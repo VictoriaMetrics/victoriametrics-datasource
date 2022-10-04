@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "baseUrl": "/",
+    "outDir": "dist",
+    "rootDirs": ["/"],
+    "allowJs": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "useUnknownInCatchVariables": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
+  },
+  "extends": "./.config/tsconfig.json",
+  "include": [
+    "app/types/svg.d.ts",
+    "app/**/*.ts*",
+    "packages/grafana-data/typings",
+    "packages/grafana-ui/src/types",
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "declarationDir": "./compiled",
+    "emitDeclarationOnly": true,
+    "isolatedModules": true,
+    "rootDirs": ["."]
+  },
+  "exclude": ["dist/**/*"],
+  "extends": "@grafana/tsconfig",
+  "include": ["src/**/*.ts*", "../../public/app/types/*.d.ts"],
+  // override for storybook which uses ts-node to compile main.ts / preview.ts files.
+  "ts-node": {
+    "compilerOptions": {
+      "isolatedModules": false
+    }
+  }
+}
