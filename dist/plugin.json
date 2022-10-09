@@ -1,7 +1,7 @@
 {
   "type": "datasource",
-  "name": "VictoriaMetrics Datasource",
-  "id": "vm-grafana-datasource",
+  "name": "VictoriaMetrics",
+  "id": "victoria-metrics",
   "category": "tsdb",
   "routes": [
     {
@@ -75,15 +75,15 @@
   "metrics": true,
   "alerting": true,
   "annotations": true,
-  "backend": false,
+  "backend": true,
   "queryOptions": {
     "minInterval": true
   },
   "info": {
     "description": "Open source time series database & alerting",
     "author": {
-      "name": "Grafana Labs",
-      "url": "https://grafana.com"
+      "name": "VictoriaMetrics",
+      "url": "https://victoriametrics.com/"
     },
     "logos": {
       "small": "img/vm_logo.svg",
@@ -92,7 +92,7 @@
     "links": [
       {
         "name": "Learn more",
-        "url": "https://prometheus.io/"
+        "url": "https://docs.victoriametrics.com/"
       }
     ]
   }
