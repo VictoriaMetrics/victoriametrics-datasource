@@ -1,5 +1,5 @@
 {
-  "name": "vm-grafana-datasource",
+  "name": "victoria-metrics",
   "version": "1.0.0",
   "description": "Showcase how to build a basic datasource plugin",
   "scripts": {
