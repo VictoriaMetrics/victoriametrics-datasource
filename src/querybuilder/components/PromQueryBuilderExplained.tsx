@@ -1,7 +1,6 @@
-import { Stack } from 'packages/grafana-ui/src';
 import React from 'react';
 
-
+import { Stack } from '../../../packages/grafana-ui';
 import promqlGrammar from '../../promql';
 import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';

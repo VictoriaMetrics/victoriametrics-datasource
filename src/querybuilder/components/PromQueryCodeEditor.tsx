@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 
+import { useStyles2 } from '../../../packages/grafana-ui';
 import { testIds } from '../../components/PromQueryEditor';
 import PromQueryField from '../../components/PromQueryField';
 import { PromQueryEditorProps } from '../../components/types';

@@ -1,4 +1,3 @@
-import { getTimeSrv, TimeSrv } from 'app/features/dashboard/services/TimeSrv';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -11,6 +10,7 @@ import {
 } from '@grafana/data';
 import { getTemplateSrv, TemplateSrv } from '@grafana/runtime';
 
+import { getTimeSrv, TimeSrv } from '../app/features/dashboard/services/TimeSrv';
 
 import { PrometheusDatasource } from './datasource';
 import PrometheusMetricFindQuery from './metric_find_query';
@@ -33,7 +33,6 @@ export class PrometheusVariableSupport extends StandardVariableSupport<Prometheu
     }
 
     const scopedVars = {
-      ...request.scopedVars,
       __interval: { text: this.datasource.interval, value: this.datasource.interval },
       __interval_ms: {
         text: rangeUtil.intervalToMs(this.datasource.interval),

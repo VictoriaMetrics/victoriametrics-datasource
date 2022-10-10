@@ -7,10 +7,10 @@ export {
   useStyles,
   useStyles2,
   mockThemeContext,
-} from './ThemeContext';
-export { getTheme, mockTheme } from './getTheme';
-export { stylesFactory } from './stylesFactory';
-export { GlobalStyles } from './GlobalStyles/GlobalStyles';
+} from '@grafana/ui';
+export { getTheme, mockTheme } from '@grafana/ui';
+export { stylesFactory } from '@grafana/ui';
+export { GlobalStyles } from '@grafana/ui';
 
-import * as styleMixins from './mixins';
+import * as styleMixins from '@grafana/ui';
 export { styleMixins };

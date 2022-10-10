@@ -1,9 +1,10 @@
 import { css } from '@emotion/css';
-import { Icon, Stack, useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 import { useToggle } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
+
+import { Icon, Stack, useStyles2 } from '../../../packages/grafana-ui';
 
 export interface Props {
   title: string;

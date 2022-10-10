@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import { AutoSizeInput, EditorRows, FlexItem, IconButton, Select, useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2, toOption } from '@grafana/data';
 
+import { AutoSizeInput, EditorRows, FlexItem, IconButton, Select, useStyles2 } from '../../../packages/grafana-ui';
 import { PrometheusDatasource } from '../../datasource';
 import { binaryScalarDefs } from '../binaryScalarOperations';
 import { PromVisualQueryBinary } from '../types';

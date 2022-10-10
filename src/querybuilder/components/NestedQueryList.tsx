@@ -1,7 +1,6 @@
-import { Stack } from 'packages/grafana-ui/src';
 import React from 'react';
 
-
+import { Stack } from '../../../packages/grafana-ui';
 import { PrometheusDatasource } from '../../datasource';
 import { PromVisualQuery, PromVisualQueryBinary } from '../types';
 

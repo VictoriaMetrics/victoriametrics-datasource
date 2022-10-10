@@ -1,11 +1,3 @@
-import {
-  InlineField,
-  InlineSwitch,
-  EventsWithValidation,
-  InlineFormLabel,
-  LegacyForms,
-  regexValidation,
-} from 'packages/grafana-ui/src';
 import React, { SyntheticEvent } from 'react';
 
 import {
@@ -14,6 +6,14 @@ import {
   SelectableValue,
   updateDatasourcePluginJsonDataOption,
 } from '@grafana/data';
+import {
+  InlineField,
+  InlineSwitch,
+  EventsWithValidation,
+  InlineFormLabel,
+  LegacyForms,
+  regexValidation,
+} from '@grafana/ui';
 
 import { PromOptions } from '../types';
 

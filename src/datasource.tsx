@@ -10,7 +10,9 @@ import {
   DataSourceWithBackend,
   FetchError,
   FetchResponse,
+  TemplateSrv,
   getBackendSrv,
+  getTemplateSrv,
   isFetchError,
   toDataQueryResponse,
 } from '@grafana/runtime';
@@ -18,7 +20,6 @@ import {
 import {safeStringifyValue} from '../app/core/utils/explore';
 import {discoverDataSourceFeatures} from '../app/features/alerting/unified/api/buildInfo';
 import {getTimeSrv, TimeSrv} from '../app/features/dashboard/services/TimeSrv';
-import {getTemplateSrv, TemplateSrv} from '../app/features/templating/template_srv';
 import {PromApiFeatures, PromApplication} from '../app/types/unified-alerting-dto';
 import {
   AbstractQuery,
@@ -842,11 +843,6 @@ export class PrometheusDatasource
     );
   }
 
-  // async getSubtitle(): Promise<JSX.Element | null> {
-  //   const buildInfo = await this.getBuildInfo();
-  //   return buildInfo ? this.getBuildInfoMessage(buildInfo) : null;
-  // }
-
   async getTagKeys(options?: any) {
     if (options?.series) {
       // Get tags for the provided series only
@@ -971,11 +967,9 @@ export class PrometheusDatasource
     } as DataQueryRequest<PromQuery>;
 
     const buildInfo = await this.getBuildInfo();
-    console.log('buildInfo', buildInfo)
 
     return lastValueFrom(this.query(request))
       .then((res: DataQueryResponse) => {
-        console.log('res', res)
         if (!res || !res.data || res.state !== LoadingState.Done) {
           return {status: 'error', message: `Error reading Prometheus: ${res?.error?.message}`};
         } else {
