@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { usePrevious } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { IconButton, InlineLabel, Tooltip, useStyles2 } from '@grafana/ui';
 
-import { IconButton, InlineLabel, Tooltip, useStyles2 } from '../../packages/grafana-ui';
 import { PrometheusDatasource } from '../datasource';
 import { PromQuery } from '../types';
 

@@ -5,13 +5,6 @@ import { Editor } from 'slate-react';
 
 import { CoreApp, isDataFrame, QueryEditorProps, QueryHint, TimeRange, toLegacyResponseData } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
-
-import { LocalStorageValueProvider } from '../../app/core/components/LocalStorageValueProvider';
-import {
-  CancelablePromise,
-  isCancelablePromiseRejection,
-  makePromiseCancelable,
-} from '../../app/core/utils/CancelablePromise';
 import {
   BracesPlugin,
   DOMUtil,
@@ -20,7 +13,14 @@ import {
   SuggestionsState,
   TypeaheadInput,
   TypeaheadOutput,
-} from '../../packages/grafana-ui/src';
+} from '@grafana/ui';
+
+import {LocalStorageValueProvider} from "../../app/core/components/LocalStorageValueProvider";
+import {
+  CancelablePromise,
+  isCancelablePromiseRejection,
+  makePromiseCancelable,
+} from '../../app/core/utils/CancelablePromise';
 import { PrometheusDatasource } from '../datasource';
 import { roundMsToMin } from '../language_utils';
 import { PromOptions, PromQuery } from '../types';

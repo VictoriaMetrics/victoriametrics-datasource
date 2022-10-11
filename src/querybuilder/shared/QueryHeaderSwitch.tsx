@@ -1,9 +1,11 @@
 import { css } from '@emotion/css';
 import { uniqueId } from 'lodash';
-import { Switch, Stack, useStyles2 } from 'packages/grafana-ui/src';
 import React, { HTMLProps, useRef } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Switch, useStyles2 } from '@grafana/ui';
+
+import { Stack } from '../../../packages/grafana-ui';
 
 export interface Props extends Omit<HTMLProps<HTMLInputElement>, 'value' | 'ref'> {
   value?: boolean;

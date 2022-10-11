@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import { Button, InlineField, InlineSwitch, Input } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
 import { DataSourcePicker } from '@grafana/runtime';
+import { Button, InlineField, InlineSwitch, Input } from '@grafana/ui';
 
 import { ExemplarTraceIdDestination } from '../types';
 

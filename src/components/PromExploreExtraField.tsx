@@ -3,7 +3,8 @@ import { isEqual } from 'lodash';
 import React, { memo, useCallback } from 'react';
 import { usePrevious } from 'react-use';
 
-import { InlineFormLabel, RadioButtonGroup } from '../../packages/grafana-ui';
+import { InlineFormLabel, RadioButtonGroup } from '@grafana/ui';
+
 import { PrometheusDatasource } from '../datasource';
 import { PromQuery } from '../types';
 

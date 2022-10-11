@@ -1,9 +1,11 @@
 import { uniqBy } from 'lodash';
-import { AccessoryButton, InputGroup, Select } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 
 import { SelectableValue, toOption } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { Select } from '@grafana/ui';
+
+import { AccessoryButton, InputGroup } from '../../../packages/grafana-ui';
 
 import { QueryBuilderLabelFilter } from './types';
 

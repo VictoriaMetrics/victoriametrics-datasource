@@ -1,10 +1,12 @@
 import { css } from '@emotion/css';
-import { Button, Cascader, CascaderOption, Stack, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useMountedState, usePrevious } from 'react-use';
 
 import { DataSourceApi, GrafanaTheme2 } from '@grafana/data';
+import { Button, Cascader, CascaderOption, useStyles2 } from '@grafana/ui';
+
+import { Stack } from '../../../packages/grafana-ui';
 
 import { OperationEditor } from './OperationEditor';
 import { QueryBuilderOperation, QueryWithOperations, VisualQueryModeller } from './types';

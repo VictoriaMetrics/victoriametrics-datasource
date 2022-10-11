@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2, renderMarkdown } from '@grafana/data';
+import { useStyles2 } from '@grafana/ui';
 
 export interface Props {
   title?: React.ReactNode;

@@ -1,9 +1,11 @@
 import { css, cx } from '@emotion/css';
-import { Button, Icon, Stack, Tooltip, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 
 import { DataSourceApi, GrafanaTheme2 } from '@grafana/data';
+import { Button, Icon, Tooltip, useStyles2 } from '@grafana/ui';
+
+import { Stack } from '../../../packages/grafana-ui';
 
 import { OperationHeader } from './OperationHeader';
 import { getOperationParamEditor } from './OperationParamEditor';

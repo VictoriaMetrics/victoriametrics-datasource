@@ -1,12 +1,13 @@
 import { isEqual } from 'lodash';
-import { EditorFieldGroup, EditorField, EditorList } from 'packages/grafana-ui/src';
 import React, { useEffect, useState } from 'react';
 
 import { SelectableValue } from '@grafana/data';
 
-import { QueryBuilderLabelFilter } from '../shared/types';
+import { EditorFieldGroup, EditorField, EditorList } from '../../../packages/grafana-ui';
 
 import { LabelFilterItem } from './LabelFilterItem';
+import { QueryBuilderLabelFilter } from './types';
+
 
 export interface Props {
   labelsFilters: QueryBuilderLabelFilter[];

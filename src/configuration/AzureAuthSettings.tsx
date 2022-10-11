@@ -1,7 +1,7 @@
-import { InlineField, InlineFieldRow, InlineSwitch, Input } from 'packages/grafana-ui/src';
 import React, { FunctionComponent, FormEvent, useMemo, useState } from 'react';
 
 import { config } from '@grafana/runtime';
+import { InlineField, InlineFieldRow, InlineSwitch, Input } from '@grafana/ui';
 import { HttpSettingsBaseProps } from '@grafana/ui/components/DataSourceSettings/types';
 
 import { KnownAzureClouds, AzureCredentials } from './AzureCredentials';

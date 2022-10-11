@@ -1,6 +1,7 @@
 import { css } from '@emotion/css';
-import { RadioButtonGroup, Tag } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { RadioButtonGroup, Tag } from '@grafana/ui';
 
 
 import { QueryEditorMode } from './types';

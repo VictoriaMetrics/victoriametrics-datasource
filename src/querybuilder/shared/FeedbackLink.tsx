@@ -1,9 +1,12 @@
 import { css } from '@emotion/css';
-import { Icon, Stack, useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
+
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { config, reportInteraction } from '@grafana/runtime';
+import { Icon, useStyles2 } from '@grafana/ui';
+
+import { Stack } from '../../../packages/grafana-ui';
 
 export interface Props {
   feedbackUrl?: string;

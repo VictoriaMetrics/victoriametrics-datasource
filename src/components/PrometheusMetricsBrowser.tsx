@@ -3,7 +3,6 @@ import React, { ChangeEvent } from 'react';
 import { FixedSizeList } from 'react-window';
 
 import { GrafanaTheme } from '@grafana/data';
-
 import {
   Button,
   HorizontalGroup,
@@ -13,7 +12,8 @@ import {
   stylesFactory,
   withTheme,
   BrowserLabel as PromLabel,
-} from '../../packages/grafana-ui/src';
+} from '@grafana/ui';
+
 import PromQlLanguageProvider from '../language_provider';
 import { escapeLabelValueInExactSelector, escapeLabelValueInRegexSelector } from '../language_utils';
 

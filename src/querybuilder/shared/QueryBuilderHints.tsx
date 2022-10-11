@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
-import { LokiDatasource } from 'app/plugins/datasource/loki/datasource';
-import { Button, Tooltip, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useState, useEffect } from 'react';
 
 import { GrafanaTheme2, PanelData, QueryHint } from '@grafana/data';
+import { Button, Tooltip, useStyles2 } from '@grafana/ui';
 
+import { LokiDatasource } from '../../../app/plugins/datasource/loki/datasource';
 import { PrometheusDatasource } from '../../datasource';
 
 import { LokiAndPromQueryModellerBase, PromLokiVisualQuery } from './LokiAndPromQueryModellerBase';

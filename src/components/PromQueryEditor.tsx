@@ -3,8 +3,8 @@ import React, { PureComponent } from 'react';
 
 // Types
 import { CoreApp, SelectableValue } from '@grafana/data';
+import { InlineFormLabel, LegacyForms, Select } from '@grafana/ui';
 
-import { InlineFormLabel, LegacyForms, Select } from '../../packages/grafana-ui/src';
 import { PromQuery } from '../types';
 
 import { PromExemplarField } from './PromExemplarField';

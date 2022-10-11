@@ -1,8 +1,10 @@
 import { css } from '@emotion/css';
-import { Button, Select, useStyles2, FlexItem } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
+import { Button, Select, useStyles2 } from '@grafana/ui';
+
+import { FlexItem } from '../../../packages/grafana-ui';
 
 import { OperationInfoButton } from './OperationInfoButton';
 import { VisualQueryModeller, QueryBuilderOperation, QueryBuilderOperationDef } from './types';

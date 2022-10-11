@@ -1,7 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { getTheme } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { getTheme } from '@grafana/ui';
 
 
 import PromQlLanguageProvider from '../language_provider';

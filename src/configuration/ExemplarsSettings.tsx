@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Button } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
+import { Button } from '@grafana/ui';
 
 import { ExemplarTraceIdDestination } from '../types';
 

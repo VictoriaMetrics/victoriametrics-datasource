@@ -1,12 +1,14 @@
 import { css } from '@emotion/css';
-import { AutoSizeInput, Button, Checkbox, Select, Stack, useStyles2 } from 'packages/grafana-ui/src';
 import React, { ComponentType } from 'react';
 
 import { GrafanaTheme2, SelectableValue, toOption } from '@grafana/data';
+import { AutoSizeInput, Button, Checkbox, Select, useStyles2 } from '@grafana/ui';
 
-import { QueryBuilderOperationParamDef, QueryBuilderOperationParamEditorProps } from '../shared/types';
+import { Stack } from '../../../packages/grafana-ui';
+
 
 import { getOperationParamId } from './operationUtils';
+import { QueryBuilderOperationParamDef, QueryBuilderOperationParamEditorProps } from './types';
 
 export function getOperationParamEditor(
   paramDef: QueryBuilderOperationParamDef

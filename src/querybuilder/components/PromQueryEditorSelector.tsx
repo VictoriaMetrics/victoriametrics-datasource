@@ -2,8 +2,9 @@ import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 
 import { CoreApp, LoadingState } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
+import { Button, ConfirmModal } from '@grafana/ui';
 
-import { Button, ConfirmModal, EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../../packages/grafana-ui';
+import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../../packages/grafana-ui';
 import { PromQueryEditorProps } from '../../components/types';
 import { PromQuery } from '../../types';
 import { promQueryModeller } from '../PromQueryModeller';
