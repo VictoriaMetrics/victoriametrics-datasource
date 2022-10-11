@@ -10,6 +10,8 @@ export {
 } from '../../../packages/grafana-data';
 
 
+import {TemplateSrv} from "@grafana/runtime";
+
 import {
   BusEventWithPayload,
   DataQuery,
@@ -19,7 +21,6 @@ import {
   BaseVariableModel,
   VariableHide,
 } from '../../../packages/grafana-data';
-import {TemplateSrv} from '../../../packages/grafana-runtime';
 
 import {NEW_VARIABLE_ID} from './constants';
 
