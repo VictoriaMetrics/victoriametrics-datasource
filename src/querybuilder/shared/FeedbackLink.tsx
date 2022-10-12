@@ -6,7 +6,7 @@ import { GrafanaTheme2 } from '@grafana/data';
 import { config, reportInteraction } from '@grafana/runtime';
 import { Icon, useStyles2 } from '@grafana/ui';
 
-import { Stack } from '../../../packages/grafana-ui';
+import { Stack } from '../../components/QueryEditor';
 
 export interface Props {
   feedbackUrl?: string;

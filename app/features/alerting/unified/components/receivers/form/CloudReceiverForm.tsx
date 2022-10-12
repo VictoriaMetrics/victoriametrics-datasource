@@ -1,7 +1,8 @@
 import { AlertManagerCortexConfig, Receiver } from 'app/plugins/datasource/alertmanager/types';
-import { Alert } from 'packages/grafana-ui/src';
 import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+
+import { Alert } from '@grafana/ui';
 
 
 import { updateAlertManagerConfigAction } from '../../../state/actions';

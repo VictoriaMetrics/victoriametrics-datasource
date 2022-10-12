@@ -5,12 +5,12 @@ import { PanelModelWithLibraryPanel } from 'app/features/library-panels/types';
 import { DashboardSavedEvent } from 'app/types/events';
 import * as H from 'history';
 import { each, find } from 'lodash';
-import { ModalsContext } from 'packages/grafana-ui/src';
 import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
 import { locationService } from '@grafana/runtime';
+import { ModalsContext } from '@grafana/ui';
 
 import { DashboardModel } from '../../state/DashboardModel';
 import { discardPanelChanges, exitPanelEditor } from '../PanelEditor/state/actions';

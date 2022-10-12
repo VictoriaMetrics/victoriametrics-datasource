@@ -1,8 +1,8 @@
 import { css, cx } from '@emotion/css';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { useStyles2 } from '@grafana/ui';
 
 export type State = 'good' | 'bad' | 'warning' | 'neutral' | 'info';
 

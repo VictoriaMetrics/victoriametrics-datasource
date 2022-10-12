@@ -7,11 +7,11 @@ import { useMenuTrigger } from '@react-aria/menu';
 import { DismissButton, OverlayContainer, useOverlay, useOverlayPosition } from '@react-aria/overlays';
 import { useMenuTriggerState } from '@react-stately/menu';
 import { MenuTriggerProps } from '@react-types/menu';
-import { Link, useTheme2 } from 'packages/grafana-ui/src';
 import React, { ReactElement, useEffect, useState } from 'react';
 
 import { GrafanaTheme2, NavModelItem } from '@grafana/data';
 import { reportExperimentView } from '@grafana/runtime';
+import { Link, useTheme2 } from '@grafana/ui';
 
 import { NavBarItemIcon } from './NavBarItemIcon';
 import { getNavMenuPortalContainer } from './NavBarMenuPortalContainer';

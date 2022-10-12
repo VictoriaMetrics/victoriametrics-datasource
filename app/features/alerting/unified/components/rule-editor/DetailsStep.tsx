@@ -4,11 +4,11 @@ import { contextSrv } from 'app/core/services/context_srv';
 import { DashboardSearchHit } from 'app/features/search/types';
 import { AccessControlAction } from 'app/types';
 import classNames from 'classnames';
-import { useStyles2, Field, Input, InputControl, Label, Tooltip, Icon, Stack } from 'packages/grafana-ui/src';
 import React, { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { useStyles2, Field, Input, InputControl, Label, Tooltip, Icon, Stack } from '@grafana/ui';
 
 import { RuleForm, RuleFormType, RuleFormValues } from '../../types/rule-form';
 

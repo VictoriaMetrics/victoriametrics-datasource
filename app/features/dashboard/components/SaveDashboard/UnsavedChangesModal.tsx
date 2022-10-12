@@ -1,6 +1,7 @@
 import { css } from '@emotion/css';
-import { Button, Modal } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { Button, Modal } from '@grafana/ui';
 
 
 import { DashboardModel } from '../../state';

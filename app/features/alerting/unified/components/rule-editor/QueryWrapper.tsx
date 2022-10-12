@@ -3,7 +3,6 @@ import { isExpressionQuery } from 'app/features/expressions/guards';
 import { QueryEditorRow } from 'app/features/query/components/QueryEditorRow';
 import { AlertQuery } from 'app/types/unified-alerting-dto';
 import { cloneDeep } from 'lodash';
-import { RelativeTimeRangePicker, useStyles2, Tooltip, Icon } from 'packages/grafana-ui/src';
 import React, { FC, useState } from 'react';
 
 import {
@@ -17,6 +16,7 @@ import {
   RelativeTimeRange,
   ThresholdsConfig,
 } from '@grafana/data';
+import { RelativeTimeRangePicker, useStyles2, Tooltip, Icon } from '@grafana/ui';
 
 import { TABLE, TIMESERIES } from '../../utils/constants';
 import { SupportedPanelPlugins } from '../PanelPluginsButtonGroup';

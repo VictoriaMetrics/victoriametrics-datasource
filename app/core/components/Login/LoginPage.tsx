@@ -4,8 +4,9 @@ import { css } from '@emotion/css';
 // Components
 import { Branding } from 'app/core/components/Branding/Branding';
 import config from 'app/core/config';
-import { HorizontalGroup, LinkButton } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { HorizontalGroup, LinkButton } from '@grafana/ui';
 
 import { ChangePassword } from '../ForgottenPassword/ChangePassword';
 

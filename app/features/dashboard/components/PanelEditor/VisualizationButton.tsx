@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 import { StoreState } from 'app/types';
-import { ToolbarButton, ButtonGroup, useStyles } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { GrafanaTheme } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { ToolbarButton, ButtonGroup, useStyles } from '@grafana/ui';
 
 import { PanelModel } from '../../state';
 import { getPanelPluginWithFallback } from '../../state/selectors';

@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { isEmpty } from 'lodash';
-import { Stack, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Stack, useStyles2 } from '@grafana/ui';
 
 import { useRulesSourcesWithRuler } from '../../../hooks/useRuleSourcesWithRuler';
 import { RuleFormType } from '../../../types/rule-form';

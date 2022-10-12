@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { contextSrv } from 'app/core/services/context_srv';
-import { Button, Icon, Input, Label, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, useState } from 'react';
 import { useDebounce } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Button, Icon, Input, Label, useStyles2 } from '@grafana/ui';
 
 import { Authorize } from '../../components/Authorize';
 import { useURLSearchParams } from '../../hooks/useURLSearchParams';

@@ -1,6 +1,7 @@
 import { AlertManagerCortexConfig } from 'app/plugins/datasource/alertmanager/types';
-import { Alert } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { Alert } from '@grafana/ui';
 
 
 import { GRAFANA_RULES_SOURCE_NAME } from '../../utils/datasource';

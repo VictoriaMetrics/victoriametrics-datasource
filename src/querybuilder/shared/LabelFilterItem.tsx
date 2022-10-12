@@ -5,7 +5,7 @@ import { SelectableValue, toOption } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Select } from '@grafana/ui';
 
-import { AccessoryButton, InputGroup } from '../../../packages/grafana-ui';
+import { AccessoryButton, InputGroup } from '../../components/QueryEditor';
 
 import { QueryBuilderLabelFilter } from './types';
 

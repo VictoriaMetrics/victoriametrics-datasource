@@ -1,8 +1,8 @@
-import { RadioButtonGroup } from 'packages/grafana-ui/src';
 import React, { useMemo } from 'react';
 
 import { SelectableValue } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { RadioButtonGroup } from '@grafana/ui';
 
 import { STAT, TABLE, TIMESERIES } from '../utils/constants';
 

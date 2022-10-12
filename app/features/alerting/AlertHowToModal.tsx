@@ -1,5 +1,6 @@
-import { Modal, VerticalGroup } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { Modal, VerticalGroup } from '@grafana/ui';
 
 
 export interface AlertHowToModalProps {

@@ -1,5 +1,6 @@
-import { Button, ModalsController } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { Button, ModalsController } from '@grafana/ui';
 
 
 import { DashboardModel } from '../../state';

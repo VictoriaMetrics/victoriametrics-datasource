@@ -1,12 +1,12 @@
 import { ColorValueEditor } from 'app/core/components/OptionsUI/color';
 import StandardAnnotationQueryEditor from 'app/features/annotations/components/StandardAnnotationQueryEditor';
-import { Button, Checkbox, Field, FieldSet, HorizontalGroup, Input, Stack } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 import { useAsync } from 'react-use';
 
 import { AnnotationQuery, DataSourceInstanceSettings, getDataSourceRef } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { DataSourcePicker, getDataSourceSrv, locationService } from '@grafana/runtime';
+import { Button, Checkbox, Field, FieldSet, HorizontalGroup, Input, Stack } from '@grafana/ui';
 
 import { DashboardModel } from '../../state/DashboardModel';
 

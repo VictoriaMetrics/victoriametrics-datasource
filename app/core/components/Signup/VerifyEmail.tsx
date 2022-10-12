@@ -1,9 +1,9 @@
 import { getConfig } from 'app/core/config';
 import { useAppNotification } from 'app/core/copy/appNotification';
-import { Form, Field, Input, Button, Legend, Container, HorizontalGroup, LinkButton } from 'packages/grafana-ui/src';
 import React, { FC, useState } from 'react';
 
 import { getBackendSrv } from '@grafana/runtime';
+import { Form, Field, Input, Button, Legend, Container, HorizontalGroup, LinkButton } from '@grafana/ui';
 
 interface EmailDTO {
   email: string;

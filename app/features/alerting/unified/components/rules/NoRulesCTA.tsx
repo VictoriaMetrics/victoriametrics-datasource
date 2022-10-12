@@ -1,6 +1,7 @@
 import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
-import { CallToActionCard } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { CallToActionCard } from '@grafana/ui';
 
 
 import { useRulesAccess } from '../../utils/accessControlHooks';

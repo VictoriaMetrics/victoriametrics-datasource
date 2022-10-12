@@ -1,5 +1,4 @@
 import { css } from '@emotion/css';
-import { InlineField, InlineFieldRow, Input, TagsInput, useStyles, InlineSwitch } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import {
@@ -11,6 +10,7 @@ import {
   updateDatasourcePluginJsonDataOption,
 } from '@grafana/data';
 import { DataSourcePicker } from '@grafana/runtime';
+import { InlineField, InlineFieldRow, Input, TagsInput, useStyles, InlineSwitch } from '@grafana/ui';
 
 import KeyValueInput from './KeyValueInput';
 

@@ -1,7 +1,7 @@
-import { Alert } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { config } from '@grafana/runtime';
+import { Alert } from '@grafana/ui';
 
 const EvaluationIntervalLimitExceeded: FC = () => (
   <Alert severity="warning" title="Global evalutation interval limit exceeded">

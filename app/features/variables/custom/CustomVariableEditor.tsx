@@ -1,10 +1,10 @@
 import { connectWithStore } from 'app/core/utils/connectWithReduxStore';
 import { StoreState } from 'app/types';
-import { VerticalGroup } from 'packages/grafana-ui/src';
 import React, { FormEvent, PureComponent } from 'react';
 import { MapDispatchToProps, MapStateToProps } from 'react-redux';
 
 import { selectors } from '@grafana/e2e-selectors';
+import { VerticalGroup } from '@grafana/ui';
 
 import { SelectionOptionsEditor } from '../editor/SelectionOptionsEditor';
 import { VariableSectionHeader } from '../editor/VariableSectionHeader';

@@ -1,8 +1,8 @@
 import { t, Trans } from '@lingui/macro';
-import { ClipboardButton, Field, Modal, Switch, TextArea } from 'packages/grafana-ui/src';
 import React, { FormEvent, PureComponent } from 'react';
 
 import { reportInteraction } from '@grafana/runtime';
+import { ClipboardButton, Field, Modal, Switch, TextArea } from '@grafana/ui';
 
 import { ThemePicker } from './ThemePicker';
 import { ShareModalTabProps } from './types';

@@ -3,10 +3,10 @@ import { getBackendSrv } from 'app/core/services/backend_srv';
 import { DashboardSearchHit } from 'app/features/search/types';
 import { FolderInfo, PermissionLevelString } from 'app/types';
 import debounce from 'debounce-promise';
-import { AsyncMultiSelect, Icon, Button, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
+import { AsyncMultiSelect, Icon, Button, useStyles2 } from '@grafana/ui';
 
 export interface FolderFilterProps {
   onChange: (folder: FolderInfo[]) => void;

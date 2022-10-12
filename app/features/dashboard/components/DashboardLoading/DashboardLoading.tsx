@@ -1,10 +1,10 @@
 import { css, keyframes } from '@emotion/css';
 import { DashboardInitPhase } from 'app/types';
-import { Button, HorizontalGroup, Spinner, useStyles, VerticalGroup } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
+import { Button, HorizontalGroup, Spinner, useStyles, VerticalGroup } from '@grafana/ui';
 
 export interface Props {
   initPhase: DashboardInitPhase;

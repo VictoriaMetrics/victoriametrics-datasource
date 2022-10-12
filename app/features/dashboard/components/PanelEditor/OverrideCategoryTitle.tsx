@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { HorizontalGroup, Icon, IconButton, useStyles } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { FieldConfigOptionsRegistry, GrafanaTheme, ConfigOverrideRule } from '@grafana/data';
+import { HorizontalGroup, Icon, IconButton, useStyles } from '@grafana/ui';
 import { FieldMatcherUIRegistryItem } from '@grafana/ui/components/MatchersUI/types';
 
 interface OverrideCategoryTitleProps {

@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { Placement } from '@popperjs/core';
 import classnames from 'classnames';
-import { Popover as GrafanaPopover, PopoverController, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, ReactElement, useRef } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Popover as GrafanaPopover, PopoverController, useStyles2 } from '@grafana/ui';
 
 export interface HoverCardProps {
   children: ReactElement;

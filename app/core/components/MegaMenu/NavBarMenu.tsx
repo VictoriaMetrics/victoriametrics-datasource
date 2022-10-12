@@ -3,12 +3,12 @@ import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { OverlayContainer, useOverlay } from '@react-aria/overlays';
 import { useGrafana } from 'app/core/context/GrafanaContext';
-import { CustomScrollbar, Icon, IconButton, useTheme2 } from 'packages/grafana-ui/src';
 import React, { useEffect, useRef, useState } from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
 
 import { GrafanaTheme2, NavModelItem } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
+import { CustomScrollbar, Icon, IconButton, useTheme2 } from '@grafana/ui';
 
 import { TOP_BAR_LEVEL_HEIGHT } from '../AppChrome/types';
 import { NavItem } from '../NavBar/NavBarMenu';

@@ -1,13 +1,13 @@
 import { css } from '@emotion/css';
 import { useCleanup } from 'app/core/hooks/useCleanup';
 import { AlertManagerCortexConfig } from 'app/plugins/datasource/alertmanager/types';
-import { Alert, Button, Field, FieldSet, Input, LinkButton, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { useForm, Validate } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Alert, Button, Field, FieldSet, Input, LinkButton, useStyles2 } from '@grafana/ui';
 
 import { useUnifiedAlertingSelector } from '../../hooks/useUnifiedAlertingSelector';
 import { updateAlertManagerConfigAction } from '../../state/actions';

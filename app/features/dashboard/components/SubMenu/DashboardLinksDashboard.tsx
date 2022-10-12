@@ -1,13 +1,13 @@
 import { css, cx } from '@emotion/css';
 import { getBackendSrv } from 'app/core/services/backend_srv';
 import { DashboardSearchItem } from 'app/features/search/types';
-import { Icon, ToolbarButton, Tooltip, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useRef, useState, useLayoutEffect } from 'react';
 import { useAsync } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { sanitize, sanitizeUrl } from '@grafana/data/text/sanitize';
 import { selectors } from '@grafana/e2e-selectors';
+import { Icon, ToolbarButton, Tooltip, useStyles2 } from '@grafana/ui';
 
 import { getLinkSrv } from '../../../panel/panellinks/link_srv';
 import { DashboardLink } from '../../state/DashboardModel';

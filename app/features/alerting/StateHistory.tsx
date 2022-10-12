@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Icon, ConfirmButton, Button } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 
 import { getBackendSrv } from '@grafana/runtime';
+import { Icon, ConfirmButton, Button } from '@grafana/ui';
 
 import { DashboardModel } from '../dashboard/state/DashboardModel';
 

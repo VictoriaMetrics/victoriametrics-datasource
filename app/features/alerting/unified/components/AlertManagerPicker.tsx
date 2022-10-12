@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Field, Select, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, useMemo } from 'react';
 
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
+import { Field, Select, useStyles2 } from '@grafana/ui';
 
 import { AlertManagerDataSource, GRAFANA_RULES_SOURCE_NAME } from '../utils/datasource';
 

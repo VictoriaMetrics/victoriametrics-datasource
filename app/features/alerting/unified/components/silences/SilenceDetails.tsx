@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { dateMath, GrafanaTheme2, intervalToAbbreviatedDurationString } from '@grafana/data';
+import { useStyles2 } from '@grafana/ui';
 
 import SilencedAlertsTable from './SilencedAlertsTable';
 import { SilenceTableItem } from './SilencesTable';

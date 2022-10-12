@@ -1,7 +1,7 @@
-import { Icon, IconName } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { config } from '@grafana/runtime';
+import { Icon, IconName } from '@grafana/ui';
 
 export interface FooterLink {
   text: string;

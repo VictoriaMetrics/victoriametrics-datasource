@@ -1,8 +1,8 @@
-import { Select } from 'packages/grafana-ui/src';
 import React, { FC, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import { SelectableValue } from '@grafana/data';
+import { Select } from '@grafana/ui';
 
 import { StoreState } from '../../../../types';
 import { getLastKey, getVariablesByKey } from '../../../variables/state/selectors';

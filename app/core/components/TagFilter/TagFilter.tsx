@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import { Icon, MultiSelect, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { components } from 'react-select';
 
 import { escapeStringForRegex, GrafanaTheme2 } from '@grafana/data';
+import { Icon, MultiSelect, useStyles2 } from '@grafana/ui';
 
 import { TagBadge } from './TagBadge';
 import { TagOption } from './TagOption';

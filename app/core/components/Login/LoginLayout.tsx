@@ -1,8 +1,8 @@
 import { cx, css, keyframes } from '@emotion/css';
-import { useStyles2, styleMixins } from 'packages/grafana-ui/src';
 import React, { FC, useEffect, useState } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { useStyles2, styleMixins } from '@grafana/ui';
 
 import { Branding } from '../Branding/Branding';
 import { BrandingSettings } from '../Branding/types';

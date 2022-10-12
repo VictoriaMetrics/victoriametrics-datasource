@@ -1,6 +1,6 @@
-import { IconName } from 'packages/grafana-ui/src';
-
 import { AnnotationQuery, BusEventBase, BusEventWithPayload, eventFactory } from '@grafana/data';
+import { IconName } from '@grafana/ui';
+
 
 /**
  * Event Payloads

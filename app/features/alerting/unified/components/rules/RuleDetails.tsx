@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { CombinedRule } from 'app/types/unified-alerting';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { useStyles2 } from '@grafana/ui';
 
 import { isRecordingRulerRule } from '../../utils/rules';
 import { AlertLabels } from '../AlertLabels';

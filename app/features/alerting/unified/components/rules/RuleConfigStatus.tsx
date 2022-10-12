@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import { Icon, Tooltip, useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { Icon, Tooltip, useStyles2 } from '@grafana/ui';
 
 import { CombinedRule } from '../../../../../types/unified-alerting';
 import { checkEvaluationIntervalGlobalLimit } from '../../utils/config';

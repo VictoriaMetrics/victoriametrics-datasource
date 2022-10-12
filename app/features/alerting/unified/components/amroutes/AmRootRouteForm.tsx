@@ -1,6 +1,7 @@
 import { cx } from '@emotion/css';
-import { Button, Collapse, Field, Form, Input, InputControl, Link, MultiSelect, Select, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, useState } from 'react';
+
+import { Button, Collapse, Field, Form, Input, InputControl, Link, MultiSelect, Select, useStyles2 } from '@grafana/ui';
 
 
 import { AmRouteReceiver, FormAmRoute } from '../../types/amroutes';

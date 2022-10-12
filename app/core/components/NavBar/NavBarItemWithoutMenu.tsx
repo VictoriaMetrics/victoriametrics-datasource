@@ -1,8 +1,8 @@
 import { css, cx } from '@emotion/css';
-import { Link, useTheme2 } from 'packages/grafana-ui/src';
 import React, { ReactNode } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Link, useTheme2 } from '@grafana/ui';
 
 import { NavFeatureHighlight } from './NavFeatureHighlight';
 

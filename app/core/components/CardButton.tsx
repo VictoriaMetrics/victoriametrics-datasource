@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Icon, IconName, useStyles2 } from 'packages/grafana-ui/src';
 import React, { HTMLAttributes } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Icon, IconName, useStyles2 } from '@grafana/ui';
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {
   icon: IconName;

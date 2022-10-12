@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { CustomScrollbar, FilterInput, RadioButtonGroup, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useMemo, useState } from 'react';
 
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
+import { CustomScrollbar, FilterInput, RadioButtonGroup, useStyles2 } from '@grafana/ui';
 
 import { isPanelModelLibraryPanel } from '../../../library-panels/guard';
 

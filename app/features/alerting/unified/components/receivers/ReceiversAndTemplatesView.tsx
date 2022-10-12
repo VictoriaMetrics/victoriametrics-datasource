@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { AlertManagerCortexConfig } from 'app/plugins/datasource/alertmanager/types';
 import { AccessControlAction } from 'app/types';
-import { Alert, LinkButton, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Alert, LinkButton, useStyles2 } from '@grafana/ui';
 
 import { GRAFANA_RULES_SOURCE_NAME, isVanillaPrometheusAlertManagerDataSource } from '../../utils/datasource';
 import { makeAMLink } from '../../utils/misc';

@@ -1,12 +1,12 @@
 import { css } from '@emotion/css';
 import { Alert, AlertingRule } from 'app/types/unified-alerting';
-import { Badge, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'react-use';
 
 import { dateTime, GrafanaTheme2 } from '@grafana/data';
+import { Badge, useStyles2 } from '@grafana/ui';
 
 import { useCombinedRuleNamespaces } from '../../hooks/useCombinedRuleNamespaces';
 import { fetchAllPromAndRulerRulesAction } from '../../state/actions';

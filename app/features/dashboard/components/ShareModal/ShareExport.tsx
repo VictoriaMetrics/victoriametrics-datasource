@@ -4,10 +4,10 @@ import { getBackendSrv } from 'app/core/services/backend_srv';
 import { DashboardExporter } from 'app/features/dashboard/components/DashExportModal';
 import { ShowModalReactEvent } from 'app/types/events';
 import { saveAs } from 'file-saver';
-import { Button, Field, Modal, Switch } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 
 import { config, reportInteraction } from '@grafana/runtime';
+import { Button, Field, Modal, Switch } from '@grafana/ui';
 
 import { ViewJsonModal } from './ViewJsonModal';
 import { ShareModalTabProps } from './types';

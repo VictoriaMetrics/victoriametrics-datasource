@@ -6,9 +6,10 @@ import PermissionList from 'app/core/components/PermissionList/PermissionList';
 import PermissionsInfo from 'app/core/components/PermissionList/PermissionsInfo';
 import { StoreState } from 'app/types';
 import { DashboardAcl, PermissionLevel, NewDashboardAclItem } from 'app/types/acl';
-import { Tooltip, Icon, Button } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+
+import { Tooltip, Icon, Button } from '@grafana/ui';
 
 import { checkFolderPermissions } from '../../../folders/state/actions';
 import {

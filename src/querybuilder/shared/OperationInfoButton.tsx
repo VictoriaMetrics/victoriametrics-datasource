@@ -5,7 +5,7 @@ import { usePopperTooltip } from 'react-popper-tooltip';
 import { GrafanaTheme2, renderMarkdown } from '@grafana/data';
 import { Button, Portal, useStyles2 } from '@grafana/ui';
 
-import { FlexItem } from '../../../packages/grafana-ui';
+import { FlexItem } from '../../components/QueryEditor';
 
 import { QueryBuilderOperation, QueryBuilderOperationDef } from './types';
 

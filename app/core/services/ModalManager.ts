@@ -1,11 +1,11 @@
 import appEvents from 'app/core/app_events';
 import { copyPanel } from 'app/features/dashboard/utils/panel';
-import { ConfirmModal, ConfirmModalProps } from 'packages/grafana-ui/src';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { textUtil } from '@grafana/data';
 import { config, CopyPanelEvent } from '@grafana/runtime';
+import { ConfirmModal, ConfirmModalProps } from '@grafana/ui';
 
 import { ShowConfirmModalEvent, ShowConfirmModalPayload, ShowModalReactEvent } from '../../types/events';
 import { AngularModalProxy } from '../components/modals/AngularModalProxy';

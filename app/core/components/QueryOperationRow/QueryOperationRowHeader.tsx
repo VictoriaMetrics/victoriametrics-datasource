@@ -1,9 +1,9 @@
 import { css, cx } from '@emotion/css';
-import { Icon, IconButton, useStyles2 } from 'packages/grafana-ui/src';
 import React, { MouseEventHandler } from 'react';
 import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Icon, IconButton, useStyles2 } from '@grafana/ui';
 
 interface QueryOperationRowHeaderProps {
   actionsElement?: React.ReactNode;

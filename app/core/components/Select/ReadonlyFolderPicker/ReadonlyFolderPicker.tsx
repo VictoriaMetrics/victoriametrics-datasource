@@ -1,9 +1,9 @@
 import debouncePromise from 'debounce-promise';
-import { AsyncSelect } from 'packages/grafana-ui/src';
 import React, { ReactElement, useCallback, useState } from 'react';
 
 import { SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { AsyncSelect } from '@grafana/ui';
 
 import { GENERAL_FOLDER_ID, GENERAL_FOLDER_TITLE } from '../../../../features/search/constants';
 import { FolderInfo, PermissionLevelString } from '../../../../types';

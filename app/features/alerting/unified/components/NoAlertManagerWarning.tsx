@@ -1,5 +1,6 @@
-import { Alert } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { Alert } from '@grafana/ui';
 
 
 import { useAlertManagerSourceName } from '../hooks/useAlertManagerSourceName';

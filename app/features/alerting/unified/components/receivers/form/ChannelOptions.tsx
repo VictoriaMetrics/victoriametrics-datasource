@@ -1,7 +1,8 @@
 import { NotificationChannelOption, NotificationChannelSecureFields } from 'app/types';
-import { Button, Field, Input } from 'packages/grafana-ui/src';
 import React from 'react';
 import { useFormContext, FieldError, FieldErrors, DeepMap } from 'react-hook-form';
+
+import { Button, Field, Input } from '@grafana/ui';
 
 
 import { ChannelValues, ReceiverFormValues } from '../../../types/receiver-form';

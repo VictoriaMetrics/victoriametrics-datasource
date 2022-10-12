@@ -1,9 +1,9 @@
 import { backendSrv } from 'app/core/services/backend_srv';
-import { Drawer, Spinner, Tab, TabsBar } from 'packages/grafana-ui/src';
 import React, { useMemo, useState } from 'react';
 import { useAsync } from 'react-use';
 
 import { config, isFetchError } from '@grafana/runtime';
+import { Drawer, Spinner, Tab, TabsBar } from '@grafana/ui';
 
 import { jsonDiff } from '../VersionHistory/utils';
 

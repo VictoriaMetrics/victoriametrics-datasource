@@ -3,13 +3,13 @@ import { contextSrv } from 'app/core/core';
 import { useSearchQuery } from 'app/features/search/hooks/useSearchQuery';
 import { StoreState } from 'app/types';
 import { cloneDeep } from 'lodash';
-import { Dropdown, FilterInput, Icon, Tooltip, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
 import { GrafanaTheme2, NavSection } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
+import { Dropdown, FilterInput, Icon, Tooltip, useStyles2 } from '@grafana/ui';
 
 import { enrichConfigItems, enrichWithInteractionTracking } from '../NavBar/utils';
 import { OrgSwitcher } from '../OrgSwitcher';

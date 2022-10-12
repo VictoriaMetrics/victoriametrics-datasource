@@ -1,7 +1,8 @@
 import { css } from '@emotion/css';
 import { Matcher } from 'app/plugins/datasource/alertmanager/types';
-import { TagList, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { TagList, useStyles2 } from '@grafana/ui';
 
 
 import { matcherToOperator } from '../../utils/alertmanager';

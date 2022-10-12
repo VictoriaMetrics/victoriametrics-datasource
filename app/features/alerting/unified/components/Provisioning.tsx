@@ -1,5 +1,6 @@
-import { Alert, Badge } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { Alert, Badge } from '@grafana/ui';
 
 
 export enum ProvisionedResource {

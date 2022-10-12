@@ -1,6 +1,7 @@
 import { AlertManagerCortexConfig } from 'app/plugins/datasource/alertmanager/types';
-import { InfoBox } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { InfoBox } from '@grafana/ui';
 
 
 import { TemplateForm } from './TemplateForm';

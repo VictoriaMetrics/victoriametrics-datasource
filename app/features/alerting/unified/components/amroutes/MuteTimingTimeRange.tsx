@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import { Field, InlineFieldRow, InlineField, Input, Button, IconButton, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Field, InlineFieldRow, InlineField, Input, Button, IconButton, useStyles2 } from '@grafana/ui';
 
 import { MuteTimingFields } from '../../types/mute-timing-form';
 

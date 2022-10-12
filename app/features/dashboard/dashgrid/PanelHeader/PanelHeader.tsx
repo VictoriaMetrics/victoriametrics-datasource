@@ -2,11 +2,11 @@ import { css, cx } from '@emotion/css';
 import { DashboardModel } from 'app/features/dashboard/state/DashboardModel';
 import { PanelModel } from 'app/features/dashboard/state/PanelModel';
 import { getPanelLinksSupplier } from 'app/features/panel/panellinks/linkSuppliers';
-import { Icon, useStyles2, ClickOutsideWrapper } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { DataLink, GrafanaTheme2, PanelData } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { Icon, useStyles2, ClickOutsideWrapper } from '@grafana/ui';
 
 import PanelHeaderCorner from './PanelHeaderCorner';
 import { PanelHeaderLoadingIndicator } from './PanelHeaderLoadingIndicator';

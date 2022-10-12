@@ -3,10 +3,11 @@ import { config } from 'app/core/config';
 import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { cleanUpDashboardAndVariables } from 'app/features/dashboard/state/actions';
 import { sumBy } from 'lodash';
-import { Modal, ConfirmModal, Button } from 'packages/grafana-ui/src';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
+
+import { Modal, ConfirmModal, Button } from '@grafana/ui';
 
 
 import { useDashboardDelete } from './useDashboardDelete';

@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { last } from 'lodash';
-import { useStyles } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
+import { useStyles } from '@grafana/ui';
 
 import { DiffTitle } from './DiffTitle';
 import { DiffValues } from './DiffValues';

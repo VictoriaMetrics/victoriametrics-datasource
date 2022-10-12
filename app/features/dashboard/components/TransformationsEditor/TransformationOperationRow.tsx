@@ -6,11 +6,11 @@ import {
   QueryOperationRowRenderProps,
 } from 'app/core/components/QueryOperationRow/QueryOperationRow';
 import { PluginStateInfo } from 'app/features/plugins/components/PluginStateInfo';
-import { HorizontalGroup } from 'packages/grafana-ui/src';
 import React, { useCallback } from 'react';
 import { useToggle } from 'react-use';
 
 import { DataFrame, DataTransformerConfig, TransformerRegistryItem } from '@grafana/data';
+import { HorizontalGroup } from '@grafana/ui';
 
 import { TransformationEditor } from './TransformationEditor';
 import { TransformationsEditorTransformation } from './types';

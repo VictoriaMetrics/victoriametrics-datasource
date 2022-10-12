@@ -12,7 +12,7 @@ locally, please checkout the [Plugin installation docs](https://grafana.com/docs
 ### Configure Grafana
 
 1. Set development mode
-   (<i>Temporary setting. [Read more about Sign a plugin](https://grafana.com/docs/grafana/v9.0/developers/plugins/sign-a-plugin/)</i>)
+   (<i>Temporary setting. [Read more about Sign a plugin](https://grafana.com/docs/grafana/latest/developers/plugins/sign-a-plugin/)</i>)
    ```
    app_mode = development
    ```

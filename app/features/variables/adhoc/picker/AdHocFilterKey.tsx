@@ -1,7 +1,7 @@
-import { Icon, SegmentAsync } from 'packages/grafana-ui/src';
 import React, { FC, ReactElement } from 'react';
 
 import { DataSourceRef, SelectableValue } from '@grafana/data';
+import { Icon, SegmentAsync } from '@grafana/ui';
 
 import { getDatasourceSrv } from '../../../plugins/datasource_srv';
 

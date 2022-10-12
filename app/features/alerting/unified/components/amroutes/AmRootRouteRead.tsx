@@ -1,5 +1,6 @@
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { useStyles2 } from '@grafana/ui';
 
 
 import { FormAmRoute } from '../../types/amroutes';

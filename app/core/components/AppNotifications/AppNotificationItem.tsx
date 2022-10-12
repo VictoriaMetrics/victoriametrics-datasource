@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 import { AppNotification, timeoutMap } from 'app/types';
-import { Alert, useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 import { useEffectOnce } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { Alert, useStyles2 } from '@grafana/ui';
 
 interface Props {
   appNotification: AppNotification;

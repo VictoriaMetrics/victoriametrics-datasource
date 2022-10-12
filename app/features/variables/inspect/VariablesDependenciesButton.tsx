@@ -1,8 +1,8 @@
-import { Button } from 'packages/grafana-ui/src';
 import React, { FC, useMemo } from 'react';
 import { Provider } from 'react-redux';
 
 import { reportInteraction } from '@grafana/runtime';
+import { Button } from '@grafana/ui';
 
 import { store } from '../../../store/store';
 import { VariableModel } from '../types';

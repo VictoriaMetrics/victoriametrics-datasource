@@ -4,12 +4,12 @@ import {
   AlertManagerCortexConfig,
   MuteTimeInterval,
 } from 'app/plugins/datasource/alertmanager/types';
-import { Alert, Field, FieldSet, Input, Button, LinkButton, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Alert, Field, FieldSet, Input, Button, LinkButton, useStyles2 } from '@grafana/ui';
 
 import { useAlertManagerSourceName } from '../../hooks/useAlertManagerSourceName';
 import { useAlertManagersByPermission } from '../../hooks/useAlertManagerSources';

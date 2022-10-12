@@ -4,11 +4,11 @@ import { Page } from 'app/core/components/Page/Page';
 import { appEvents } from 'app/core/core';
 import { useNavModel } from 'app/core/hooks/useNavModel';
 import { AlertNotification } from 'app/types/alerting';
-import { HorizontalGroup, Button, LinkButton } from 'packages/grafana-ui/src';
 import React, { useState, FC, useEffect } from 'react';
 import { useAsyncFn } from 'react-use';
 
 import { getBackendSrv } from '@grafana/runtime';
+import { HorizontalGroup, Button, LinkButton } from '@grafana/ui';
 
 import { ShowConfirmModalEvent } from '../../types/events';
 

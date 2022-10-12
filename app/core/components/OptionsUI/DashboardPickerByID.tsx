@@ -1,10 +1,10 @@
 import { backendSrv } from 'app/core/services/backend_srv';
 import { DashboardSearchHit } from 'app/features/search/types';
 import debounce from 'debounce-promise';
-import { AsyncSelect } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { SelectableValue } from '@grafana/data';
+import { AsyncSelect } from '@grafana/ui';
 
 /**
  * @deprecated prefer using dashboard uid rather than id

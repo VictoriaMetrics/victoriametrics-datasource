@@ -3,13 +3,13 @@ import { useAppNotification } from 'app/core/copy/appNotification';
 import { useCleanup } from 'app/core/hooks/useCleanup';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 import { RuleWithLocation } from 'app/types/unified-alerting';
-import { Button, ConfirmModal, CustomScrollbar, PageToolbar, Spinner, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, useMemo, useState } from 'react';
 import { FormProvider, useForm, UseFormWatch } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Button, ConfirmModal, CustomScrollbar, PageToolbar, Spinner, useStyles2 } from '@grafana/ui';
 
 import { useUnifiedAlertingSelector } from '../../hooks/useUnifiedAlertingSelector';
 import { deleteRuleAction, saveRuleFormAction } from '../../state/actions';

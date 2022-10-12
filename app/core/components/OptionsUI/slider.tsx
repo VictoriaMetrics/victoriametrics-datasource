@@ -1,10 +1,10 @@
 import { css, cx } from '@emotion/css';
 import { Global } from '@emotion/react';
-import { useTheme2 } from 'packages/grafana-ui/src';
 import SliderComponent from 'rc-slider';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { FieldConfigEditorProps, GrafanaTheme2, SliderFieldConfigSettings } from '@grafana/data';
+import { useTheme2 } from '@grafana/ui';
 import { getStyles } from '@grafana/ui/components/Slider/styles';
 
 import { NumberInput } from './NumberInput';

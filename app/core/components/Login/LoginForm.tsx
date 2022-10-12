@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Button, Form, Input, Field } from 'packages/grafana-ui/src';
 import React, { FC, ReactElement } from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
+import { Button, Form, Input, Field } from '@grafana/ui';
 
 import { PasswordField } from '../PasswordField/PasswordField';
 

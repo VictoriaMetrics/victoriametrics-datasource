@@ -5,7 +5,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import { DataSourceApi, GrafanaTheme2 } from '@grafana/data';
 import { Button, Icon, Tooltip, useStyles2 } from '@grafana/ui';
 
-import { Stack } from '../../../packages/grafana-ui';
+import { Stack } from '../../components/QueryEditor';
 
 import { OperationHeader } from './OperationHeader';
 import { getOperationParamEditor } from './OperationParamEditor';

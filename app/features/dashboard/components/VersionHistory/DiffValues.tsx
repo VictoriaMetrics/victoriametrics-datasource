@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { isArray, isObject, isUndefined } from 'lodash';
-import { useStyles2, Icon } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { useStyles2, Icon } from '@grafana/ui';
 
 import { Diff } from './utils';
 

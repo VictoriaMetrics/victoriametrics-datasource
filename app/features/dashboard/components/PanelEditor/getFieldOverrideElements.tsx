@@ -1,7 +1,6 @@
 import { css } from '@emotion/css';
 import { getDataLinksVariableSuggestions } from 'app/features/panel/panellinks/link_srv';
 import { cloneDeep } from 'lodash';
-import { fieldMatchersUI, useStyles2, ValuePicker } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import {
@@ -13,6 +12,7 @@ import {
   ConfigOverrideRule,
   GrafanaTheme2,
 } from '@grafana/data';
+import { fieldMatchersUI, useStyles2, ValuePicker } from '@grafana/ui';
 
 import { DynamicConfigValueEditor } from './DynamicConfigValueEditor';
 import { OptionsPaneCategoryDescriptor } from './OptionsPaneCategoryDescriptor';

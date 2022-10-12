@@ -4,6 +4,11 @@ import { DashboardPicker } from 'app/core/components/Select/DashboardPicker';
 import { ENGLISH_US, FRENCH_FRANCE, SPANISH_SPAIN } from 'app/core/internationalization/constants';
 import { PreferencesService } from 'app/core/services/PreferencesService';
 import { UserPreferencesDTO } from 'app/types';
+import React, { PureComponent } from 'react';
+
+import { FeatureState, SelectableValue } from '@grafana/data';
+import { selectors } from '@grafana/e2e-selectors';
+import { config } from '@grafana/runtime';
 import {
   Button,
   Field,
@@ -16,12 +21,7 @@ import {
   TimeZonePicker,
   WeekStartPicker,
   FeatureBadge,
-} from 'packages/grafana-ui/src';
-import React, { PureComponent } from 'react';
-
-import { FeatureState, SelectableValue } from '@grafana/data';
-import { selectors } from '@grafana/e2e-selectors';
-import { config } from '@grafana/runtime';
+} from '@grafana/ui';
 
 export interface Props {
   resourceUri: string;

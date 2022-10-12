@@ -1,6 +1,7 @@
 import { css } from '@emotion/css';
-import { Modal, stylesFactory } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { Modal, stylesFactory } from '@grafana/ui';
 
 
 import { OnRowOptionsUpdate, RowOptionsForm } from './RowOptionsForm';

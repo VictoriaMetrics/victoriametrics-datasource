@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { SelectableValue } from '@grafana/data';
 import { Select, AutoSizeInput } from '@grafana/ui';
 
-import { EditorField } from '../../../packages/grafana-ui';
+import { EditorField } from '../../components/QueryEditor';
 import { LegendFormatMode } from '../../types';
 
 export interface Props {

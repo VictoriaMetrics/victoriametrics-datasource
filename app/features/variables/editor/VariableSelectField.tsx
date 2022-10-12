@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { useUniqueId } from 'app/plugins/datasource/influxdb/components/useUniqueId';
-import { InlineFormLabel, Select, useStyles } from 'packages/grafana-ui/src';
 import React, { PropsWithChildren, ReactElement } from 'react';
 
 import { GrafanaTheme, SelectableValue } from '@grafana/data';
+import { InlineFormLabel, Select, useStyles } from '@grafana/ui';
 
 interface VariableSelectFieldProps<T> {
   name: string;

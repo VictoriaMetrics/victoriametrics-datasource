@@ -3,12 +3,12 @@ import config from 'app/core/config';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AccessControlAction } from 'app/types';
 import * as H from 'history';
-import { Button, PageToolbar } from 'packages/grafana-ui/src';
 import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { locationUtil, NavModel, NavModelItem } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
+import { Button, PageToolbar } from '@grafana/ui';
 
 import { VariableEditorContainer } from '../../../variables/editor/VariableEditorContainer';
 import { DashboardModel } from '../../state/DashboardModel';

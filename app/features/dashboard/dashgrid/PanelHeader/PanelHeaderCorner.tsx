@@ -1,12 +1,12 @@
 import { getTimeSrv, TimeSrv } from 'app/features/dashboard/services/TimeSrv';
 import { PanelModel } from 'app/features/dashboard/state/PanelModel';
 import { InspectTab } from 'app/features/inspector/types';
-import { Tooltip, PopoverContent } from 'packages/grafana-ui/src';
 import React, { Component } from 'react';
 
 import { renderMarkdown, LinkModelSupplier, ScopedVars } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { locationService, getTemplateSrv } from '@grafana/runtime';
+import { Tooltip, PopoverContent } from '@grafana/ui';
 
 enum InfoMode {
   Error = 'Error',

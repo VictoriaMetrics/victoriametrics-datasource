@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 import { AlertmanagerGroup, AlertState } from 'app/plugins/datasource/alertmanager/types';
-import { Button, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Button, useStyles2 } from '@grafana/ui';
 
 import { useAlertManagerSourceName } from '../../hooks/useAlertManagerSourceName';
 import { useAlertManagersByPermission } from '../../hooks/useAlertManagerSources';

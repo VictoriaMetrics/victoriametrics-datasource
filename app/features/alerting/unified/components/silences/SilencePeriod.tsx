@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import { Field, TimeRangeInput, useStyles } from 'packages/grafana-ui/src';
 import React from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 
 import { dateTime, GrafanaTheme } from '@grafana/data';
+import { Field, TimeRangeInput, useStyles } from '@grafana/ui';
 
 import { SilenceFormFields } from '../../types/silence-form';
 

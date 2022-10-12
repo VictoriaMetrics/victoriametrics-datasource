@@ -1,8 +1,8 @@
 import { DashboardModel } from 'app/features/dashboard/state';
-import { Button, ButtonVariant, ComponentSize, ModalsController } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
+import { Button, ButtonVariant, ComponentSize, ModalsController } from '@grafana/ui';
 
 import { SaveDashboardDrawer } from './SaveDashboardDrawer';
 

@@ -5,7 +5,7 @@ import { useToggle } from 'react-use';
 import { GrafanaTheme2 } from '@grafana/data';
 import { Icon, useStyles2 } from '@grafana/ui';
 
-import { Stack }  from '../../../packages/grafana-ui';
+import { Stack }  from '../../components/QueryEditor';
 
 export interface Props {
   title: string;

@@ -1,7 +1,7 @@
-import { Select } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { FieldConfigEditorProps, SelectFieldConfigSettings, SelectableValue } from '@grafana/data';
+import { Select } from '@grafana/ui';
 
 interface State<T> {
   isLoading: boolean;

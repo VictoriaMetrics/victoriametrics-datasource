@@ -1,6 +1,10 @@
 import { notifyApp } from 'app/core/actions';
 import { createErrorNotification } from 'app/core/copy/appNotification';
 import { dispatch } from 'app/store/store';
+import React, { useCallback, useEffect, useState } from 'react';
+
+import { selectors as e2eSelectors } from '@grafana/e2e-selectors/src';
+import { reportInteraction } from '@grafana/runtime';
 import {
   Alert,
   Button,
@@ -12,11 +16,7 @@ import {
   Label,
   LinkButton,
   Switch,
-} from 'packages/grafana-ui/src';
-import React, { useCallback, useEffect, useState } from 'react';
-
-import { selectors as e2eSelectors } from '@grafana/e2e-selectors/src';
-import { reportInteraction } from '@grafana/runtime';
+} from '@grafana/ui';
 
 import { contextSrv } from '../../../../core/services/context_srv';
 import { AccessControlAction } from '../../../../types';

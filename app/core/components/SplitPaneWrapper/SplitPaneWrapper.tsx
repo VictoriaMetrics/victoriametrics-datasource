@@ -1,10 +1,10 @@
 import { css, cx } from '@emotion/css';
 import { config } from 'app/core/config';
-import { stylesFactory } from 'packages/grafana-ui/src';
 import React, { createRef, MutableRefObject, PureComponent, ReactNode } from 'react';
 import SplitPane from 'react-split-pane';
 
 import { GrafanaTheme } from '@grafana/data';
+import { stylesFactory } from '@grafana/ui';
 
 enum Pane {
   Right,

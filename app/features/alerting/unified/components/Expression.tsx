@@ -2,12 +2,12 @@ import { css, cx } from '@emotion/css';
 import LogqlSyntax from 'app/plugins/datasource/loki/syntax';
 import PromqlSyntax from 'app/plugins/datasource/prometheus/promql';
 import { RulesSource } from 'app/types/unified-alerting';
-import { makeValue, SlatePrism, useStyles } from 'packages/grafana-ui/src';
 import { LanguageMap, languages as prismLanguages } from 'prismjs';
 import React, { FC, useMemo } from 'react';
 import { Editor } from 'slate-react';
 
 import { GrafanaTheme } from '@grafana/data';
+import { makeValue, SlatePrism, useStyles } from '@grafana/ui';
 
 import { DataSourceType, isCloudRulesSource } from '../utils/datasource';
 

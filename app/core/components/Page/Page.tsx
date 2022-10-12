@@ -1,10 +1,10 @@
 // Libraries
 import { css, cx } from '@emotion/css';
-import { CustomScrollbar, useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2, PageLayoutType } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { CustomScrollbar, useStyles2 } from '@grafana/ui';
 
 import { Footer } from '../Footer/Footer';
 import { PageHeader } from '../PageHeader/PageHeader';

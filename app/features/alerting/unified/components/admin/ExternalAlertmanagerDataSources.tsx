@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { capitalize } from 'lodash';
-import { Badge, CallToActionCard, Card, Icon, LinkButton, Tooltip, useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Badge, CallToActionCard, Card, Icon, LinkButton, Tooltip, useStyles2 } from '@grafana/ui';
 
 import { ExternalDataSourceAM } from '../../hooks/useExternalAmSelector';
 import { makeDataSourceLink } from '../../utils/misc';

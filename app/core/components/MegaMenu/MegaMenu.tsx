@@ -1,13 +1,13 @@
 import { css } from '@emotion/css';
 import { StoreState } from 'app/types';
 import { cloneDeep } from 'lodash';
-import { useTheme2 } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
 import { GrafanaTheme2, NavModelItem, NavSection } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { useTheme2 } from '@grafana/ui';
 
 import { enrichConfigItems, enrichWithInteractionTracking, getActiveItem } from '../NavBar/utils';
 

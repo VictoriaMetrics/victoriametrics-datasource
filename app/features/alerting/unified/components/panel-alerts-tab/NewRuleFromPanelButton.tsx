@@ -1,12 +1,12 @@
 import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { StoreState } from 'app/types';
-import { Alert, Button, LinkButton } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { useAsync } from 'react-use';
 
 import { urlUtil } from '@grafana/data';
+import { Alert, Button, LinkButton } from '@grafana/ui';
 
 import { panelToRuleFormValues } from '../../utils/rule-form';
 

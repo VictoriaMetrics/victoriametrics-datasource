@@ -4,9 +4,9 @@
  * It includes auto-complete for template data and syntax highlighting
  */
 import { editor } from 'monaco-editor';
-import { CodeEditor } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
+import { CodeEditor } from '@grafana/ui';
 import { CodeEditorProps } from '@grafana/ui/components/Monaco/types';
 
 import goTemplateLanguageDefinition, { GO_TEMPLATE_LANGUAGE_ID } from './editor/definition';

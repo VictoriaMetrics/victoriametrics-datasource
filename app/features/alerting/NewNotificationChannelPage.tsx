@@ -1,10 +1,10 @@
 import { Page } from 'app/core/components/Page/Page';
 import { getNavModel } from 'app/core/selectors/navModel';
-import { Form } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { config } from '@grafana/runtime';
+import { Form } from '@grafana/ui';
 
 import { NotificationChannelDTO, StoreState } from '../../types';
 

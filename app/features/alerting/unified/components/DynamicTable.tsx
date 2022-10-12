@@ -1,8 +1,8 @@
 import { css, cx } from '@emotion/css';
-import { IconButton, Pagination, useStyles2 } from 'packages/grafana-ui/src';
 import React, { ReactNode, useState } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { IconButton, Pagination, useStyles2 } from '@grafana/ui';
 
 import { usePagination } from '../hooks/usePagination';
 import { getPaginationStyles } from '../styles/pagination';

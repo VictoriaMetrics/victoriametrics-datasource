@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { saveAs } from 'file-saver';
-import { Button, ClipboardButton, HorizontalGroup, Stack, stylesFactory, TextArea, useTheme } from 'packages/grafana-ui/src';
 import React, { useCallback, useState } from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
+import { Button, ClipboardButton, HorizontalGroup, Stack, stylesFactory, TextArea, useTheme } from '@grafana/ui';
 
 import { SaveDashboardFormProps } from '../types';
 

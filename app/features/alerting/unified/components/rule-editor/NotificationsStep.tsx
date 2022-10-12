@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Card, Link, useStyles2, useTheme2 } from 'packages/grafana-ui/src';
 import React, { FC, useState } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Card, Link, useStyles2, useTheme2 } from '@grafana/ui';
 
 import LabelsField from './LabelsField';
 import { RuleEditorSection } from './RuleEditorSection';

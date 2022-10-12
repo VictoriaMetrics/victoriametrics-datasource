@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 import { Page } from 'app/core/components/PageNew/Page';
 import { dashboardWatcher } from 'app/features/live/dashboard/dashboardWatcher';
-import { Button, CodeEditor, Stack, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Button, CodeEditor, Stack, useStyles2 } from '@grafana/ui';
 
 import { getDashboardSrv } from '../../services/DashboardSrv';
 

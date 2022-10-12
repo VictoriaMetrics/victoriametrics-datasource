@@ -8,7 +8,6 @@ import { isExpressionQuery } from 'app/features/expressions/guards';
 import { ExpressionQueryType } from 'app/features/expressions/types';
 import { defaultCondition } from 'app/features/expressions/utils/expressionTypes';
 import { AlertQuery } from 'app/types/unified-alerting-dto';
-import { Button, HorizontalGroup, stylesFactory, Tooltip } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 
 import {
@@ -21,6 +20,7 @@ import {
 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { config } from '@grafana/runtime';
+import { Button, HorizontalGroup, stylesFactory, Tooltip } from '@grafana/ui';
 
 import { AlertingQueryRunner } from '../../state/AlertingQueryRunner';
 import { getDefaultOrFirstCompatibleDataSource } from '../../utils/datasource';

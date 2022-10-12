@@ -3,7 +3,6 @@ import { dispatch } from 'app/store/store';
 import { CombinedRule, CombinedRuleGroup, CombinedRuleNamespace } from 'app/types/unified-alerting';
 import cx from 'classnames';
 import { compact } from 'lodash';
-import { Badge, Icon, Modal, Tooltip, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, useCallback, useState } from 'react';
 import {
   DragDropContext,
@@ -15,6 +14,7 @@ import {
 } from 'react-beautiful-dnd';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Badge, Icon, Modal, Tooltip, useStyles2 } from '@grafana/ui';
 
 import { updateRulesOrder } from '../../state/actions';
 import { getRulesSourceName, isCloudRulesSource } from '../../utils/datasource';

@@ -1,7 +1,7 @@
-import { Tooltip } from 'packages/grafana-ui/src';
 import React, { FunctionComponent, PropsWithChildren, ReactElement, useMemo } from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
+import { Tooltip } from '@grafana/ui';
 
 import { variableAdapters } from '../adapters';
 import { VariableHide, VariableModel } from '../types';

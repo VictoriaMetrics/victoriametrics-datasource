@@ -1,8 +1,8 @@
 import { css, cx } from '@emotion/css';
-import { useTheme2, styleMixins } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { colorManipulator } from '@grafana/data';
+import { useTheme2, styleMixins } from '@grafana/ui';
 
 export interface BrandComponentProps {
   className?: string;

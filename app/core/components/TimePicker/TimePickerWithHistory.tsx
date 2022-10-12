@@ -1,7 +1,7 @@
-import { TimeRangePickerProps, TimeRangePicker } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { TimeRange, isDateTime, toUtc } from '@grafana/data';
+import { TimeRangePickerProps, TimeRangePicker } from '@grafana/ui';
 
 import { LocalStorageValueProvider } from '../LocalStorageValueProvider';
 

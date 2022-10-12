@@ -1,8 +1,8 @@
 import { css, cx } from '@emotion/css';
-import { Button, ModalsController, CollapsableSection, HorizontalGroup, useStyles } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
+import { Button, ModalsController, CollapsableSection, HorizontalGroup, useStyles } from '@grafana/ui';
 
 import { DecoratedRevisionModel } from '../DashboardSettings/VersionsSettings';
 

@@ -1,6 +1,7 @@
 import { getPanelLinksVariableSuggestions } from 'app/features/panel/panellinks/link_srv';
-import { DataLinksInlineEditor, Input, RadioButtonGroup, Select, Switch, TextArea } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { DataLinksInlineEditor, Input, RadioButtonGroup, Select, Switch, TextArea } from '@grafana/ui';
 
 
 import { RepeatRowSelect } from '../RepeatRowSelect/RepeatRowSelect';

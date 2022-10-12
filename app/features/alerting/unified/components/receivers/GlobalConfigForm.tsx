@@ -1,9 +1,10 @@
 import { useCleanup } from 'app/core/hooks/useCleanup';
 import { AlertManagerCortexConfig } from 'app/plugins/datasource/alertmanager/types';
-import { Alert, Button, HorizontalGroup, LinkButton } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+
+import { Alert, Button, HorizontalGroup, LinkButton } from '@grafana/ui';
 
 
 import { useUnifiedAlertingSelector } from '../../hooks/useUnifiedAlertingSelector';

@@ -1,8 +1,9 @@
 import { Silence } from 'app/plugins/datasource/alertmanager/types';
-import { Alert, LoadingPlaceholder, withErrorBoundary } from 'packages/grafana-ui/src';
 import React, { FC, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Redirect, Route, RouteChildrenProps, Switch, useLocation } from 'react-router-dom';
+
+import { Alert, LoadingPlaceholder, withErrorBoundary } from '@grafana/ui';
 
 
 import { featureDiscoveryApi } from './api/featureDiscoveryApi';

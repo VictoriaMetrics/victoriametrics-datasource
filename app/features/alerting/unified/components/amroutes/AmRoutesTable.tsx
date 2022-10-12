@@ -1,7 +1,8 @@
 import { contextSrv } from 'app/core/services/context_srv';
 import { intersectionWith, isEqual } from 'lodash';
-import { Button, ConfirmModal, HorizontalGroup, IconButton } from 'packages/grafana-ui/src';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+
+import { Button, ConfirmModal, HorizontalGroup, IconButton } from '@grafana/ui';
 
 
 import { AmRouteReceiver, FormAmRoute } from '../../types/amroutes';

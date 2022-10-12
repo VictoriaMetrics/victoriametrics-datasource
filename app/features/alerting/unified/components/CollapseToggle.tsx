@@ -1,8 +1,8 @@
 import { css, cx } from '@emotion/css';
-import { IconSize, useStyles2, Button } from 'packages/grafana-ui/src';
 import React, { FC, HTMLAttributes } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { IconSize, useStyles2, Button } from '@grafana/ui';
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {
   isCollapsed: boolean;

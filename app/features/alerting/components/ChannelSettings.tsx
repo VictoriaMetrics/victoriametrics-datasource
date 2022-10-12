@@ -1,5 +1,6 @@
-import { Alert, CollapsableSection } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { Alert, CollapsableSection } from '@grafana/ui';
 
 
 import { NotificationChannelSecureFields, NotificationChannelType } from '../../../types';

@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { noop } from 'lodash';
-import { Icon, IconButton, useStyles } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
+import { Icon, IconButton, useStyles } from '@grafana/ui';
 
 type VersionHistoryHeaderProps = {
   onClick?: () => void;

@@ -1,9 +1,10 @@
 import { css } from '@emotion/css';
 import { NotificationChannelOption } from 'app/types';
 import { isEmpty } from 'lodash';
-import { Checkbox, Field, Input, InputControl, Select, TextArea } from 'packages/grafana-ui/src';
 import React, { FC, useEffect } from 'react';
 import { useFormContext, FieldError, DeepMap } from 'react-hook-form';
+
+import { Checkbox, Field, Input, InputControl, Select, TextArea } from '@grafana/ui';
 
 
 import { KeyValueMapInput } from './KeyValueMapInput';

@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { useStyles2 } from '@grafana/ui';
 
 export interface Props {
   leftActionsSeparator?: boolean;

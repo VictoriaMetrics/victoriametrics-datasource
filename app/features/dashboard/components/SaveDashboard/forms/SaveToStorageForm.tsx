@@ -1,5 +1,10 @@
 import { getGrafanaStorage } from 'app/features/storage/storage';
 import { ItemOptions, WorkflowID, WriteValueResponse } from 'app/features/storage/types';
+import React, { useMemo, useState } from 'react';
+import { useAsync } from 'react-use';
+
+import { selectors } from '@grafana/e2e-selectors';
+import { locationService } from '@grafana/runtime';
 import {
   Button,
   Checkbox,
@@ -11,12 +16,7 @@ import {
   Spinner,
   Stack,
   TextArea,
-} from 'packages/grafana-ui/src';
-import React, { useMemo, useState } from 'react';
-import { useAsync } from 'react-use';
-
-import { selectors } from '@grafana/e2e-selectors';
-import { locationService } from '@grafana/runtime';
+} from '@grafana/ui';
 
 import { SaveProps } from './SaveDashboardForm';
 

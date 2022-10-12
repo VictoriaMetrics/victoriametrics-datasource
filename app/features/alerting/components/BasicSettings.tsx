@@ -1,7 +1,7 @@
-import { Field, Input, InputControl, Select } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { SelectableValue } from '@grafana/data';
+import { Field, Input, InputControl, Select } from '@grafana/ui';
 
 import { NotificationChannelSecureFields, NotificationChannelType } from '../../../types';
 

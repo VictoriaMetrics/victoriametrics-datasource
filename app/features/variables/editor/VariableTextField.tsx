@@ -1,5 +1,6 @@
-import { InlineField, Input, PopoverContent } from 'packages/grafana-ui/src';
 import React, { FormEvent, PropsWithChildren, ReactElement } from 'react';
+
+import { InlineField, Input, PopoverContent } from '@grafana/ui';
 
 
 interface VariableTextFieldProps {

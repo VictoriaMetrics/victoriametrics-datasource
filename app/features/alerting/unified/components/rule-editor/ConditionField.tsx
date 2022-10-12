@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 import { ExpressionDatasourceUID } from 'app/features/expressions/ExpressionDatasource';
 import { last } from 'lodash';
-import { Alert, Card, Field, InputControl, RadioButtonList, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
+import { Alert, Card, Field, InputControl, RadioButtonList, useStyles2 } from '@grafana/ui';
 
 import { RuleFormValues } from '../../types/rule-form';
 

@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { getAllPanelPluginMeta } from 'app/features/panel/state/util';
-import { Icon, Button, MultiSelect, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { GrafanaTheme2, PanelPluginMeta, SelectableValue } from '@grafana/data';
+import { Icon, Button, MultiSelect, useStyles2 } from '@grafana/ui';
 
 export interface Props {
   onChange: (plugins: PanelPluginMeta[]) => void;

@@ -1,11 +1,11 @@
 import { Trans, t } from '@lingui/macro';
 import { getTimeSrv } from 'app/features/dashboard/services/TimeSrv';
 import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
-import { Button, ClipboardButton, Field, Input, LinkButton, Modal, Select, Spinner } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 
 import { SelectableValue } from '@grafana/data';
 import { getBackendSrv, reportInteraction } from '@grafana/runtime';
+import { Button, ClipboardButton, Field, Input, LinkButton, Modal, Select, Spinner } from '@grafana/ui';
 
 import { VariableRefresh } from '../../../variables/types';
 

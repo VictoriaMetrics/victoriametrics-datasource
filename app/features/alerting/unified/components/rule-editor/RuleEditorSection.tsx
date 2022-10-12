@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { FieldSet, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { FieldSet, useStyles2 } from '@grafana/ui';
 
 export interface RuleEditorSectionProps {
   title: string;

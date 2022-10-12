@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
-import { ReactUtils, stylesFactory, useTheme } from 'packages/grafana-ui/src';
 import React, { useCallback, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { useUpdateEffect } from 'react-use';
 
 import { GrafanaTheme } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
+import { ReactUtils, stylesFactory, useTheme } from '@grafana/ui';
 
 import { QueryOperationRowHeader } from './QueryOperationRowHeader';
 

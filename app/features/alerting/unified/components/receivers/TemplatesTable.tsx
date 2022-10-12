@@ -1,8 +1,9 @@
 import { contextSrv } from 'app/core/services/context_srv';
 import { AlertManagerCortexConfig } from 'app/plugins/datasource/alertmanager/types';
-import { ConfirmModal, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, Fragment, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
+
+import { ConfirmModal, useStyles2 } from '@grafana/ui';
 
 
 import { Authorize } from '../../components/Authorize';

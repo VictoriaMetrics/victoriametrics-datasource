@@ -1,7 +1,7 @@
-import { SegmentAsync } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { DataSourceRef, MetricFindValue, SelectableValue } from '@grafana/data';
+import { SegmentAsync } from '@grafana/ui';
 
 import { getDatasourceSrv } from '../../../plugins/datasource_srv';
 

@@ -1,11 +1,11 @@
 import { css, cx } from '@emotion/css';
 import { useLingui } from '@lingui/react';
 import { Item } from '@react-stately/collections';
-import { toIconName, useTheme2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2, locationUtil, NavMenuItemType, NavModelItem } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
+import { toIconName, useTheme2 } from '@grafana/ui';
 
 import { NavBarItemMenu } from './NavBarItemMenu';
 import { NavBarItemMenuTrigger } from './NavBarItemMenuTrigger';

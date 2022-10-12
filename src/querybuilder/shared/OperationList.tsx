@@ -6,7 +6,7 @@ import { useMountedState, usePrevious } from 'react-use';
 import { DataSourceApi, GrafanaTheme2 } from '@grafana/data';
 import { Button, Cascader, CascaderOption, useStyles2 } from '@grafana/ui';
 
-import { Stack } from '../../../packages/grafana-ui';
+import { Stack } from '../../components/QueryEditor';
 
 import { OperationEditor } from './OperationEditor';
 import { QueryBuilderOperation, QueryWithOperations, VisualQueryModeller } from './types';

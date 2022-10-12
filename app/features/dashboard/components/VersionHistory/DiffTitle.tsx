@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { useStyles, Icon } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
+import { useStyles, Icon } from '@grafana/ui';
 
 import { DiffValues } from './DiffValues';
 import { Diff, getDiffText } from './utils';

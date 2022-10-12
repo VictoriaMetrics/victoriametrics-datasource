@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
-import { InlineField, InlineFieldRow, VerticalGroup } from 'packages/grafana-ui/src';
 import React, { FormEvent, PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { DataSourceInstanceSettings, getDataSourceRef, LoadingState, SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { DataSourcePicker, getTemplateSrv } from '@grafana/runtime';
+import { InlineField, InlineFieldRow, VerticalGroup } from '@grafana/ui';
 
 import { StoreState } from '../../../types';
 import { getTimeSrv } from '../../dashboard/services/TimeSrv';

@@ -67,28 +67,6 @@ const config = (env) => {
       ],
     },
     performance: {hints: false},
-    // plugins: [
-    // new MonacoWebpackPlugin(),
-    //   new CopyWebpackPlugin({
-    //     patterns: [
-    //       {
-    //         context: path.join(require.resolve('monaco-editor/package.json'), '../min/vs/'),
-    //         from: '**/*',
-    //         to: './monaco/min/vs/', // inside the public/build folder
-    //         globOptions: {
-    //           ignore: [
-    //             '**/*.map', // debug files
-    //           ],
-    //         },
-    //       },
-    //       {
-    //         context: path.join(require.resolve('@kusto/monaco-kusto'), '../'),
-    //         from: '**/*',
-    //         to: './monaco/min/vs/language/kusto/',
-    //       },
-    //     ],
-    //   }),
-    // ],
   });
 }
 

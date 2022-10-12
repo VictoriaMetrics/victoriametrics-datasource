@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { useTheme2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { useTheme2 } from '@grafana/ui';
 
 const NAV_MENU_PORTAL_CONTAINER_ID = 'navbar-menu-portal-container';
 

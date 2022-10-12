@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { Page } from 'app/core/components/Page/Page';
-import { PageToolbar, useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
+import { PageToolbar, useStyles2 } from '@grafana/ui';
 
 type Props = {
   children: React.ReactNode | React.ReactNode[];

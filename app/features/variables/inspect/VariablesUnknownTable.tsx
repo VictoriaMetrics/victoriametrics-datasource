@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
-import { CollapsableSection, HorizontalGroup, Icon, Spinner, Tooltip, useStyles, VerticalGroup } from 'packages/grafana-ui/src';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { useAsync } from 'react-use';
 
 import { GrafanaTheme } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
+import { CollapsableSection, HorizontalGroup, Icon, Spinner, Tooltip, useStyles, VerticalGroup } from '@grafana/ui';
 
 import { DashboardModel } from '../../dashboard/state';
 import { VariableModel } from '../types';

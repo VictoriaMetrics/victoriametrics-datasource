@@ -1,5 +1,4 @@
 import { css, cx } from '@emotion/css';
-import { Counter, Field, HorizontalGroup, IconButton, Label, stylesFactory, useTheme } from 'packages/grafana-ui/src';
 import React from 'react';
 import Highlighter from 'react-highlight-words';
 
@@ -10,6 +9,7 @@ import {
   FieldOverrideContext,
   GrafanaTheme,
 } from '@grafana/data';
+import { Counter, Field, HorizontalGroup, IconButton, Label, stylesFactory, useTheme } from '@grafana/ui';
 
 import { OptionsPaneCategory } from './OptionsPaneCategory';
 

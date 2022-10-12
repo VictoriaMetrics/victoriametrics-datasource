@@ -1,6 +1,7 @@
 import { DashboardAcl, dashboardPermissionLevels } from 'app/types/acl';
-import { Select, Icon, Button } from 'packages/grafana-ui/src';
 import React, { Component } from 'react';
+
+import { Select, Icon, Button } from '@grafana/ui';
 
 
 export interface Props {

@@ -5,7 +5,7 @@ import Highlighter from 'react-highlight-words';
 import { SelectableValue, toOption, GrafanaTheme2 } from '@grafana/data';
 import { Select, FormatOptionLabelMeta, useStyles2 } from '@grafana/ui';
 
-import { EditorField, EditorFieldGroup } from '../../../packages/grafana-ui';
+import { EditorField, EditorFieldGroup } from '../../components/QueryEditor';
 import { PromVisualQuery } from '../types';
 
 // We are matching words split with space

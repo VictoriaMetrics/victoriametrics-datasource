@@ -2,10 +2,10 @@ import { css } from '@emotion/css';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 import { SilenceState } from 'app/plugins/datasource/alertmanager/types';
 import { debounce, uniqueId } from 'lodash';
-import { Label, Icon, Input, Tooltip, RadioButtonGroup, useStyles2, Button, Field, Stack } from 'packages/grafana-ui/src';
 import React, { FormEvent, useState } from 'react';
 
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
+import { Label, Icon, Input, Tooltip, RadioButtonGroup, useStyles2, Button, Field, Stack } from '@grafana/ui';
 
 import { parseMatchers } from '../../utils/alertmanager';
 import { getSilenceFiltersFromUrlParams } from '../../utils/misc';

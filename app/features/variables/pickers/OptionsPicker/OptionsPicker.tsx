@@ -1,10 +1,10 @@
 import { StoreState, ThunkDispatch } from 'app/types';
-import { ClickOutsideWrapper } from 'packages/grafana-ui/src';
 import React, { ComponentType, PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { LoadingState } from '@grafana/data';
+import { ClickOutsideWrapper } from '@grafana/ui';
 
 import { isMulti } from '../../guard';
 import { getVariableQueryRunner } from '../../query/VariableQueryRunner';

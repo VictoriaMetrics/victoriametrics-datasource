@@ -1,26 +1,15 @@
 import {ComponentType} from 'react';
 
-export {
-  /** @deprecated Import from @grafana/data instead */
-    VariableRefresh,
-  /** @deprecated Import from @grafana/data instead */
-    VariableSort,
-  /** @deprecated Import from @grafana/data instead */
-    VariableHide,
-} from '../../../packages/grafana-data';
-
-
-import {TemplateSrv} from "@grafana/runtime";
-
 import {
   BusEventWithPayload,
   DataQuery,
   DataSourceJsonData,
   LoadingState,
   QueryEditorProps,
-  BaseVariableModel,
-  VariableHide,
-} from '../../../packages/grafana-data';
+} from '@grafana/data';
+import {TemplateSrv} from "@grafana/runtime";
+
+import { BaseVariableModel, VariableHide } from '../../../src/templateVars';
 
 import {NEW_VARIABLE_ID} from './constants';
 

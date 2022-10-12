@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Button, useStyles } from 'packages/grafana-ui/src';
 import React, { ButtonHTMLAttributes } from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
+import { Button, useStyles } from '@grafana/ui';
 
 export interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {}
 

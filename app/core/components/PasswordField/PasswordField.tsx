@@ -1,7 +1,7 @@
-import { Input, IconButton } from 'packages/grafana-ui/src';
 import React, { FC, useState } from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
+import { Input, IconButton } from '@grafana/ui';
 
 export interface Props {
   autoFocus?: boolean;

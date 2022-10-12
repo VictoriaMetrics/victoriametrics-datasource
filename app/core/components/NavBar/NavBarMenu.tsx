@@ -3,13 +3,13 @@ import { useLingui } from '@lingui/react';
 import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { OverlayContainer, useOverlay } from '@react-aria/overlays';
-import { CollapsableSection, CustomScrollbar, Icon, IconButton, toIconName, useStyles2, useTheme2 } from 'packages/grafana-ui/src';
 import React, { useRef } from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import { useLocalStorage } from 'react-use';
 
 import { GrafanaTheme2, NavModelItem } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
+import { CollapsableSection, CustomScrollbar, Icon, IconButton, toIconName, useStyles2, useTheme2 } from '@grafana/ui';
 
 import { NavBarItemIcon } from './NavBarItemIcon';
 import { NavBarItemWithoutMenu } from './NavBarItemWithoutMenu';

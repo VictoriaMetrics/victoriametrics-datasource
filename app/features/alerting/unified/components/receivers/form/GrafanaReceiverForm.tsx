@@ -4,9 +4,10 @@ import {
   Receiver,
   TestReceiversAlert,
 } from 'app/plugins/datasource/alertmanager/types';
-import { LoadingPlaceholder } from 'packages/grafana-ui/src';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
+
+import { LoadingPlaceholder } from '@grafana/ui';
 
 
 import { useUnifiedAlertingSelector } from '../../../hooks/useUnifiedAlertingSelector';

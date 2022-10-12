@@ -1,7 +1,8 @@
 import { css } from '@emotion/css';
 import { getConfig } from 'app/core/config';
-import { LinkButton, VerticalGroup } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { LinkButton, VerticalGroup } from '@grafana/ui';
 
 
 export const UserSignup: FC<{}> = () => {

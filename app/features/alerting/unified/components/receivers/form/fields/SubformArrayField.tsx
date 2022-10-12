@@ -1,8 +1,9 @@
 import { useControlledFieldArray } from 'app/features/alerting/unified/hooks/useControlledFieldArray';
 import { NotificationChannelOption } from 'app/types';
-import { Button, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { FieldError, DeepMap, useFormContext } from 'react-hook-form';
+
+import { Button, useStyles2 } from '@grafana/ui';
 
 
 import { ActionIcon } from '../../../rules/ActionIcon';

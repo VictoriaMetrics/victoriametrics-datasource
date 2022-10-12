@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import config from 'app/core/config';
-import { Button, FormAPI, HorizontalGroup, stylesFactory, useTheme, Spinner } from 'packages/grafana-ui/src';
 import React, { FC, useEffect } from 'react';
 
 import { GrafanaTheme, SelectableValue } from '@grafana/data';
+import { Button, FormAPI, HorizontalGroup, stylesFactory, useTheme, Spinner } from '@grafana/ui';
 
 import { NotificationChannelType, NotificationChannelDTO, NotificationChannelSecureFields } from '../../../types';
 

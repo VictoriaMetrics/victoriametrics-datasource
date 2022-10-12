@@ -2,12 +2,12 @@ import { t } from '@lingui/macro';
 import { TimePickerWithHistory } from 'app/core/components/TimePicker/TimePickerWithHistory';
 import { appEvents } from 'app/core/core';
 import { getTimeSrv } from 'app/features/dashboard/services/TimeSrv';
-import { defaultIntervals, RefreshPicker } from 'packages/grafana-ui/src';
 import React, { Component } from 'react';
 import { Unsubscribable } from 'rxjs';
 
 import { dateMath, TimeRange, TimeZone } from '@grafana/data';
 import { TimeRangeUpdatedEvent } from '@grafana/runtime';
+import { defaultIntervals, RefreshPicker } from '@grafana/ui';
 
 import { ShiftTimeEvent, ShiftTimeEventDirection, ZoomOutEvent } from '../../../../types/events';
 import { DashboardModel } from '../../state';

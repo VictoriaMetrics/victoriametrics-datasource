@@ -2,11 +2,11 @@ import { css } from '@emotion/css';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AlertmanagerAlert, Silence, SilenceState } from 'app/plugins/datasource/alertmanager/types';
-import { Icon, useStyles2, Link, Button, Stack } from 'packages/grafana-ui/src';
 import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { GrafanaTheme2, dateMath } from '@grafana/data';
+import { Icon, useStyles2, Link, Button, Stack } from '@grafana/ui';
 
 import { expireSilenceAction } from '../../state/actions';
 import { getInstancesPermissions } from '../../utils/access-control';

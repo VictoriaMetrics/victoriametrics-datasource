@@ -8,7 +8,6 @@ import { GetVariables, getVariablesByKey } from 'app/features/variables/state/se
 import { CoreEvents, DashboardMeta, KioskMode } from 'app/types';
 import { DashboardPanelsChangedEvent, RenderEvent } from 'app/types/events';
 import { cloneDeep, defaults as _defaults, filter, indexOf, isEqual, map, maxBy, pull } from 'lodash';
-import { DEFAULT_ANNOTATION_COLOR } from 'packages/grafana-ui/src';
 import { Subscription } from 'rxjs';
 
 import {
@@ -27,6 +26,7 @@ import {
   UrlQueryValue,
 } from '@grafana/data';
 import { RefreshEvent, TimeRangeUpdatedEvent } from '@grafana/runtime';
+import { DEFAULT_ANNOTATION_COLOR } from '@grafana/ui';
 
 import { appEvents } from '../../../core/core';
 import { dispatch } from '../../../store/store';

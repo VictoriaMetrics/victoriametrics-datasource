@@ -1,5 +1,4 @@
 import { css } from '@emotion/css';
-import { Icon, JSONFormatter, useStyles } from 'packages/grafana-ui/src';
 import React, { useEffect, useMemo, useState } from 'react';
 import { mergeMap } from 'rxjs/operators';
 
@@ -11,6 +10,7 @@ import {
   TransformerRegistryItem,
 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { Icon, JSONFormatter, useStyles } from '@grafana/ui';
 
 import { TransformationsEditorTransformation } from './types';
 

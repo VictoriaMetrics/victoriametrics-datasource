@@ -1,10 +1,10 @@
 import { getBackendSrv } from 'app/core/services/backend_srv';
 import { Organization, UserOrg } from 'app/types';
-import { AsyncSelect } from 'packages/grafana-ui/src';
 import React, { useEffect } from 'react';
 import { useAsyncFn } from 'react-use';
 
 import { SelectableValue } from '@grafana/data';
+import { AsyncSelect } from '@grafana/ui';
 
 export type OrgSelectItem = SelectableValue<Organization>;
 

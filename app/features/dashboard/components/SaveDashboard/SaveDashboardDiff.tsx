@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import { Spinner, useStyles2 } from 'packages/grafana-ui/src';
 import React, { ReactElement } from 'react';
 import { useAsync } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Spinner, useStyles2 } from '@grafana/ui';
 
 import { DiffGroup } from '../VersionHistory/DiffGroup';
 import { DiffViewer } from '../VersionHistory/DiffViewer';

@@ -3,7 +3,6 @@ import { TimeSrv } from 'app/features/dashboard/services/TimeSrv';
 import { PanelModel } from 'app/features/dashboard/state';
 import { EXPLORE_GRAPH_STYLES, ExploreGraphStyle, ExploreId, QueryOptions, QueryTransaction } from 'app/types/explore';
 import { flatten, omit, uniq } from 'lodash';
-import { RefreshPicker } from 'packages/grafana-ui/src';
 import { Unsubscribable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -31,6 +30,7 @@ import {
   urlUtil,
 } from '@grafana/data';
 import { DataSourceSrv, getDataSourceSrv } from '@grafana/runtime';
+import { RefreshPicker } from '@grafana/ui';
 
 import { config } from '../config';
 

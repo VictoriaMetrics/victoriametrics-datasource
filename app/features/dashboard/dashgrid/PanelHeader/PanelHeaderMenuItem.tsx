@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import { Icon, toIconName, useTheme } from 'packages/grafana-ui/src';
 import React, { FC, useState } from 'react';
 
 import { PanelMenuItem } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { Icon, toIconName, useTheme } from '@grafana/ui';
 
 interface Props {
   children?: any;

@@ -3,6 +3,10 @@ import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
 import { loadDataSources } from 'app/features/datasources/state/actions';
 import { AlertmanagerChoice } from 'app/plugins/datasource/alertmanager/types';
 import { StoreState } from 'app/types/store';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { GrafanaTheme2, SelectableValue } from '@grafana/data';
 import {
   Alert,
   Button,
@@ -14,11 +18,7 @@ import {
   Tooltip,
   useStyles2,
   useTheme2,
-} from 'packages/grafana-ui/src';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { GrafanaTheme2, SelectableValue } from '@grafana/data';
+} from '@grafana/ui';
 
 import { useExternalAmSelector, useExternalDataSourceAlertmanagers } from '../../hooks/useExternalAmSelector';
 import {

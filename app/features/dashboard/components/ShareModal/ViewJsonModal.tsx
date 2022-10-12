@@ -1,6 +1,7 @@
-import { ClipboardButton, CodeEditor, Modal } from 'packages/grafana-ui/src';
 import React, { useCallback } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
+
+import { ClipboardButton, CodeEditor, Modal } from '@grafana/ui';
 
 
 export interface ViewJsonModalProps {

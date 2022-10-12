@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { Page } from 'app/core/components/Page/Page';
 import { useNavModel } from 'app/core/hooks/useNavModel';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { useStyles2 } from '@grafana/ui';
 
 import { NavLandingPageCard } from './NavLandingPageCard';
 

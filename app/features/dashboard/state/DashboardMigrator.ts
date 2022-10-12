@@ -19,7 +19,7 @@ import { MIXED_DATASOURCE_NAME } from 'app/plugins/datasource/mixed/MixedDataSou
 import { plugin as gaugePanelPlugin } from 'app/plugins/panel/gauge/module';
 import { plugin as statPanelPlugin } from 'app/plugins/panel/stat/module';
 import { each, find, findIndex, flattenDeep, isArray, isBoolean, isNumber, isString, map, max, some } from 'lodash';
-import { AxisPlacement, GraphFieldConfig } from 'packages/grafana-ui/src';
+
 
 import {
   AnnotationQuery,
@@ -47,6 +47,7 @@ import {
 import { labelsToFieldsTransformer } from '@grafana/data/transformations/transformers/labelsToFields';
 import { mergeTransformer } from '@grafana/data/transformations/transformers/merge';
 import { getDataSourceSrv, setDataSourceSrv } from '@grafana/runtime';
+import { AxisPlacement, GraphFieldConfig } from '@grafana/ui';
 
 import {
   migrateCloudWatchQuery,

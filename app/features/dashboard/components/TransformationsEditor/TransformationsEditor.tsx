@@ -2,19 +2,6 @@ import { css } from '@emotion/css';
 import { LocalStorageValueProvider } from 'app/core/components/LocalStorageValueProvider';
 import { getDocsLink } from 'app/core/utils/docsLinks';
 import { PluginStateInfo } from 'app/features/plugins/components/PluginStateInfo';
-import {
-  Alert,
-  Button,
-  Container,
-  CustomScrollbar,
-  Themeable,
-  VerticalGroup,
-  withTheme,
-  Input,
-  IconButton,
-  useStyles2,
-  Card,
-} from 'packages/grafana-ui/src';
 import React, { ChangeEvent } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { Unsubscribable } from 'rxjs';
@@ -30,6 +17,19 @@ import {
   TransformerRegistryItem,
 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import {
+  Alert,
+  Button,
+  Container,
+  CustomScrollbar,
+  Themeable,
+  VerticalGroup,
+  withTheme,
+  Input,
+  IconButton,
+  useStyles2,
+  Card,
+} from '@grafana/ui';
 
 import { AppNotificationSeverity } from '../../../../types';
 import { PanelModel } from '../../state';

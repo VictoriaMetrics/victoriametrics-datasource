@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { NotifierDTO } from 'app/types';
-import { Alert, Button, Field, InputControl, Select, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useFormContext, FieldErrors, FieldValues } from 'react-hook-form';
 
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
+import { Alert, Button, Field, InputControl, Select, useStyles2 } from '@grafana/ui';
 
 import { useUnifiedAlertingSelector } from '../../../hooks/useUnifiedAlertingSelector';
 import { ChannelValues, CommonSettingsComponentType } from '../../../types/receiver-form';

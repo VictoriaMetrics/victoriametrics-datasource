@@ -6,21 +6,6 @@ import { PanelModel } from 'app/features/dashboard/state';
 import { setDashboardToFetchFromLocalStorage } from 'app/features/dashboard/state/initDashboard';
 import { InspectTab } from 'app/features/inspector/types';
 import { saveAs } from 'file-saver';
-import {
-  Drawer,
-  Tab,
-  TabsBar,
-  CodeEditor,
-  useStyles2,
-  Field,
-  HorizontalGroup,
-  InlineSwitch,
-  Button,
-  Spinner,
-  Alert,
-  FeatureBadge,
-  Select,
-} from 'packages/grafana-ui/src';
 import React, { useState, useMemo } from 'react';
 import { useAsync, useCopyToClipboard } from 'react-use';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -36,6 +21,21 @@ import {
   formattedValueToString,
 } from '@grafana/data';
 import { config, getTemplateSrv } from '@grafana/runtime';
+import {
+  Drawer,
+  Tab,
+  TabsBar,
+  CodeEditor,
+  useStyles2,
+  Field,
+  HorizontalGroup,
+  InlineSwitch,
+  Button,
+  Spinner,
+  Alert,
+  FeatureBadge,
+  Select,
+} from '@grafana/ui';
 
 import { Randomize } from './randomizer';
 import { getGithubMarkdown, getDebugDashboard } from './utils';

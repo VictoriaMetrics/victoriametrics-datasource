@@ -1,10 +1,10 @@
 import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
-import { Button, Stack } from 'packages/grafana-ui/src';
 import React, { ReactElement } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 
 import { selectors } from '@grafana/e2e-selectors';
 import { reportInteraction } from '@grafana/runtime';
+import { Button, Stack } from '@grafana/ui';
 
 import { VariablesDependenciesButton } from '../inspect/VariablesDependenciesButton';
 import { UsagesToNetwork, VariableUsageTree } from '../inspect/utils';

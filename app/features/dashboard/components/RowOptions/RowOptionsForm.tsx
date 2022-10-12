@@ -1,5 +1,6 @@
-import { Button, Field, Form, Modal, Input } from 'packages/grafana-ui/src';
 import React, { FC, useCallback, useState } from 'react';
+
+import { Button, Field, Form, Modal, Input } from '@grafana/ui';
 
 
 import { RepeatRowSelect } from '../RepeatRowSelect/RepeatRowSelect';

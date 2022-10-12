@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
-import { Button, Icon, IconButton, useStyles2, useTheme2 } from 'packages/grafana-ui/src';
 import React, { ReactElement } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { reportInteraction } from '@grafana/runtime';
+import { Button, Icon, IconButton, useStyles2, useTheme2 } from '@grafana/ui';
 
 import { hasOptions, isAdHoc, isQuery } from '../guard';
 import { VariableUsagesButton } from '../inspect/VariableUsagesButton';

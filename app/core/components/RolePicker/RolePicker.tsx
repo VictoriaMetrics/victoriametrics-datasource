@@ -1,6 +1,7 @@
 import { Role, OrgRole } from 'app/types';
-import { ClickOutsideWrapper, HorizontalGroup, Spinner } from 'packages/grafana-ui/src';
 import React, { FormEvent, useCallback, useEffect, useState, useRef } from 'react';
+
+import { ClickOutsideWrapper, HorizontalGroup, Spinner } from '@grafana/ui';
 
 
 import { RolePickerInput } from './RolePickerInput';

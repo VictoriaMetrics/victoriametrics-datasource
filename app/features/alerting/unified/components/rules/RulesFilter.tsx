@@ -2,11 +2,11 @@ import { css, cx } from '@emotion/css';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 import { PromAlertingRuleState, PromRuleType } from 'app/types/unified-alerting-dto';
 import { debounce } from 'lodash';
-import { Button, Field, Icon, Input, Label, RadioButtonGroup, Stack, Tooltip, useStyles } from 'packages/grafana-ui/src';
 import React, { FormEvent, useState } from 'react';
 
 import { DataSourceInstanceSettings, GrafanaTheme, SelectableValue } from '@grafana/data';
 import { DataSourcePicker } from '@grafana/runtime';
+import { Button, Field, Icon, Input, Label, RadioButtonGroup, Stack, Tooltip, useStyles } from '@grafana/ui';
 
 import { getFiltersFromUrlParams } from '../../utils/misc';
 import { alertStateToReadable } from '../../utils/rules';

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
 import { Button, Select, useStyles2 } from '@grafana/ui';
 
-import { FlexItem } from '../../../packages/grafana-ui';
+import { FlexItem } from '../../components/QueryEditor';
 
 import { OperationInfoButton } from './OperationInfoButton';
 import { VisualQueryModeller, QueryBuilderOperation, QueryBuilderOperationDef } from './types';

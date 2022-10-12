@@ -1,6 +1,7 @@
-import { Input } from 'packages/grafana-ui/src';
 import React, { ChangeEvent, FocusEvent, KeyboardEvent, ReactElement, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+
+import { Input } from '@grafana/ui';
 
 
 import { variableAdapters } from '../adapters';

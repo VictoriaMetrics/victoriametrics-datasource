@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import { Button, InlineFieldRow, InlineLabel, useStyles, VerticalGroup } from 'packages/grafana-ui/src';
 import React, { MouseEvent, useCallback, useEffect, useState } from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { Button, InlineFieldRow, InlineLabel, useStyles, VerticalGroup } from '@grafana/ui';
 
 import { VariableOption, VariableWithOptions } from '../types';
 

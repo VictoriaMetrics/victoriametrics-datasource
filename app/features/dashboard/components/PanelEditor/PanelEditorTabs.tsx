@@ -2,12 +2,12 @@ import { css } from '@emotion/css';
 import AlertTabIndex from 'app/features/alerting/AlertTabIndex';
 import { PanelAlertTab } from 'app/features/alerting/unified/PanelAlertTab';
 import { PanelQueriesChangedEvent, PanelTransformationsChangedEvent } from 'app/types/events';
-import { Tab, TabContent, TabsBar, toIconName, useForceUpdate, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, useEffect } from 'react';
 import { Subscription } from 'rxjs';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { Tab, TabContent, TabsBar, toIconName, useForceUpdate, useStyles2 } from '@grafana/ui';
 
 import { DashboardModel, PanelModel } from '../../state';
 import { TransformationsEditor } from '../TransformationsEditor/TransformationsEditor';

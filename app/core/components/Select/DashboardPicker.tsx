@@ -2,10 +2,10 @@ import { backendSrv } from 'app/core/services/backend_srv';
 import { DashboardSearchItem } from 'app/features/search/types';
 import { DashboardDTO } from 'app/types';
 import debounce from 'debounce-promise';
-import { AsyncSelectProps, AsyncSelect } from 'packages/grafana-ui/src';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { SelectableValue } from '@grafana/data';
+import { AsyncSelectProps, AsyncSelect } from '@grafana/ui';
 
 interface Props extends Omit<AsyncSelectProps<DashboardPickerDTO>, 'value' | 'onChange' | 'loadOptions' | ''> {
   value?: DashboardPickerDTO['uid'];

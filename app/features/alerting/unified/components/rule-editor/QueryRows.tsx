@@ -3,7 +3,6 @@ import { isExpressionQuery } from 'app/features/expressions/guards';
 import { getDatasourceSrv } from 'app/features/plugins/datasource_srv';
 import { AlertDataQuery, AlertQuery } from 'app/types/unified-alerting-dto';
 import { omit } from 'lodash';
-import { Button, Card, Icon } from 'packages/grafana-ui/src';
 import React, { PureComponent, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 
@@ -17,6 +16,7 @@ import {
   ThresholdsMode,
 } from '@grafana/data';
 import { config, getDataSourceSrv } from '@grafana/runtime';
+import { Button, Card, Icon } from '@grafana/ui';
 
 import { EmptyQueryWrapper, QueryWrapper } from './QueryWrapper';
 import { queriesWithUpdatedReferences } from './util';

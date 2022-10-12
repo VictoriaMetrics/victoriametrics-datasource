@@ -1,4 +1,7 @@
 import { css, cx } from '@emotion/css';
+import React, { FC, useState } from 'react';
+
+import { GrafanaTheme2 } from '@grafana/data';
 import {
   Button,
   Field,
@@ -14,10 +17,7 @@ import {
   useStyles2,
   Badge,
   VerticalGroup,
-} from 'packages/grafana-ui/src';
-import React, { FC, useState } from 'react';
-
-import { GrafanaTheme2 } from '@grafana/data';
+} from '@grafana/ui';
 
 import { useMuteTimingOptions } from '../../hooks/useMuteTimingOptions';
 import { AmRouteReceiver, FormAmRoute } from '../../types/amroutes';

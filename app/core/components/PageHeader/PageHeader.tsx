@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { PanelHeaderMenuItem } from 'app/features/dashboard/dashgrid/PanelHeader/PanelHeaderMenuItem';
-import { Tab, TabsBar, Icon, useStyles2, toIconName } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { NavModelItem, NavModelBreadcrumb, GrafanaTheme2 } from '@grafana/data';
+import { Tab, TabsBar, Icon, useStyles2, toIconName } from '@grafana/ui';
 
 import { ProBadge } from '../Upgrade/ProBadge';
 

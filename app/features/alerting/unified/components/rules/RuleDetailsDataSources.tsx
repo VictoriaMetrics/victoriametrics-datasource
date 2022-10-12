@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 import { ExpressionDatasourceUID } from 'app/features/expressions/ExpressionDatasource';
 import { CombinedRule, RulesSource } from 'app/types/unified-alerting';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React, { useMemo } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { getDataSourceSrv } from '@grafana/runtime';
+import { useStyles2 } from '@grafana/ui';
 
 import { isCloudRulesSource } from '../../utils/datasource';
 import { isGrafanaRulerRule } from '../../utils/rules';

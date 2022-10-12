@@ -1,6 +1,7 @@
-import { Icon, Button, LinkButton, Card } from 'packages/grafana-ui/src';
 import React, { useCallback } from 'react';
 import Highlighter from 'react-highlight-words';
+
+import { Icon, Button, LinkButton, Card } from '@grafana/ui';
 
 
 import { AlertRule } from '../../types';

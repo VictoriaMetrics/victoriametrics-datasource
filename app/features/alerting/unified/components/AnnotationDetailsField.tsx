@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Tooltip, useStyles } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
+import { Tooltip, useStyles } from '@grafana/ui';
 
 import { Annotation, annotationLabels } from '../utils/constants';
 

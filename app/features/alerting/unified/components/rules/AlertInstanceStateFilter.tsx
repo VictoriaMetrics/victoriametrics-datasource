@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { GrafanaAlertState, PromAlertingRuleState } from 'app/types/unified-alerting-dto';
 import { capitalize } from 'lodash';
-import { Label, RadioButtonGroup, Tag, useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Label, RadioButtonGroup, Tag, useStyles2 } from '@grafana/ui';
 
 export type InstanceStateFilter = GrafanaAlertState | PromAlertingRuleState.Pending | PromAlertingRuleState.Firing;
 

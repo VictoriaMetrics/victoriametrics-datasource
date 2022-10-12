@@ -1,10 +1,10 @@
 // Libraries
 import { css } from '@emotion/css';
-import { IconName, IconType, IconSize, IconButton, useTheme, stylesFactory } from 'packages/grafana-ui/src';
 import React, { FunctionComponent, MouseEvent } from 'react';
 
 // Components
 import { GrafanaTheme } from '@grafana/data';
+import { IconName, IconType, IconSize, IconButton, useTheme, stylesFactory } from '@grafana/ui';
 
 interface Props {
   icon?: IconName;

@@ -1,8 +1,8 @@
-import { Field, Label } from 'packages/grafana-ui/src';
 import React, { ReactNode } from 'react';
 import Highlighter from 'react-highlight-words';
 
 import { selectors } from '@grafana/e2e-selectors';
+import { Field, Label } from '@grafana/ui';
 
 import { OptionsPaneCategoryDescriptor } from './OptionsPaneCategoryDescriptor';
 import { OptionsPaneItemOverrides } from './OptionsPaneItemOverrides';

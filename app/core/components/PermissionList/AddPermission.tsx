@@ -11,10 +11,10 @@ import {
   NewDashboardAclItem,
   OrgRole,
 } from 'app/types/acl';
-import { Button, Form, HorizontalGroup, Select, stylesFactory } from 'packages/grafana-ui/src';
 import React, { Component } from 'react';
 
 import { GrafanaTheme, SelectableValue } from '@grafana/data';
+import { Button, Form, HorizontalGroup, Select, stylesFactory } from '@grafana/ui';
 
 import { CloseButton } from '../CloseButton/CloseButton';
 

@@ -1,6 +1,7 @@
 import { css } from '@emotion/css';
-import { Checkbox, Button, Tag, ModalsController } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { Checkbox, Button, Tag, ModalsController } from '@grafana/ui';
 
 
 import { DecoratedRevisionModel } from '../DashboardSettings/VersionsSettings';

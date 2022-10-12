@@ -1,6 +1,6 @@
-import { attachDebugger, createLogger } from 'packages/grafana-ui/src';
-
 import { CurrentUserDTO } from '@grafana/data';
+import { attachDebugger, createLogger } from '@grafana/ui';
+
 
 /**
  * Returns an opaque identifier for a user, for reporting purposes.

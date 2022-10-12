@@ -1,5 +1,6 @@
-import { Tooltip, Button, Stack } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { Tooltip, Button, Stack } from '@grafana/ui';
 
 
 type VersionsButtonsType = {

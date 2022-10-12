@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { IconButton, UnitPicker, useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { FieldConfigEditorProps, GrafanaTheme2, UnitFieldConfigSettings } from '@grafana/data';
+import { IconButton, UnitPicker, useStyles2 } from '@grafana/ui';
 
 type Props = FieldConfigEditorProps<string, UnitFieldConfigSettings>;
 

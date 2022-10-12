@@ -1,7 +1,7 @@
-import { CollapsableSection, TagsInput, Select, Field, Input, Checkbox, Button, IconName } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 
 import { SelectableValue } from '@grafana/data';
+import { CollapsableSection, TagsInput, Select, Field, Input, Checkbox, Button, IconName } from '@grafana/ui';
 
 import { DashboardLink, DashboardModel } from '../../state/DashboardModel';
 

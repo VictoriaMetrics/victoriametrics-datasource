@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { EditorRow, EditorFieldGroup, EditorField } from '../../../packages/grafana-ui';
+import { EditorRow, EditorFieldGroup, EditorField } from '../../components/QueryEditor';
 import promqlGrammar from '../../promql';
 import { RawQuery } from '../shared/RawQuery';
 

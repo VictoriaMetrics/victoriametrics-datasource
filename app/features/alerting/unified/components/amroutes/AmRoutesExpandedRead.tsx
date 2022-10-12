@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Button, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, useState } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Button, useStyles2 } from '@grafana/ui';
 
 import { AmRouteReceiver, FormAmRoute } from '../../types/amroutes';
 import { getNotificationsPermissions } from '../../utils/access-control';

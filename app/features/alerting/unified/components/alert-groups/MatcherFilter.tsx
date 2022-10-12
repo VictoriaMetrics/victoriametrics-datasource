@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Label, Tooltip, Input, Icon, useStyles2, Stack } from 'packages/grafana-ui/src';
 import React, { FormEvent } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Label, Tooltip, Input, Icon, useStyles2, Stack } from '@grafana/ui';
 
 interface Props {
   className?: string;

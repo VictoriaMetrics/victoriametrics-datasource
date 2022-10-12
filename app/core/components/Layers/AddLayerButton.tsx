@@ -1,7 +1,7 @@
-import { ValuePicker } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { SelectableValue } from '@grafana/data';
+import { ValuePicker } from '@grafana/ui';
 
 export type AddLayerButtonProps = {
   onChange: (sel: SelectableValue<string>) => void;

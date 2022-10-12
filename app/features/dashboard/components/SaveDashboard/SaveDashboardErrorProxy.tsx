@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { DashboardModel } from 'app/features/dashboard/state';
-import { Button, ConfirmModal, Modal, stylesFactory, useTheme } from 'packages/grafana-ui/src';
 import React, { useEffect } from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
 import { FetchError } from '@grafana/runtime';
+import { Button, ConfirmModal, Modal, stylesFactory, useTheme } from '@grafana/ui';
 
 import { SaveDashboardAsButton } from './SaveDashboardButton';
 import { SaveDashboardModalProps } from './types';

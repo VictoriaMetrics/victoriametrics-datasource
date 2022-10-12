@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { useStyles2, TabsBar, Tab, toIconName } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { NavModelItem, GrafanaTheme2 } from '@grafana/data';
+import { useStyles2, TabsBar, Tab, toIconName } from '@grafana/ui';
 
 export interface Props {
   navItem: NavModelItem;

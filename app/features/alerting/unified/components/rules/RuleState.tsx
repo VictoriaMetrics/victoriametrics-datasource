@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { CombinedRule } from 'app/types/unified-alerting';
 import { PromAlertingRuleState } from 'app/types/unified-alerting-dto';
-import { HorizontalGroup, Spinner, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, useMemo } from 'react';
 
 import { GrafanaTheme2, intervalToAbbreviatedDurationString } from '@grafana/data';
+import { HorizontalGroup, Spinner, useStyles2 } from '@grafana/ui';
 
 import { isAlertingRule, isRecordingRule, getFirstActiveAt } from '../../utils/rules';
 

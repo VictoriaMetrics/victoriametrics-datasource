@@ -1,8 +1,8 @@
 import { GrafanaAlertStateDecision } from 'app/types/unified-alerting-dto';
-import { Select } from 'packages/grafana-ui/src';
 import React, { FC, useMemo } from 'react';
 
 import { SelectableValue } from '@grafana/data';
+import { Select } from '@grafana/ui';
 import { SelectBaseProps } from '@grafana/ui/components/Select/types';
 
 

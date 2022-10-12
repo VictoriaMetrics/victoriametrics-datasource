@@ -3,11 +3,11 @@ import { useAppNotification } from 'app/core/copy/appNotification';
 import { useCleanup } from 'app/core/hooks/useCleanup';
 import { AlertManagerCortexConfig } from 'app/plugins/datasource/alertmanager/types';
 import { NotifierDTO } from 'app/types';
-import { Alert, Button, Field, Input, LinkButton, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useCallback } from 'react';
 import { useForm, FormProvider, FieldErrors, Validate } from 'react-hook-form';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Alert, Button, Field, Input, LinkButton, useStyles2 } from '@grafana/ui';
 
 import { useControlledFieldArray } from '../../../hooks/useControlledFieldArray';
 import { useUnifiedAlertingSelector } from '../../../hooks/useUnifiedAlertingSelector';

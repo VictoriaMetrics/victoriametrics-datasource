@@ -1,9 +1,9 @@
 import { css, cx } from '@emotion/css';
-import { Button, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Button, useStyles2 } from '@grafana/ui';
 
 interface Props {
   title: string;

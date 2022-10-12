@@ -1,6 +1,7 @@
 import { debounce } from 'lodash';
-import { Field, Input } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
+
+import { Field, Input } from '@grafana/ui';
 
 
 interface Props {

@@ -1,6 +1,7 @@
 import { Page } from 'app/core/components/PageNew/Page';
-import { Spinner, HorizontalGroup } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
+
+import { Spinner, HorizontalGroup } from '@grafana/ui';
 
 
 import {

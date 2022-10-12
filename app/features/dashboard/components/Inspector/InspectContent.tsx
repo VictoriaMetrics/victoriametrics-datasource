@@ -6,11 +6,11 @@ import { InspectMetadataTab } from 'app/features/inspector/InspectMetadataTab';
 import { InspectStatsTab } from 'app/features/inspector/InspectStatsTab';
 import { QueryInspector } from 'app/features/inspector/QueryInspector';
 import { InspectTab } from 'app/features/inspector/types';
-import { Drawer, Tab, TabsBar } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 
 import { CoreApp, DataSourceApi, formattedValueToString, getValueFormat, PanelData, PanelPlugin } from '@grafana/data';
 import { getTemplateSrv } from '@grafana/runtime';
+import { Drawer, Tab, TabsBar } from '@grafana/ui';
 
 import { GetDataOptions } from '../../../query/state/PanelQueryRunner';
 import { DashboardModel, PanelModel } from '../../state';

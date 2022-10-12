@@ -1,5 +1,6 @@
-import { ConfirmModal } from 'packages/grafana-ui/src';
 import React, { useEffect } from 'react';
+
+import { ConfirmModal } from '@grafana/ui';
 
 
 import { useDashboardRestore } from './useDashboardRestore';

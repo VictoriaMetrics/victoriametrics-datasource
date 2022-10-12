@@ -1,4 +1,9 @@
 import {
+  LoadingState,
+  VariableType,
+} from '@grafana/data';
+
+import {
   AdHocVariableModel,
   BaseVariableModel,
   ConstantVariableModel,
@@ -6,7 +11,6 @@ import {
   DashboardVariableModel,
   DataSourceVariableModel,
   IntervalVariableModel,
-  LoadingState,
   OrgVariableModel,
   QueryVariableModel,
   TextBoxVariableModel,
@@ -15,8 +19,8 @@ import {
   VariableOption,
   VariableRefresh,
   VariableSort,
-  VariableType,
-} from '../../../../../packages/grafana-data';
+} from '../../../../../src/templateVars';
+
 
 function createBaseVariableModel<T extends VariableType>(type: T): BaseVariableModel & { type: T } {
   return {

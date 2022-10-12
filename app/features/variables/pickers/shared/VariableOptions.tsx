@@ -1,8 +1,8 @@
 import { css, cx } from '@emotion/css';
-import { Tooltip } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
+import { Tooltip } from '@grafana/ui';
 
 import { VariableOption } from '../../types';
 

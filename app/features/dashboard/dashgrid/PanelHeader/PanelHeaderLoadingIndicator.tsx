@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Icon, Tooltip, useStyles } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { GrafanaTheme, LoadingState } from '@grafana/data';
+import { Icon, Tooltip, useStyles } from '@grafana/ui';
 
 interface Props {
   state: LoadingState;

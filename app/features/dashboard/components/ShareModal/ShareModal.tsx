@@ -3,10 +3,10 @@ import { config } from 'app/core/config';
 import { contextSrv } from 'app/core/core';
 import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { isPanelModelLibraryPanel } from 'app/features/library-panels/guard';
-import { Modal, ModalTabsHeader, TabContent } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { reportInteraction } from '@grafana/runtime';
+import { Modal, ModalTabsHeader, TabContent } from '@grafana/ui';
 
 import { ShareEmbed } from './ShareEmbed';
 import { ShareExport } from './ShareExport';

@@ -1,5 +1,3 @@
-import { SeriesVisibilityChangeMode } from 'packages/grafana-ui/src';
-
 import {
   ByNamesMatcherMode,
   ConfigOverrideRule,
@@ -13,6 +11,8 @@ import {
   isSystemOverrideWithRef,
   SystemConfigOverrideRule,
 } from '@grafana/data';
+import { SeriesVisibilityChangeMode } from '@grafana/ui';
+
 
 const displayOverrideRef = 'hideSeriesFrom';
 const isHideSeriesOverride = isSystemOverrideWithRef(displayOverrideRef);

@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { Badge, useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Badge, useStyles2 } from '@grafana/ui';
 
 import { HoverCard } from './HoverCard';
 import { keywords as KEYWORDS, builtinFunctions as FUNCTIONS } from './receivers/editor/language';

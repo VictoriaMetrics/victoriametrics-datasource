@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
-import { Alert, Card, Icon, LoadingPlaceholder, useStyles2, withErrorBoundary } from 'packages/grafana-ui/src';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Alert, Card, Icon, LoadingPlaceholder, useStyles2, withErrorBoundary } from '@grafana/ui';
 
 import { AlertLabels } from './components/AlertLabels';
 import { RuleViewerLayout } from './components/rule-viewer/RuleViewerLayout';

@@ -1,8 +1,8 @@
 import { css, cx } from '@emotion/css';
-import { Card, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, ReactNode } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Card, useStyles2 } from '@grafana/ui';
 
 import { RuleFormType } from '../../../types/rule-form';
 

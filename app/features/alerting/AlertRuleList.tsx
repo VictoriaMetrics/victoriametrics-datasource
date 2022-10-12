@@ -4,12 +4,12 @@ import { Page } from 'app/core/components/Page/Page';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { AlertRule, StoreState } from 'app/types';
-import { Button, FilterInput, LinkButton, Select, VerticalGroup } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { SelectableValue } from '@grafana/data';
 import { config, locationService } from '@grafana/runtime';
+import { Button, FilterInput, LinkButton, Select, VerticalGroup } from '@grafana/ui';
 
 import { ShowModalReactEvent } from '../../types/events';
 

@@ -4,10 +4,10 @@ import { useMenuItem } from '@react-aria/menu';
 import { mergeProps } from '@react-aria/utils';
 import { TreeState } from '@react-stately/tree';
 import { Node } from '@react-types/shared';
-import { useTheme2 } from 'packages/grafana-ui/src';
 import React, { ReactElement, useRef, useState } from 'react';
 
 import { GrafanaTheme2, NavModelItem } from '@grafana/data';
+import { useTheme2 } from '@grafana/ui';
 
 import { useNavBarItemMenuContext, useNavBarContext } from './context';
 

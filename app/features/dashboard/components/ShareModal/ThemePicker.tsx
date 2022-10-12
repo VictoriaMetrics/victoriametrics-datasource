@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
-import { RadioButtonGroup, Field } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { SelectableValue } from '@grafana/data';
+import { RadioButtonGroup, Field } from '@grafana/ui';
 
 interface Props {
   selectedTheme: string;

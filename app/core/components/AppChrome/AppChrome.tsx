@@ -1,10 +1,10 @@
 import { css, cx } from '@emotion/css';
 import { useGrafana } from 'app/core/context/GrafanaContext';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React, { PropsWithChildren } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { useStyles2 } from '@grafana/ui';
 
 import { MegaMenu } from '../MegaMenu/MegaMenu';
 

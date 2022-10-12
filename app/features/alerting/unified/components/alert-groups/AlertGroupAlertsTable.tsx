@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { AlertmanagerAlert } from 'app/plugins/datasource/alertmanager/types';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React, { useMemo } from 'react';
 
 import { GrafanaTheme2, intervalToAbbreviatedDurationString } from '@grafana/data';
+import { useStyles2 } from '@grafana/ui';
 
 import { AlertLabels } from '../AlertLabels';
 import { DynamicTableColumnProps, DynamicTableItemProps } from '../DynamicTable';

@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { SegmentInput, useStyles, InlineLabel, Icon } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme, KeyValue } from '@grafana/data';
+import { SegmentInput, useStyles, InlineLabel, Icon } from '@grafana/ui';
 
 const EQ_WIDTH = 3; // = 24px in inline label
 

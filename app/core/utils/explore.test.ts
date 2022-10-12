@@ -1,8 +1,9 @@
 import store from 'app/core/store';
-import { RefreshPicker } from 'packages/grafana-ui/src';
+
 
 import { dateTime, ExploreUrlState, LogsSortOrder } from '@grafana/data';
 import { serializeStateToUrlParam } from '@grafana/data/utils/url';
+import { RefreshPicker } from '@grafana/ui';
 
 import { ExploreId } from '../../types';
 

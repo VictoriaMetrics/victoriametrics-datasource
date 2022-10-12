@@ -1,6 +1,5 @@
 import { ThresholdsValueEditor } from 'app/features/dimensions/editors/ThresholdsEditor/thresholds';
 import { ValueMappingsEditor } from 'app/features/dimensions/editors/ValueMappingsEditor/ValueMappingsEditor';
-import { RadioButtonGroup, TimeZonePicker, Switch } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import {
@@ -29,6 +28,7 @@ import {
   displayNameOverrideProcessor,
   FieldNamePickerConfigSettings,
 } from '@grafana/data';
+import { RadioButtonGroup, TimeZonePicker, Switch } from '@grafana/ui';
 import { FieldNamePicker } from '@grafana/ui/components/MatchersUI/FieldNamePicker';
 
 

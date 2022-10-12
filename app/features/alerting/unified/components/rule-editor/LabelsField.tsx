@@ -1,9 +1,9 @@
 import { css, cx } from '@emotion/css';
-import { Button, Field, Input, InlineLabel, Label, useStyles } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { GrafanaTheme } from '@grafana/data';
+import { Button, Field, Input, InlineLabel, Label, useStyles } from '@grafana/ui';
 
 import { RuleFormValues } from '../../types/rule-form';
 

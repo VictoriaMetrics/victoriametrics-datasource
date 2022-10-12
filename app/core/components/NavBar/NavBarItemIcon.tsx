@@ -1,8 +1,8 @@
 import { css, cx } from '@emotion/css';
-import { Icon, toIconName, useTheme2 } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme2, NavModelItem } from '@grafana/data';
+import { Icon, toIconName, useTheme2 } from '@grafana/ui';
 
 import { Branding } from '../Branding/Branding';
 

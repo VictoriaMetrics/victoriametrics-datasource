@@ -1,8 +1,8 @@
 import { css, cx } from '@emotion/css';
-import { useStyles2, getInputStyles, sharedInputStyle, styleMixins, Tooltip, Icon } from 'packages/grafana-ui/src';
 import React, { FormEvent, HTMLProps, useEffect, useRef } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { useStyles2, getInputStyles, sharedInputStyle, styleMixins, Tooltip, Icon } from '@grafana/ui';
 
 import { Role } from '../../../types';
 

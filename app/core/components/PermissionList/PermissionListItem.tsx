@@ -1,9 +1,9 @@
 import { FolderInfo } from 'app/types';
 import { dashboardPermissionLevels, DashboardAcl, PermissionLevel } from 'app/types/acl';
-import { Select, Icon, Button } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 
 import { SelectableValue } from '@grafana/data';
+import { Select, Icon, Button } from '@grafana/ui';
 
 const setClassNameHelper = (inherited: boolean) => {
   return inherited ? 'gf-form-disabled' : '';

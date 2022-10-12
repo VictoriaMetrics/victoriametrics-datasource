@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 import config from 'app/core/config';
 import { contextSrv } from 'app/core/services/context_srv';
-import { Button, CustomScrollbar, Modal } from 'packages/grafana-ui/src';
 import React, { ReactElement } from 'react';
 import { useAsync } from 'react-use';
 
 import { UserOrgDTO } from '@grafana/data';
+import { Button, CustomScrollbar, Modal } from '@grafana/ui';
 
 import { api } from '../../features/profile/api';
 

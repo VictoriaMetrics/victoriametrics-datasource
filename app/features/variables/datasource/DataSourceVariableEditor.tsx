@@ -1,9 +1,9 @@
-import { InlineFieldRow, VerticalGroup } from 'packages/grafana-ui/src';
 import React, { FormEvent, PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { InlineFieldRow, VerticalGroup } from '@grafana/ui';
 
 import { StoreState } from '../../../types';
 import { SelectionOptionsEditor } from '../editor/SelectionOptionsEditor';

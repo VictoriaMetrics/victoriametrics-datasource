@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { InlineField, InlineFieldRow, InlineSwitch, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useEffect, useState } from 'react';
 
 import { AnnotationQuery, EventBus, GrafanaTheme2 } from '@grafana/data';
+import { InlineField, InlineFieldRow, InlineSwitch, useStyles2 } from '@grafana/ui';
 import { LoadingIndicator } from '@grafana/ui/components/PanelChrome/LoadingIndicator';
 
 import { AnnotationQueryFinished, AnnotationQueryStarted } from '../../../../types/events';

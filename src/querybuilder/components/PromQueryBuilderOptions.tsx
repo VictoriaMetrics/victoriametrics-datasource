@@ -3,9 +3,9 @@ import React, { SyntheticEvent } from 'react';
 import { CoreApp, SelectableValue } from '@grafana/data';
 import { AutoSizeInput, RadioButtonGroup, Select } from '@grafana/ui';
 
-import { EditorField, EditorRow, EditorSwitch } from '../../../packages/grafana-ui';
 import { getQueryTypeChangeHandler, getQueryTypeOptions } from '../../components/PromExploreExtraField';
 import { FORMAT_OPTIONS, INTERVAL_FACTOR_OPTIONS } from '../../components/PromQueryEditor';
+import { EditorField, EditorRow, EditorSwitch } from '../../components/QueryEditor';
 import { PromQuery } from '../../types';
 import { QueryOptionGroup } from '../shared/QueryOptionGroup';
 

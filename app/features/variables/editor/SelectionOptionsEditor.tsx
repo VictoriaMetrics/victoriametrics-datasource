@@ -1,7 +1,7 @@
-import { InlineFieldRow, VerticalGroup } from 'packages/grafana-ui/src';
 import React, { ChangeEvent, FormEvent, FunctionComponent, useCallback } from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
+import { InlineFieldRow, VerticalGroup } from '@grafana/ui';
 
 import { KeyedVariableIdentifier } from '../state/types';
 import { VariableWithMultiSupport } from '../types';

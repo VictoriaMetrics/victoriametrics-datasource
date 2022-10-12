@@ -1,10 +1,10 @@
 import { Trans, t } from '@lingui/macro';
 import config from 'app/core/config';
-import { Alert, ClipboardButton, Field, FieldSet, Icon, Input, Switch } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 
 import { selectors as e2eSelectors } from '@grafana/e2e-selectors';
 import { reportInteraction } from '@grafana/runtime';
+import { Alert, ClipboardButton, Field, FieldSet, Icon, Input, Switch } from '@grafana/ui';
 
 import { ThemePicker } from './ThemePicker';
 import { ShareModalTabProps } from './types';

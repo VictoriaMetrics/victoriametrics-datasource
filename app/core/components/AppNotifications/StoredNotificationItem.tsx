@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { formatDistanceToNow } from 'date-fns';
-import { Card, Checkbox, useTheme2 } from 'packages/grafana-ui/src';
 import React, { ReactNode } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { Card, Checkbox, useTheme2 } from '@grafana/ui';
 
 export type AlertVariant = 'success' | 'warning' | 'error' | 'info';
 

@@ -1,5 +1,6 @@
-import { Tooltip } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { Tooltip } from '@grafana/ui';
 
 
 type Props = {

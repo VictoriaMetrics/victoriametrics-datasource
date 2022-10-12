@@ -1,9 +1,9 @@
 import { isEmpty } from 'lodash';
-import { CollapsableSection, Field, Input, Switch, TimeZonePicker, WeekStartPicker } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 
 import { rangeUtil, TimeZone } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { CollapsableSection, Field, Input, Switch, TimeZonePicker, WeekStartPicker } from '@grafana/ui';
 
 import { AutoRefreshIntervals } from './AutoRefreshIntervals';
 

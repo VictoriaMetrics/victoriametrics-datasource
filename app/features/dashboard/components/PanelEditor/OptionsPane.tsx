@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 import { StoreState } from 'app/types';
-import { useStyles } from 'packages/grafana-ui/src';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { GrafanaTheme } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { useStyles } from '@grafana/ui';
 
 import { OptionsPaneOptions } from './OptionsPaneOptions';
 import { VisualizationButton } from './VisualizationButton';

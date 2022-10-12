@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 import { TestReceiversAlert } from 'app/plugins/datasource/alertmanager/types';
 import { Annotations, Labels } from 'app/types/unified-alerting-dto';
-import { Modal, Button, Label, useStyles2, RadioButtonGroup } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Modal, Button, Label, useStyles2, RadioButtonGroup } from '@grafana/ui';
 
 import AnnotationsField from '../../rule-editor/AnnotationsField';
 import LabelsField from '../../rule-editor/LabelsField';

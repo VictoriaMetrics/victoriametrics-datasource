@@ -1,9 +1,9 @@
 import { css, cx } from '@emotion/css';
-import { useTheme, stylesFactory } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { OptionProps } from 'react-select';
 
 import { GrafanaTheme } from '@grafana/data';
+import { useTheme, stylesFactory } from '@grafana/ui';
 
 import { TagBadge } from './TagBadge';
 

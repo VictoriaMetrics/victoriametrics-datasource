@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { CombinedRuleNamespace } from 'app/types/unified-alerting';
-import { LoadingPlaceholder, Pagination, useStyles2 } from 'packages/grafana-ui/src';
 import pluralize from 'pluralize';
 import React, { FC, useMemo } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { LoadingPlaceholder, Pagination, useStyles2 } from '@grafana/ui';
 
 import { DEFAULT_PER_PAGE_PAGINATION } from '../../../../../core/constants';
 import { usePagination } from '../../hooks/usePagination';

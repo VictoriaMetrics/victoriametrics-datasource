@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Stack } from '../../../packages/grafana-ui';
+import { Stack } from '../../components/QueryEditor';
 import promqlGrammar from '../../promql';
 import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';

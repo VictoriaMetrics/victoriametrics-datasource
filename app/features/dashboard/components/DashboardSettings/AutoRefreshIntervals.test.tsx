@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { defaultIntervals } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { defaultIntervals } from '@grafana/ui';
 
 
 import { TimeSrv } from '../../services/TimeSrv';

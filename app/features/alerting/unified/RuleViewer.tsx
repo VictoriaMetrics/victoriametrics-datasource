@@ -1,5 +1,9 @@
 import { css } from '@emotion/css';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useObservable } from 'react-use';
+
+import { GrafanaTheme2, LoadingState, PanelData } from '@grafana/data';
 import {
   Alert,
   Button,
@@ -9,11 +13,7 @@ import {
   useStyles2,
   VerticalGroup,
   withErrorBoundary,
-} from 'packages/grafana-ui/src';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useObservable } from 'react-use';
-
-import { GrafanaTheme2, LoadingState, PanelData } from '@grafana/data';
+} from '@grafana/ui';
 
 import { DEFAULT_PER_PAGE_PAGINATION } from '../../../core/constants';
 import { AlertQuery } from '../../../types/unified-alerting-dto';

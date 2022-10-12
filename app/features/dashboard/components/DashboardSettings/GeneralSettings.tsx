@@ -1,12 +1,12 @@
 import { Page } from 'app/core/components/PageNew/Page';
 import { FolderPicker } from 'app/core/components/Select/FolderPicker';
 import { updateTimeZoneDashboard, updateWeekStartDashboard } from 'app/features/dashboard/state/actions';
-import { CollapsableSection, Field, Input, RadioButtonGroup, TagsInput } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { TimeZone } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { CollapsableSection, Field, Input, RadioButtonGroup, TagsInput } from '@grafana/ui';
 
 import { DeleteDashboardButton } from '../DeleteDashboard/DeleteDashboardButton';
 

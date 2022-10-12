@@ -4,7 +4,7 @@ import React from 'react';
 import { GrafanaTheme2, toOption } from '@grafana/data';
 import { AutoSizeInput, IconButton, Select, useStyles2 } from '@grafana/ui';
 
-import { EditorRows, FlexItem } from '../../../packages/grafana-ui';
+import { EditorRows, FlexItem } from '../../components/QueryEditor';
 import { PrometheusDatasource } from '../../datasource';
 import { binaryScalarDefs } from '../binaryScalarOperations';
 import { PromVisualQueryBinary } from '../types';

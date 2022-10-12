@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
-import { IconButton, useStyles } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
+import { IconButton, useStyles } from '@grafana/ui';
 
 interface Props {
   labelKey: string;

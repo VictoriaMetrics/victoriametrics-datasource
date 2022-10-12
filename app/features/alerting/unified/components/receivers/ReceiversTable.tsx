@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AlertManagerCortexConfig } from 'app/plugins/datasource/alertmanager/types';
-import { Button, ConfirmModal, Modal, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Button, ConfirmModal, Modal, useStyles2 } from '@grafana/ui';
 
 import { Authorize } from '../../components/Authorize';
 import { useUnifiedAlertingSelector } from '../../hooks/useUnifiedAlertingSelector';

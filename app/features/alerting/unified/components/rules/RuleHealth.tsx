@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
 import { Rule } from 'app/types/unified-alerting';
-import { Icon, Tooltip, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Icon, Tooltip, useStyles2 } from '@grafana/ui';
 
 interface Prom {
   rule: Rule;

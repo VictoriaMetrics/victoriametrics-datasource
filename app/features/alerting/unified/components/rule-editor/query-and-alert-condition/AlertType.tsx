@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AccessControlAction } from 'app/types';
-import { Field, InputControl, useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { DataSourceInstanceSettings, GrafanaTheme2 } from '@grafana/data';
+import { Field, InputControl, useStyles2 } from '@grafana/ui';
 
 import { RuleFormType, RuleFormValues } from '../../../types/rule-form';
 import { CloudRulesSourcePicker } from '../CloudRulesSourcePicker';

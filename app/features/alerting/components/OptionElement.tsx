@@ -1,5 +1,6 @@
-import { FormAPI, Input, InputControl, Select, TextArea } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { FormAPI, Input, InputControl, Select, TextArea } from '@grafana/ui';
 
 
 import { NotificationChannelOption } from '../../../types';

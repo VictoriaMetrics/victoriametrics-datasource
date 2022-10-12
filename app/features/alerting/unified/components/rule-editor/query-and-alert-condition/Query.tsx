@@ -1,6 +1,7 @@
-import { Field, InputControl } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
+
+import { Field, InputControl } from '@grafana/ui';
 
 
 import { RuleFormType, RuleFormValues } from '../../../types/rule-form';

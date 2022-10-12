@@ -10,6 +10,14 @@ import { getPanelStateForModel } from 'app/features/panel/state/selectors';
 import { updateTimeZoneForSession } from 'app/features/profile/state/reducers';
 import { StoreState } from 'app/types';
 import { PanelOptionsChangedEvent, ShowModalReactEvent } from 'app/types/events';
+import React, { PureComponent } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { Subscription } from 'rxjs';
+
+import { FieldConfigSource, GrafanaTheme2, NavModel, NavModelItem, PageLayoutType } from '@grafana/data';
+import { selectors } from '@grafana/e2e-selectors';
+import { config, locationService } from '@grafana/runtime';
 import {
   Button,
   HorizontalGroup,
@@ -23,15 +31,7 @@ import {
   ToolbarButton,
   ToolbarButtonRow,
   withTheme2,
-} from 'packages/grafana-ui/src';
-import React, { PureComponent } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import { Subscription } from 'rxjs';
-
-import { FieldConfigSource, GrafanaTheme2, NavModel, NavModelItem, PageLayoutType } from '@grafana/data';
-import { selectors } from '@grafana/e2e-selectors';
-import { config, locationService } from '@grafana/runtime';
+} from '@grafana/ui';
 
 import { notifyApp } from '../../../../core/actions';
 import { UnlinkModal } from '../../../library-panels/components/UnlinkModal/UnlinkModal';

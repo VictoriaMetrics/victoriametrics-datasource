@@ -1,7 +1,7 @@
-import { Icon, HorizontalGroup } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { config } from '@grafana/runtime';
+import { Icon, HorizontalGroup } from '@grafana/ui';
 
 type Props = {
   title: string;

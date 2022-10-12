@@ -3,11 +3,11 @@ import { contextSrv } from 'app/core/services/context_srv';
 import { createFolder, getFolderById, searchFolders } from 'app/features/manage-dashboards/state/actions';
 import { DashboardSearchHit } from 'app/features/search/types';
 import { debounce } from 'lodash';
-import { ActionMeta, AsyncSelect, LoadOptionsCallback } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 
 import { AppEvents, SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { ActionMeta, AsyncSelect, LoadOptionsCallback } from '@grafana/ui';
 
 import { AccessControlAction, PermissionLevelString } from '../../../types';
 import appEvents from '../../app_events';

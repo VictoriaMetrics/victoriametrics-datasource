@@ -10,10 +10,10 @@ import { SortOrder } from 'app/plugins/panel/alertlist/types';
 import { Alert, CombinedRule, PaginationProps } from 'app/types/unified-alerting';
 import { mapStateWithReasonToBaseState } from 'app/types/unified-alerting-dto';
 import { countBy } from 'lodash';
-import { LinkButton, useStyles } from 'packages/grafana-ui/src';
 import React, { useMemo, useState } from 'react';
 
 import { GrafanaTheme } from '@grafana/data';
+import { LinkButton, useStyles } from '@grafana/ui';
 
 import { GRAFANA_RULES_SOURCE_NAME, isGrafanaRulesSource } from '../../utils/datasource';
 import { isAlertingRule } from '../../utils/rules';

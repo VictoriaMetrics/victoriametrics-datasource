@@ -5,7 +5,7 @@ import React, { HTMLProps, useRef } from 'react';
 import { GrafanaTheme2 } from '@grafana/data';
 import { Switch, useStyles2 } from '@grafana/ui';
 
-import { Stack } from '../../../packages/grafana-ui';
+import { Stack } from '../../components/QueryEditor';
 
 export interface Props extends Omit<HTMLProps<HTMLInputElement>, 'value' | 'ref'> {
   value?: boolean;

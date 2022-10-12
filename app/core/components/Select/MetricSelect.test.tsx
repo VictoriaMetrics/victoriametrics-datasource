@@ -1,6 +1,7 @@
 import { shallow } from 'enzyme';
-import { LegacyForms } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { LegacyForms } from '@grafana/ui';
 
 
 import { MetricSelect } from './MetricSelect';

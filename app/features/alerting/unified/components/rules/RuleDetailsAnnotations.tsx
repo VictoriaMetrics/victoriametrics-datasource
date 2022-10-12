@@ -1,6 +1,7 @@
 import { css } from '@emotion/css';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { useStyles2 } from '@grafana/ui';
 
 
 import { AnnotationDetailsField } from '../AnnotationDetailsField';

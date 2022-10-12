@@ -1,5 +1,6 @@
-import { Icon } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { Icon } from '@grafana/ui';
 
 
 interface RuleLocationProps {

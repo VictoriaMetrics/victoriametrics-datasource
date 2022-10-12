@@ -1,10 +1,10 @@
 import { StoreState } from 'app/types';
-import { Alert, InlineField, InlineFieldRow, VerticalGroup } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { DataSourceInstanceSettings, getDataSourceRef } from '@grafana/data';
 import { DataSourcePicker } from '@grafana/runtime';
+import { Alert, InlineField, InlineFieldRow, VerticalGroup } from '@grafana/ui';
 
 import { VariableSectionHeader } from '../editor/VariableSectionHeader';
 import { initialVariableEditorState } from '../editor/reducer';

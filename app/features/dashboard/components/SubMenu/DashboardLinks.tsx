@@ -1,10 +1,10 @@
-import { Icon, Tooltip, useForceUpdate } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 import { useEffectOnce } from 'react-use';
 
 import { sanitizeUrl } from '@grafana/data/text/sanitize';
 import { selectors } from '@grafana/e2e-selectors';
 import { TimeRangeUpdatedEvent } from '@grafana/runtime';
+import { Icon, Tooltip, useForceUpdate } from '@grafana/ui';
 
 import { getLinkSrv } from '../../../panel/panellinks/link_srv';
 import { DashboardModel } from '../../state';

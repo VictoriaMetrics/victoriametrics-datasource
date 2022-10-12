@@ -1,8 +1,8 @@
-import { ThemeContext } from 'packages/grafana-ui/src';
 import React, { useEffect, useState } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { ThemeChangedEvent } from '@grafana/runtime';
+import { ThemeContext } from '@grafana/ui';
 
 import { appEvents } from '../core';
 

@@ -1,6 +1,6 @@
-import { useTheme2 } from 'packages/grafana-ui/src';
-
 import { PanelData } from '@grafana/data';
+import { useTheme2 } from '@grafana/ui';
+
 
 import { STAT, TIMESERIES } from '../utils/constants';
 

@@ -9,6 +9,13 @@ import { ShareModal } from 'app/features/dashboard/components/ShareModal';
 import { playlistSrv } from 'app/features/playlist/PlaylistSrv';
 import { updateTimeZoneForSession } from 'app/features/profile/state/reducers';
 import { KioskMode } from 'app/types';
+import React, { FC, ReactNode } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+
+import { locationUtil, textUtil } from '@grafana/data';
+import { selectors as e2eSelectors } from '@grafana/e2e-selectors/src';
+import { locationService } from '@grafana/runtime';
 import {
   ButtonGroup,
   ModalsController,
@@ -17,14 +24,7 @@ import {
   useForceUpdate,
   Tag,
   ToolbarButtonRow,
-} from 'packages/grafana-ui/src';
-import React, { FC, ReactNode } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-
-import { locationUtil, textUtil } from '@grafana/data';
-import { selectors as e2eSelectors } from '@grafana/e2e-selectors/src';
-import { locationService } from '@grafana/runtime';
+} from '@grafana/ui';
 
 import { setStarred } from '../../../../core/reducers/navBarTree';
 import { getDashboardSrv } from '../../services/DashboardSrv';

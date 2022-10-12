@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 import { useCleanup } from 'app/core/hooks/useCleanup';
 import { CombinedRuleGroup, CombinedRuleNamespace } from 'app/types/unified-alerting';
-import { Modal, Button, Form, Field, Input, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { isValidGoDuration } from '@grafana/data';
+import { Modal, Button, Form, Field, Input, useStyles2 } from '@grafana/ui';
 
 import { useUnifiedAlertingSelector } from '../../hooks/useUnifiedAlertingSelector';
 import { updateLotexNamespaceAndGroupAction } from '../../state/actions';

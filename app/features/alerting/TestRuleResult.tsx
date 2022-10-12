@@ -1,7 +1,7 @@
-import { LoadingPlaceholder, JSONFormatter, Icon, HorizontalGroup, ClipboardButton } from 'packages/grafana-ui/src';
 import React, { PureComponent } from 'react';
 
 import { getBackendSrv } from '@grafana/runtime';
+import { LoadingPlaceholder, JSONFormatter, Icon, HorizontalGroup, ClipboardButton } from '@grafana/ui';
 
 import { DashboardModel, PanelModel } from '../dashboard/state';
 

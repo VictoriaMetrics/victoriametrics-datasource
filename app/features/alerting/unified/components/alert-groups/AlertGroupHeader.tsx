@@ -1,7 +1,8 @@
 import { AlertmanagerGroup, AlertState } from 'app/plugins/datasource/alertmanager/types';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import pluralize from 'pluralize';
 import React from 'react';
+
+import { useStyles2 } from '@grafana/ui';
 
 
 import { getNotificationsTextColors } from '../../styles/notifications';

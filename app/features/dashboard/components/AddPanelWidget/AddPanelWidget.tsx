@@ -5,7 +5,6 @@ import { LS_PANEL_COPY_KEY } from 'app/core/constants';
 import store from 'app/core/store';
 import { addPanel } from 'app/features/dashboard/state/reducers';
 import { chain, cloneDeep, defaults, find, sortBy } from 'lodash';
-import { Icon, IconButton, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useMemo, useState } from 'react';
 import { connect, MapDispatchToProps } from 'react-redux';
 import tinycolor from 'tinycolor2';
@@ -13,6 +12,7 @@ import tinycolor from 'tinycolor2';
 import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { locationService, reportInteraction } from '@grafana/runtime';
+import { Icon, IconButton, useStyles2 } from '@grafana/ui';
 
 import {
   LibraryPanelsSearch,

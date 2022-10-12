@@ -1,7 +1,7 @@
-import { Button, Checkbox, Field, Input } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { SelectableValue } from '@grafana/data';
+import { Button, Checkbox, Field, Input } from '@grafana/ui';
 
 import { NotificationChannelDTO, NotificationChannelOption, NotificationChannelSecureFields } from '../../../types';
 

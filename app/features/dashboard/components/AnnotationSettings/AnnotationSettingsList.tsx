@@ -1,9 +1,9 @@
 import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
-import { DeleteButton, Icon, IconButton, VerticalGroup } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 
 import { arrayUtils } from '@grafana/data';
 import { getDataSourceSrv } from '@grafana/runtime';
+import { DeleteButton, Icon, IconButton, VerticalGroup } from '@grafana/ui';
 
 import { DashboardModel } from '../../state/DashboardModel';
 import { ListNewButton } from '../DashboardSettings/ListNewButton';

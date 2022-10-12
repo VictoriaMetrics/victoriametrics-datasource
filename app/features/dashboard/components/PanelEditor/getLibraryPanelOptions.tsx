@@ -1,6 +1,7 @@
 import { LibraryPanelInformation } from 'app/features/library-panels/components/LibraryPanelInfo/LibraryPanelInfo';
-import { Input } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { Input } from '@grafana/ui';
 
 
 import { isPanelModelLibraryPanel } from '../../../library-panels/guard';

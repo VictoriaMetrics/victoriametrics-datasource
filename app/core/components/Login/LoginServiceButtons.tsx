@@ -1,10 +1,10 @@
 import { css, cx } from '@emotion/css';
 import config from 'app/core/config';
 import { pickBy } from 'lodash';
-import { Icon, IconName, LinkButton, useStyles, useTheme2, VerticalGroup } from 'packages/grafana-ui/src';
 import React from 'react';
 
 import { GrafanaTheme, GrafanaTheme2, DEFAULT_SAML_NAME } from '@grafana/data';
+import { Icon, IconName, LinkButton, useStyles, useTheme2, VerticalGroup } from '@grafana/ui';
 
 export interface LoginService {
   bgColor: string;

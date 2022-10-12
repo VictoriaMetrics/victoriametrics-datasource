@@ -2,8 +2,9 @@
 import { FolderPicker } from 'app/core/components/Select/FolderPicker';
 import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { validationSrv } from 'app/features/manage-dashboards/services/ValidationSrv';
-import { Button, Input, Switch, Form, Field, InputControl, HorizontalGroup } from 'packages/grafana-ui/src';
 import React from 'react';
+
+import { Button, Input, Switch, Form, Field, InputControl, HorizontalGroup } from '@grafana/ui';
 
 import { SaveDashboardFormProps } from '../types';
 

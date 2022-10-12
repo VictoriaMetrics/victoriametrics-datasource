@@ -1,9 +1,9 @@
 import { css, cx } from '@emotion/css';
 import { AlertmanagerAlert } from 'app/plugins/datasource/alertmanager/types';
-import { useStyles2 } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { useStyles2 } from '@grafana/ui';
 
 import { getAlertTableStyles } from '../../styles/table';
 

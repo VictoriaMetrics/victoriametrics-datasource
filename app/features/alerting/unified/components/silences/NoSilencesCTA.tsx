@@ -1,8 +1,9 @@
 
 import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
 import { contextSrv } from 'app/core/services/context_srv';
-import { CallToActionCard } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
+
+import { CallToActionCard } from '@grafana/ui';
 
 import { getInstancesPermissions } from '../../utils/access-control';
 import { makeAMLink } from '../../utils/misc';

@@ -1,5 +1,4 @@
 import { isEqual } from 'lodash';
-import { Button, HorizontalGroup, Icon, InlineFieldRow, VerticalGroup } from 'packages/grafana-ui/src';
 import React, { FormEvent, PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -7,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { AppEvents, LoadingState, SelectableValue, VariableType } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { locationService } from '@grafana/runtime';
+import { Button, HorizontalGroup, Icon, InlineFieldRow, VerticalGroup } from '@grafana/ui';
 
 import { appEvents } from '../../../core/core';
 import { StoreState, ThunkDispatch } from '../../../types';

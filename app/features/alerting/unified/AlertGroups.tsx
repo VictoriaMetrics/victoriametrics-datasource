@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
-import { Alert, LoadingPlaceholder, useStyles2 } from 'packages/grafana-ui/src';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { GrafanaTheme2 } from '@grafana/data';
+import { Alert, LoadingPlaceholder, useStyles2 } from '@grafana/ui';
 
 import { AlertingPageWrapper } from './components/AlertingPageWrapper';
 import { NoAlertManagerWarning } from './components/NoAlertManagerWarning';

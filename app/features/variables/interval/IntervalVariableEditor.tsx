@@ -1,8 +1,8 @@
-import { InlineFieldRow, VerticalGroup } from 'packages/grafana-ui/src';
 import React, { ChangeEvent, FormEvent, PureComponent } from 'react';
 
 import { SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { InlineFieldRow, VerticalGroup } from '@grafana/ui';
 
 import { VariableSectionHeader } from '../editor/VariableSectionHeader';
 import { VariableSelectField } from '../editor/VariableSelectField';

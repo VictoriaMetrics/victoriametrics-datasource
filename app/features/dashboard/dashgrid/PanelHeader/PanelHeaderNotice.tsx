@@ -1,7 +1,7 @@
-import { Icon, Tooltip } from 'packages/grafana-ui/src';
 import React, { FC } from 'react';
 
 import { QueryResultMetaNotice } from '@grafana/data';
+import { Icon, Tooltip } from '@grafana/ui';
 
 interface Props {
   notice: QueryResultMetaNotice;

@@ -4,13 +4,13 @@ import { getKioskMode } from 'app/core/navigation/kiosk';
 import { KioskMode, StoreState } from 'app/types';
 import { Location as HistoryLocation } from 'history';
 import { cloneDeep } from 'lodash';
-import { Icon, useTheme2, CustomScrollbar } from 'packages/grafana-ui/src';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
 import { GrafanaTheme2, NavModelItem, NavSection } from '@grafana/data';
 import { config, locationSearchToObject, locationService, reportInteraction } from '@grafana/runtime';
+import { Icon, useTheme2, CustomScrollbar } from '@grafana/ui';
 
 import { OrgSwitcher } from '../OrgSwitcher';
 

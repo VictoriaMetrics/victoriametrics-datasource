@@ -3,12 +3,12 @@ import { isExpressionQuery } from 'app/features/expressions/guards';
 import { PanelOptions } from 'app/plugins/panel/table/models.gen';
 import { AccessControlAction } from 'app/types';
 import { AlertQuery } from 'app/types/unified-alerting-dto';
-import { Alert, CodeEditor, DateTimePicker, LinkButton, useStyles2, useTheme2 } from 'packages/grafana-ui/src';
 import React, { useCallback, useState } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import { DataSourceInstanceSettings, DateTime, dateTime, GrafanaTheme2, PanelData, urlUtil } from '@grafana/data';
 import { config, getDataSourceSrv, PanelRenderer } from '@grafana/runtime';
+import { Alert, CodeEditor, DateTimePicker, LinkButton, useStyles2, useTheme2 } from '@grafana/ui';
 
 import { TABLE, TIMESERIES } from '../../utils/constants';
 import { Authorize } from '../Authorize';

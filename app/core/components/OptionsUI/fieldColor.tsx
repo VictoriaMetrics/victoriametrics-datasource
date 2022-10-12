@@ -1,5 +1,4 @@
 import { css } from '@emotion/css';
-import { useStyles2, useTheme2, Field, RadioButtonGroup, Select } from 'packages/grafana-ui/src';
 import React, { CSSProperties, FC } from 'react';
 
 import {
@@ -14,6 +13,7 @@ import {
   FieldColorSeriesByMode,
   getFieldColorMode,
 } from '@grafana/data';
+import { useStyles2, useTheme2, Field, RadioButtonGroup, Select } from '@grafana/ui';
 
 import { ColorValueEditor } from './color';
 
