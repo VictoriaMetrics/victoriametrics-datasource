@@ -4,9 +4,8 @@ import { map } from 'rxjs/operators';
 
 import { MetricFindValue, TimeRange } from '@grafana/data';
 
-import { getTimeSrv } from '../app/features/dashboard/services/TimeSrv';
-
 import { PrometheusDatasource } from './datasource';
+import { getTimeSrv } from './services/TimeSrv';
 import { PromQueryRequest } from './types';
 
 export default class PrometheusMetricFindQuery {

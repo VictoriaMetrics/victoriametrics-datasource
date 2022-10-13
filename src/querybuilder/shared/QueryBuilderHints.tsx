@@ -4,14 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { GrafanaTheme2, PanelData, QueryHint } from '@grafana/data';
 import { Button, Tooltip, useStyles2 } from '@grafana/ui';
 
-import { LokiDatasource } from '../../../app/plugins/datasource/loki/datasource';
 import { PrometheusDatasource } from '../../datasource';
 
 import { LokiAndPromQueryModellerBase, PromLokiVisualQuery } from './LokiAndPromQueryModellerBase';
 
 export interface Props<T extends PromLokiVisualQuery> {
   query: T;
-  datasource: PrometheusDatasource | LokiDatasource;
+  datasource: PrometheusDatasource;
   queryModeller: LokiAndPromQueryModellerBase;
   buildVisualQueryFromString: (expr: string) => { query: T };
   onChange: (update: T) => void;

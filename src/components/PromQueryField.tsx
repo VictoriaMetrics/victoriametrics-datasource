@@ -15,16 +15,16 @@ import {
   TypeaheadOutput,
 } from '@grafana/ui';
 
-import {LocalStorageValueProvider} from "../../app/core/components/LocalStorageValueProvider";
+import { PrometheusDatasource } from '../datasource';
+import { roundMsToMin } from '../language_utils';
+import { PromOptions, PromQuery } from '../types';
 import {
   CancelablePromise,
   isCancelablePromiseRejection,
   makePromiseCancelable,
-} from '../../app/core/utils/CancelablePromise';
-import { PrometheusDatasource } from '../datasource';
-import { roundMsToMin } from '../language_utils';
-import { PromOptions, PromQuery } from '../types';
+} from '../utils/CancelablePromise';
 
+import {LocalStorageValueProvider} from "./LocalStorageValueProvider";
 import { PrometheusMetricsBrowser } from './PrometheusMetricsBrowser';
 import { MonacoQueryFieldWrapper } from './monaco-query-field/MonacoQueryFieldWrapper';
 

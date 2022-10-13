@@ -10,10 +10,9 @@ import {
 } from '@grafana/data';
 import { getTemplateSrv, TemplateSrv } from '@grafana/runtime';
 
-import { getTimeSrv, TimeSrv } from '../app/features/dashboard/services/TimeSrv';
-
 import { PrometheusDatasource } from './datasource';
 import PrometheusMetricFindQuery from './metric_find_query';
+import { getTimeSrv, TimeSrv } from './services/TimeSrv';
 import { PromQuery } from './types';
 
 export class PrometheusVariableSupport extends StandardVariableSupport<PrometheusDatasource> {

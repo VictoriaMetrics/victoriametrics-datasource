@@ -2,7 +2,9 @@ import { css } from '@emotion/css';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
-import { useStyles2, Stack } from '@grafana/ui';
+import { useStyles2 } from '@grafana/ui';
+
+import { Stack } from "../../components/QueryEditor";
 
 interface Props {
   children: React.ReactNode;

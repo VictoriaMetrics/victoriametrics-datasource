@@ -11,8 +11,7 @@ import { Alert, Button, ConfirmModal, Container, CustomScrollbar, HorizontalGrou
 
 import { AlertState } from '../../plugins/datasource/alertmanager/types';
 import { PanelNotSupported } from '../dashboard/components/PanelEditor/PanelNotSupported';
-import { DashboardModel } from '../dashboard/state/DashboardModel';
-import { PanelModel } from '../dashboard/state/PanelModel';
+import { PanelModel, DashboardModel } from '../dashboard/state';
 
 import StateHistory from './StateHistory';
 import { TestRuleResult } from './TestRuleResult';

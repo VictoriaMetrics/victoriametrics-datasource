@@ -4,7 +4,6 @@ import { CompletionItem } from '@grafana/ui';
 
 
 // When changing RATE_RANGES, check if Loki/LogQL ranges should be changed too
-// @see public/app/plugins/datasource/loki/LanguageProvider.ts
 export const RATE_RANGES: CompletionItem[] = [
   { label: '$__interval', sortValue: '$__interval' },
   { label: '$__rate_interval', sortValue: '$__rate_interval' },
