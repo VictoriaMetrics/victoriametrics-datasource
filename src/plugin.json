@@ -25,11 +25,6 @@
       "reqRole": "Viewer"
     },
     {
-      "method": "POST",
-      "path": "api/v1/query_exemplars",
-      "reqRole": "Viewer"
-    },
-    {
       "method": "GET",
       "path": "/rules",
       "reqRole": "Viewer"
@@ -55,23 +50,6 @@
       "reqRole": "Editor"
     }
   ],
-  "includes": [
-    {
-      "type": "dashboard",
-      "name": "Prometheus Stats",
-      "path": "dashboards/prometheus_stats.json"
-    },
-    {
-      "type": "dashboard",
-      "name": "Prometheus 2.0 Stats",
-      "path": "dashboards/prometheus_2_stats.json"
-    },
-    {
-      "type": "dashboard",
-      "name": "Grafana Stats",
-      "path": "dashboards/grafana_stats.json"
-    }
-  ],
   "metrics": true,
   "alerting": true,
   "annotations": true,
@@ -89,6 +67,7 @@
       "small": "img/vm_logo.svg",
       "large": "img/vm_logo.svg"
     },
+    "version": "1.0.0",
     "links": [
       {
         "name": "Learn more",

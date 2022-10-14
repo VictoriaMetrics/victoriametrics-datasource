@@ -25,7 +25,7 @@ import {
   roundSecToMin,
   toPromLikeQuery,
 } from './language_utils';
-import PromqlSyntax, { FUNCTIONS, RATE_RANGES } from './promql';
+import PromqlSyntax, { FUNCTIONS, RATE_RANGES } from './metricsql';
 import { PromMetricsMetadata, PromQuery } from './types';
 
 const DEFAULT_KEYS = ['job', 'instance'];

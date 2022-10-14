@@ -8,8 +8,6 @@ import { InlineFormLabel, RadioButtonGroup } from '@grafana/ui';
 import { PrometheusDatasource } from '../datasource';
 import { PromQuery } from '../types';
 
-import { PromExemplarField } from './PromExemplarField';
-
 export interface PromExploreExtraFieldProps {
   query: PromQuery;
   onChange: (value: PromQuery) => void;
@@ -18,18 +16,9 @@ export interface PromExploreExtraFieldProps {
 }
 
 export const PromExploreExtraField: React.FC<PromExploreExtraFieldProps> = memo(
-  ({ query, datasource, onChange, onRunQuery }) => {
+  ({ query, onChange, onRunQuery }) => {
     const rangeOptions = getQueryTypeOptions(true);
     const prevQuery = usePrevious(query);
-
-    const onExemplarChange = useCallback(
-      (exemplar: boolean) => {
-        if (!isEqual(query, prevQuery) || exemplar !== query.exemplar) {
-          onChange({ ...query, exemplar });
-        }
-      },
-      [prevQuery, query, onChange]
-    );
 
     function onChangeQueryStep(interval: string) {
       onChange({ ...query, interval });
@@ -98,8 +87,6 @@ export const PromExploreExtraField: React.FC<PromExploreExtraFieldProps> = memo(
             value={query.interval ?? ''}
           />
         </div>
-
-        <PromExemplarField onChange={onExemplarChange} datasource={datasource} query={query} />
       </div>
     );
   }
