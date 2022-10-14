@@ -58,21 +58,31 @@
     "minInterval": true
   },
   "info": {
-    "description": "Open source time series database & alerting",
+    "description": "VictoriaMetrics datasource plugin for Grafana",
     "author": {
       "name": "VictoriaMetrics",
       "url": "https://victoriametrics.com/"
     },
+    "keywords": [
+      "VictoriaMetrics",
+      "datasource"
+    ],
     "logos": {
       "small": "img/vm_logo.svg",
       "large": "img/vm_logo.svg"
     },
-    "version": "1.0.0",
     "links": [
       {
         "name": "Learn more",
         "url": "https://docs.victoriametrics.com/"
       }
-    ]
+    ],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=8.3.0",
+    "plugins": []
   }
 }

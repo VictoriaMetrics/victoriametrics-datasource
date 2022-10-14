@@ -202,6 +202,7 @@
     "@grafana/lezer-logql": "0.1.0",
     "@grafana/runtime": "^9.1.5",
     "@grafana/schema": "^9.2.0",
+    "@grafana/toolkit": "^9.2.0",
     "@grafana/ui": "^9.1.5",
     "@kusto/monaco-kusto": "5.1.8",
     "@lezer/common": "1.0.0",
