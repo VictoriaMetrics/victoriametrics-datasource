@@ -7,7 +7,6 @@ import { InlineFormLabel, LegacyForms, Select } from '@grafana/ui';
 
 import { PromQuery } from '../types';
 
-import { PromExemplarField } from './PromExemplarField';
 import PromLink from './PromLink';
 import PromQueryField from './PromQueryField';
 import { PromQueryEditorProps } from './types';
@@ -45,8 +44,7 @@ export class PromQueryEditor extends PureComponent<PromQueryEditorProps, State> 
       expr: '',
       legendFormat: '',
       interval: '',
-      // Set exemplar to false for alerting queries
-      exemplar: props.app === CoreApp.UnifiedAlerting ? false : true,
+      exemplar: false,
     };
     const query = Object.assign({}, defaultQuery, props.query);
     this.query = query;
@@ -97,11 +95,6 @@ export class PromQueryEditor extends PureComponent<PromQueryEditorProps, State> 
     this.setState({ legendFormat });
   };
 
-  onExemplarChange = (isEnabled: boolean) => {
-    this.query.exemplar = isEnabled;
-    this.setState({ exemplar: isEnabled }, this.onRunQuery);
-  };
-
   onRunQuery = () => {
     const { query } = this;
     // Change of query.hide happens outside of this component and is just passed as prop. We have to update it when running queries.
@@ -113,8 +106,6 @@ export class PromQueryEditor extends PureComponent<PromQueryEditorProps, State> 
   render() {
     const { datasource, query, range, data } = this.props;
     const { formatOption, instant, interval, intervalFactorOption, legendFormat } = this.state;
-    //We want to hide exemplar field for unified alerting as exemplars in alerting don't make sense and are source of confusion
-    const showExemplarField = this.props.app !== CoreApp.UnifiedAlerting;
 
     return (
       <PromQueryField
@@ -202,14 +193,6 @@ export class PromQueryEditor extends PureComponent<PromQueryEditorProps, State> 
                 />
               </InlineFormLabel>
             </div>
-            {showExemplarField && (
-              <PromExemplarField
-                onChange={this.onExemplarChange}
-                datasource={datasource}
-                query={this.query}
-                data-testid={testIds.exemplar}
-              />
-            )}
           </div>
         }
       />
