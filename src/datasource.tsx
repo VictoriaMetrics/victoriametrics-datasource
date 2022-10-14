@@ -50,7 +50,6 @@ import {
   ExemplarTraceIdDestination,
   PromDataErrorResponse,
   PromDataSuccessResponse,
-  PromExemplarData,
   PromMatrixData,
   PromOptions,
   PromQuery,
@@ -124,7 +123,7 @@ export class PrometheusDatasource
     this.lookupsDisabled = instanceSettings.jsonData.disableMetricsLookup ?? false;
     this.customQueryParameters = new URLSearchParams(instanceSettings.jsonData.customQueryParameters);
     this.variables = new PrometheusVariableSupport(this, this.templateSrv, this.timeSrv);
-    this.exemplarsAvailable = true;
+    this.exemplarsAvailable = false;
 
     // This needs to be here and cannot be static because of how annotations typing affects casting of data source
     // objects to DataSourceApi types.
@@ -137,7 +136,6 @@ export class PrometheusDatasource
 
   init = async () => {
     await this.loadRules();
-    this.exemplarsAvailable = await this.areExemplarsAvailable();
   };
 
   getQueryDisplayText(query: PromQuery) {
@@ -290,7 +288,7 @@ export class PrometheusDatasource
       }
 
       target.requestId = options.panelId + target.refId;
-      const metricName = this.languageProvider.histogramMetrics.find((m) => target.expr.includes(m));
+      // const metricName = this.languageProvider.histogramMetrics.find((m) => target.expr.includes(m));
 
       // In Explore, we run both (instant and range) queries if both are true (selected) or both are undefined (legacy Explore queries)
       if (options.app === CoreApp.Explore && target.range === target.instant) {
@@ -309,23 +307,6 @@ export class PrometheusDatasource
         rangeTarget.instant = false;
         instantTarget.range = true;
 
-        // Create exemplar query
-        if (target.exemplar) {
-          // Only create exemplar target for different metric names
-          if (
-            !metricName ||
-            (metricName && !activeTargets.some((activeTarget) => activeTarget.expr.includes(metricName)))
-          ) {
-            const exemplarTarget = cloneDeep(target);
-            exemplarTarget.instant = false;
-            exemplarTarget.requestId += '_exemplar';
-            queries.push(this.createQuery(exemplarTarget, options, start, end));
-            activeTargets.push(exemplarTarget);
-          }
-          instantTarget.exemplar = false;
-          rangeTarget.exemplar = false;
-        }
-
         // Add both targets to activeTargets and queries arrays
         activeTargets.push(instantTarget, rangeTarget);
         queries.push(
@@ -339,19 +320,6 @@ export class PrometheusDatasource
         queries.push(this.createQuery(instantTarget, options, start, end));
         activeTargets.push(instantTarget);
       } else {
-        // It doesn't make sense to query for exemplars in dashboard if only instant is selected
-        if (target.exemplar && !target.instant) {
-          if (
-            !metricName ||
-            (metricName && !activeTargets.some((activeTarget) => activeTarget.expr.includes(metricName)))
-          ) {
-            const exemplarTarget = cloneDeep(target);
-            exemplarTarget.requestId += '_exemplar';
-            queries.push(this.createQuery(exemplarTarget, options, start, end));
-            activeTargets.push(exemplarTarget);
-          }
-          target.exemplar = false;
-        }
         queries.push(this.createQuery(target, options, start, end));
         activeTargets.push(target);
       }
@@ -363,25 +331,10 @@ export class PrometheusDatasource
     };
   };
 
-  shouldRunExemplarQuery(target: PromQuery, request: DataQueryRequest<PromQuery>): boolean {
-    if (target.exemplar) {
-      // We check all already processed targets and only create exemplar target for not used metric names
-      const metricName = this.languageProvider.histogramMetrics.find((m) => target.expr.includes(m));
-      // Remove targets that weren't processed yet (in targets array they are after current target)
-      const currentTargetIdx = request.targets.findIndex((t) => t.refId === target.refId);
-      const targets = request.targets.slice(0, currentTargetIdx).filter((t) => !t.hide);
-      const result = !metricName || (metricName && !targets.some((t) => t.expr.includes(metricName)))
-      return !!result;
-
-    }
-    return false;
-  }
-
   processTargetV2(target: PromQuery, request: DataQueryRequest<PromQuery>) {
     return {
       ...target,
       queryType: PromQueryType.timeSeriesQuery,
-      exemplar: this.shouldRunExemplarQuery(target, request),
       requestId: request.panelId + target.refId,
       // We need to pass utcOffsetSec to backend to calculate aligned range
       utcOffsetSec: this.timeSrv.timeRange().to.utcOffset() * 60,
@@ -395,7 +348,7 @@ export class PrometheusDatasource
         .query({...request, targets})
         .pipe(
           map((response) =>
-            transformV2(response, request, {exemplarTraceIdDestinations: this.exemplarTraceIdDestinations})
+            transformV2(response, request, {})
           )
         );
       // Run queries trough browser/proxy
@@ -436,7 +389,6 @@ export class PrometheusDatasource
             query,
             target,
             responseListLength: queries.length,
-            exemplarTraceIdDestinations: this.exemplarTraceIdDestinations,
           });
           return {
             data,
@@ -470,7 +422,6 @@ export class PrometheusDatasource
             target,
             responseListLength: queries.length,
             scopedVars,
-            exemplarTraceIdDestinations: this.exemplarTraceIdDestinations,
           });
         })
       );
@@ -495,18 +446,6 @@ export class PrometheusDatasource
   private runQuery<T>(query: PromQueryRequest, end: number, filter: OperatorFunction<any, T>): Observable<T> {
     if (query.instant) {
       return this.performInstantQuery(query, end).pipe(filter);
-    }
-
-    if (query.exemplar) {
-      return this.getExemplars(query).pipe(
-        catchError(() => {
-          return of({
-            data: [],
-            state: LoadingState.Done,
-          });
-        }),
-        filter
-      );
     }
 
     return this.performTimeSeriesQuery(query, query.start, query.end).pipe(filter);
@@ -835,15 +774,6 @@ export class PrometheusDatasource
     return eventList;
   };
 
-  getExemplars(query: PromQueryRequest) {
-    const url = '/api/v1/query_exemplars';
-    return this._request<PromDataSuccessResponse<PromExemplarData>>(
-      url,
-      {query: query.expr, start: query.start.toString(), end: query.end.toString()},
-      {requestId: query.requestId, headers: query.headers}
-    );
-  }
-
   async getTagKeys(options?: any) {
     if (options?.series) {
       // Get tags for the provided series only
@@ -933,27 +863,6 @@ export class PrometheusDatasource
     } catch (e) {
       console.log('Rules API is experimental. Ignore next error.');
       console.error(e);
-    }
-  }
-
-  async areExemplarsAvailable() {
-    try {
-      const res = await this.metadataRequest(
-        '/api/v1/query_exemplars',
-        {
-          query: 'test',
-          start: dateTime().subtract(30, 'minutes').valueOf().toString(),
-          end: dateTime().valueOf().toString(),
-        },
-        {
-          // Avoid alerting the user if this test fails
-          showErrorAlert: false,
-        }
-      );
-      return res.data.status === 'success';
-
-    } catch (err) {
-      return false;
     }
   }
 

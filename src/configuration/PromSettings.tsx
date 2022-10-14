@@ -17,7 +17,6 @@ import {
 
 import { PromOptions } from '../types';
 
-import { ExemplarsSettings } from './ExemplarsSettings';
 const { Select, Input, FormField } = LegacyForms;
 
 const httpOptions = [
@@ -126,16 +125,6 @@ export const PromSettings = (props: Props) => {
           </div>
         </div>
       </div>
-      <ExemplarsSettings
-        options={options.jsonData.exemplarTraceIdDestinations}
-        onChange={(exemplarOptions) =>
-          updateDatasourcePluginJsonDataOption(
-            { onOptionsChange, options },
-            'exemplarTraceIdDestinations',
-            exemplarOptions
-          )
-        }
-      />
     </>
   );
 };

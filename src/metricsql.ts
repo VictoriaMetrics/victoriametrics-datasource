@@ -1299,9 +1299,7 @@ export const FUNCTIONS = [
   }
 ];
 
-export const PROM_KEYWORDS = FUNCTIONS.map((keyword) => keyword.label);
-
-export const promqlGrammar: Grammar = {
+export const metricsqlGrammar: Grammar = {
   comment: {
     pattern: /#.*/,
   },
@@ -1367,4 +1365,4 @@ export const promqlGrammar: Grammar = {
   punctuation: /[{};()`,.]/,
 };
 
-export default promqlGrammar;
+export default metricsqlGrammar;

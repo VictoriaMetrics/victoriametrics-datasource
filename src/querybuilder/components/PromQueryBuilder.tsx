@@ -5,7 +5,7 @@ import { DataSourceApi, PanelData, SelectableValue } from '@grafana/data';
 import { EditorRow } from '../../components/QueryEditor';
 import { PrometheusDatasource } from '../../datasource';
 import { getMetadataString } from '../../language_provider';
-import promqlGrammar from '../../promql';
+import metricsqlGrammar from '../../metricsql';
 import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';
 import { LabelFilters } from '../shared/LabelFilters';
@@ -94,7 +94,7 @@ export const PromQueryBuilder = React.memo<Props>((props) => {
     return withTemplateVariableOptions(getMetrics(datasource, query));
   }, [datasource, query, withTemplateVariableOptions]);
 
-  const lang = { grammar: promqlGrammar, name: 'promql' };
+  const lang = { grammar: metricsqlGrammar, name: 'promql' };
 
   return (
     <>

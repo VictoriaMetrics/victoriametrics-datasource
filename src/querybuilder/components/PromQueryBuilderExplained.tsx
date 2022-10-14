@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Stack } from '../../components/QueryEditor';
-import promqlGrammar from '../../promql';
+import metricsqlGrammar from '../../metricsql';
 import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';
 import { OperationExplainedBox } from '../shared/OperationExplainedBox';
@@ -17,7 +17,7 @@ export interface Props {
 
 export const PromQueryBuilderExplained = React.memo<Props>(({ query }) => {
   const visQuery = buildVisualQueryFromString(query || '').query;
-  const lang = { grammar: promqlGrammar, name: 'promql' };
+  const lang = { grammar: metricsqlGrammar, name: 'promql' };
 
   return (
     <Stack gap={0.5} direction="column">

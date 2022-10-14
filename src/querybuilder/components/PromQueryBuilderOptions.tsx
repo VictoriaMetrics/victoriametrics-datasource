@@ -41,12 +41,6 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
   const queryTypeOptions = getQueryTypeOptions(app === CoreApp.Explore || app === CoreApp.PanelEditor);
   const onQueryTypeChange = getQueryTypeChangeHandler(query, onChange);
 
-  const onExemplarChange = (event: SyntheticEvent<HTMLInputElement>) => {
-    const isEnabled = event.currentTarget.checked;
-    onChange({ ...query, exemplar: isEnabled });
-    onRunQuery();
-  };
-
   const onIntervalFactorChange = (value: SelectableValue<number>) => {
     onChange({ ...query, intervalFactor: value.value });
     onRunQuery();
@@ -91,11 +85,6 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
         <EditorField label="Type">
           <RadioButtonGroup options={queryTypeOptions} value={queryTypeValue} onChange={onQueryTypeChange} />
         </EditorField>
-        {shouldShowExemplarSwitch(query, app) && (
-          <EditorField label="Exemplars">
-            <EditorSwitch value={query.exemplar || false} onChange={onExemplarChange} />
-          </EditorField>
-        )}
         {query.intervalFactor && query.intervalFactor > 1 && (
           <EditorField label="Resolution">
             <Select
@@ -112,14 +101,6 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
   );
 });
 
-function shouldShowExemplarSwitch(query: PromQuery, app?: CoreApp) {
-  if (app === CoreApp.UnifiedAlerting || !query.range) {
-    return false;
-  }
-
-  return true;
-}
-
 function getQueryTypeValue(query: PromQuery) {
   return query.range && query.instant ? 'both' : query.instant ? 'instant' : 'range';
 }
@@ -131,14 +112,6 @@ function getCollapsedInfo(query: PromQuery, formatOption: string, queryType: str
   items.push(`Format: ${formatOption}`);
   items.push(`Step: ${query.interval ?? 'auto'}`);
   items.push(`Type: ${queryType}`);
-
-  if (shouldShowExemplarSwitch(query, app)) {
-    if (query.exemplar) {
-      items.push(`Exemplars: true`);
-    } else {
-      items.push(`Exemplars: false`);
-    }
-  }
   return items;
 }
 
