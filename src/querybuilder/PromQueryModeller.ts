@@ -1,4 +1,4 @@
-import { FUNCTIONS } from '../promql';
+import { FUNCTIONS } from '../metricsql';
 
 import { getAggregationOperations } from './aggregations';
 import { getOperationDefinitions } from './operations';

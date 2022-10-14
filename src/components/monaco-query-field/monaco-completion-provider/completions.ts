@@ -1,5 +1,5 @@
 import { escapeLabelValueInExactSelector } from '../../../language_utils';
-import { FUNCTIONS } from '../../../promql';
+import { FUNCTIONS } from '../../../metricsql';
 
 import type { Situation, Label } from './situation';
 import { NeverCaseError } from './util';
