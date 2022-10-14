@@ -1,7 +1,8 @@
-# Prometheus Data Source - Native Plugin
+# VictoriaMetrics data source for Grafana
 
-Grafana ships with **built in** support for Prometheus, the open-source service monitoring system and time series database.
+The VictoriaMetrics data source plugin allows you to query and visualize VictoriaMetrics
+data from within Grafana.
 
 Read more about it here:
 
-[http://docs.grafana.org/datasources/prometheus/](http://docs.grafana.org/datasources/prometheus/)
+[https://docs.victoriametrics.com/](https://docs.victoriametrics.com/)
