@@ -2,8 +2,6 @@ import {merge} from 'webpack-merge';
 
 import grafanaConfig from './.config/webpack/webpack.config';
 
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
-// const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const path = require('path');
 
 const config = (env) => {
