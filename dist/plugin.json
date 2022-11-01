@@ -71,15 +71,24 @@
       "small": "img/vm_logo.svg",
       "large": "img/vm_logo.svg"
     },
+    "screenshots": [
+      {
+        "name": "Connection properties",
+        "path": "img/datasource.jpg"
+      },
+      {
+        "name": "Query editor",
+        "path": "img/query_editor.jpg"
+      }
+    ],
     "links": [
       {
         "name": "Learn more",
         "url": "https://docs.victoriametrics.com/"
       }
     ],
-    "screenshots": [],
     "version": "1.0.0",
-    "updated": "2022-10-14"
+    "updated": "2022-10-20"
   },
   "dependencies": {
     "grafanaDependency": ">=8.3.0",

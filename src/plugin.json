@@ -71,13 +71,22 @@
       "small": "img/vm_logo.svg",
       "large": "img/vm_logo.svg"
     },
+    "screenshots": [
+      {
+        "name": "Connection properties",
+        "path": "img/datasource.jpg"
+      },
+      {
+        "name": "Query editor",
+        "path": "img/query_editor.jpg"
+      }
+    ],
     "links": [
       {
         "name": "Learn more",
         "url": "https://docs.victoriametrics.com/"
       }
     ],
-    "screenshots": [],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
