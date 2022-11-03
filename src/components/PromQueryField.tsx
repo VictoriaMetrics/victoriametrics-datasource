@@ -24,11 +24,10 @@ import {
   makePromiseCancelable,
 } from '../utils/CancelablePromise';
 
-import {LocalStorageValueProvider} from "./LocalStorageValueProvider";
+import { LocalStorageValueProvider } from "./LocalStorageValueProvider";
 import { PrometheusMetricsBrowser } from './PrometheusMetricsBrowser';
 import { MonacoQueryFieldWrapper } from './monaco-query-field/MonacoQueryFieldWrapper';
 
-export const RECORDING_RULES_GROUP = '__recording_rules__';
 const LAST_USED_LABELS_KEY = 'grafana.datasources.prometheus.browser.labels';
 
 function getChooserText(metricsLookupDisabled: boolean, hasSyntax: boolean, hasMetrics: boolean) {

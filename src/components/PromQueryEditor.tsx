@@ -2,7 +2,7 @@ import { map } from 'lodash';
 import React, { PureComponent } from 'react';
 
 // Types
-import { CoreApp, SelectableValue } from '@grafana/data';
+import { SelectableValue } from '@grafana/data';
 import { InlineFormLabel, LegacyForms, Select } from '@grafana/ui';
 
 import { PromQuery } from '../types';
@@ -63,7 +63,7 @@ export class PromQueryEditor extends PureComponent<PromQueryEditorProps, State> 
     };
   }
 
-  onFieldChange = (query: PromQuery, override?: any) => {
+  onFieldChange = (query: PromQuery) => {
     this.query.expr = query.expr;
   };
 

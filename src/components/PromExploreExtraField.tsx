@@ -1,7 +1,5 @@
 import { css, cx } from '@emotion/css';
-import { isEqual } from 'lodash';
-import React, { memo, useCallback } from 'react';
-import { usePrevious } from 'react-use';
+import React, { memo } from 'react';
 
 import { InlineFormLabel, RadioButtonGroup } from '@grafana/ui';
 
@@ -18,7 +16,6 @@ export interface PromExploreExtraFieldProps {
 export const PromExploreExtraField: React.FC<PromExploreExtraFieldProps> = memo(
   ({ query, onChange, onRunQuery }) => {
     const rangeOptions = getQueryTypeOptions(true);
-    const prevQuery = usePrevious(query);
 
     function onChangeQueryStep(interval: string) {
       onChange({ ...query, interval });

@@ -1,4 +1,4 @@
-import {IMarkdownString} from "monaco-editor";
+import { IMarkdownString } from "monaco-editor";
 
 import type { Monaco, monacoTypes } from '@grafana/ui';
 

@@ -1,4 +1,4 @@
-import {merge} from 'webpack-merge';
+import { merge } from 'webpack-merge';
 
 import grafanaConfig from './.config/webpack/webpack.config';
 
@@ -60,11 +60,11 @@ const config = (env) => {
         {
           test: /\.(svg|ico|jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|cur|ani|pdf)(\?.*)?$/,
           type: 'asset/resource',
-          generator: {filename: 'static/img/[name].[hash:8][ext]'},
+          generator: { filename: 'static/img/[name].[hash:8][ext]' },
         },
       ],
     },
-    performance: {hints: false},
+    performance: { hints: false },
   });
 }
 
