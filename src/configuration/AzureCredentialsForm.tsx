@@ -1,9 +1,9 @@
-import React, {ChangeEvent, FunctionComponent, useEffect, useReducer, useState} from 'react';
+import React, { ChangeEvent, FunctionComponent, useEffect, useReducer, useState } from 'react';
 
-import {SelectableValue} from '@grafana/data';
-import {Input, InlineFormLabel, Button, Select} from '@grafana/ui';
+import { SelectableValue } from '@grafana/data';
+import { Input, InlineFormLabel, Button, Select } from '@grafana/ui';
 
-import {AzureAuthType, AzureCredentials, isCredentialsComplete} from './AzureCredentials';
+import { AzureAuthType, AzureCredentials, isCredentialsComplete } from './AzureCredentials';
 
 export interface Props {
   managedIdentityEnabled: boolean;

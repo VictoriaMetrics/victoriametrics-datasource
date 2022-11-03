@@ -9,6 +9,7 @@
   "rules": {
     "react/prop-types": "off",
     "@emotion/jsx-import": "error",
+    "object-curly-spacing": [2, "always"],
     "lodash/import-scope": [2, "member"],
     "jest/no-focused-tests": "error",
     "import/order": [

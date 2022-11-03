@@ -1,6 +1,6 @@
-import {cloneDeep, defaults} from 'lodash';
-import {forkJoin, lastValueFrom, merge, Observable, of, OperatorFunction, pipe, throwError} from 'rxjs';
-import {catchError, filter, map, tap} from 'rxjs/operators';
+import { cloneDeep, defaults } from 'lodash';
+import { forkJoin, lastValueFrom, merge, Observable, of, OperatorFunction, pipe, throwError } from 'rxjs';
+import { catchError, filter, map, tap } from 'rxjs/operators';
 
 import {
   AbstractQuery,
@@ -37,15 +37,15 @@ import {
 } from '@grafana/runtime';
 
 
-import {addLabelToQuery} from './add_label_to_query';
-import {AnnotationQueryEditor} from './components/AnnotationQueryEditor';
+import { addLabelToQuery } from './add_label_to_query';
+import { AnnotationQueryEditor } from './components/AnnotationQueryEditor';
 import PrometheusLanguageProvider from './language_provider';
-import {expandRecordingRules} from './language_utils';
-import {renderLegendFormat} from './legend';
+import { expandRecordingRules } from './language_utils';
+import { renderLegendFormat } from './legend';
 import PrometheusMetricFindQuery from './metric_find_query';
-import {getInitHints, getQueryHints} from './query_hints';
-import {getOriginalMetricName, transform, transformV2} from './result_transformer';
-import {getTimeSrv, TimeSrv} from './services/TimeSrv';
+import { getInitHints, getQueryHints } from './query_hints';
+import { getOriginalMetricName, transform, transformV2 } from './result_transformer';
+import { getTimeSrv, TimeSrv } from './services/TimeSrv';
 import {
   ExemplarTraceIdDestination,
   PromDataErrorResponse,
@@ -58,8 +58,8 @@ import {
   PromScalarData,
   PromVectorData,
 } from './types';
-import {safeStringifyValue} from './utils/safeStringifyValue';
-import {PrometheusVariableSupport} from './variables';
+import { safeStringifyValue } from './utils/safeStringifyValue';
+import { PrometheusVariableSupport } from './variables';
 
 
 enum PromApplication {
@@ -345,7 +345,7 @@ export class PrometheusDatasource
     if (this.access === 'proxy') {
       const targets = request.targets.map((target) => this.processTargetV2(target, request));
       return super
-        .query({...request, targets})
+        .query({ ...request, targets })
         .pipe(
           map((response) =>
             transformV2(response, request, {})
@@ -355,7 +355,7 @@ export class PrometheusDatasource
     } else {
       const start = this.getPrometheusTime(request.range.from, false);
       const end = this.getPrometheusTime(request.range.to, true);
-      const {queries, activeTargets} = this.prepareTargets(request, start, end);
+      const { queries, activeTargets } = this.prepareTargets(request, start, end);
 
       // No valid targets, return the empty result to save a round trip.
       if (!queries || !queries.length) {
@@ -489,8 +489,8 @@ export class PrometheusDatasource
     if (interval !== adjustedInterval) {
       interval = adjustedInterval;
       scopedVars = Object.assign({}, options.scopedVars, {
-        __interval: {text: interval + 's', value: interval + 's'},
-        __interval_ms: {text: interval * 1000, value: interval * 1000},
+        __interval: { text: interval + 's', value: interval + 's' },
+        __interval_ms: { text: interval * 1000, value: interval * 1000 },
         ...this.getRateIntervalScopedVariable(interval, scrapeInterval),
         ...this.getRangeScopedVars(options.range),
       });
@@ -521,7 +521,7 @@ export class PrometheusDatasource
       scrapeInterval = 15;
     }
     const rateInterval = Math.max(interval + scrapeInterval, 4 * scrapeInterval);
-    return {__rate_interval: {text: rateInterval + 's', value: rateInterval + 's'}};
+    return { __rate_interval: { text: rateInterval + 's', value: rateInterval + 's' } };
   }
 
   adjustInterval(interval: number, minInterval: number, range: number, intervalFactor: number) {
@@ -538,7 +538,7 @@ export class PrometheusDatasource
 
   performTimeSeriesQuery(query: PromQueryRequest, start: number, end: number) {
     if (start > end) {
-      throw {message: 'Invalid time range'};
+      throw { message: 'Invalid time range' };
     }
 
     const url = '/api/v1/query_range';
@@ -625,8 +625,8 @@ export class PrometheusDatasource
     }
 
     const scopedVars = {
-      __interval: {text: this.interval, value: this.interval},
-      __interval_ms: {text: rangeUtil.intervalToMs(this.interval), value: rangeUtil.intervalToMs(this.interval)},
+      __interval: { text: this.interval, value: this.interval },
+      __interval_ms: { text: rangeUtil.intervalToMs(this.interval), value: rangeUtil.intervalToMs(this.interval) },
       ...this.getRangeScopedVars(this.timeSrv.timeRange()),
     };
     const interpolated = this.templateSrv.replace(query, scopedVars, this.interpolateQueryExpr);
@@ -638,9 +638,9 @@ export class PrometheusDatasource
     const msRange = range.to.diff(range.from);
     const sRange = Math.round(msRange / 1000);
     return {
-      __range_ms: {text: msRange, value: msRange},
-      __range_s: {text: sRange, value: sRange},
-      __range: {text: sRange + 's', value: sRange + 's'},
+      __range_ms: { text: msRange, value: msRange },
+      __range_s: { text: sRange, value: sRange },
+      __range: { text: sRange + 's', value: sRange + 's' },
     };
   }
 
@@ -653,7 +653,7 @@ export class PrometheusDatasource
     // }
 
     const annotation = options.annotation;
-    const {expr = ''} = annotation;
+    const { expr = '' } = annotation;
 
     if (!expr) {
       return Promise.resolve([]);
@@ -691,13 +691,13 @@ export class PrometheusDatasource
   }
 
   processAnnotationResponse = (options: AnnotationQueryRequest<PromQuery>, data: BackendDataSourceResponse) => {
-    const frames: DataFrame[] = toDataQueryResponse({data: data}).data;
+    const frames: DataFrame[] = toDataQueryResponse({ data: data }).data;
     if (!frames || !frames.length) {
       return [];
     }
 
     const annotation = options.annotation;
-    const {tagKeys = '', titleFormat = '', textFormat = ''} = annotation;
+    const { tagKeys = '', titleFormat = '', textFormat = '' } = annotation;
 
     const step = rangeUtil.intervalToSeconds(annotation.step || ANNOTATION_QUERY_STEP_DEFAULT) * 1000;
     const tagKeysArray = tagKeys.split(',');
@@ -784,23 +784,23 @@ export class PrometheusDatasource
       let tags: string[] = [];
       seriesLabels.map((value) => (tags = tags.concat(Object.keys(value))));
       const uniqueLabels = [...new Set(tags)];
-      return uniqueLabels.map((value: any) => ({text: value}));
+      return uniqueLabels.map((value: any) => ({ text: value }));
     } else {
       // Get all tags
       const result = await this.metadataRequest('/api/v1/labels');
-      return result?.data?.data?.map((value: any) => ({text: value})) ?? [];
+      return result?.data?.data?.map((value: any) => ({ text: value })) ?? [];
     }
   }
 
   async getTagValues(options: { key?: string } = {}) {
     const result = await this.metadataRequest(`/api/v1/label/${options.key}/values`);
-    return result?.data?.data?.map((value: any) => ({text: value})) ?? [];
+    return result?.data?.data?.map((value: any) => ({ text: value })) ?? [];
   }
 
   async testDatasource() {
     const now = new Date().getTime();
     const request: DataQueryRequest<PromQuery> = {
-      targets: [{refId: 'test', expr: '1+1', instant: true}],
+      targets: [{ refId: 'test', expr: '1+1', instant: true }],
       requestId: `${this.id}-health`,
       scopedVars: {},
       dashboardId: 0,
@@ -817,7 +817,7 @@ export class PrometheusDatasource
     return lastValueFrom(this.query(request))
       .then((res: DataQueryResponse) => {
         if (!res || !res.data || res.state !== LoadingState.Done) {
-          return {status: 'error', message: `Error reading Prometheus: ${res?.error?.message}`};
+          return { status: 'error', message: `Error reading Prometheus: ${res?.error?.message}` };
         } else {
           return {
             status: 'success',
@@ -827,7 +827,7 @@ export class PrometheusDatasource
       })
       .catch((err: any) => {
         console.error('Prometheus Error', err);
-        return {status: 'error', message: err.message};
+        return { status: 'error', message: err.message };
       });
   }
 
@@ -854,7 +854,7 @@ export class PrometheusDatasource
 
   async loadRules() {
     try {
-      const res = await this.metadataRequest('/api/v1/rules', {}, {showErrorAlert: false});
+      const res = await this.metadataRequest('/api/v1/rules', {}, { showErrorAlert: false });
       const groups = res.data?.data?.groups;
 
       if (groups) {
@@ -870,7 +870,7 @@ export class PrometheusDatasource
     let expression = query.expr ?? '';
     switch (action.type) {
       case 'ADD_FILTER': {
-        const {key, value} = action.options ?? {};
+        const { key, value } = action.options ?? {};
         if (key && value) {
           expression = addLabelToQuery(expression, key, value);
         }
@@ -878,7 +878,7 @@ export class PrometheusDatasource
         break;
       }
       case 'ADD_FILTER_OUT': {
-        const {key, value} = action.options ?? {};
+        const { key, value } = action.options ?? {};
         if (key && value) {
           expression = addLabelToQuery(expression, key, value, '!=');
         }
@@ -905,7 +905,7 @@ export class PrometheusDatasource
       default:
         break;
     }
-    return {...query, expr: expression};
+    return { ...query, expr: expression };
   }
 
   getPrometheusTime(date: string | DateTime, roundUp: boolean) {
@@ -932,8 +932,8 @@ export class PrometheusDatasource
     const adhocFilters = this.templateSrv.getAdhocFilters(this.name);
 
     return adhocFilters.reduce((acc: string, filter: { key?: any; operator?: any; value?: any }) => {
-      const {key, operator} = filter;
-      let {value} = filter;
+      const { key, operator } = filter;
+      let { value } = filter;
       if (operator === '=~' || operator === '!~') {
         value = prometheusRegularEscape(value);
       }

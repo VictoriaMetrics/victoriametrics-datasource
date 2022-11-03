@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { SIGV4ConnectionConfig } from '@grafana/aws-sdk';
 import { DataSourcePluginOptionsEditorProps, DataSourceSettings } from '@grafana/data';
 import { config } from '@grafana/runtime';
-import {AlertingSettings, DataSourceHttpSettings, Alert, Icon} from '@grafana/ui';
+import { AlertingSettings, DataSourceHttpSettings, Alert, Icon } from '@grafana/ui';
 
 import { getAllAlertmanagerDataSources } from '../../app/features/alerting/unified/utils/alertmanager';
 import { PromOptions } from '../types';
@@ -46,7 +46,7 @@ export const ConfigEditor = (props: Props) => {
              target="_blank"
              rel="noreferrer">
              <Icon name="file-alt"/>
-             <span style={{marginLeft: "4px"}}>Cluster VM</span>
+             <span style={{ marginLeft: "4px" }}>Cluster VM</span>
            </a>
          </div>
          <div className="gf-form">
@@ -56,7 +56,7 @@ export const ConfigEditor = (props: Props) => {
              target="_blank"
              rel="noreferrer">
              <Icon name="file-alt"/>
-             <span style={{marginLeft: "4px"}}>Grafana setup</span>
+             <span style={{ marginLeft: "4px" }}>Grafana setup</span>
            </a>
          </div>
        </div>
