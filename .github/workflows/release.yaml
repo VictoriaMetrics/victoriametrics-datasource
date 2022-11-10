@@ -13,6 +13,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      - name: Build Project
+        run: |
+          yarn install
+          npm run build
       - name: Build ZIP
         run: |
           cp -r ./pkg ./${{ env.NAME }} && zip ${{ env.NAME }}-${{ env.TAG }}.zip ${{ env.NAME }} -r && rm -rf ${{ env.NAME }}
