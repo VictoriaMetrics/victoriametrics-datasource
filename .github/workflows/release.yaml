@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Build ZIP
         run: |
-          cp -r ./dist ./${{ env.NAME }} && zip ${{ env.NAME }}-${{ env.TAG }}.zip ${{ env.NAME }} -r && rm -rf ${{ env.NAME }}
+          cp -r ./pkg ./${{ env.NAME }} && zip ${{ env.NAME }}-${{ env.TAG }}.zip ${{ env.NAME }} -r && rm -rf ${{ env.NAME }}
           sha1sum ./${{ env.NAME }}-${{ env.TAG }}.zip >${{ env.NAME }}-${{ env.TAG }}.zip.sha1
       - name: Upload Release Asset
         id: upload-release-asset
@@ -37,3 +37,7 @@ jobs:
           asset_path: ./${{ env.NAME }}-${{ env.TAG }}.zip.sha1
           asset_name: ${{ env.NAME }}-${{ env.TAG }}.zip.sha1
           asset_content_type: application/zip
+      - name: Update version package.json
+        uses: pocket-apps/action-update-version@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
