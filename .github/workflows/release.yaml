@@ -19,7 +19,7 @@ jobs:
           npm run build
       - name: Build ZIP
         run: |
-          cp -r ./pkg ./${{ env.NAME }} && zip ${{ env.NAME }}-${{ env.TAG }}.zip ${{ env.NAME }} -r && rm -rf ${{ env.NAME }}
+          cp -r ./dist ./${{ env.NAME }} && zip ${{ env.NAME }}-${{ env.TAG }}.zip ${{ env.NAME }} -r && rm -rf ${{ env.NAME }}
           sha1sum ./${{ env.NAME }}-${{ env.TAG }}.zip >${{ env.NAME }}-${{ env.TAG }}.zip.sha1
       - name: Upload Release Asset
         id: upload-release-asset
