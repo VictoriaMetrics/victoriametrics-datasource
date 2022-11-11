@@ -87,8 +87,8 @@
         "url": "https://docs.victoriametrics.com/"
       }
     ],
-    "version": "1.0.0",
-    "updated": "2022-11-03"
+    "version": "0.1.0",
+    "updated": "2022-11-11"
   },
   "dependencies": {
     "grafanaDependency": ">=8.3.0",

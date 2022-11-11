@@ -87,7 +87,7 @@
         "url": "https://docs.victoriametrics.com/"
       }
     ],
-    "version": "%VERSION%",
+    "version": "0.1.0",
     "updated": "%TODAY%"
   },
   "dependencies": {
