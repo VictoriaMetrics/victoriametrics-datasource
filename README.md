@@ -19,7 +19,7 @@ Grafana docs can be found [here](https://grafana.com/docs/grafana/latest/setup-g
 2. To download plugin build and move contents into grafana plugins directory:
 
 ``` bash
-curl -L https://github.com/VictoriaMetrics/grafana-datasource/raw/main/victoriametrics-datasource-1.0.0.zip -o /var/lib/grafana/plugins/plugin.zip
+curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/v0.1.0/victoriametrics-datasource-v0.1.0.zip -o /var/lib/grafana/plugins/plugin.zip
 unzip -d /var/lib/grafana/plugins/ /var/lib/grafana/plugins/plugin.zip
 rm /var/lib/grafana/plugins/plugin.zip
 ```
