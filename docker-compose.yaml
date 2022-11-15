@@ -1,6 +1,32 @@
 version: '3.0'
 
 services:
+  backend_builder:
+    image: golang:1.19
+    working_dir: /go/src/grafana-datasource
+    volumes:
+      - ./:/go/src/grafana-datasource
+      - ./.cache:/go/pkg/mod
+      - ./.cache:/go-cache
+    command: |
+      bash -xec "
+        GOOS=darwin GOARCH=amd64 go build -o ./dist/victoriametrics_datasource_plugin_darwin_amd64 ./pkg/ && \
+        chmod +x ./dist/victoriametrics_datasource_plugin*
+      "
+
+  frontend_builder:
+    image: node:16.18.1
+    working_dir: /grafana-datasource
+    volumes:
+      - ./:/grafana-datasource
+      # for speedup npm install
+      - "node_modules:/grafana-clickhouse/node_modules"
+    command: |
+      bash -xec "      
+        if [[ "0" == `ls -la ./node_modules/ | wc -l` ]]; then yarn install --omit=dev; fi && \
+        yarn run build
+      "
+
   grafana:
     container_name: 'basic-datasource'
     build:
@@ -12,3 +38,6 @@ services:
     volumes:
       - ./dist:/var/lib/grafana/plugins/basic-datasource,
       - ./provisioning:/etc/grafana/provisioning
+
+volumes:
+  node_modules:
