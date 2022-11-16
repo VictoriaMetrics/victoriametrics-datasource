@@ -5,7 +5,6 @@ import { Value } from 'slate';
 
 import {
   AbstractLabelMatcher,
-  AbstractLabelOperator,
   AbstractQuery,
   dateTime,
   HistoryItem,
@@ -16,6 +15,7 @@ import { CompletionItem, CompletionItemGroup, SearchFunctionType, TypeaheadInput
 
 import { PrometheusDatasource } from './datasource';
 import {
+  AbstractLabelOperator,
   addLimitInfo,
   extractLabelMatchers,
   fixSummariesMetadata,

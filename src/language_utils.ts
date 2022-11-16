@@ -1,7 +1,7 @@
 import { invert } from 'lodash';
 import { Token } from 'prismjs';
 
-import { DataQuery, AbstractQuery, AbstractLabelOperator, AbstractLabelMatcher } from '@grafana/data';
+import { DataQuery, AbstractQuery, AbstractLabelMatcher } from '@grafana/data';
 
 import { addLabelToQuery } from './add_label_to_query';
 import { SUGGESTIONS_LIMIT } from './language_provider';
@@ -262,6 +262,13 @@ export function escapeLabelValueInExactSelector(labelValue: string): string {
 
 export function escapeLabelValueInRegexSelector(labelValue: string): string {
   return escapeLabelValueInExactSelector(escapePrometheusRegexp(labelValue));
+}
+
+export enum AbstractLabelOperator {
+  Equal = "Equal",
+  NotEqual = "NotEqual",
+  EqualRegEx = "EqualRegEx",
+  NotEqualRegEx = "NotEqualRegEx"
 }
 
 const FromPromLikeMap: Record<string, AbstractLabelOperator> = {
