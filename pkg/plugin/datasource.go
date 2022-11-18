@@ -11,18 +11,6 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
-	"github.com/grafana/grafana-plugin-sdk-go/data"
-)
-
-// Make sure Datasource implements required interfaces. This is important to do
-// since otherwise we will only get a not implemented error response from plugin in
-// runtime. In this example datasource instance implements backend.QueryDataHandler,
-// backend.CheckHealthHandler interfaces. Plugin should not implement all these
-// interfaces- only those which are required for a particular task.
-var (
-	_ backend.QueryDataHandler      = (*Datasource)(nil)
-	_ backend.CheckHealthHandler    = (*Datasource)(nil)
-	_ instancemgmt.InstanceDisposer = (*Datasource)(nil)
 )
 
 // apiMetrics is a struct containing a slice of dataPoint
@@ -94,8 +82,14 @@ func (d *Datasource) query(ctx context.Context, pCtx backend.PluginContext, quer
 	// Response to be returned.
 	var response backend.DataResponse
 
+	var q Query
+	if err := json.Unmarshal(query.JSON, &q); err != nil {
+		return response, err
+	}
+
+	reqURL := q.GetQueryURL(query)
 	// Do HTTP request
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, d.settings.URL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
 	if err != nil {
 		return response, fmt.Errorf("new request with context: %w", err)
 	}
@@ -108,7 +102,6 @@ func (d *Datasource) query(ctx context.Context, pCtx backend.PluginContext, quer
 			log.DefaultLogger.Error("query: failed to close response body", "err", err.Error())
 		}
 	}()
-	defer resp.Body.Close()
 
 	// Make sure the response was successful
 	if resp.StatusCode != http.StatusOK {
@@ -116,29 +109,14 @@ func (d *Datasource) query(ctx context.Context, pCtx backend.PluginContext, quer
 	}
 
 	// Decode response
-	var body apiMetrics
-	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+	var r Response
+	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
 		return response, fmt.Errorf("decode: %w", err)
 	}
+	r.Instant = q.Instant
+	r.Range = q.Range
 
-	// Create slice of values for time and values.
-	times := make([]time.Time, len(body.DataPoints))
-	values := make([]float64, len(body.DataPoints))
-	for i, p := range body.DataPoints {
-		times[i] = p.Time
-		values[i] = p.Value
-	}
-
-	// Create frame and add it to the response
-	response.Frames = append(
-		response.Frames,
-		data.NewFrame(
-			"response",
-			data.NewField("time", nil, times),
-			data.NewField("values", nil, values),
-		),
-	)
-	return response, nil
+	return r.PrepareFrames()
 }
 
 // CheckHealth performs a request to the specified data source and returns an error if the HTTP handler did not return
