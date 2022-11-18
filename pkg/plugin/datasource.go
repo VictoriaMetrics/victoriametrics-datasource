@@ -86,7 +86,7 @@ func (d *Datasource) query(ctx context.Context, pCtx backend.PluginContext, quer
 	if err := json.Unmarshal(query.JSON, &q); err != nil {
 		return response, err
 	}
-
+	q.sourceURL = d.settings.URL
 	reqURL := q.GetQueryURL(query)
 	// Do HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
