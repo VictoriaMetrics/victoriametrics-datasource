@@ -41,7 +41,7 @@ func (r *Response) PrepareFrames() (backend.DataResponse, error) {
 		return r.processInstanceResponse()
 	}
 	if r.Range {
-		return r.processInstanceResponse()
+		return r.processRangeResponse()
 
 	}
 	return response, nil
