@@ -6,67 +6,76 @@ import (
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
+)
+
+const (
+	varInterval     = "$__interval"
+	varRateInterval = "$__rate_interval"
+
+	instantQueryPath = "/api/v1/query"
+	rangeQueryPath   = "/api/v1/query_range"
 )
 
 type Query struct {
-	RefId      string        `json:"refId"`
-	Instant    bool          `json:"instant"`
-	Range      bool          `json:"range"`
-	IntervalMs time.Duration `json:"intervalMs"`
-	Expr       string        `json:"expr"`
-	From       time.Time
-	To         time.Time
-	sourceURL  string
+	RefId        string `json:"refId"`
+	Instant      bool   `json:"instant"`
+	Range        bool   `json:"range"`
+	Interval     string `json:"interval"`
+	IntervalMs   int64  `json:"intervalMs"`
+	TimeInterval string `json:"timeInterval"`
+	Expr         string `json:"expr"`
+	From         time.Time
+	To           time.Time
+	Step         time.Duration
 }
 
 type instantQuery struct {
-	RefId string
-	Expr  string
-	Step  time.Duration
-	From  time.Time
+	Expr string
+	Step time.Duration
+	Time time.Time
 }
 
 func (i *instantQuery) String() string {
 	query := url.QueryEscape(i.Expr)
-	t := url.QueryEscape(i.From.Format(time.RFC3339))
-	return fmt.Sprintf("/api/v1/query?query=%s&time=%s", query, t)
+	return fmt.Sprintf("%s?query=%s&time=%d&step=%f", instantQueryPath, query, i.Time.Unix(), i.Step.Seconds())
 }
 
 type queryRange struct {
-	RefId string `json:"refId"`
-	Expr  string `json:"expr"`
-	From  time.Time
-	To    time.Time
+	Expr  string
+	Start time.Time
+	End   time.Time
 	Step  time.Duration
 }
 
 func (qr *queryRange) String() string {
 	query := url.QueryEscape(qr.Expr)
-	start := url.QueryEscape(qr.From.Format(time.RFC3339))
-	end := url.QueryEscape(qr.To.Format(time.RFC3339))
-	return fmt.Sprintf("/api/v1/query_range?query=%s&start=%s&end=%s", query, start, end)
+	return fmt.Sprintf("%s?query=%s&start=%d&end=%d&step=%f", rangeQueryPath, query, qr.Start.Unix(), qr.End.Unix(), qr.Step.Seconds())
 }
 
-func (q *Query) GetQueryURL(query backend.DataQuery) string {
+func (q *Query) GetQueryURL(timeRange backend.TimeRange, url string) string {
 	var reqURL string
 	if q.Instant {
 		iq := instantQuery{
-			RefId: query.RefID,
-			Expr:  q.Expr,
-			Step:  q.IntervalMs,
-			From:  query.TimeRange.From,
+			Expr: q.Expr,
+			Step: q.Step,
+			Time: timeRange.To,
 		}
-		reqURL = fmt.Sprintf("%s%s", q.sourceURL, iq.String())
+		reqURL = fmt.Sprintf("%s%s", url, iq.String())
 	}
 	if q.Range {
 		qr := queryRange{
-			RefId: query.RefID,
 			Expr:  q.Expr,
-			From:  query.TimeRange.From,
-			To:    query.TimeRange.To,
-			Step:  q.IntervalMs,
+			Start: timeRange.From,
+			End:   timeRange.To,
+			Step:  q.Step,
 		}
-		reqURL = fmt.Sprintf("%s%s", q.sourceURL, qr.String())
+		reqURL = fmt.Sprintf("%s%s", url, qr.String())
 	}
+	log.DefaultLogger.Info("REQUEST URL => %s", reqURL)
 	return reqURL
+}
+
+func (q *Query) WithIntervalVariable() bool {
+	return q.Interval == varInterval || q.Interval == varRateInterval
 }

@@ -13,16 +13,9 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
-// apiMetrics is a struct containing a slice of dataPoint
-type apiMetrics struct {
-	DataPoints []apiDataPoint `json:"datapoints"`
-}
-
-// apiDataPoint is a single data point with a timestamp and a float value
-type apiDataPoint struct {
-	Time  time.Time `json:"time"`
-	Value float64   `json:"value"`
-}
+const (
+	defaultScrapeInterval = 15 * time.Second
+)
 
 // NewDatasource creates a new datasource instance.
 func NewDatasource(settings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
@@ -86,8 +79,19 @@ func (d *Datasource) query(ctx context.Context, pCtx backend.PluginContext, quer
 	if err := json.Unmarshal(query.JSON, &q); err != nil {
 		return response, err
 	}
-	q.sourceURL = d.settings.URL
-	reqURL := q.GetQueryURL(query)
+
+	if q.WithIntervalVariable() {
+		q.Interval = ""
+	}
+
+	minInterval, err := getIntervalFrom(q.TimeInterval, q.Interval, q.IntervalMs, defaultScrapeInterval)
+	if err != nil {
+		return response, fmt.Errorf("error calculate minimal interval: %w", err)
+	}
+	expr := interpolateVariables(q, minInterval, q.Interval)
+	q.Expr = expr
+	q.Step = calcStep(minInterval, query.TimeRange, query.MaxDataPoints)
+	reqURL := q.GetQueryURL(query.TimeRange, d.settings.URL)
 	// Do HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
 	if err != nil {

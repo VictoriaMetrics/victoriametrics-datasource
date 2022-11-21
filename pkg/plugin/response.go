@@ -15,9 +15,9 @@ type Metric struct {
 }
 
 type Result struct {
-	Metric Metric         `json:"metric"`
-	Values []Value        `json:"values"`
-	Value  [2]interface{} `json:"value"`
+	Metric Metric  `json:"metric"`
+	Values []Value `json:"values"`
+	Value  Value   `json:"value"`
 }
 
 type Value [2]interface{}
@@ -35,16 +35,15 @@ type Response struct {
 }
 
 func (r *Response) PrepareFrames() (backend.DataResponse, error) {
-	var response backend.DataResponse
 	// Create slice of values for time and values.
 	if r.Instant {
 		return r.processInstanceResponse()
 	}
 	if r.Range {
 		return r.processRangeResponse()
-
 	}
-	return response, nil
+	// in older dashboards we should use range query
+	return r.processRangeResponse()
 }
 
 func (r *Response) processRangeResponse() (backend.DataResponse, error) {
