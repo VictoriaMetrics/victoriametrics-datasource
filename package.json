@@ -1,10 +1,12 @@
 {
-  "name": "victoria-metrics",
-  "version": "0.1.0",
+  "name": "victoriametrics-datasource",
+  "version": "0.1.1",
   "description": "Showcase how to build a basic datasource plugin",
   "scripts": {
+    "zip": "cp -r ./dist ./$npm_package_name && zip $npm_package_name-v$npm_package_version.zip $npm_package_name -r && rm -rf $npm_package_name",
+    "sha": "sha1sum ./$npm_package_name-v$npm_package_version.zip >$npm_package_name-v$npm_package_version.zip.sha1",
     "build": "TS_NODE_PROJECT=\"./.config/webpack/tsconfig.webpack.json\" webpack -c ./webpack.config.ts --env production",
-    "zip": "cp -r ./dist ./victoriametrics-datasource && zip victoriametrics-datasource-1.0.0.zip victoriametrics-datasource -r && sha1sum ./victoriametrics-datasource-1.0.0.zip && rm -rf victoriametrics-datasource",
+    "buildZip": "npm run prebuild && npm run zip && npm run sha",
     "dev": "TS_NODE_PROJECT=\"./.config/webpack/tsconfig.webpack.json\" webpack -w -c ./webpack.config.ts --env development",
     "e2e": "yarn cypress install && TZ=UTC yarn grafana-e2e run",
     "test": "jest --watch --onlyChanged",
