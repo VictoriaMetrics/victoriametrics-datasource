@@ -89,18 +89,21 @@ func (d *Datasource) query(ctx context.Context, pCtx backend.PluginContext, quer
 
 	minInterval, err := q.CalculateMinInterval()
 	if err != nil {
-		return response, fmt.Errorf("error calculate minimal interval: %w", err)
+		err := fmt.Errorf("error calculate minimal interval: %w", err)
+		return newResponseError(err, backend.StatusBadRequest), err
 	}
 
 	reqURL := q.GetQueryURL(minInterval, d.settings.URL)
 	// Do HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
 	if err != nil {
-		return response, fmt.Errorf("new request with context: %w", err)
+		err := fmt.Errorf("err create new request with context: %w", err)
+		return newResponseError(err, backend.StatusBadRequest), err
 	}
 	resp, err := d.httpClient.Do(req)
 	if err != nil {
-		return response, fmt.Errorf("http client do: %w", err)
+		err := fmt.Errorf("error do http request: %w", err)
+		return newResponseError(err, backend.StatusBadRequest), err
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -110,13 +113,15 @@ func (d *Datasource) query(ctx context.Context, pCtx backend.PluginContext, quer
 
 	// Make sure the response was successful
 	if resp.StatusCode != http.StatusOK {
-		return response, fmt.Errorf("expected 200 response, got %d", resp.StatusCode)
+		err := fmt.Errorf("got unexpected response status code: %d", resp.StatusCode)
+		return newResponseError(err, backend.Status(resp.StatusCode)), err
 	}
 
 	// Decode response
 	var r Response
 	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
-		return response, fmt.Errorf("decode: %w", err)
+		err := fmt.Errorf("error decode body reponse: %w", err)
+		return newResponseError(err, backend.StatusInternal), err
 	}
 	r.Instant = q.Instant
 	r.Range = q.Range
@@ -153,4 +158,10 @@ func (d *Datasource) CheckHealth(ctx context.Context, _ *backend.CheckHealthRequ
 // and the specified message, which is formatted with Sprintf.
 func newHealthCheckErrorf(format string, args ...interface{}) *backend.CheckHealthResult {
 	return &backend.CheckHealthResult{Status: backend.HealthStatusError, Message: fmt.Sprintf(format, args...)}
+}
+
+// newHealthCheckErrorf returns a new backend.DataResponse with its status set to backend.DataResponse
+// and the specified error message.
+func newResponseError(err error, httpStatus backend.Status) backend.DataResponse {
+	return backend.DataResponse{Status: httpStatus, Error: err}
 }
