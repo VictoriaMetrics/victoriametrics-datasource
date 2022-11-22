@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	backend.Logger.Info("Starting VictoriaMetrics datasource backend 123...")
+	backend.Logger.Info("Starting VictoriaMetrics datasource backend ...")
 	if err := datasource.Manage("victoriametrics-datasource-http-backend", plugin.NewDatasource, datasource.ManageOpts{}); err != nil {
 		log.DefaultLogger.Error(err.Error())
 		os.Exit(1)

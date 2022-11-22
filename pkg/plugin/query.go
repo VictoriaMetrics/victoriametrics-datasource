@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"net/url"
 	"time"
-
-	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
 const (
@@ -85,7 +83,6 @@ func (q *Query) GetQueryURL(minInterval time.Duration, url string) string {
 		}
 		reqURL = fmt.Sprintf("%s%s", url, qr.String())
 	}
-	log.DefaultLogger.Info("REQUEST URL => %s", reqURL)
 	return reqURL
 }
 
