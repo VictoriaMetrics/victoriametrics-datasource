@@ -58,7 +58,7 @@ func Test_calculateStep(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := calcStep(tt.baseInterval, tt.timeRange, tt.resolution); got.String() != tt.want {
+			if got := calculateStep(tt.baseInterval, tt.timeRange.From, tt.timeRange.To, tt.resolution); got.String() != tt.want {
 				t.Errorf("calculateStep() = %v, want %v", got, tt.want)
 			}
 		})

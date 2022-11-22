@@ -80,18 +80,19 @@ func (d *Datasource) query(ctx context.Context, pCtx backend.PluginContext, quer
 		return response, err
 	}
 
+	q.TimeRange = TimeRange(query.TimeRange)
+	q.MaxDataPoints = query.MaxDataPoints
+
 	if q.WithIntervalVariable() {
 		q.Interval = ""
 	}
 
-	minInterval, err := getIntervalFrom(q.TimeInterval, q.Interval, q.IntervalMs, defaultScrapeInterval)
+	minInterval, err := q.CalculateMinInterval()
 	if err != nil {
 		return response, fmt.Errorf("error calculate minimal interval: %w", err)
 	}
-	expr := interpolateVariables(q, minInterval, q.Interval)
-	q.Expr = expr
-	q.Step = calcStep(minInterval, query.TimeRange, query.MaxDataPoints)
-	reqURL := q.GetQueryURL(query.TimeRange, d.settings.URL)
+
+	reqURL := q.GetQueryURL(minInterval, d.settings.URL)
 	// Do HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
 	if err != nil {
