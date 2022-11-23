@@ -52,7 +52,7 @@ export function createQueryVariable(input: Partial<QueryVariableModel> = {}): Qu
     label: 'DefaultLabel',
     datasource: {
       uid: 'abc-123',
-      type: 'prometheus',
+      type: 'victoriametrics-datasource',
     },
     definition: 'def',
     sort: VariableSort.alphabeticalAsc,
@@ -75,7 +75,7 @@ export function createAdhocVariable(input?: Partial<AdHocVariableModel>): AdHocV
     ...createBaseVariableModel('adhoc'),
     datasource: {
       uid: 'abc-123',
-      type: 'prometheus',
+      type: 'victoriametrics-datasource',
     },
     filters: [],
     ...input,

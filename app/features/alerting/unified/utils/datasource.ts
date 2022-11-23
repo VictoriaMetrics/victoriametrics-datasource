@@ -1,10 +1,10 @@
-import { contextSrv } from 'app/core/services/context_srv';
-import { AlertManagerDataSourceJsonData, AlertManagerImplementation } from 'app/plugins/datasource/alertmanager/types';
-import { AccessControlAction } from 'app/types';
-import { RulesSource } from 'app/types/unified-alerting';
-
 import { DataSourceInstanceSettings, DataSourceJsonData } from '@grafana/data';
 import { getDataSourceSrv } from '@grafana/runtime';
+
+import { contextSrv } from '../../../../core/services/context_srv';
+import { AlertManagerDataSourceJsonData, AlertManagerImplementation } from '../../../../plugins/datasource/alertmanager/types';
+import { AccessControlAction } from '../../../../types';
+import { RulesSource } from '../../../../types/unified-alerting';
 
 import { instancesPermissions, notificationsPermissions } from './access-control';
 import { getAllDataSources } from './config';
@@ -15,7 +15,7 @@ export const GRAFANA_DATASOURCE_NAME = '-- Grafana --';
 export enum DataSourceType {
   Alertmanager = 'alertmanager',
   Loki = 'loki',
-  Prometheus = 'prometheus',
+  VictoriaMetrics = 'victoriametrics-datasource',
 }
 
 export interface AlertManagerDataSource {
@@ -24,7 +24,7 @@ export interface AlertManagerDataSource {
   meta?: DataSourceInstanceSettings['meta'];
 }
 
-export const RulesDataSourceTypes: string[] = [DataSourceType.Loki, DataSourceType.Prometheus];
+export const RulesDataSourceTypes: string[] = [DataSourceType.Loki, DataSourceType.VictoriaMetrics];
 
 export function getRulesDataSources() {
   if (!contextSrv.hasPermission(AccessControlAction.AlertingRuleExternalRead)) {
@@ -97,7 +97,7 @@ export function getLotexDataSourceByName(dataSourceName: string): DataSourceInst
   if (!dataSource) {
     throw new Error(`Data source ${dataSourceName} not found`);
   }
-  if (dataSource.type !== DataSourceType.Loki && dataSource.type !== DataSourceType.Prometheus) {
+  if (dataSource.type !== DataSourceType.Loki && dataSource.type !== DataSourceType.VictoriaMetrics) {
     throw new Error(`Unexpected data source type ${dataSource.type}`);
   }
   return dataSource;
@@ -139,7 +139,7 @@ export function isVanillaPrometheusAlertManagerDataSource(name: string): boolean
   return (
     name !== GRAFANA_RULES_SOURCE_NAME &&
     (getDataSourceByName(name)?.jsonData as AlertManagerDataSourceJsonData)?.implementation ===
-      AlertManagerImplementation.prometheus
+      AlertManagerImplementation.victoriametrics
   );
 }
 

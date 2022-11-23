@@ -49,7 +49,7 @@ async function loadGroupByLabels(
   let labels: QueryBuilderLabelFilter[] = query.labels;
 
   // This function is used by both Prometheus and Loki and this the only difference.
-  if (datasource.type === 'prometheus') {
+  if (datasource.type === 'victoriametrics-datasource') {
     labels = [{ label: '__name__', op: '=', value: query.metric }, ...query.labels];
   }
 

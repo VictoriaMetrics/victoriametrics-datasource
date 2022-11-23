@@ -40,12 +40,12 @@ jest.spyOn(config, 'getAllDataSources');
 const dataSources = {
   prometheus: mockDataSource<PromOptions>({
     name: 'Prometheus',
-    type: DataSourceType.Prometheus,
+    type: DataSourceType.VictoriaMetrics,
     isDefault: false,
   }),
   default: mockDataSource<PromOptions>({
     name: 'Default',
-    type: DataSourceType.Prometheus,
+    type: DataSourceType.VictoriaMetrics,
     isDefault: true,
   }),
 };

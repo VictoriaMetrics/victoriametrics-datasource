@@ -293,7 +293,7 @@ export interface ExternalAlertmanagerConfig {
 export enum AlertManagerImplementation {
   cortex = 'cortex',
   mimir = 'mimir',
-  prometheus = 'prometheus',
+  victoriametrics = 'victoriametrics-datasource',
 }
 
 export interface TimeRange {
