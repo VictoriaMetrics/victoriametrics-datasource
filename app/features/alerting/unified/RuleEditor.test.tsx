@@ -528,7 +528,7 @@ describe('RuleEditor', () => {
       // can edit rules
       prom: mockDataSource(
         {
-          type: DataSourceType.Prometheus,
+          type: DataSourceType.VictoriaMetrics,
           name: 'cortex with ruler',
         },
         { alerting: true }

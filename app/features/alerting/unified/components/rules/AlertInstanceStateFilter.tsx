@@ -10,7 +10,7 @@ export type InstanceStateFilter = GrafanaAlertState | PromAlertingRuleState.Pend
 
 interface Props {
   className?: string;
-  filterType: 'grafana' | 'prometheus';
+  filterType: 'grafana' | 'victoriametrics-datasource';
   stateFilter?: InstanceStateFilter;
   onStateFilterChange: (value?: InstanceStateFilter) => void;
   itemPerStateStats?: Record<string, number>;

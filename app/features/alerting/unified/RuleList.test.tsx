@@ -76,11 +76,11 @@ const renderRuleList = () => {
 const dataSources = {
   prom: mockDataSource({
     name: 'Prometheus',
-    type: DataSourceType.Prometheus,
+    type: DataSourceType.VictoriaMetrics,
   }),
   promdisabled: mockDataSource({
     name: 'Prometheus-disabled',
-    type: DataSourceType.Prometheus,
+    type: DataSourceType.VictoriaMetrics,
     jsonData: {
       manageAlerts: false,
     },
@@ -91,7 +91,7 @@ const dataSources = {
   }),
   promBroken: mockDataSource({
     name: 'Prometheus-broken',
-    type: DataSourceType.Prometheus,
+    type: DataSourceType.VictoriaMetrics,
   }),
 };
 

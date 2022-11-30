@@ -53,7 +53,7 @@ export enum PromRuleType {
 export enum PromApplication {
   Lotex = 'Lotex',
   Mimir = 'Mimir',
-  Prometheus = 'Prometheus',
+  VictoriaMetrics = 'VictoriaMetrics',
 }
 
 export interface PromBuildInfoResponse {

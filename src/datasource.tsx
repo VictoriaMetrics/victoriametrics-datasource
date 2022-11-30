@@ -65,7 +65,7 @@ import { PrometheusVariableSupport } from './variables';
 enum PromApplication {
   Lotex = 'Lotex',
   Mimir = 'Mimir',
-  Prometheus = 'Prometheus',
+  VictoriaMetrics = 'VictoriaMetrics',
 }
 const ANNOTATION_QUERY_STEP_DEFAULT = '60s';
 const GET_AND_POST_METADATA_ENDPOINTS = ['api/v1/query', 'api/v1/query_range', 'api/v1/series', 'api/v1/labels'];
@@ -102,8 +102,8 @@ export class PrometheusDatasource
   ) {
     super(instanceSettings);
 
-    this.type = 'prometheus';
-    this.subType = PromApplication.Prometheus;
+    this.type = 'victoriametrics-datasource';
+    this.subType = PromApplication.VictoriaMetrics;
     this.rulerEnabled = false;
     this.editorSrc = 'app/features/prometheus/partials/query.editor.html';
     this.id = instanceSettings.id;

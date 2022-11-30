@@ -45,7 +45,7 @@ function cloudAlertRuleToModel(dsSettings: DataSourceInstanceSettings, rule: Com
   const refId = 'A';
 
   switch (dsSettings.type) {
-    case 'prometheus': {
+    case 'victoriametrics-datasource': {
       const query: PromQuery = {
         refId,
         expr: rule.query,

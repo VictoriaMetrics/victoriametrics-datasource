@@ -66,7 +66,7 @@ export function RuleDetailsMatchingInstances(props: Props): JSX.Element | null {
 
   const styles = useStyles(getStyles);
 
-  const stateFilterType = isGrafanaRulesSource(namespace.rulesSource) ? GRAFANA_RULES_SOURCE_NAME : 'prometheus';
+  const stateFilterType = isGrafanaRulesSource(namespace.rulesSource) ? GRAFANA_RULES_SOURCE_NAME : 'victoriametrics-datasource';
 
   const alerts = useMemo(
     (): Alert[] =>
