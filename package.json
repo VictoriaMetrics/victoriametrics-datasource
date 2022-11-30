@@ -17,7 +17,7 @@
     "server": "docker-compose up --build"
   },
   "author": "VictoriaMetrics",
-  "license": "Apache-2.0",
+  "license": "AGPL-3.0-only",
   "devDependencies": {
     "@babel/core": "7.19.0",
     "@babel/plugin-proposal-class-properties": "7.18.6",
