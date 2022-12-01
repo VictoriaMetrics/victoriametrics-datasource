@@ -76,8 +76,7 @@ export function getMetadataString(metric: string, metadata: PromMetricsMetadata)
   return `${type.toUpperCase()}: ${help}`;
 }
 
-const PREFIX_DELIMITER_REGEX =
-  /(="|!="|=~"|!~"|\{|\[|\(|\+|-|\/|\*|%|\^|\band\b|\bor\b|\bunless\b|==|>=|!=|<=|>|<|=|~|,)/;
+// const PREFIX_DELIMITER_REGEX = /(="|!="|=~"|!~"|\{|\[|\(|\+|-|\/|\*|%|\^|\band\b|\bor\b|\bunless\b|==|>=|!=|<=|>|<|=|~|,)/;
 
 interface AutocompleteContext {
   history?: Array<HistoryItem<PromQuery>>;
@@ -108,13 +107,6 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     this.metrics = [];
 
     Object.assign(this, initialValues);
-  }
-
-  // Strip syntax chars so that typeahead suggestions can work on clean inputs
-  cleanText(s: string) {
-    const parts = s.split(PREFIX_DELIMITER_REGEX);
-    const last = parts.pop()!;
-    return last.trimLeft().replace(/"$/, '').replace(/^"/, '');
   }
 
   get syntax() {

@@ -1,12 +1,10 @@
 import { extend } from 'lodash';
 
 import { OrgRole, rangeUtil, WithAccessControlMetadata } from '@grafana/data';
-import { featureEnabled, getBackendSrv } from '@grafana/runtime';
+import { config as config1 } from '@grafana/runtime';
 
 import { AccessControlAction, UserPermission } from '../types/accessControl';
 import { CurrentUserInternal } from '../types/config';
-
-import config from './config';
 
 export class User implements CurrentUserInternal {
   isSignedIn: boolean;
@@ -51,26 +49,24 @@ export class User implements CurrentUserInternal {
     this.weekStart = '';
     this.gravatarUrl = '';
 
-    if (config.bootData.user) {
-      extend(this, config.bootData.user);
+    if (config1.bootData.user) {
+      extend(this, config1.bootData.user);
     }
   }
 }
 
 export class ContextSrv {
-  pinned: any;
   version: any;
   user: User;
   isSignedIn: any;
   isGrafanaAdmin: any;
   isEditor: any;
-  sidemenuSmallBreakpoint = false;
   hasEditPermissionInFolders: boolean;
   minRefreshInterval: string;
 
   constructor() {
-    if (!config.bootData) {
-      config.bootData = { user: {}, settings: {} } as any;
+    if (!config1.bootData) {
+      config1.bootData = { user: {}, settings: {} } as any;
     }
 
     this.user = new User();
@@ -78,27 +74,7 @@ export class ContextSrv {
     this.isGrafanaAdmin = this.user.isGrafanaAdmin;
     this.isEditor = this.hasRole('Editor') || this.hasRole('Admin');
     this.hasEditPermissionInFolders = this.user.hasEditPermissionInFolders;
-    this.minRefreshInterval = config.minRefreshInterval;
-  }
-
-  async fetchUserPermissions() {
-    try {
-      if (this.accessControlEnabled()) {
-        this.user.permissions = await getBackendSrv().get('/api/access-control/user/permissions', {
-          reloadcache: true,
-        });
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  /**
-   * Indicate the user has been logged out
-   */
-  setLoggedOut() {
-    this.user.isSignedIn = false;
-    this.isSignedIn = false;
+    this.minRefreshInterval = config1.minRefreshInterval;
   }
 
   hasRole(role: string) {
@@ -110,11 +86,7 @@ export class ContextSrv {
   }
 
   accessControlEnabled(): boolean {
-    return config.rbacEnabled;
-  }
-
-  licensedAccessControlEnabled(): boolean {
-    return featureEnabled('accesscontrol') && config.rbacEnabled;
+    return config1.rbacEnabled;
   }
 
   // Checks whether user has required permission
@@ -143,59 +115,19 @@ export class ContextSrv {
 
   // checks whether the passed interval is longer than the configured minimum refresh rate
   isAllowedInterval(interval: string) {
-    if (!config.minRefreshInterval) {
+    if (!config1.minRefreshInterval) {
       return true;
     }
-    return rangeUtil.intervalToMs(interval) >= rangeUtil.intervalToMs(config.minRefreshInterval);
+    return rangeUtil.intervalToMs(interval) >= rangeUtil.intervalToMs(config1.minRefreshInterval);
   }
 
   getValidInterval(interval: string) {
     if (!this.isAllowedInterval(interval)) {
-      return config.minRefreshInterval;
+      return config1.minRefreshInterval;
     }
     return interval;
-  }
-
-  hasAccessToExplore() {
-    if (this.accessControlEnabled()) {
-      return this.hasPermission(AccessControlAction.DataSourcesExplore);
-    }
-    return (this.isEditor || config.viewersCanEdit) && config.exploreEnabled;
-  }
-
-  hasAccess(action: string, fallBack: boolean): boolean {
-    if (!this.accessControlEnabled()) {
-      return fallBack;
-    }
-    return this.hasPermission(action);
-  }
-
-  hasAccessInMetadata(action: string, object: WithAccessControlMetadata, fallBack: boolean) {
-    if (!this.accessControlEnabled()) {
-      return fallBack;
-    }
-    return this.hasPermissionInMetadata(action, object);
-  }
-
-  // evaluates access control permissions, granting access if the user has any of them; uses fallback if access control is disabled
-  evaluatePermission(fallback: () => string[], actions: string[]) {
-    if (!this.accessControlEnabled()) {
-      return fallback();
-    }
-    if (actions.some((action) => this.hasPermission(action))) {
-      return [];
-    }
-    // Hack to reject when user does not have permission
-    return ['Reject'];
   }
 }
 
 let contextSrv = new ContextSrv();
 export { contextSrv };
-
-export const setContextSrv = (override: ContextSrv) => {
-  if (process.env.NODE_ENV !== 'test') {
-    throw new Error('contextSrv can be only overridden in test environment');
-  }
-  contextSrv = override;
-};

@@ -63,8 +63,6 @@ import { PrometheusVariableSupport } from './variables';
 
 
 enum PromApplication {
-  Lotex = 'Lotex',
-  Mimir = 'Mimir',
   VictoriaMetrics = 'VictoriaMetrics',
 }
 const ANNOTATION_QUERY_STEP_DEFAULT = '60s';
@@ -147,6 +145,7 @@ export class PrometheusDatasource
     const proxyMode = !this.url.match(/^http/);
     if (proxyMode) {
       httpOptions.headers['X-Dashboard-Id'] = options.dashboardId;
+      // @ts-ignore
       httpOptions.headers['X-Dashboard-UID'] = options.dashboardUID || "";
       httpOptions.headers['X-Panel-Id'] = options.panelId;
     }
@@ -929,6 +928,7 @@ export class PrometheusDatasource
   }
 
   enhanceExprWithAdHocFilters(expr: string) {
+    // @ts-ignore
     const adhocFilters = this.templateSrv.getAdhocFilters(this.name);
 
     return adhocFilters.reduce((acc: string, filter: { key?: any; operator?: any; value?: any }) => {

@@ -78,5 +78,3 @@ export const AzureAuthSettings: FunctionComponent<HttpSettingsBaseProps> = (prop
     </>
   );
 };
-
-export default AzureAuthSettings;

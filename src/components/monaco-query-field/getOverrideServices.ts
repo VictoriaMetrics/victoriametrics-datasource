@@ -29,40 +29,14 @@ function makeStorageService() {
   strings.set('expandSuggestionDocs', true.toString());
 
   return {
-    // we do not implement the on* handlers
-    onDidChangeValue: (data: unknown): void => undefined,
-    onDidChangeTarget: (data: unknown): void => undefined,
-    onWillSaveState: (data: unknown): void => undefined,
 
     get: (key: string, scope: unknown, fallbackValue?: string): string | undefined => {
       return strings.get(key) ?? fallbackValue;
     },
 
-    getBoolean: (key: string, scope: unknown, fallbackValue?: boolean): boolean | undefined => {
-      const val = strings.get(key);
-      if (val !== undefined) {
-        // the interface-docs say the value will be converted
-        // to a boolean but do not specify how, so we improvise
-        return val === 'true';
-      } else {
-        return fallbackValue;
-      }
-    },
-
-    getNumber: (key: string, scope: unknown, fallbackValue?: number): number | undefined => {
-      const val = strings.get(key);
-      if (val !== undefined) {
-        return parseInt(val, 10);
-      } else {
-        return fallbackValue;
-      }
-    },
-
     store: (
       key: string,
       value: string | boolean | number | undefined | null,
-      scope: unknown,
-      target: unknown
     ): void => {
       // the interface-docs say if the value is nullish, it should act as delete
       if (value === null || value === undefined) {
@@ -72,30 +46,15 @@ function makeStorageService() {
       }
     },
 
-    remove: (key: string, scope: unknown): void => {
+    remove: (key: string): void => {
       strings.delete(key);
     },
 
-    keys: (scope: unknown, target: unknown): string[] => {
+    keys: (): string[] => {
       return Array.from(strings.keys());
     },
 
-    logStorage: (): void => {
-      console.log('logStorage: not implemented');
-    },
-
-    migrate: (): Promise<void> => {
-      // we do not implement this
-      return Promise.resolve(undefined);
-    },
-
-    isNew: (scope: unknown): boolean => {
-      // we create a new storage for every session, we do not persist it,
-      // so we return `true`.
-      return true;
-    },
-
-    flush: (reason?: unknown): Promise<void> => {
+    flush: (): Promise<void> => {
       // we do not implement this
       return Promise.resolve(undefined);
     },

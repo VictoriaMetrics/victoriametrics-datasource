@@ -73,16 +73,6 @@ export interface QueryBuilderOperationParamDef {
   runQueryOnEnter?: boolean;
 }
 
-export interface QueryBuilderOperationEditorProps {
-  operation: QueryBuilderOperation;
-  index: number;
-  query: any;
-  datasource: DataSourceApi;
-  queryModeller: VisualQueryModeller;
-  onChange: (index: number, update: QueryBuilderOperation) => void;
-  onRemove: (index: number) => void;
-}
-
 export interface QueryBuilderOperationParamEditorProps {
   value?: QueryBuilderOperationParamValue;
   paramDef: QueryBuilderOperationParamDef;

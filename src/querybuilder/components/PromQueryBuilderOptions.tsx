@@ -46,7 +46,7 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
     <EditorRow>
       <QueryOptionGroup
         title="Options"
-        collapsedInfo={getCollapsedInfo(query, formatOption.label!, queryTypeLabel, app)}
+        collapsedInfo={getCollapsedInfo(query, formatOption.label!, queryTypeLabel)}
       >
         <PromQueryLegendEditor
           legendFormat={query.legendFormat}
@@ -97,7 +97,7 @@ function getQueryTypeValue(query: PromQuery) {
   return query.range && query.instant ? 'both' : query.instant ? 'instant' : 'range';
 }
 
-function getCollapsedInfo(query: PromQuery, formatOption: string, queryType: string, app?: CoreApp): string[] {
+function getCollapsedInfo(query: PromQuery, formatOption: string, queryType: string): string[] {
   const items: string[] = [];
 
   items.push(`Legend: ${getLegendModeLabel(query.legendFormat)}`);

@@ -76,6 +76,9 @@ export function OperationEditor({
     const paramDef = def.params[Math.min(def.params.length - 1, paramIndex)];
     const Editor = getOperationParamEditor(paramDef);
 
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
     operationElements.push(
       <div className={styles.paramRow} key={`${paramIndex}-1`}>
         {!paramDef.hideName && (
@@ -90,6 +93,7 @@ export function OperationEditor({
         )}
         <div className={styles.paramValue}>
           <Stack gap={0.5} direction="row" alignItems="center" wrap={false}>
+            {/* @ts-ignore */}
             <Editor
               index={paramIndex}
               paramDef={paramDef}

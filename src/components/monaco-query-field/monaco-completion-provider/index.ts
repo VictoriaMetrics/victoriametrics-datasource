@@ -42,7 +42,7 @@ function getMonacoCompletionItemKind(type: CompletionType, monaco: Monaco): mona
     case 'METRIC_NAME':
       return monaco.languages.CompletionItemKind.Constructor;
     default:
-      throw new NeverCaseError(type);
+      throw new NeverCaseError();
   }
 }
 export function getCompletionProvider(

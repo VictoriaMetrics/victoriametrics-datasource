@@ -1,7 +1,6 @@
 import { css } from '@emotion/css';
 import React from 'react';
 
-import { GrafanaTheme2 } from '@grafana/data';
 import { useStyles2 } from '@grafana/ui';
 
 import { testIds } from '../../components/PromQueryEditor';
@@ -37,7 +36,7 @@ export function PromQueryCodeEditor(props: Props) {
   );
 }
 
-const getStyles = (theme: GrafanaTheme2) => {
+const getStyles = () => {
   return {
     // This wrapper styling can be removed after the old PromQueryEditor is removed.
     // This is removing margin bottom on the old legacy inline form styles

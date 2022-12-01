@@ -1,8 +1,6 @@
-import { descending, deviation } from 'd3';
 import { flatten, forOwn, groupBy, partition } from 'lodash';
 
 import {
-  ArrayDataFrame,
   ArrayVector,
   CoreApp,
   DataFrame,
@@ -40,11 +38,6 @@ import {
 
 // handles case-insensitive Inf, +Inf, -Inf (with optional "inity" suffix)
 const INFINITY_SAMPLE_REGEX = /^[+-]?inf(?:inity)?$/i;
-
-interface TimeAndValue {
-  [TIME_SERIES_TIME_FIELD_NAME]: number;
-  [TIME_SERIES_VALUE_FIELD_NAME]: number;
-}
 
 const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
   // We want to process vector and scalar results in Explore as table
@@ -128,7 +121,7 @@ export function transformV2(
     });
 
     // Then iterate through the resultant object
-    forOwn(heatmapResultsGroupedByValues, (dataFrames, key) => {
+    forOwn(heatmapResultsGroupedByValues, (dataFrames) => {
       // Sort frames within each grouping
       const sortedHeatmap = dataFrames.sort(sortSeriesByLabel);
       // And push the sorted grouping with the rest

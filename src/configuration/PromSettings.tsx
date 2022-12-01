@@ -4,7 +4,6 @@ import {
   DataSourcePluginOptionsEditorProps,
   onUpdateDatasourceJsonDataOptionChecked,
   SelectableValue,
-  updateDatasourcePluginJsonDataOption,
 } from '@grafana/data';
 import {
   InlineField,

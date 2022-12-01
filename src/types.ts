@@ -145,14 +145,6 @@ export interface TransformOptions {
   meta: QueryResultMeta;
 }
 
-export interface PromLabelQueryResponse {
-  data: {
-    status: string;
-    data: string[];
-  };
-  cancelled?: boolean;
-}
-
 /**
  * Auto = query.legendFormat == '__auto'
  * Verbose = query.legendFormat == null/undefined/''

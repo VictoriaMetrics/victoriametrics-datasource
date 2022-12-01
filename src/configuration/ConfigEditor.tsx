@@ -5,17 +5,20 @@ import { DataSourcePluginOptionsEditorProps, DataSourceSettings } from '@grafana
 import { config } from '@grafana/runtime';
 import { AlertingSettings, DataSourceHttpSettings, Alert, Icon } from '@grafana/ui';
 
-import { getAllAlertmanagerDataSources } from '../../app/features/alerting/unified/utils/alertmanager';
 import { PromOptions } from '../types';
 
 import { AzureAuthSettings } from './AzureAuthSettings';
 import { hasCredentials, setDefaultCredentials, resetCredentials } from './AzureCredentialsConfig';
 import { PromSettings } from './PromSettings';
 
+export enum DataSourceType {
+  Alertmanager = 'alertmanager',
+}
+
 export type Props = DataSourcePluginOptionsEditorProps<PromOptions>;
 export const ConfigEditor = (props: Props) => {
   const { options, onOptionsChange } = props;
-  const alertmanagers = getAllAlertmanagerDataSources();
+  const alertmanagers = Object.values(config.datasources).filter((ds) => ds.type === DataSourceType.Alertmanager);
   // use ref so this is evaluated only first time it renders and the select does not disappear suddenly.
   const showAccessOptions = useRef(props.options.access === 'direct');
 

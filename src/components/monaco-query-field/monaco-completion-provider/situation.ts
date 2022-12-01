@@ -61,7 +61,7 @@ function move(node: SyntaxNode, direction: Direction): SyntaxNode | null {
     case 'nextSibling':
       return node.nextSibling;
     default:
-      throw new NeverCaseError(direction);
+      throw new NeverCaseError();
   }
 }
 
@@ -305,7 +305,7 @@ function getNodeInSubtree(node: SyntaxNode, typeId: NodeTypeId): SyntaxNode | nu
   return null;
 }
 
-function resolveLabelsForGrouping(node: SyntaxNode, text: string, pos: number): Situation | null {
+function resolveLabelsForGrouping(node: SyntaxNode, text: string): Situation | null {
   const aggrExpNode = walk(node, [
     ['parent', AggregateModifier],
     ['parent', AggregateExpr],
@@ -336,7 +336,7 @@ function resolveLabelsForGrouping(node: SyntaxNode, text: string, pos: number): 
   };
 }
 
-function resolveLabelMatcher(node: SyntaxNode, text: string, pos: number): Situation | null {
+function resolveLabelMatcher(node: SyntaxNode, text: string): Situation | null {
   // we can arrive here in two situation. `node` is either:
   // - a StringNode (like in `{job="^"}`)
   // - or an error node (like in `{job=^}`)
@@ -425,19 +425,19 @@ function resolveLabelMatcher(node: SyntaxNode, text: string, pos: number): Situa
   };
 }
 
-function resolveTopLevel(node: SyntaxNode, text: string, pos: number): Situation {
+function resolveTopLevel(): Situation {
   return {
     type: 'AT_ROOT',
   };
 }
 
-function resolveInFunction(node: SyntaxNode, text: string, pos: number): Situation {
+function resolveInFunction(): Situation {
   return {
     type: 'IN_FUNCTION',
   };
 }
 
-function resolveDurations(node: SyntaxNode, text: string, pos: number): Situation {
+function resolveDurations(): Situation {
   return {
     type: 'IN_DURATION',
   };
@@ -545,6 +545,7 @@ export function getSituation(text: string, pos: number): Situation | null {
   // also, if there are errors, the node lezer finds us,
   // might not be the best node.
   // so first we check if there is an error-node at the cursor-position
+  // @ts-ignore
   const maybeErrorNode = getErrorNode(tree, pos);
 
   const cur = maybeErrorNode != null ? maybeErrorNode.cursor() : tree.cursorAt(pos);
@@ -559,6 +560,7 @@ export function getSituation(text: string, pos: number): Situation | null {
     // i do not use a foreach because i want to stop as soon
     // as i find something
     if (isPathMatch(resolver.path, ids)) {
+      // @ts-ignore
       return resolver.fun(currentNode, text, pos);
     }
   }

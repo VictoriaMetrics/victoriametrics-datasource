@@ -56,7 +56,7 @@ export function replaceVariables(expr: string) {
 }
 
 const varTypeFunc = [
-  (v: string, f?: string) => `\$${v}`,
+  (v: string) => `\$${v}`,
   (v: string, f?: string) => `[[${v}${f ? `:${f}` : ''}]]`,
   (v: string, f?: string) => `\$\{${v}${f ? `:${f}` : ''}\}`,
 ];

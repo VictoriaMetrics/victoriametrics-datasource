@@ -4,6 +4,7 @@ import grafanaConfig from './.config/webpack/webpack.config';
 
 const path = require('path');
 
+// @ts-ignore
 const config = (env) => {
   const defaultConfig = grafanaConfig(env);
   if (Array.isArray(defaultConfig.externals)) {

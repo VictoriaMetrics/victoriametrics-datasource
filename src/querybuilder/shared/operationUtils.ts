@@ -15,7 +15,7 @@ import {
 } from './types';
 
 export function functionRendererLeft(model: QueryBuilderOperation, def: QueryBuilderOperationDef, innerExpr: string) {
-  const params = renderParams(model, def, innerExpr);
+  const params = renderParams(model, def);
   const str = model.id + '(';
 
   if (innerExpr) {
@@ -26,7 +26,7 @@ export function functionRendererLeft(model: QueryBuilderOperation, def: QueryBui
 }
 
 export function functionRendererRight(model: QueryBuilderOperation, def: QueryBuilderOperationDef, innerExpr: string) {
-  const params = renderParams(model, def, innerExpr);
+  const params = renderParams(model, def);
   const str = model.id + '(';
 
   if (innerExpr) {
@@ -59,8 +59,7 @@ function rangeRendererWithParams(
       ...def,
       params: def.params.slice(1),
       defaultParams: def.defaultParams.slice(1),
-    },
-    innerExpr
+    }
   );
 
   const str = model.id + '(';
@@ -92,7 +91,7 @@ export function rangeRendererLeftWithParams(
   return rangeRendererWithParams(model, def, innerExpr, true);
 }
 
-function renderParams(model: QueryBuilderOperation, def: QueryBuilderOperationDef, innerExpr: string) {
+function renderParams(model: QueryBuilderOperation, def: QueryBuilderOperationDef) {
   return (model.params ?? []).map((value, index) => {
     const paramDef = def.params[index];
     if (paramDef.type === 'string') {

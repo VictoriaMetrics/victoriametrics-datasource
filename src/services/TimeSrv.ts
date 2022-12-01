@@ -97,14 +97,6 @@ export class TimeSrv {
     }
   }
 
-  getValidIntervals(intervals: string[]): string[] {
-    if (!this.contextSrv.minRefreshInterval) {
-      return intervals;
-    }
-
-    return intervals.filter((str) => str !== '').filter(this.contextSrv.isAllowedInterval);
-  }
-
   private parseTime() {
     // when absolute time is saved in json it is turned to a string
     if (isString(this.time.from) && this.time.from.indexOf('Z') >= 0) {
@@ -191,34 +183,6 @@ export class TimeSrv {
     });
   }
 
-  updateTimeRangeFromUrl() {
-    const params = locationService.getSearch();
-
-    if (params.get('left')) {
-      return; // explore handles this;
-    }
-
-    const urlRange = this.timeRangeForUrl();
-    const from = params.get('from');
-    const to = params.get('to');
-
-    // check if url has time range
-    if (from && to) {
-      // is it different from what our current time range?
-      if (from !== urlRange.from || to !== urlRange.to) {
-        // issue update
-        this.initTimeFromUrl();
-        this.setTime(this.time, false);
-      }
-    } else if (this.timeHasChangedSinceLoad()) {
-      this.setTime(this.timeAtLoad, true);
-    }
-  }
-
-  private timeHasChangedSinceLoad() {
-    return this.timeAtLoad && (this.timeAtLoad.from !== this.time.from || this.timeAtLoad.to !== this.time.to);
-  }
-
   setAutoRefresh(interval: any) {
     if (this.timeModel) {
       this.timeModel.refresh = interval;
@@ -269,18 +233,6 @@ export class TimeSrv {
 
   stopAutoRefresh() {
     clearTimeout(this.refreshTimer);
-  }
-
-  // store timeModel refresh value and pause auto-refresh in some places
-  // i.e panel edit
-  pauseAutoRefresh() {
-    this.autoRefreshPaused = true;
-  }
-
-  // resume auto-refresh based on old dashboard refresh property
-  resumeAutoRefresh() {
-    this.autoRefreshPaused = false;
-    this.refreshTimeModel();
   }
 
   setTime(time: RawTimeRange, updateUrl = true) {
@@ -370,30 +322,9 @@ export class TimeSrv {
     const { from, to } = this.timeRange();
     this.setTime({ from, to }, true);
   }
-
-  // isRefreshOutsideThreshold function calculates the difference between last refresh and now
-  // if the difference is outside 5% of the current set time range then the function will return true
-  // if the difference is within 5% of the current set time range then the function will return false
-  // if the current time range is absolute (i.e. not using relative strings like now-5m) then the function will return false
-  isRefreshOutsideThreshold(lastRefresh: number, threshold = 0.05) {
-    const timeRange = this.timeRange();
-
-    if (dateMath.isMathString(timeRange.raw.from)) {
-      const totalRange = timeRange.to.diff(timeRange.from);
-      const msSinceLastRefresh = Date.now() - lastRefresh;
-      const msThreshold = totalRange * threshold;
-      return msSinceLastRefresh >= msThreshold;
-    }
-
-    return false;
-  }
 }
 
 let singleton: TimeSrv | undefined;
-
-export function setTimeSrv(srv: TimeSrv) {
-  singleton = srv;
-}
 
 export function getTimeSrv(): TimeSrv {
   if (!singleton) {

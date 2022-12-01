@@ -17,7 +17,7 @@ export const RATE_RANGES: CompletionItem[] = [
 ];
 
 export const OPERATORS = ['by', 'group_left', 'group_right', 'ignoring', 'on', 'offset', 'without'];
-export const LOGICAL_OPERATORS = ['or', 'and', 'unless'];
+// export const LOGICAL_OPERATORS = ['or', 'and', 'unless'];
 
 const ROLLUP_FUNCTIONS: CompletionItem[] = [
   {

@@ -205,6 +205,6 @@ export async function getCompletions(situation: Situation, dataProvider: DataPro
         dataProvider
       );
     default:
-      throw new NeverCaseError(situation);
+      throw new NeverCaseError();
   }
 }

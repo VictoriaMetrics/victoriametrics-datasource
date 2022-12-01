@@ -248,7 +248,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
     this.fetchValues(METRIC_LABEL, EMPTY_SELECTOR);
   };
 
-  onClickLabel = (name: string, value: string | undefined, event: React.MouseEvent<HTMLElement>) => {
+  onClickLabel = (name: string) => {
     const label = this.state.labels.find((l) => l.name === name);
     if (!label) {
       return;
@@ -266,7 +266,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
     this.updateLabelState(name, nextValue, '', () => this.doFacettingForLabel(name));
   };
 
-  onClickValue = (name: string, value: string | undefined, event: React.MouseEvent<HTMLElement>) => {
+  onClickValue = (name: string, value: string | undefined) => {
     const label = this.state.labels.find((l) => l.name === name);
     if (!label || !label.values) {
       return;
@@ -278,7 +278,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
     this.updateLabelState(name, { values }, '', () => this.doFacetting(name));
   };
 
-  onClickMetric = (name: string, value: string | undefined, event: React.MouseEvent<HTMLElement>) => {
+  onClickMetric = (name: string, value: string | undefined) => {
     // Finding special metric label
     const label = this.state.labels.find((l) => l.name === name);
     if (!label || !label.values) {
@@ -324,7 +324,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
         // Get metrics
         this.fetchValues(METRIC_LABEL, EMPTY_SELECTOR);
         // Auto-select previously selected labels
-        const labels: SelectableLabel[] = rawLabels.map((label, i, arr) => ({
+        const labels: SelectableLabel[] = rawLabels.map((label) => ({
           name: label,
           selected: selectedLabels.includes(label),
           loading: false,

@@ -10,7 +10,7 @@
 //   case 'B':
 //     // something
 //   default:
-//     throw new NeverCaseError(x);
+//     throw new NeverCaseError();
 // }
 //
 //
@@ -19,7 +19,7 @@
 // the problem will be fixed.
 
 export class NeverCaseError extends Error {
-  constructor(value: never) {
+  constructor() {
     super('should never happen');
   }
 }

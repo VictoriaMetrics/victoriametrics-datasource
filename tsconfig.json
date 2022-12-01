@@ -12,8 +12,4 @@
     "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
   },
   "extends": "./.config/tsconfig.json",
-  "include": [
-    "app/types/svg.d.ts",
-    "app/**/*.ts*",
-  ]
 }
