@@ -22,6 +22,7 @@ type Query struct {
 	Expr          string `json:"expr"`
 	MaxDataPoints int64
 	TimeRange     TimeRange
+	url           *url.URL
 }
 
 // TimeRange represents time range backend object
@@ -30,14 +31,14 @@ type TimeRange struct {
 	To   time.Time
 }
 
-// instantQuery represents instant query with it params
-type instantQuery struct {
+// queryInstant represents instant query with it params
+type queryInstant struct {
 	Expr string
 	Step time.Duration
 	Time time.Time
 }
 
-func (i *instantQuery) String() string {
+func (i *queryInstant) String() string {
 	query := url.QueryEscape(i.Expr)
 	return fmt.Sprintf("%s?query=%s&time=%d&step=%f", instantQueryPath, query, i.Time.Unix(), i.Step.Seconds())
 }
@@ -57,42 +58,56 @@ func (qr *queryRange) String() string {
 
 // GetQueryURL calculates step and clear expression from template variables,
 // and after builds query url depends on query type
-func (q *Query) GetQueryURL(minInterval time.Duration, url string) string {
+func (q *Query) getQueryURL(minInterval time.Duration, rawURL string) (string, error) {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse datasource url: %s", err)
+	}
+
+	q.url = u
 	from := q.TimeRange.From
 	to := q.TimeRange.To
-	step := calculateStep(minInterval, from, to, q.MaxDataPoints)
-
 	timerange := to.Sub(from)
+
+	step := calculateStep(minInterval, from, to, q.MaxDataPoints)
 	expr := replaceTemplateVariable(q.Expr, timerange, minInterval, q.Interval)
 
-	var reqURL string
 	if q.Instant {
-		iq := instantQuery{
-			Expr: expr,
-			Step: step,
-			Time: q.TimeRange.To,
-		}
-		reqURL = fmt.Sprintf("%s%s", url, iq.String())
+		return q.queryInstantURL(expr, step), nil
 	}
-	if q.Range {
-		qr := queryRange{
-			Expr:  expr,
-			Start: q.TimeRange.From,
-			End:   q.TimeRange.To,
-			Step:  step,
-		}
-		reqURL = fmt.Sprintf("%s%s", url, qr.String())
-	}
-	return reqURL
+	return q.queryRangeURL(expr, step), nil
 }
 
-// WithIntervalVariable checks does query has interval variable
-func (q *Query) WithIntervalVariable() bool {
+// withIntervalVariable checks does query has interval variable
+func (q *Query) withIntervalVariable() bool {
 	return q.Interval == varInterval || q.Interval == varIntervalMs || q.Interval == varRateInterval
 }
 
-// CalculateMinInterval tries to calculate interval from requested params
+// calculateMinInterval tries to calculate interval from requested params
 // in duration representation or return error if
-func (q *Query) CalculateMinInterval() (time.Duration, error) {
+func (q *Query) calculateMinInterval() (time.Duration, error) {
 	return getIntervalFrom(q.TimeInterval, q.Interval, q.IntervalMs, defaultScrapeInterval)
+}
+
+// queryInstantURL prepare query url for instant query
+func (q *Query) queryInstantURL(expr string, step time.Duration) string {
+	iq := queryInstant{
+		Expr: expr,
+		Step: step,
+		Time: q.TimeRange.To,
+	}
+	q.url.RawQuery = iq.String()
+	return q.url.String()
+}
+
+// queryRangeURL prepare query url for range query
+func (q *Query) queryRangeURL(expr string, step time.Duration) string {
+	qr := queryRange{
+		Expr:  expr,
+		Start: q.TimeRange.From,
+		End:   q.TimeRange.To,
+		Step:  step,
+	}
+	q.url.RawQuery = qr.String()
+	return q.url.String()
 }

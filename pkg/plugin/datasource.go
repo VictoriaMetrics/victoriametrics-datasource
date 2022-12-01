@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
@@ -55,79 +56,91 @@ func (d *Datasource) Dispose() {
 // The QueryDataResponse contains a map of RefID to the response for each query, and each response
 // contains Frames ([]*Frame).
 func (d *Datasource) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
-	// create response struct
 	response := backend.NewQueryDataResponse()
 
-	// loop over queries and execute them individually.
+	var wg sync.WaitGroup
 	for _, q := range req.Queries {
-		res, err := d.query(ctx, req.PluginContext, q)
-		if err != nil {
-			return nil, fmt.Errorf("query: %w", err)
-		}
-		// save the response in a hashmap
-		// based on with RefID as identifier
-		response.Responses[q.RefID] = res
+		wg.Add(1)
+		go func(q backend.DataQuery) {
+			defer wg.Done()
+			response.Responses[q.RefID] = d.query(ctx, q)
+		}(q)
 	}
+	wg.Wait()
 
 	return response, nil
 }
 
-func (d *Datasource) query(ctx context.Context, pCtx backend.PluginContext, query backend.DataQuery) (backend.DataResponse, error) {
-	// Response to be returned.
-	var response backend.DataResponse
+func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
 
 	var q Query
 	if err := json.Unmarshal(query.JSON, &q); err != nil {
-		return response, err
+		log.DefaultLogger.Error("failed to parse query json: %s", err)
+		err = fmt.Errorf("failed to parse query json: %s", err)
+		return newResponseError(err, backend.StatusBadRequest)
 	}
 
 	q.TimeRange = TimeRange(query.TimeRange)
 	q.MaxDataPoints = query.MaxDataPoints
 
-	if q.WithIntervalVariable() {
+	if q.withIntervalVariable() {
 		q.Interval = ""
 	}
 
-	minInterval, err := q.CalculateMinInterval()
+	minInterval, err := q.calculateMinInterval()
 	if err != nil {
-		err := fmt.Errorf("error calculate minimal interval: %w", err)
-		return newResponseError(err, backend.StatusBadRequest), err
+		log.DefaultLogger.Error("failed to calculate minimal interval: %w", err)
+		err := fmt.Errorf("failed to calculate minimal interval: %w", err)
+		return newResponseError(err, backend.StatusBadRequest)
 	}
 
-	reqURL := q.GetQueryURL(minInterval, d.settings.URL)
-	// Do HTTP request
+	reqURL, err := q.getQueryURL(minInterval, d.settings.URL)
+	if err != nil {
+		log.DefaultLogger.Error("failed to create request url: %w", err)
+		err := fmt.Errorf("failed to create request url: %w", err)
+		return newResponseError(err, backend.StatusBadRequest)
+	}
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
 	if err != nil {
-		err := fmt.Errorf("err create new request with context: %w", err)
-		return newResponseError(err, backend.StatusBadRequest), err
+		log.DefaultLogger.Error("failed to create new request with context: %w", err)
+		err := fmt.Errorf("failed to create new request with context: %w", err)
+		return newResponseError(err, backend.StatusBadRequest)
 	}
 	resp, err := d.httpClient.Do(req)
 	if err != nil {
-		err := fmt.Errorf("error do http request: %w", err)
-		return newResponseError(err, backend.StatusBadRequest), err
+		log.DefaultLogger.Error("failed to make http request: %w", err)
+		err := fmt.Errorf("failed to make http request: %w", err)
+		return newResponseError(err, backend.StatusBadRequest)
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
-			log.DefaultLogger.Error("query: failed to close response body", "err", err.Error())
+			log.DefaultLogger.Error("failed to close response body", "err", err.Error())
 		}
 	}()
 
-	// Make sure the response was successful
 	if resp.StatusCode != http.StatusOK {
+		log.DefaultLogger.Error("got unexpected response status code: %d", resp.StatusCode)
 		err := fmt.Errorf("got unexpected response status code: %d", resp.StatusCode)
-		return newResponseError(err, backend.Status(resp.StatusCode)), err
+		return newResponseError(err, backend.Status(resp.StatusCode))
 	}
 
-	// Decode response
 	var r Response
 	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
-		err := fmt.Errorf("error decode body reponse: %w", err)
-		return newResponseError(err, backend.StatusInternal), err
+		log.DefaultLogger.Error("failed to decode body response: %w", err)
+		err := fmt.Errorf("failed to decode body response: %w", err)
+		return newResponseError(err, backend.StatusInternal)
 	}
 	r.Instant = q.Instant
 	r.Range = q.Range
 
-	return r.PrepareFrames()
+	dataResponse, err := r.getDataResponse()
+	if err != nil {
+		log.DefaultLogger.Error("failed to prepare data from reponse: %w", err)
+		err := fmt.Errorf("failed to prepare data from reponse: %w", err)
+		return newResponseError(err, backend.StatusInternal)
+	}
+	return dataResponse
 }
 
 // CheckHealth performs a request to the specified data source and returns an error if the HTTP handler did not return
