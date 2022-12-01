@@ -3,18 +3,15 @@
   "version": "0.1.1",
   "description": "Showcase how to build a basic datasource plugin",
   "scripts": {
-    "zip": "cp -r ./dist ./$npm_package_name && zip $npm_package_name-v$npm_package_version.zip $npm_package_name -r && rm -rf $npm_package_name",
-    "sha": "sha1sum ./$npm_package_name-v$npm_package_version.zip >$npm_package_name-v$npm_package_version.zip.sha1",
     "build": "TS_NODE_PROJECT=\"./.config/webpack/tsconfig.webpack.json\" webpack -c ./webpack.config.ts --env production",
-    "buildZip": "npm run prebuild && npm run zip && npm run sha",
+    "build:zip": "npm run build && npm run zip",
     "dev": "TS_NODE_PROJECT=\"./.config/webpack/tsconfig.webpack.json\" webpack -w -c ./webpack.config.ts --env development",
-    "e2e": "yarn cypress install && TZ=UTC yarn grafana-e2e run",
     "test": "jest --watch --onlyChanged",
     "test:ci": "jest --maxWorkers 4",
-    "typecheck": "tsc --noEmit",
     "lint": "eslint --cache --ignore-path ./.gitignore --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "yarn lint --fix",
-    "server": "docker-compose up --build"
+    "server": "docker-compose up --build",
+    "zip": "cp -r ./dist ./$npm_package_name && zip $npm_package_name-v$npm_package_version.zip $npm_package_name -r && rm -rf $npm_package_name && sha1sum ./$npm_package_name-v$npm_package_version.zip >$npm_package_name-v$npm_package_version.zip.sha1"
   },
   "author": "VictoriaMetrics",
   "license": "AGPL-3.0-only",
