@@ -1,29 +1,5 @@
 
-import { contextSrv } from 'app/core/services/context_srv';
 import { DatasourceSrv } from 'app/features/plugins/datasource_srv';
-import {
-  AlertmanagerAlert,
-  AlertManagerCortexConfig,
-  AlertmanagerGroup,
-  AlertmanagerStatus,
-  AlertState,
-  GrafanaManagedReceiverConfig,
-  Silence,
-  SilenceState,
-} from 'app/plugins/datasource/alertmanager/types';
-import { configureStore } from 'app/store/configureStore';
-import { AccessControlAction, FolderDTO, StoreState } from 'app/types';
-import { Alert, AlertingRule, CombinedRule, RecordingRule, RuleGroup, RuleNamespace } from 'app/types/unified-alerting';
-import {
-  GrafanaAlertStateDecision,
-  GrafanaRuleDefinition,
-  PromAlertingRuleState,
-  PromRuleType,
-  RulerAlertingRuleDTO,
-  RulerGrafanaRuleDTO,
-  RulerRuleGroupDTO,
-  RulerRulesConfigDTO,
-} from 'app/types/unified-alerting-dto';
 import produce from 'immer';
 
 import {
@@ -36,6 +12,31 @@ import {
 } from '@grafana/data';
 import { config, DataSourceSrv, GetDataSourceListFilters } from '@grafana/runtime';
 
+import { contextSrv } from '../../../core/services/context_srv';
+import {
+  AlertmanagerAlert,
+  AlertManagerCortexConfig,
+  AlertmanagerGroup,
+  AlertmanagerStatus,
+  AlertState,
+  GrafanaManagedReceiverConfig,
+  Silence,
+  SilenceState,
+} from '../../../plugins/datasource/alertmanager/types';
+import { configureStore } from '../../../store/configureStore';
+import { AccessControlAction, FolderDTO, StoreState } from '../../../types';
+import { Alert, AlertingRule, CombinedRule, RecordingRule, RuleGroup, RuleNamespace } from '../../../types/unified-alerting';
+import {
+  GrafanaAlertStateDecision,
+  GrafanaRuleDefinition,
+  PromAlertingRuleState,
+  PromRuleType,
+  RulerAlertingRuleDTO,
+  RulerGrafanaRuleDTO,
+  RulerRuleGroupDTO,
+  RulerRulesConfigDTO,
+} from '../../../types/unified-alerting-dto';
+
 let nextDataSourceId = 1;
 
 export function mockDataSource<T extends DataSourceJsonData = DataSourceJsonData>(
@@ -47,7 +48,7 @@ export function mockDataSource<T extends DataSourceJsonData = DataSourceJsonData
   return {
     id,
     uid: `mock-ds-${nextDataSourceId}`,
-    type: 'prometheus',
+    type: 'victoriametrics-datasource',
     name: `Prometheus-${id}`,
     access: 'proxy',
     jsonData: {} as T,
@@ -60,7 +61,6 @@ export function mockDataSource<T extends DataSourceJsonData = DataSourceJsonData
       },
       ...meta,
     } as any as DataSourcePluginMeta,
-    readOnly: false,
     ...partial,
   };
 }
@@ -415,7 +415,7 @@ export const someCloudAlertManagerConfig: AlertManagerCortexConfig = {
   },
 };
 
-export const somePromRules = (dataSourceName = 'Prometheus'): RuleNamespace[] => [
+export const somePromRules = (dataSourceName = 'VictoriaMetrics'): RuleNamespace[] => [
   {
     dataSourceName,
     name: 'namespace1',

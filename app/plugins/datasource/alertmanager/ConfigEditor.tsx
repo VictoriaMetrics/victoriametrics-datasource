@@ -1,9 +1,9 @@
-import { config } from 'app/core/config';
 import produce from 'immer';
 import React from 'react';
 
 import { SIGV4ConnectionConfig } from '@grafana/aws-sdk';
 import { DataSourcePluginOptionsEditorProps, SelectableValue } from '@grafana/data';
+import { config } from '@grafana/runtime';
 import { DataSourceHttpSettings, InlineField, InlineFormLabel, InlineSwitch, Select } from '@grafana/ui';
 
 import { AlertManagerDataSourceJsonData, AlertManagerImplementation } from './types';
@@ -22,8 +22,8 @@ const IMPL_OPTIONS: Array<SelectableValue<AlertManagerImplementation>> = [
     description: `https://cortexmetrics.io/`,
   },
   {
-    value: AlertManagerImplementation.prometheus,
-    label: 'Prometheus',
+    value: AlertManagerImplementation.victoriametrics,
+    label: 'VictoriaMetrics',
     description:
       'https://prometheus.io/. Does not support editing configuration via API, so contact points and notification policies are read-only.',
   },

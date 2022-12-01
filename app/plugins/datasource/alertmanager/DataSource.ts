@@ -53,7 +53,7 @@ export class AlertManagerDatasource extends DataSourceApi<AlertManagerQuery, Ale
       ? await discoverAlertmanagerFeaturesByUrl(amUrl)
       : { lazyConfigInit: false };
 
-    if (this.instanceSettings.jsonData.implementation === AlertManagerImplementation.prometheus) {
+    if (this.instanceSettings.jsonData.implementation === AlertManagerImplementation.victoriametrics) {
       try {
         alertmanagerResponse = await this._request('/alertmanager/api/v2/status');
         if (alertmanagerResponse && alertmanagerResponse?.status === 200) {

@@ -36,8 +36,8 @@ export async function discoverFeatures(dataSourceName: string): Promise<PromApiF
     throw new Error(`The data source url cannot be empty.`);
   }
 
-  if (type !== 'prometheus' && type !== 'loki') {
-    throw new Error(`The build info request is not available for ${type}. Only 'prometheus' and 'loki' are supported`);
+  if (type !== 'victoriametrics-datasource' && type !== 'loki') {
+    throw new Error(`The build info request is not available for ${type}. Only 'victoriametrics-datasource' and 'loki' are supported`);
   }
 
   return discoverDataSourceFeatures({ name, url, type });
@@ -54,7 +54,7 @@ export async function discoverFeatures(dataSourceName: string): Promise<PromApiF
 export async function discoverDataSourceFeatures(dsSettings: {
   url: string;
   name: string;
-  type: 'prometheus' | 'loki';
+  type: 'victoriametrics-datasource' | 'loki';
 }): Promise<PromApiFeatures> {
   const { url, name, type } = dsSettings;
 
