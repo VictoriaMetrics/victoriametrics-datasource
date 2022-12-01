@@ -3,6 +3,7 @@ package plugin
 import (
 	"fmt"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -29,31 +30,6 @@ type Query struct {
 type TimeRange struct {
 	From time.Time
 	To   time.Time
-}
-
-// queryInstant represents instant query with it params
-type queryInstant struct {
-	Expr string
-	Step time.Duration
-	Time time.Time
-}
-
-func (i *queryInstant) String() string {
-	query := url.QueryEscape(i.Expr)
-	return fmt.Sprintf("%s?query=%s&time=%d&step=%f", instantQueryPath, query, i.Time.Unix(), i.Step.Seconds())
-}
-
-// queryRange represents instant query with it params
-type queryRange struct {
-	Expr  string
-	Start time.Time
-	End   time.Time
-	Step  time.Duration
-}
-
-func (qr *queryRange) String() string {
-	query := url.QueryEscape(qr.Expr)
-	return fmt.Sprintf("%s?query=%s&start=%d&end=%d&step=%f", rangeQueryPath, query, qr.Start.Unix(), qr.End.Unix(), qr.Step.Seconds())
 }
 
 // GetQueryURL calculates step and clear expression from template variables,
@@ -91,23 +67,27 @@ func (q *Query) calculateMinInterval() (time.Duration, error) {
 
 // queryInstantURL prepare query url for instant query
 func (q *Query) queryInstantURL(expr string, step time.Duration) string {
-	iq := queryInstant{
-		Expr: expr,
-		Step: step,
-		Time: q.TimeRange.To,
-	}
-	q.url.RawQuery = iq.String()
+	q.url.Path = instantQueryPath
+	values := q.url.Query()
+
+	values.Add("query", expr)
+	values.Add("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
+	values.Add("step", step.String())
+
+	q.url.RawQuery = values.Encode()
 	return q.url.String()
 }
 
 // queryRangeURL prepare query url for range query
 func (q *Query) queryRangeURL(expr string, step time.Duration) string {
-	qr := queryRange{
-		Expr:  expr,
-		Start: q.TimeRange.From,
-		End:   q.TimeRange.To,
-		Step:  step,
-	}
-	q.url.RawQuery = qr.String()
+	q.url.Path = rangeQueryPath
+	values := q.url.Query()
+
+	values.Add("query", expr)
+	values.Add("start", strconv.FormatInt(q.TimeRange.From.Unix(), 10))
+	values.Add("end", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
+	values.Add("step", step.String())
+
+	q.url.RawQuery = values.Encode()
 	return q.url.String()
 }

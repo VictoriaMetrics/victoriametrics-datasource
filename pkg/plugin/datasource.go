@@ -71,6 +71,7 @@ func (d *Datasource) QueryData(ctx context.Context, req *backend.QueryDataReques
 	return response, nil
 }
 
+// query process backend.Query and return response
 func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
 
 	var q Query
