@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"regexp"
 	"strconv"
@@ -118,14 +119,14 @@ func replaceTemplateVariable(expr string, timerange, interval time.Duration, tim
 		rateInterval = calculateRateInterval(interval, timeInterval)
 	}
 
-	expr = strings.ReplaceAll(expr, varInterval, formatDuration(interval))
-	expr = strings.ReplaceAll(expr, varRateInterval, rateInterval.String())
 	expr = strings.ReplaceAll(expr, varIntervalMs, strconv.FormatInt(int64(interval/time.Millisecond), 10))
+	expr = strings.ReplaceAll(expr, varInterval, formatDuration(interval))
+
 	expr = strings.ReplaceAll(expr, varRangeMs, strconv.FormatInt(rangeMs, 10))
 	expr = strings.ReplaceAll(expr, varRangeS, strconv.FormatInt(rangeSRounded, 10))
 	expr = strings.ReplaceAll(expr, varRange, strconv.FormatInt(rangeSRounded, 10)+"s")
 	expr = strings.ReplaceAll(expr, varRateInterval, rateInterval.String())
-
+	log.Printf("EXPR => %#v", expr)
 	return expr
 }
 
