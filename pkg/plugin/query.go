@@ -35,6 +35,9 @@ type TimeRange struct {
 // GetQueryURL calculates step and clear expression from template variables,
 // and after builds query url depends on query type
 func (q *Query) getQueryURL(minInterval time.Duration, rawURL string) (string, error) {
+	if rawURL == "" {
+		return "", fmt.Errorf("url can't be blank")
+	}
 	u, err := url.Parse(rawURL)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse datasource url: %s", err)
@@ -47,6 +50,10 @@ func (q *Query) getQueryURL(minInterval time.Duration, rawURL string) (string, e
 
 	step := calculateStep(minInterval, from, to, q.MaxDataPoints)
 	expr := replaceTemplateVariable(q.Expr, timerange, minInterval, q.Interval)
+
+	if expr == "" {
+		return "", fmt.Errorf("expression can't be blank")
+	}
 
 	if q.Instant {
 		return q.queryInstantURL(expr, step), nil
