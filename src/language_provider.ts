@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Grafana Labs
 // Modifications Copyright (c) 2022 VictoriaMetrics
 // 2022-10-14: remove PromCheatSheet
-// A detailed history of changes can be seen this - https://github.com/VictoriaMetrics/grafana-datasource
+// A detailed history of changes can be seen here - https://github.com/VictoriaMetrics/grafana-datasource
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
