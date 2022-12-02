@@ -9,16 +9,13 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
-type Metric struct {
-	Name   string `json:"__name__"`
-	Status string `json:"status"`
-}
-
 type Result struct {
 	Metric Metric  `json:"metric"`
 	Values []Value `json:"values"`
 	Value  Value   `json:"value"`
 }
+
+type Metric map[string]string
 
 type Value [2]interface{}
 
@@ -104,6 +101,5 @@ func (r *Response) processInstanceResponse() (backend.DataResponse, error) {
 			data.NewField("values", nil, values),
 		),
 	)
-
 	return response, nil
 }

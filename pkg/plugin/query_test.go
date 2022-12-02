@@ -6,8 +6,6 @@ import (
 	"time"
 )
 
-const ()
-
 func TestQuery_getQueryURL(t *testing.T) {
 	type fields struct {
 		RefId         string
