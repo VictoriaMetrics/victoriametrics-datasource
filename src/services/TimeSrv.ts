@@ -1,3 +1,21 @@
+// Copyright (c) 2022 Grafana Labs
+// Modifications Copyright (c) 2022 VictoriaMetrics
+// 2022-10-13: correct imports
+// A detailed history of changes can be seen here - https://github.com/VictoriaMetrics/grafana-datasource
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import { cloneDeep, extend, isString } from 'lodash';
 
 import {
@@ -97,14 +115,6 @@ export class TimeSrv {
     }
   }
 
-  getValidIntervals(intervals: string[]): string[] {
-    if (!this.contextSrv.minRefreshInterval) {
-      return intervals;
-    }
-
-    return intervals.filter((str) => str !== '').filter(this.contextSrv.isAllowedInterval);
-  }
-
   private parseTime() {
     // when absolute time is saved in json it is turned to a string
     if (isString(this.time.from) && this.time.from.indexOf('Z') >= 0) {
@@ -191,34 +201,6 @@ export class TimeSrv {
     });
   }
 
-  updateTimeRangeFromUrl() {
-    const params = locationService.getSearch();
-
-    if (params.get('left')) {
-      return; // explore handles this;
-    }
-
-    const urlRange = this.timeRangeForUrl();
-    const from = params.get('from');
-    const to = params.get('to');
-
-    // check if url has time range
-    if (from && to) {
-      // is it different from what our current time range?
-      if (from !== urlRange.from || to !== urlRange.to) {
-        // issue update
-        this.initTimeFromUrl();
-        this.setTime(this.time, false);
-      }
-    } else if (this.timeHasChangedSinceLoad()) {
-      this.setTime(this.timeAtLoad, true);
-    }
-  }
-
-  private timeHasChangedSinceLoad() {
-    return this.timeAtLoad && (this.timeAtLoad.from !== this.time.from || this.timeAtLoad.to !== this.time.to);
-  }
-
   setAutoRefresh(interval: any) {
     if (this.timeModel) {
       this.timeModel.refresh = interval;
@@ -269,18 +251,6 @@ export class TimeSrv {
 
   stopAutoRefresh() {
     clearTimeout(this.refreshTimer);
-  }
-
-  // store timeModel refresh value and pause auto-refresh in some places
-  // i.e panel edit
-  pauseAutoRefresh() {
-    this.autoRefreshPaused = true;
-  }
-
-  // resume auto-refresh based on old dashboard refresh property
-  resumeAutoRefresh() {
-    this.autoRefreshPaused = false;
-    this.refreshTimeModel();
   }
 
   setTime(time: RawTimeRange, updateUrl = true) {
@@ -370,30 +340,9 @@ export class TimeSrv {
     const { from, to } = this.timeRange();
     this.setTime({ from, to }, true);
   }
-
-  // isRefreshOutsideThreshold function calculates the difference between last refresh and now
-  // if the difference is outside 5% of the current set time range then the function will return true
-  // if the difference is within 5% of the current set time range then the function will return false
-  // if the current time range is absolute (i.e. not using relative strings like now-5m) then the function will return false
-  isRefreshOutsideThreshold(lastRefresh: number, threshold = 0.05) {
-    const timeRange = this.timeRange();
-
-    if (dateMath.isMathString(timeRange.raw.from)) {
-      const totalRange = timeRange.to.diff(timeRange.from);
-      const msSinceLastRefresh = Date.now() - lastRefresh;
-      const msThreshold = totalRange * threshold;
-      return msSinceLastRefresh >= msThreshold;
-    }
-
-    return false;
-  }
 }
 
 let singleton: TimeSrv | undefined;
-
-export function setTimeSrv(srv: TimeSrv) {
-  singleton = srv;
-}
 
 export function getTimeSrv(): TimeSrv {
   if (!singleton) {

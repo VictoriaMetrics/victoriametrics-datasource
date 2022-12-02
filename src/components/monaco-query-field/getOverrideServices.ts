@@ -1,3 +1,21 @@
+// Copyright (c) 2022 Grafana Labs
+// Modifications Copyright (c) 2022 VictoriaMetrics
+// 2022-12-01: remove unused functions and methods
+// A detailed history of changes can be seen here - https://github.com/VictoriaMetrics/grafana-datasource
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import { monacoTypes } from '@grafana/ui';
 
 // this thing here is a workaround in a way.
@@ -29,40 +47,14 @@ function makeStorageService() {
   strings.set('expandSuggestionDocs', true.toString());
 
   return {
-    // we do not implement the on* handlers
-    onDidChangeValue: (data: unknown): void => undefined,
-    onDidChangeTarget: (data: unknown): void => undefined,
-    onWillSaveState: (data: unknown): void => undefined,
 
     get: (key: string, scope: unknown, fallbackValue?: string): string | undefined => {
       return strings.get(key) ?? fallbackValue;
     },
 
-    getBoolean: (key: string, scope: unknown, fallbackValue?: boolean): boolean | undefined => {
-      const val = strings.get(key);
-      if (val !== undefined) {
-        // the interface-docs say the value will be converted
-        // to a boolean but do not specify how, so we improvise
-        return val === 'true';
-      } else {
-        return fallbackValue;
-      }
-    },
-
-    getNumber: (key: string, scope: unknown, fallbackValue?: number): number | undefined => {
-      const val = strings.get(key);
-      if (val !== undefined) {
-        return parseInt(val, 10);
-      } else {
-        return fallbackValue;
-      }
-    },
-
     store: (
       key: string,
       value: string | boolean | number | undefined | null,
-      scope: unknown,
-      target: unknown
     ): void => {
       // the interface-docs say if the value is nullish, it should act as delete
       if (value === null || value === undefined) {
@@ -72,30 +64,15 @@ function makeStorageService() {
       }
     },
 
-    remove: (key: string, scope: unknown): void => {
+    remove: (key: string): void => {
       strings.delete(key);
     },
 
-    keys: (scope: unknown, target: unknown): string[] => {
+    keys: (): string[] => {
       return Array.from(strings.keys());
     },
 
-    logStorage: (): void => {
-      console.log('logStorage: not implemented');
-    },
-
-    migrate: (): Promise<void> => {
-      // we do not implement this
-      return Promise.resolve(undefined);
-    },
-
-    isNew: (scope: unknown): boolean => {
-      // we create a new storage for every session, we do not persist it,
-      // so we return `true`.
-      return true;
-    },
-
-    flush: (reason?: unknown): Promise<void> => {
+    flush: (): Promise<void> => {
       // we do not implement this
       return Promise.resolve(undefined);
     },

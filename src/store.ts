@@ -9,14 +9,6 @@ export class Store {
     window.localStorage[key] = value;
   }
 
-  getBool(key: string, def: boolean): boolean {
-    if (def !== void 0 && !this.exists(key)) {
-      return def;
-    }
-    return window.localStorage[key] === 'true';
-  }
-
-  getObject<T = unknown>(key: string): T | undefined;
   getObject<T = unknown>(key: string, def: T): T;
   getObject<T = unknown>(key: string, def?: T) {
     let ret = def;

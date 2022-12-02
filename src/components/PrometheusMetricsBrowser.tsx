@@ -1,3 +1,21 @@
+// Copyright (c) 2022 Grafana Labs
+// Modifications Copyright (c) 2022 VictoriaMetrics
+// 2022-12-01: remove unused arguments
+// A detailed history of changes can be seen here - https://github.com/VictoriaMetrics/grafana-datasource
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import { css, cx } from '@emotion/css';
 import React, { ChangeEvent } from 'react';
 import { FixedSizeList } from 'react-window';
@@ -248,7 +266,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
     this.fetchValues(METRIC_LABEL, EMPTY_SELECTOR);
   };
 
-  onClickLabel = (name: string, value: string | undefined, event: React.MouseEvent<HTMLElement>) => {
+  onClickLabel = (name: string) => {
     const label = this.state.labels.find((l) => l.name === name);
     if (!label) {
       return;
@@ -266,7 +284,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
     this.updateLabelState(name, nextValue, '', () => this.doFacettingForLabel(name));
   };
 
-  onClickValue = (name: string, value: string | undefined, event: React.MouseEvent<HTMLElement>) => {
+  onClickValue = (name: string, value: string | undefined) => {
     const label = this.state.labels.find((l) => l.name === name);
     if (!label || !label.values) {
       return;
@@ -278,7 +296,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
     this.updateLabelState(name, { values }, '', () => this.doFacetting(name));
   };
 
-  onClickMetric = (name: string, value: string | undefined, event: React.MouseEvent<HTMLElement>) => {
+  onClickMetric = (name: string, value: string | undefined) => {
     // Finding special metric label
     const label = this.state.labels.find((l) => l.name === name);
     if (!label || !label.values) {
@@ -324,7 +342,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
         // Get metrics
         this.fetchValues(METRIC_LABEL, EMPTY_SELECTOR);
         // Auto-select previously selected labels
-        const labels: SelectableLabel[] = rawLabels.map((label, i, arr) => ({
+        const labels: SelectableLabel[] = rawLabels.map((label) => ({
           name: label,
           selected: selectedLabels.includes(label),
           loading: false,

@@ -1,3 +1,21 @@
+// Copyright (c) 2022 Grafana Labs
+// Modifications Copyright (c) 2022 VictoriaMetrics
+// 2022-11-23: change props for MonacoQueryFieldWrapper, optimizations imports
+// A detailed history of changes can be seen here - https://github.com/VictoriaMetrics/grafana-datasource
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import { LanguageMap, languages as prismLanguages } from 'prismjs';
 import React, { ReactNode } from 'react';
 import { Plugin } from 'slate';
@@ -7,12 +25,8 @@ import { CoreApp, isDataFrame, QueryEditorProps, QueryHint, TimeRange, toLegacyR
 import { reportInteraction } from '@grafana/runtime';
 import {
   BracesPlugin,
-  DOMUtil,
   Icon,
   SlatePrism,
-  SuggestionsState,
-  TypeaheadInput,
-  TypeaheadOutput,
 } from '@grafana/ui';
 
 import { PrometheusDatasource } from '../datasource';
@@ -46,33 +60,6 @@ function getChooserText(metricsLookupDisabled: boolean, hasSyntax: boolean, hasM
   return 'Metrics browser';
 }
 
-export function willApplySuggestion(suggestion: string, { typeaheadContext, typeaheadText }: SuggestionsState): string {
-  // Modify suggestion based on context
-  switch (typeaheadContext) {
-    case 'context-labels': {
-      const nextChar = DOMUtil.getNextCharacter();
-      if (!nextChar || nextChar === '}' || nextChar === ',') {
-        suggestion += '=';
-      }
-      break;
-    }
-
-    case 'context-label-values': {
-      // Always add quotes and remove existing ones instead
-      if (!typeaheadText.match(/^(!?=~?"|")/)) {
-        suggestion = `"${suggestion}`;
-      }
-      if (DOMUtil.getNextCharacter() !== '"') {
-        suggestion = `${suggestion}"`;
-      }
-      break;
-    }
-
-    default:
-  }
-  return suggestion;
-}
-
 interface PromQueryFieldProps extends QueryEditorProps<PrometheusDatasource, PromQuery, PromOptions> {
   ExtraFieldElement?: ReactNode;
   'data-testid'?: string;
@@ -85,6 +72,7 @@ interface PromQueryFieldState {
 }
 
 class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryFieldState> {
+  // @ts-ignore
   plugins: Array<Plugin<Editor>>;
   declare languageProviderInitializationPromise: CancelablePromise<any>;
 
@@ -92,11 +80,13 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
     super(props, context);
 
     this.plugins = [
+      // @ts-ignore
       BracesPlugin(),
+      // @ts-ignore
       SlatePrism(
         {
           onlyIn: (node: any) => node.type === 'code_block',
-          getSyntax: (node: any) => 'promql',
+          getSyntax: () => 'promql',
         },
         { ...(prismLanguages as LanguageMap), promql: this.props.datasource.languageProvider.syntax }
       ),
@@ -247,26 +237,6 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
     }
 
     this.setState({ syntaxLoaded: true });
-  };
-
-  onTypeahead = async (typeahead: TypeaheadInput): Promise<TypeaheadOutput> => {
-    const {
-      datasource: { languageProvider },
-    } = this.props;
-
-    if (!languageProvider) {
-      return { suggestions: [] };
-    }
-
-    const { history } = this.props;
-    const { prefix, text, value, wrapperClasses, labelKey } = typeahead;
-
-    const result = await languageProvider.provideCompletionItems(
-      { text, value, prefix, wrapperClasses, labelKey },
-      { history }
-    );
-
-    return result;
   };
 
   render() {

@@ -1,8 +1,24 @@
-import { descending, deviation } from 'd3';
+// Copyright (c) 2022 Grafana Labs
+// Modifications Copyright (c) 2022 VictoriaMetrics
+// 2022-10-04: change transform() return if isExemplarData
+// A detailed history of changes can be seen here - https://github.com/VictoriaMetrics/grafana-datasource
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import { flatten, forOwn, groupBy, partition } from 'lodash';
 
 import {
-  ArrayDataFrame,
   ArrayVector,
   CoreApp,
   DataFrame,
@@ -40,11 +56,6 @@ import {
 
 // handles case-insensitive Inf, +Inf, -Inf (with optional "inity" suffix)
 const INFINITY_SAMPLE_REGEX = /^[+-]?inf(?:inity)?$/i;
-
-interface TimeAndValue {
-  [TIME_SERIES_TIME_FIELD_NAME]: number;
-  [TIME_SERIES_VALUE_FIELD_NAME]: number;
-}
 
 const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
   // We want to process vector and scalar results in Explore as table
@@ -128,7 +139,7 @@ export function transformV2(
     });
 
     // Then iterate through the resultant object
-    forOwn(heatmapResultsGroupedByValues, (dataFrames, key) => {
+    forOwn(heatmapResultsGroupedByValues, (dataFrames) => {
       // Sort frames within each grouping
       const sortedHeatmap = dataFrames.sort(sortSeriesByLabel);
       // And push the sorted grouping with the rest

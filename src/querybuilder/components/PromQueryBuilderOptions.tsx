@@ -1,3 +1,21 @@
+// Copyright (c) 2022 Grafana Labs
+// Modifications Copyright (c) 2022 VictoriaMetrics
+// 2022-10-10: switch imports 'packages/grafana-ui/src' to '@grafana/ui'
+// A detailed history of changes can be seen here - https://github.com/VictoriaMetrics/grafana-datasource
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React from 'react';
 
 import { CoreApp, SelectableValue } from '@grafana/data';
@@ -46,7 +64,7 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
     <EditorRow>
       <QueryOptionGroup
         title="Options"
-        collapsedInfo={getCollapsedInfo(query, formatOption.label!, queryTypeLabel, app)}
+        collapsedInfo={getCollapsedInfo(query, formatOption.label!, queryTypeLabel)}
       >
         <PromQueryLegendEditor
           legendFormat={query.legendFormat}
@@ -97,7 +115,7 @@ function getQueryTypeValue(query: PromQuery) {
   return query.range && query.instant ? 'both' : query.instant ? 'instant' : 'range';
 }
 
-function getCollapsedInfo(query: PromQuery, formatOption: string, queryType: string, app?: CoreApp): string[] {
+function getCollapsedInfo(query: PromQuery, formatOption: string, queryType: string): string[] {
   const items: string[] = [];
 
   items.push(`Legend: ${getLegendModeLabel(query.legendFormat)}`);

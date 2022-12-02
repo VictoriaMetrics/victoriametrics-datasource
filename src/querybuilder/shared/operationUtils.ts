@@ -1,3 +1,21 @@
+// Copyright (c) 2022 Grafana Labs
+// Modifications Copyright (c) 2022 VictoriaMetrics
+// 2022-12-01: remove unused arguments from 'renderParams'
+// A detailed history of changes can be seen here - https://github.com/VictoriaMetrics/grafana-datasource
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import { capitalize } from 'lodash';
 import pluralize from 'pluralize';
 
@@ -15,7 +33,7 @@ import {
 } from './types';
 
 export function functionRendererLeft(model: QueryBuilderOperation, def: QueryBuilderOperationDef, innerExpr: string) {
-  const params = renderParams(model, def, innerExpr);
+  const params = renderParams(model, def);
   const str = model.id + '(';
 
   if (innerExpr) {
@@ -26,7 +44,7 @@ export function functionRendererLeft(model: QueryBuilderOperation, def: QueryBui
 }
 
 export function functionRendererRight(model: QueryBuilderOperation, def: QueryBuilderOperationDef, innerExpr: string) {
-  const params = renderParams(model, def, innerExpr);
+  const params = renderParams(model, def);
   const str = model.id + '(';
 
   if (innerExpr) {
@@ -59,8 +77,7 @@ function rangeRendererWithParams(
       ...def,
       params: def.params.slice(1),
       defaultParams: def.defaultParams.slice(1),
-    },
-    innerExpr
+    }
   );
 
   const str = model.id + '(';
@@ -92,7 +109,7 @@ export function rangeRendererLeftWithParams(
   return rangeRendererWithParams(model, def, innerExpr, true);
 }
 
-function renderParams(model: QueryBuilderOperation, def: QueryBuilderOperationDef, innerExpr: string) {
+function renderParams(model: QueryBuilderOperation, def: QueryBuilderOperationDef) {
   return (model.params ?? []).map((value, index) => {
     const paramDef = def.params[index];
     if (paramDef.type === 'string') {

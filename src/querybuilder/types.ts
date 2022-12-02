@@ -23,7 +23,6 @@ export enum PromVisualQueryOperationCategory {
 }
 
 export enum PromOperationId {
-  Abs = 'abs',
   Absent = 'absent',
   AbsentOverTime = 'absent_over_time',
   Acos = 'acos',
@@ -44,7 +43,6 @@ export enum PromOperationId {
   Cosh = 'cosh',
   Count = 'count',
   CountOverTime = 'count_over_time',
-  CountScalar = 'count_scalar',
   CountValues = 'count_values',
   DayOfMonth = 'day_of_month',
   DayOfWeek = 'day_of_week',
@@ -52,7 +50,6 @@ export enum PromOperationId {
   Deg = 'deg',
   Delta = 'delta',
   Deriv = 'deriv',
-  DropCommonLabels = 'drop_common_labels',
   Exp = 'exp',
   Floor = 'floor',
   Group = 'group',
@@ -64,7 +61,6 @@ export enum PromOperationId {
   Irate = 'irate',
   LabelJoin = 'label_join',
   LabelReplace = 'label_replace',
-  Last = 'last',
   LastOverTime = 'last_over_time',
   Ln = 'ln',
   Log10 = 'log10',
@@ -77,7 +73,6 @@ export enum PromOperationId {
   Month = 'month',
   Pi = 'pi',
   PredictLinear = 'predict_linear',
-  Present = 'present',
   PresentOverTime = 'present_over_time',
   Quantile = 'quantile',
   QuantileOverTime = 'quantile_over_time',

@@ -65,6 +65,7 @@ export function buildVisualQueryFromString(expr: string): Context {
   };
 
   try {
+    // @ts-ignore
     handleExpression(replacedExpr, node, context);
   } catch (err) {
     // Not ideal to log it here, but otherwise we would lose the stack trace.
