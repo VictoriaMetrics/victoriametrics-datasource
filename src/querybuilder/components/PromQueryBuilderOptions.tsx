@@ -57,7 +57,7 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
   };
 
   const formatOption = FORMAT_OPTIONS.find((option) => option.value === query.format) || FORMAT_OPTIONS[0];
-  const queryTypeValue = getQueryTypeValue(query);
+  const queryTypeValue = getQueryTypeValue(query, queryTypeOptions.map(o => o.value));
   const queryType = queryTypeOptions.find((x) => x.value === queryTypeValue) || queryTypeOptions[0];
 
   return (
@@ -111,8 +111,9 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
   );
 });
 
-function getQueryTypeValue(query: PromQuery) {
-  return query.range && query.instant ? 'both' : query.instant ? 'instant' : 'range';
+function getQueryTypeValue(query: PromQuery, options: string[]) {
+  const expect = query.range && query.instant ? 'both' : query.instant ? 'instant' : 'range';
+  return options.includes(expect) ? expect : options[0]
 }
 
 function getCollapsedInfo(query: PromQuery, formatOption: string, queryType: string): string[] {
