@@ -3,9 +3,9 @@ version: '3.0'
 services:
   backend_builder:
     image: golang:1.19
-    working_dir: /go/src/grafana-datasource
+    working_dir: /go/src/victoriametrics-datasource
     volumes:
-      - ./:/go/src/grafana-datasource
+      - ./:/go/src/victoriametrics-datasource
       - ./.cache:/go/pkg/mod
       - ./.cache:/go-cache
     environment:
@@ -16,16 +16,16 @@ services:
         GOOS=linux GOARCH=arm64 go build -o ./dist/victoriametrics_datasource_plugin_linux_arm64 ./pkg/ && \
         GOOS=linux GOARCH=arm go build -o ./dist/victoriametrics_datasource_plugin_linux_arm ./pkg/ && \
         GOOS=linux GOARCH=386 go build -o ./dist/victoriametrics_datasource_plugin_linux_386 ./pkg/ && \
-        GOOS=darwin GOARCH=amd64 go build -o ./dist/victoriametrics_datasource_plugin_darwin_amd64 ./pkg/ && \
         GOOS=darwin GOARCH=arm64 go build -o ./dist/victoriametrics_datasource_plugin_darwin_arm64 ./pkg/ && \
+        GOOS=darwin GOARCH=amd64 go build -o ./dist/victoriametrics_datasource_plugin_darwin_amd64 ./pkg/ && \
         chmod +x ./dist/victoriametrics_datasource_plugin*
       "
 
   frontend_builder:
     image: node:16.18.1
-    working_dir: /grafana-datasource
+    working_dir: /victoriametrics-datasource
     volumes:
-      - ./:/grafana-datasource
+      - ./:/victoriametrics-datasource
       # for speedup yarn install
       - "node_modules:/grafana-datasource/node_modules"
     command: |
@@ -35,7 +35,7 @@ services:
       "
 
   grafana:
-    container_name: 'basic-datasource'
+    container_name: 'grafana-datasource'
     build:
       context: ./.config
       args:
@@ -43,7 +43,7 @@ services:
     ports:
       - 3000:3000/tcp
     volumes:
-      - ./dist:/var/lib/grafana/plugins/basic-datasource,
+      - ./dist:/var/lib/grafana/plugins/grafana-datasource,
       - ./provisioning:/etc/grafana/provisioning
 
 volumes:

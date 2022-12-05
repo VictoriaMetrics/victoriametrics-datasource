@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -21,6 +22,7 @@ type Query struct {
 	IntervalMs    int64  `json:"intervalMs"`
 	TimeInterval  string `json:"timeInterval"`
 	Expr          string `json:"expr"`
+	LegendFormat  string `json:"legendFormat"`
 	MaxDataPoints int64
 	TimeRange     TimeRange
 	url           *url.URL
@@ -97,4 +99,14 @@ func (q *Query) queryRangeURL(expr string, step time.Duration) string {
 
 	q.url.RawQuery = values.Encode()
 	return q.url.String()
+}
+
+func (q *Query) parseLegend() string {
+	repl := strings.NewReplacer("{{", "", "}}", "")
+	legend := repl.Replace(q.LegendFormat)
+
+	if legend == "{}" {
+		return q.Expr
+	}
+	return legend
 }

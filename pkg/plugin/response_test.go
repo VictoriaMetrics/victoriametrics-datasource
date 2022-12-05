@@ -37,7 +37,7 @@ package plugin
 // 				var values []float64
 //
 // 				return []*data.Frame{
-// 					data.NewFrame("response",
+// 					data.NewFrame("dataframes",
 // 						data.NewField("time", nil, times),
 // 						data.NewField("values", nil, values),
 // 					),
@@ -63,7 +63,7 @@ package plugin
 // 			},
 // 			getFrames: func() []*data.Frame {
 // 				return []*data.Frame{
-// 					data.NewFrame("response",
+// 					data.NewFrame("dataframes",
 // 						data.NewField("time", nil, []time.Time{
 // 							time.Date(2022, time.December, 5, 9, 15, 32, 0, time.Local),
 // 						}),
@@ -105,7 +105,7 @@ package plugin
 // 		// 	},
 // 		// 	getFrames: func() []*data.Frame {
 // 		// 		return []*data.Frame{
-// 		// 			data.NewFrame("response",
+// 		// 			data.NewFrame("dataframes",
 // 		// 				data.NewField("time", nil, []time.Time{
 // 		// 					time.Date(2022, time.December, 2, 11, 33, 30, 0, time.Local),
 // 		// 				}),
