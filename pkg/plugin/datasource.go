@@ -76,7 +76,6 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 
 	var q Query
 	if err := json.Unmarshal(query.JSON, &q); err != nil {
-		log.DefaultLogger.Error("failed to parse query json: %s", err)
 		err = fmt.Errorf("failed to parse query json: %s", err)
 		return newResponseError(err, backend.StatusBadRequest)
 	}
@@ -90,28 +89,24 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 
 	minInterval, err := q.calculateMinInterval()
 	if err != nil {
-		log.DefaultLogger.Error("failed to calculate minimal interval: %w", err)
-		err := fmt.Errorf("failed to calculate minimal interval: %w", err)
+		err = fmt.Errorf("failed to calculate minimal interval: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 
 	reqURL, err := q.getQueryURL(minInterval, d.settings.URL)
 	if err != nil {
-		log.DefaultLogger.Error("failed to create request url: %w", err)
-		err := fmt.Errorf("failed to create request url: %w", err)
+		err = fmt.Errorf("failed to create request url: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
 	if err != nil {
-		log.DefaultLogger.Error("failed to create new request with context: %w", err)
-		err := fmt.Errorf("failed to create new request with context: %w", err)
+		err = fmt.Errorf("failed to create new request with context: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 	resp, err := d.httpClient.Do(req)
 	if err != nil {
-		log.DefaultLogger.Error("failed to make http request: %w", err)
-		err := fmt.Errorf("failed to make http request: %w", err)
+		err = fmt.Errorf("failed to make http request: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 	defer func() {
@@ -121,27 +116,23 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		log.DefaultLogger.Error("got unexpected response status code: %d", resp.StatusCode)
-		err := fmt.Errorf("got unexpected response status code: %d", resp.StatusCode)
+		err = fmt.Errorf("got unexpected response status code: %d", resp.StatusCode)
 		return newResponseError(err, backend.Status(resp.StatusCode))
 	}
 
 	var r Response
 	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
-		log.DefaultLogger.Error("failed to decode body response: %w", err)
-		err := fmt.Errorf("failed to decode body response: %w", err)
+		err = fmt.Errorf("failed to decode body response: %w", err)
 		return newResponseError(err, backend.StatusInternal)
 	}
-	r.Instant = q.Instant
-	r.Range = q.Range
 
-	dataResponse, err := r.getDataResponse()
+	frames, err := r.getDataFrames(q.Expr)
 	if err != nil {
-		log.DefaultLogger.Error("failed to prepare data from reponse: %w", err)
-		err := fmt.Errorf("failed to prepare data from reponse: %w", err)
+		err = fmt.Errorf("failed to prepare data from reponse: %w", err)
 		return newResponseError(err, backend.StatusInternal)
 	}
-	return dataResponse
+
+	return backend.DataResponse{Frames: frames}
 }
 
 // CheckHealth performs a request to the specified data source and returns an error if the HTTP handler did not return
@@ -178,5 +169,6 @@ func newHealthCheckErrorf(format string, args ...interface{}) *backend.CheckHeal
 // newHealthCheckErrorf returns a new backend.DataResponse with its status set to backend.DataResponse
 // and the specified error message.
 func newResponseError(err error, httpStatus backend.Status) backend.DataResponse {
+	log.DefaultLogger.Error(err.Error())
 	return backend.DataResponse{Status: httpStatus, Error: err}
 }
