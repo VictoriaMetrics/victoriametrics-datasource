@@ -68,18 +68,18 @@ func (pr promRange) dataframes(label string) (data.Frames, error) {
 	for i, res := range pr.Result {
 		timestamps := make([]time.Time, len(res.Values))
 		values := make([]float64, len(res.Values))
-		for _, value := range res.Values {
+		for j, value := range res.Values {
 			v, ok := value[0].(float64)
 			if !ok {
 				return nil, fmt.Errorf("error get time from dataframes")
 			}
-			timestamps = append(timestamps, time.Unix(int64(v), 0))
+			timestamps[j] = time.Unix(int64(v), 0)
 
 			f, err := strconv.ParseFloat(value[1].(string), 64)
 			if err != nil {
 				return nil, fmt.Errorf("erro get value from dataframes: %s", err)
 			}
-			values = append(values, f)
+			values[j] = f
 		}
 
 		if len(values) < 1 || len(timestamps) < 1 {
@@ -110,8 +110,8 @@ func (ps promScalar) dataframes(label string) (data.Frames, error) {
 
 	frames = append(frames,
 		data.NewFrame(label,
-			data.NewField("time", nil, time.Unix(int64(ps[0].(float64)), 0)),
-			data.NewField("value", nil, f)))
+			data.NewField("time", nil, []time.Time{time.Unix(int64(ps[0].(float64)), 0)}),
+			data.NewField("value", nil, []float64{f})))
 
 	return frames, nil
 }
