@@ -74,6 +74,15 @@ func (d *Datasource) QueryData(ctx context.Context, req *backend.QueryDataReques
 // query process backend.Query and return response
 func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
 
+	// by default we should use POST http request if it is not defined in the settings
+	httpMethod := http.MethodPost
+	var settingsData struct {
+		HTTPMethod string `json:"httpMethod"`
+	}
+	if err := json.Unmarshal(d.settings.JSONData, &settingsData); err == nil {
+		httpMethod = settingsData.HTTPMethod
+	}
+
 	var q Query
 	if err := json.Unmarshal(query.JSON, &q); err != nil {
 		err = fmt.Errorf("failed to parse query json: %s", err)
@@ -99,7 +108,7 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
+	req, err := http.NewRequestWithContext(ctx, httpMethod, reqURL, nil)
 	if err != nil {
 		err = fmt.Errorf("failed to create new request with context: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
