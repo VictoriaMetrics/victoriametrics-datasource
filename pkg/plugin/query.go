@@ -104,9 +104,10 @@ func (q *Query) queryRangeURL(expr string, step time.Duration) string {
 	return q.url.String()
 }
 
+var legendReplacer = strings.NewReplacer("{{", "", "}}", "")
+
 func (q *Query) parseLegend() string {
-	repl := strings.NewReplacer("{{", "", "}}", "")
-	legend := repl.Replace(q.LegendFormat)
+	legend := legendReplacer.Replace(q.LegendFormat)
 
 	if legend == "{}" {
 		return q.Expr

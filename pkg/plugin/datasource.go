@@ -73,16 +73,6 @@ func (d *Datasource) QueryData(ctx context.Context, req *backend.QueryDataReques
 
 // query process backend.Query and return response
 func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
-
-	// by default we should use POST http request if it is not defined in the settings
-	httpMethod := http.MethodPost
-	var settingsData struct {
-		HTTPMethod string `json:"httpMethod"`
-	}
-	if err := json.Unmarshal(d.settings.JSONData, &settingsData); err == nil {
-		httpMethod = settingsData.HTTPMethod
-	}
-
 	var q Query
 	if err := json.Unmarshal(query.JSON, &q); err != nil {
 		err = fmt.Errorf("failed to parse query json: %s", err)
@@ -102,6 +92,14 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 	if err != nil {
 		err = fmt.Errorf("failed to create request url: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
+	}
+
+	httpMethod := http.MethodPost
+	var settingsData struct {
+		HTTPMethod string `json:"httpMethod"`
+	}
+	if err := json.Unmarshal(d.settings.JSONData, &settingsData); err == nil && settingsData.HTTPMethod != "" {
+		httpMethod = settingsData.HTTPMethod
 	}
 
 	req, err := http.NewRequestWithContext(ctx, httpMethod, reqURL, nil)
@@ -133,7 +131,6 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 
 	legend := q.parseLegend()
 	frames, err := r.getDataFrames(legend)
-
 	if err != nil {
 		err = fmt.Errorf("failed to prepare data from reponse: %w", err)
 		return newResponseError(err, backend.StatusInternal)

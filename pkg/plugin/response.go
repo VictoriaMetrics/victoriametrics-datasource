@@ -37,23 +37,20 @@ type promInstant struct {
 }
 
 func (pi promInstant) dataframes(label string) (data.Frames, error) {
-
 	frames := make(data.Frames, len(pi.Result))
 	for i, res := range pi.Result {
 		f, err := strconv.ParseFloat(res.Value[1].(string), 64)
 		if err != nil {
 			return nil, fmt.Errorf("metric %v, unable to parse float64 from %s: %w", res, res.Value[1], err)
 		}
-		timestamps := []time.Time{time.Unix(int64(res.Value[0].(float64)), 0)}
-		values := []float64{f}
-
 		if val, ok := res.Labels[label]; ok {
 			label = val
 		}
 
+		ts := time.Unix(int64(res.Value[0].(float64)), 0)
 		frames[i] = data.NewFrame(label,
-			data.NewField("time", nil, timestamps),
-			data.NewField("values", data.Labels(res.Labels), values))
+			data.NewField("time", nil, []time.Time{ts}),
+			data.NewField("values", data.Labels(res.Labels), []float64{f}))
 	}
 
 	return frames, nil
