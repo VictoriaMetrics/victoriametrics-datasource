@@ -53,7 +53,8 @@
   "metrics": true,
   "alerting": true,
   "annotations": true,
-  "backend": false,
+  "backend": true,
+  "executable": "victoriametrics_datasource_plugin",
   "queryOptions": {
     "minInterval": true
   },

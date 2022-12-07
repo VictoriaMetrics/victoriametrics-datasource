@@ -35,3 +35,6 @@ e2e-results/
 # Cypress
 cypress/report.json
 cypress/videos
+
+# Docker
+.cache
