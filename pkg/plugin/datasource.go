@@ -92,10 +92,6 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 	q.TimeRange = TimeRange(query.TimeRange)
 	q.MaxDataPoints = query.MaxDataPoints
 
-	if q.withIntervalVariable() {
-		q.Interval = ""
-	}
-
 	minInterval, err := q.calculateMinInterval()
 	if err != nil {
 		err = fmt.Errorf("failed to calculate minimal interval: %w", err)

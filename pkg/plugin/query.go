@@ -71,6 +71,9 @@ func (q *Query) withIntervalVariable() bool {
 // calculateMinInterval tries to calculate interval from requested params
 // in duration representation or return error if
 func (q *Query) calculateMinInterval() (time.Duration, error) {
+	if q.withIntervalVariable() {
+		q.Interval = ""
+	}
 	return getIntervalFrom(q.TimeInterval, q.Interval, q.IntervalMs, defaultScrapeInterval)
 }
 
