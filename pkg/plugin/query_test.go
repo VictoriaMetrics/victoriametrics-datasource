@@ -163,7 +163,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 }
 
 func getTimeRage() TimeRange {
-	from := time.Date(2022, 12, 5, 9, 52, 13, 0, time.Local)
-	to := from.Add(time.Minute * 1)
+	from := time.Unix(1670226733, 0)
+	to := time.Unix(1670226793, 0)
 	return TimeRange{From: from, To: to}
 }
