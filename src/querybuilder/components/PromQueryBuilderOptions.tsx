@@ -112,8 +112,14 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
 });
 
 function getQueryTypeValue(query: PromQuery, options: string[]) {
-  const expect = query.range && query.instant ? 'both' : query.instant ? 'instant' : 'range';
-  return options.includes(expect) ? expect : options[0]
+  if (query.range && query.instant && options.includes('both')) {
+    return 'both'
+  } else if (!query.range && query.instant && options.includes('instant')) {
+    return 'instant'
+  } else if (options.includes('range')) {
+    return 'range'
+  }
+  return options[0]
 }
 
 function getCollapsedInfo(query: PromQuery, formatOption: string, queryType: string): string[] {
