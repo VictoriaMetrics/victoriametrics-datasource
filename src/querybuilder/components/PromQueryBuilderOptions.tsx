@@ -57,14 +57,14 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
   };
 
   const formatOption = FORMAT_OPTIONS.find((option) => option.value === query.format) || FORMAT_OPTIONS[0];
-  const queryTypeValue = getQueryTypeValue(query);
-  const queryTypeLabel = queryTypeOptions.find((x) => x.value === queryTypeValue)!.label;
+  const queryTypeValue = getQueryTypeValue(query, queryTypeOptions.map(o => o.value));
+  const queryType = queryTypeOptions.find((x) => x.value === queryTypeValue) || queryTypeOptions[0];
 
   return (
     <EditorRow>
       <QueryOptionGroup
         title="Options"
-        collapsedInfo={getCollapsedInfo(query, formatOption.label!, queryTypeLabel)}
+        collapsedInfo={getCollapsedInfo(query, formatOption.label!, queryType.label)}
       >
         <PromQueryLegendEditor
           legendFormat={query.legendFormat}
@@ -111,8 +111,15 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
   );
 });
 
-function getQueryTypeValue(query: PromQuery) {
-  return query.range && query.instant ? 'both' : query.instant ? 'instant' : 'range';
+function getQueryTypeValue(query: PromQuery, options: string[]) {
+  if (query.range && query.instant && options.includes('both')) {
+    return 'both'
+  } else if (!query.range && query.instant && options.includes('instant')) {
+    return 'instant'
+  } else if (options.includes('range')) {
+    return 'range'
+  }
+  return options[0]
 }
 
 function getCollapsedInfo(query: PromQuery, formatOption: string, queryType: string): string[] {
