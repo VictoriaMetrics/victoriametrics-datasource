@@ -44,6 +44,7 @@ frontend-package-base-image:
 
 frontend-build: frontend-package-base-image
 	docker run --rm -ti \
+		 --user $(shell id -u):$(shell id -g) \
          -v "$(shell pwd):/victoriametrics-datasource" \
          -w /victoriametrics-datasource \
          -v "$(shell pwd)/node_modules:/victoriametrics-datasource/node_modules" \

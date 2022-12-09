@@ -60,5 +60,6 @@ victorimetrics-frontend-plugin-build: \
 	frontend-build
 
 victoriametrics-datasource-plugin-build: \
-	victoriametrics-backend-plugin-build \
-	victorimetrics-frontend-plugin-build
+	victorimetrics-frontend-plugin-build \
+	victoriametrics-backend-plugin-build
+

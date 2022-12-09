@@ -38,3 +38,4 @@ cypress/videos
 
 # Docker
 .cache
+gocache-for-docker
