@@ -28,9 +28,9 @@ app-via-docker: package-builder
 	mkdir -p gocache-for-docker
 	docker run --rm \
 		--user $(shell id -u):$(shell id -g) \
-		--mount type=bind,src="$(shell pwd)",dst=/usr/local/go/src/victoriametrics-datasource \
+		-v "$(shell pwd):/usr/local/go/src/victoriametrics-datasource" \
 		-w /usr/local/go/src/victoriametrics-datasource \
-		--mount type=bind,src="$(shell pwd)/gocache-for-docker",dst=/gocache \
+		-v "$(shell pwd)/gocache-for-docker:/gocache" \
 		--env GOCACHE=/gocache \
 		$(DOCKER_OPTS) \
 		$(BUILDER_IMAGE) \
@@ -38,3 +38,15 @@ app-via-docker: package-builder
 			-ldflags "-extldflags '-static' $(GO_BUILDINFO)" \
 			-tags 'netgo osusergo nethttpomithttp2 musl' \
 			-o ./dist/$(APP_NAME)$(APP_SUFFIX) ./pkg/
+
+frontend-package-base-image:
+	docker build -t frontent-builder-image -f deployment/docker/web/Dockerfile ./deployment/docker/web
+
+frontend-build: frontend-package-base-image
+	docker run --rm -ti \
+		 --user $(shell id -u):$(shell id -g) \
+         -v "$(shell pwd):/victoriametrics-datasource" \
+         -w /victoriametrics-datasource \
+         -v "$(shell pwd)/node_modules:/victoriametrics-datasource/node_modules" \
+         --entrypoint=/bin/bash \
+         frontent-builder-image -c "yarn install --omit=dev && yarn run build"

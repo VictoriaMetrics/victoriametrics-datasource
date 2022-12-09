@@ -30,6 +30,9 @@ app-via-docker-linux-amd64:
 app-via-docker-linux-arm:
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm $(MAKE) app-via-docker-goos-goarch
 
+app-via-docker-linux-386:
+	CGO_ENABLED=0 GOOS=linux GOARCH=386 $(MAKE) app-via-docker-goos-goarch
+
 app-via-docker-linux-arm64:
 ifeq ($(APP_NAME),vmagent)
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(MAKE) app-via-docker-goos-goarch
@@ -53,3 +56,9 @@ victoriametrics-backend-plugin-build: \
 	victoriametrics-backend-plugin-amd64-prod \
 	victoriametrics-backend-plugin-arm64-prod
 
+victorimetrics-frontend-plugin-build: \
+	frontend-build
+
+victoriametrics-datasource-plugin-build: \
+	victoriametrics-backend-plugin-build \
+	victorimetrics-frontend-plugin-build
