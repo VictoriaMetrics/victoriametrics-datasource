@@ -64,7 +64,7 @@ victoriametrics-datasource-plugin-build: \
 	victoriametrics-backend-plugin-build
 
 victoriametrics-datasource-plugin-pack:
-	zip -9 -r victoriametrics-datasource-$(PKG_TAG).zip ./dist && \
+	gzip -9 -r victoriametrics-datasource-$(PKG_TAG).zip ./dist && \
 	sha1sum ./victoriametrics-datasource-$(PKG_TAG).zip > victoriametrics-datasource-$(PKG_TAG).zip.sha1
 
 
