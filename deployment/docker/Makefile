@@ -47,7 +47,6 @@ frontend-build: frontend-package-base-image
 		 --user $(shell id -u):$(shell id -g) \
          -v "$(shell pwd):/victoriametrics-datasource" \
          -w /victoriametrics-datasource \
-         -v "$(shell pwd)/node_modules:/victoriametrics-datasource/node_modules" \
          -v "$(shell pwd)/.cache:/victoriametrics-datasource/.cache" \
          --entrypoint=/bin/bash \
          frontent-builder-image -c "yarn install --omit=dev && yarn run build"
