@@ -48,4 +48,4 @@ frontend-build: frontend-package-base-image
          -v "$(shell pwd):/victoriametrics-datasource" \
          -w /victoriametrics-datasource \
          --entrypoint=/bin/bash \
-         frontent-builder-image -c "yarn install --omit=dev && yarn run build"
+         frontent-builder-image -c "yarn install && yarn run build"
