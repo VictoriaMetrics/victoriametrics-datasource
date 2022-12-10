@@ -64,9 +64,9 @@ victoriametrics-datasource-plugin-build: \
 	victoriametrics-backend-plugin-build
 
 victoriametrics-datasource-plugin-pack:
-	sudo apt-get -y install zip && \
-	zip -9 -r victoriametrics-datasource-$(PKG_TAG).zip ./dist && \
-	sha1sum ./victoriametrics-datasource-$(PKG_TAG).zip > victoriametrics-datasource-$(PKG_TAG).zip.sha1
+	tar -czf victoriametrics-datasource-$(PKG_TAG).tar.gz ./dist \
+	&& sha256sum victoriametrics-datasource-$(PKG_TAG).tar.gz \
+	> victoriametrics-datasource-$(PKG_TAG)_checksums.txt
 
 
 victoriametrics-datasource-plugin-release: \
