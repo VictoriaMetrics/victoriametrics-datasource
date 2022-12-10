@@ -76,4 +76,4 @@ victoriametrics-datasource-plugin-release: \
 	victoriametrics-datasource-plugin-pack
 
 build-release:
-	git checkout $(TAG) && victoriametrics-datasource-plugin-release
+	git checkout $(TAG) && $(MAKE) victoriametrics-datasource-plugin-release
