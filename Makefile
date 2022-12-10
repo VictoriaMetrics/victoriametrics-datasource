@@ -74,3 +74,6 @@ victoriametrics-datasource-plugin-release: \
 	victorimetrics-frontend-plugin-build \
 	victoriametrics-backend-plugin-build \
 	victoriametrics-datasource-plugin-pack
+
+build-release:
+	git checkout $(TAG) && victoriametrics-datasource-plugin-release
