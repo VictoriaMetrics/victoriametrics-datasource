@@ -81,7 +81,7 @@ yarn build:zip
 
 ### 3. How to build backend plugin
 
-From the root folder of the project you can run 
+From the root folder of the project run the following command:
 ```
 make victoriametrics-backend-plugin-build
 ```
