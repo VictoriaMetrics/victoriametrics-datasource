@@ -79,7 +79,7 @@ yarn dev
 yarn build:zip
 ```
 
-### 3. Run the backend plugin
+### 3. How to build backend plugin
 
 From the root folder of the project you can run 
 ```
@@ -93,48 +93,13 @@ This command will build executable multi-platform files to the `dist` folder for
 * amd64
 * arm64
 
-If you want to build only one of the supported platform you can run one of the next commands:
-* linux/amd64
-```
-make victoriametrics-backend-plugin-linux-amd64-prod
-```
-* linux/arm64
-```
-make victoriametrics-backend-plugin-linux-arm64-prod
-```
-* linux/arm
-```
-make victoriametrics-backend-plugin-linux-arm-prod
-```
-* linux/386
-```
-make victoriametrics-backend-plugin-linux-386-prod
-```
-* amd64
-```
-make victoriametrics-backend-plugin-amd64-prod
-```
-* arm64
-```
-make victoriametrics-backend-plugin-arm64-prod
-```
+## How to make new release
 
-To use backend plugin you should define in the `plugin.json` file:
-
-1. "backend": true
-2. "executable": "victoriametrics_datasource_plugin"
-
-And run your grafana server.
-
-## Release version
-
-0. Make sure that the release commits have no security issues.
-1. Create the following release tags:
+0. Make sure there are no open security issues.
+1. Create a release tag:
     * `git tag -s v1.xx.y` in `master` branch
-2. Run `TAG=v1.xx.y make build-release`. This command performs the following tasks:
-   a) Build and package binaries in `*.tar.gz` release archives with the corresponding `_checksums.txt` files inside `dist` directory.
-   This step can be run manually with the command `make build-release` from the needed git tag.
-3. Push the tags created `v1.xx.y` at step 2 to public GitHub repository
+2. Run `TAG=v1.xx.y make build-release` to build and package binaries in `*.tar.gz` release archives.
+3. Run `git push origin v1.xx.y` to push the tag created `v1.xx.y` at step 2 to public GitHub repository
 4. Go to <https://github.com/VictoriaMetrics/grafana-datasource/releases> and verify that draft release with the name `TAG` has been created
    and this release contains all the needed binaries and checksums.
 5. Remove the `draft` checkbox for the `TAG` release and manually publish it.
