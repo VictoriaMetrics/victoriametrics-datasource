@@ -29,32 +29,6 @@ const config = (env) => {
     module: {
       rules: [
         {
-          test: require.resolve('jquery'),
-          loader: 'expose-loader',
-          options: {
-            exposes: ['$', 'jQuery'],
-          },
-        },
-        {
-          test: /\.html$/,
-          exclude: /(index|error)\-template\.html/,
-          use: [
-            {
-              loader: 'ngtemplate-loader?relativeTo=' + path.resolve(__dirname, '../../') + '&prefix=',
-            },
-            {
-              loader: 'html-loader',
-              options: {
-                sources: false,
-                minimize: {
-                  removeComments: false,
-                  collapseWhitespace: false,
-                },
-              },
-            },
-          ],
-        },
-        {
           test: /\.css$/,
           use: ['style-loader', 'css-loader'],
         },
