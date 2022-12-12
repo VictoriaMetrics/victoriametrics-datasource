@@ -93,6 +93,22 @@ This command will build executable multi-platform files to the `dist` folder for
 * amd64
 * arm64
 
+### 4.How to build frontend plugin
+From the root folder of the project run the following command:
+```
+make victorimetrics-frontend-plugin-build
+```
+This command will build all frontend app into `dist` folder.
+
+### 5. How to build frontend and backend parts of the plugin:
+When frontend and backend parts of the plugin is required, run the following command from 
+the root folder of the project:
+```
+make victoriametrics-datasource-plugin-build
+```
+This command will build frontend part and backend part or the plugin and locate both 
+parts into `dist` folder. 
+
 ## How to make new release
 
 0. Make sure there are no open security issues.
