@@ -83,3 +83,6 @@ victoriametrics-datasource-plugin-release: \
 
 build-release:
 	git checkout $(TAG) && $(MAKE) victoriametrics-datasource-plugin-release
+
+frontend-build-release:
+	git checkout $(TAG) && $(MAKE) victoriametrics-datasource-frontend-plugin-release

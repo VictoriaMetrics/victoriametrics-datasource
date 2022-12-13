@@ -51,5 +51,6 @@ frontend-build: frontend-package-base-image
          frontent-builder-image -c "yarn install --omit=dev && yarn run build"
 
 frontend-pack: frontend-package-base-image
+	docker run --rm -ti \
 	--entrypoint=/bin/bash \
-	frontent-builder-image -c "yarn build:zip"
+	frontent-builder-image -c "yarn run build:zip"
