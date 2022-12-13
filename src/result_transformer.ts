@@ -45,6 +45,7 @@ import {
   ExemplarTraceIdDestination,
   isExemplarData,
   isMatrixData,
+  LegendFormatMode,
   MatrixOrVectorResult,
   PromDataSuccessResponse,
   PromMetric,
@@ -479,20 +480,21 @@ function getValueField({
 }
 
 function createLabelInfo(labels: { [key: string]: string }, options: TransformOptions) {
-  if (options?.legendFormat) {
-    const title = renderLegendFormat(getTemplateSrv().replace(options.legendFormat, options?.scopedVars), labels);
+  const legendFormat = options?.legendFormat
+  if (legendFormat && legendFormat !== LegendFormatMode.Auto) {
+    const title = renderLegendFormat(getTemplateSrv().replace(legendFormat, options?.scopedVars), labels);
     return { name: title, labels };
+  }
+
+  if (legendFormat === LegendFormatMode.Auto && Object.keys(labels).length === 1) {
+    return { name: Object.values(labels)[0], labels }
   }
 
   const { __name__, ...labelsWithoutName } = labels;
   const labelPart = formatLabels(labelsWithoutName);
   let title = `${__name__ ?? ''}${labelPart}`;
 
-  if (!title) {
-    title = options.query;
-  }
-
-  return { name: title, labels: labelsWithoutName };
+  return { name: title || options.query, labels: labelsWithoutName };
 }
 
 export function getOriginalMetricName(labelData: { [key: string]: string }) {
