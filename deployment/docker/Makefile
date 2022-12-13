@@ -49,3 +49,7 @@ frontend-build: frontend-package-base-image
          -v "$(shell pwd)/.cache:/victoriametrics-datasource/.cache" \
          --entrypoint=/bin/bash \
          frontent-builder-image -c "yarn install --omit=dev && yarn run build"
+
+frontend-pack: frontend-package-base-image
+	--entrypoint=/bin/bash \
+	frontent-builder-image -c "yarn build:zip"

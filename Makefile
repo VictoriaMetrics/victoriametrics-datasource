@@ -69,6 +69,12 @@ victoriametrics-datasource-plugin-pack:
 	> victoriametrics-datasource-$(PKG_TAG)_checksums.txt \
 	&& rm -rf ./dist
 
+victoriametrics-datasource-frontend-plugin-pack: \
+	frontend-pack
+
+victoriametrics-datasource-frontend-plugin-release: \
+	victorimetrics-frontend-plugin-build \
+	victoriametrics-datasource-frontend-plugin-pack
 
 victoriametrics-datasource-plugin-release: \
 	victorimetrics-frontend-plugin-build \
