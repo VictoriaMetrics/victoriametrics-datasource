@@ -55,4 +55,4 @@ frontend-pack: frontend-package-base-image
 	-v "$(shell pwd):/victoriametrics-datasource" \
 	-w /victoriametrics-datasource \
 	--entrypoint=/bin/bash \
-	frontent-builder-image -c "yarn run build:zip"
+	frontent-builder-image -c "yarn run zip"
