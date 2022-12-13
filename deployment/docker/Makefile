@@ -52,5 +52,7 @@ frontend-build: frontend-package-base-image
 
 frontend-pack: frontend-package-base-image
 	docker run --rm -ti \
+	-v "$(shell pwd):/victoriametrics-datasource" \
+	-w /victoriametrics-datasource \
 	--entrypoint=/bin/bash \
 	frontent-builder-image -c "yarn run build:zip"
