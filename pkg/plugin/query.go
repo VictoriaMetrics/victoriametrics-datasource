@@ -3,7 +3,7 @@ package plugin
 import (
 	"fmt"
 	"net/url"
-    "path"
+	"path"
 	"strconv"
 	"strings"
 	"time"
