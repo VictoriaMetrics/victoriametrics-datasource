@@ -54,8 +54,8 @@ import {
   toDataQueryResponse,
 } from '@grafana/runtime';
 
-
 import { addLabelToQuery } from './add_label_to_query';
+import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
 import PrometheusLanguageProvider from './language_provider';
 import { expandRecordingRules } from './language_utils';
 import { renderLegendFormat } from './legend';
@@ -78,11 +78,9 @@ import {
 import { safeStringifyValue } from './utils/safeStringifyValue';
 import { PrometheusVariableSupport } from './variables';
 
-
 enum PromApplication {
   VictoriaMetrics = 'VictoriaMetrics',
 }
-export const ANNOTATION_QUERY_STEP_DEFAULT = '60s';
 const GET_AND_POST_METADATA_ENDPOINTS = ['api/v1/query', 'api/v1/query_range', 'api/v1/series', 'api/v1/labels'];
 
 export class PrometheusDatasource
@@ -117,7 +115,7 @@ export class PrometheusDatasource
   ) {
     super(instanceSettings);
 
-    this.type = 'victoriametrics-datasource';
+    this.type = DATASOURCE_TYPE;
     this.subType = PromApplication.VictoriaMetrics;
     this.rulerEnabled = false;
     this.editorSrc = 'app/features/prometheus/partials/query.editor.html';

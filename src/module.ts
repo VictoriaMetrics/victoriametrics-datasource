@@ -2,7 +2,8 @@ import { DataSourcePlugin } from '@grafana/data';
 
 import PromQueryEditorByApp from './components/PromQueryEditorByApp';
 import { ConfigEditor } from './configuration/ConfigEditor';
-import { ANNOTATION_QUERY_STEP_DEFAULT, PrometheusDatasource } from './datasource';
+import { ANNOTATION_QUERY_STEP_DEFAULT } from "./consts";
+import { PrometheusDatasource } from './datasource';
 
 class VictoriaMetricsAnnotationsQueryCtrl {
   static templateUrl = 'partials/annotations.editor.html';

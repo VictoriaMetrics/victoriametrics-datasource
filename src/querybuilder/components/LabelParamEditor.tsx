@@ -21,6 +21,7 @@ import React, { useState } from 'react';
 import { DataSourceApi, SelectableValue, toOption } from '@grafana/data';
 import { Select } from '@grafana/ui';
 
+import { DATASOURCE_TYPE } from "../../consts";
 import { promQueryModeller } from '../PromQueryModeller';
 import { getOperationParamId } from '../shared/operationUtils';
 import { QueryBuilderLabelFilter, QueryBuilderOperationParamEditorProps } from '../shared/types';
@@ -67,7 +68,7 @@ async function loadGroupByLabels(
   let labels: QueryBuilderLabelFilter[] = query.labels;
 
   // This function is used by both Prometheus and Loki and this the only difference.
-  if (datasource.type === 'victoriametrics-datasource') {
+  if (datasource.type === DATASOURCE_TYPE) {
     labels = [{ label: '__name__', op: '=', value: query.metric }, ...query.labels];
   }
 
