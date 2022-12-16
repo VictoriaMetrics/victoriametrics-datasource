@@ -3,6 +3,7 @@ package plugin
 import (
 	"fmt"
 	"net/url"
+    "path"
 	"strconv"
 	"strings"
 	"time"
@@ -79,7 +80,7 @@ func (q *Query) calculateMinInterval() (time.Duration, error) {
 
 // queryInstantURL prepare query url for instant query
 func (q *Query) queryInstantURL(expr string, step time.Duration) string {
-	q.url.Path = instantQueryPath
+	q.url.Path = path.Join(q.url.Path, instantQueryPath)
 	values := q.url.Query()
 
 	values.Add("query", expr)
@@ -92,7 +93,7 @@ func (q *Query) queryInstantURL(expr string, step time.Duration) string {
 
 // queryRangeURL prepare query url for range query
 func (q *Query) queryRangeURL(expr string, step time.Duration) string {
-	q.url.Path = rangeQueryPath
+	q.url.Path = path.Join(q.url.Path, rangeQueryPath)
 	values := q.url.Query()
 
 	values.Add("query", expr)
