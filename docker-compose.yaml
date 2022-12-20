@@ -12,13 +12,13 @@ services:
       CGO_ENABLED: "0"
     command: |
       bash -xec "
-        GOOS=linux GOARCH=amd64 go build -o ./dist/victoriametrics_datasource_plugin_linux_amd64 ./pkg/ && \
-        GOOS=linux GOARCH=arm64 go build -o ./dist/victoriametrics_datasource_plugin_linux_arm64 ./pkg/ && \
-        GOOS=linux GOARCH=arm go build -o ./dist/victoriametrics_datasource_plugin_linux_arm ./pkg/ && \
-        GOOS=linux GOARCH=386 go build -o ./dist/victoriametrics_datasource_plugin_linux_386 ./pkg/ && \
-        GOOS=darwin GOARCH=arm64 go build -o ./dist/victoriametrics_datasource_plugin_darwin_arm64 ./pkg/ && \
-        GOOS=darwin GOARCH=amd64 go build -o ./dist/victoriametrics_datasource_plugin_darwin_amd64 ./pkg/ && \
-        chmod +x ./dist/victoriametrics_datasource_plugin*
+        GOOS=linux GOARCH=amd64 go build -o ./victoriametrics-datasource/victoriametrics_datasource_plugin_linux_amd64 ./pkg/ && \
+        GOOS=linux GOARCH=arm64 go build -o ./victoriametrics-datasource/victoriametrics_datasource_plugin_linux_arm64 ./pkg/ && \
+        GOOS=linux GOARCH=arm go build -o ./victoriametrics-datasource/victoriametrics_datasource_plugin_linux_arm ./pkg/ && \
+        GOOS=linux GOARCH=386 go build -o ./victoriametrics-datasource/victoriametrics_datasource_plugin_linux_386 ./pkg/ && \
+        GOOS=darwin GOARCH=arm64 go build -o ./victoriametrics-datasource/victoriametrics_datasource_plugin_darwin_arm64 ./pkg/ && \
+        GOOS=darwin GOARCH=amd64 go build -o ./victoriametrics-datasource/victoriametrics_datasource_plugin_darwin_amd64 ./pkg/ && \
+        chmod +x ./victoriametrics-datasource/victoriametrics_datasource_plugin*
       "
 
   frontend_builder:

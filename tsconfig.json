@@ -2,7 +2,7 @@
   "compilerOptions": {
     "jsx": "react",
     "baseUrl": "/",
-    "outDir": "dist",
+    "outDir": "victoriametrics-datasource",
     "rootDirs": ["/"],
     "allowJs": true,
     "strict": true,
