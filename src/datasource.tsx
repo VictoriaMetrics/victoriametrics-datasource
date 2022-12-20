@@ -54,9 +54,8 @@ import {
   toDataQueryResponse,
 } from '@grafana/runtime';
 
-
 import { addLabelToQuery } from './add_label_to_query';
-import { AnnotationQueryEditor } from './components/AnnotationQueryEditor';
+import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
 import PrometheusLanguageProvider from './language_provider';
 import { expandRecordingRules } from './language_utils';
 import { renderLegendFormat } from './legend';
@@ -79,11 +78,9 @@ import {
 import { safeStringifyValue } from './utils/safeStringifyValue';
 import { PrometheusVariableSupport } from './variables';
 
-
 enum PromApplication {
   VictoriaMetrics = 'VictoriaMetrics',
 }
-const ANNOTATION_QUERY_STEP_DEFAULT = '60s';
 const GET_AND_POST_METADATA_ENDPOINTS = ['api/v1/query', 'api/v1/query_range', 'api/v1/series', 'api/v1/labels'];
 
 export class PrometheusDatasource
@@ -118,7 +115,7 @@ export class PrometheusDatasource
   ) {
     super(instanceSettings);
 
-    this.type = 'victoriametrics-datasource';
+    this.type = DATASOURCE_TYPE;
     this.subType = PromApplication.VictoriaMetrics;
     this.rulerEnabled = false;
     this.editorSrc = 'app/features/prometheus/partials/query.editor.html';
@@ -140,14 +137,6 @@ export class PrometheusDatasource
     this.customQueryParameters = new URLSearchParams(instanceSettings.jsonData.customQueryParameters);
     this.variables = new PrometheusVariableSupport(this, this.templateSrv, this.timeSrv);
     this.exemplarsAvailable = false;
-
-    // This needs to be here and cannot be static because of how annotations typing affects casting of data source
-    // objects to DataSourceApi types.
-    // We don't use the default processing for prometheus.
-    // See standardAnnotationSupport.ts/[shouldUseMappingUI|shouldUseLegacyRunner]
-    this.annotations = {
-      QueryEditor: AnnotationQueryEditor,
-    };
   }
 
   init = async () => {
@@ -662,12 +651,6 @@ export class PrometheusDatasource
   }
 
   async annotationQuery(options: AnnotationQueryRequest<PromQuery>): Promise<AnnotationEvent[]> {
-    // if (this.access === 'direct') {
-    //   const error = new Error(
-    //     'Browser access mode in the Prometheus datasource is no longer available. Switch to server access mode.'
-    //   );
-    //   return Promise.reject(error);
-    // }
 
     const annotation = options.annotation;
     const { expr = '' } = annotation;
