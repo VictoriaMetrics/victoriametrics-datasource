@@ -64,7 +64,7 @@ victoriametrics-datasource-plugin-build: \
 	victoriametrics-backend-plugin-build
 
 victoriametrics-datasource-plugin-pack:
-	tar -czf victoriametrics-datasource-$(PKG_TAG).tar.gz dist \
+	tar -czf victoriametrics-datasource-$(PKG_TAG).tar.gz victoriametrics-datasource \
 	&& sha256sum victoriametrics-datasource-$(PKG_TAG).tar.gz \
 	> victoriametrics-datasource-$(PKG_TAG)_checksums.txt \
 	&& rm -rf ./dist
