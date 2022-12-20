@@ -11,7 +11,7 @@
     "lint": "eslint --cache --ignore-path ./.gitignore --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "yarn lint --fix",
     "server": "docker-compose up --build",
-    "zip": "cp -r ./dist ./$npm_package_name && zip $npm_package_name-v$npm_package_version.zip $npm_package_name -r && rm -rf $npm_package_name && sha1sum ./$npm_package_name-v$npm_package_version.zip >$npm_package_name-v$npm_package_version.zip.sha1"
+    "zip": "zip $npm_package_name-v$npm_package_version.zip $npm_package_name -r && sha1sum ./$npm_package_name-v$npm_package_version.zip >$npm_package_name-v$npm_package_version.zip.sha1"
   },
   "author": "VictoriaMetrics",
   "license": "AGPL-3.0-only",
