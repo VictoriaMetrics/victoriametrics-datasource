@@ -14,7 +14,7 @@ const config = (env) => {
   return merge(defaultConfig, {
     output: {
       clean: true,
-      path: path.resolve(__dirname, 'dist'),
+      path: path.resolve(__dirname, 'victoriametrics-datasource'),
       filename: '[name].js',
       // Keep publicPath relative for host.com/grafana/ deployments
       publicPath: '/public/plugins/victoriametrics-datasource/',
