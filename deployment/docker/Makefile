@@ -48,7 +48,7 @@ frontend-build: frontend-package-base-image
          -v "$(shell pwd)/node_modules:/victoriametrics-datasource/node_modules" \
          -v "$(shell pwd)/.cache:/victoriametrics-datasource/.cache" \
          --entrypoint=/bin/bash \
-         frontent-builder-image -c "yarn install --omit=dev && yarn run build"
+         frontent-builder-image -c "yarn install --cache-folder /victoriametrics-datasource/.cache --omit=dev && yarn run build"
 
 frontend-pack: frontend-package-base-image
 	docker run --rm -ti \
