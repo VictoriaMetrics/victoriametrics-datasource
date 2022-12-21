@@ -43,7 +43,7 @@ services:
     ports:
       - 3000:3000/tcp
     volumes:
-      - ./dist:/var/lib/grafana/plugins/grafana-datasource,
+      - ./victoriametrics-datasource:/var/lib/grafana/plugins/grafana-datasource,
       - ./provisioning:/etc/grafana/provisioning
 
 volumes:
