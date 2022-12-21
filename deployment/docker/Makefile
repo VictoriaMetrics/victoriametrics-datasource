@@ -36,7 +36,7 @@ app-via-docker: package-builder
 		go build $(RACE) -trimpath -buildvcs=false \
 			-ldflags "-extldflags '-static' $(GO_BUILDINFO)" \
 			-tags 'netgo osusergo nethttpomithttp2 musl' \
-			-o ./dist/$(APP_NAME)$(APP_SUFFIX) ./pkg/
+			-o ./victoriametrics-datasource/$(APP_NAME)$(APP_SUFFIX) ./pkg/
 
 frontend-package-base-image:
 	docker build -t frontent-builder-image -f deployment/docker/web/Dockerfile ./deployment/docker/web

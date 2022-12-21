@@ -9,7 +9,7 @@ ifeq ($(PKG_TAG),)
 PKG_TAG := $(BUILDINFO_TAG)
 endif
 
-GO_BUILDINFO = -X '$(PKG_PREFIX)/dist/buildinfo.Version=$(APP_NAME)-$(DATEINFO_TAG)-$(BUILDINFO_TAG)'
+GO_BUILDINFO = -X '$(PKG_PREFIX)/victoriametrics-datasource/buildinfo.Version=$(APP_NAME)-$(DATEINFO_TAG)-$(BUILDINFO_TAG)'
 
 .PHONY: $(MAKECMDGOALS)
 
@@ -17,7 +17,7 @@ include pkg/Makefile
 include deployment/*/Makefile
 
 app-local-goos-goarch:
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) GOARCH=$(GOARCH) go build $(RACE) -ldflags "$(GO_BUILDINFO)" -o dist/$(APP_NAME)_$(GOOS)_$(GOARCH)$(RACE) pkg/
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) GOARCH=$(GOARCH) go build $(RACE) -ldflags "$(GO_BUILDINFO)" -o victoriametrics-datasource/$(APP_NAME)_$(GOOS)_$(GOARCH)$(RACE) pkg/
 
 app-via-docker-goos-goarch:
 	APP_SUFFIX='_$(GOOS)_$(GOARCH)' \
@@ -67,7 +67,7 @@ victoriametrics-datasource-plugin-pack:
 	tar -czf victoriametrics-datasource-$(PKG_TAG).tar.gz victoriametrics-datasource \
 	&& sha256sum victoriametrics-datasource-$(PKG_TAG).tar.gz \
 	> victoriametrics-datasource-$(PKG_TAG)_checksums.txt \
-	&& rm -rf ./dist
+	&& rm -rf ./victoriametrics-datasource
 
 victoriametrics-datasource-frontend-plugin-pack: \
 	frontend-pack
