@@ -2,7 +2,14 @@
 
 ## tip
 
+
+
+## [v0.1.2](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.1.2)
+
+Released at 21-12-2022
+
 * FEATURE: add annotation support
+* FEATURE: add datasource backend
 
 ## [v0.1.1](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.1.1)
 
