@@ -81,7 +81,7 @@ func calculateStep(minInterval time.Duration, from, to time.Time, maxDataPoints 
 	}
 
 	calculatedInterval := time.Duration((to.UnixNano() - from.UnixNano()) / resolution)
-	if calculatedInterval < minInterval {
+	if calculatedInterval > minInterval {
 		return minInterval
 	}
 
