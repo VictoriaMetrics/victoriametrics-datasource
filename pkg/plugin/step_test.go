@@ -23,7 +23,7 @@ func Test_calculateStep(t *testing.T) {
 				To:   time.Now(),
 			},
 			resolution: 43200,
-			want:       "20s",
+			want:       "3m55.636s",
 		},
 		{
 			name:         "one month timerange interval max points 43200 with 1 second base interval",
@@ -33,7 +33,7 @@ func Test_calculateStep(t *testing.T) {
 				To:   time.Now(),
 			},
 			resolution: 43200,
-			want:       "1s",
+			want:       "3m55.636s",
 		},
 		{
 			name:         "one month timerange interval max points 10000 with 5 second base interval",
@@ -43,7 +43,7 @@ func Test_calculateStep(t *testing.T) {
 				To:   time.Now(),
 			},
 			resolution: 10000,
-			want:       "5s",
+			want:       "3m55.636s",
 		},
 		{
 			name:         "one month timerange interval max points 10000 with 5 second base interval",
@@ -64,6 +64,16 @@ func Test_calculateStep(t *testing.T) {
 			},
 			resolution: 100,
 			want:       "1m0s",
+		},
+		{
+			name:         "two days time range with minimal resolution",
+			baseInterval: 60 * time.Second,
+			timeRange: backend.TimeRange{
+				From: time.Now().Add(-time.Hour * 24 * 90),
+				To:   time.Now(),
+			},
+			resolution: 100000,
+			want:       "11m46.909s",
 		},
 	}
 	for _, tt := range tests {

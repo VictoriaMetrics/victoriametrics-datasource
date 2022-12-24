@@ -22,6 +22,7 @@ const (
 
 var (
 	defaultResolution int64 = 1500
+	safeResolution    int64 = 11000
 	year                    = time.Hour * 24 * 365
 	day                     = time.Hour * 24
 )
@@ -80,12 +81,20 @@ func calculateStep(minInterval time.Duration, from, to time.Time, maxDataPoints 
 		resolution = defaultResolution
 	}
 
-	calculatedInterval := time.Duration((to.UnixNano() - from.UnixNano()) / resolution)
+	rangeValue := to.UnixNano() - from.UnixNano()
+
+	calculatedInterval := time.Duration(rangeValue / resolution)
 	if calculatedInterval > minInterval {
-		return minInterval
+		calculatedInterval = minInterval
 	}
 
-	return calculatedInterval
+	safeInterval := time.Duration(rangeValue / safeResolution)
+
+	if calculatedInterval > safeInterval {
+		safeInterval = calculatedInterval
+	}
+
+	return safeInterval.Round(time.Millisecond)
 }
 
 // calculateRateInterval calculates scrape interval from string representation of interval and
@@ -113,9 +122,9 @@ func replaceTemplateVariable(expr string, timerange, interval time.Duration, tim
 
 	var rateInterval time.Duration
 	if timeInterval == varRateInterval {
-		rateInterval = interval
-	} else {
 		rateInterval = calculateRateInterval(interval, timeInterval)
+	} else {
+		rateInterval = interval
 	}
 
 	expr = strings.ReplaceAll(expr, varIntervalMs, strconv.FormatInt(int64(interval/time.Millisecond), 10))
