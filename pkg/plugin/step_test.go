@@ -53,7 +53,7 @@ func Test_calculateStep(t *testing.T) {
 				To:   time.Now(),
 			},
 			resolution: 10000,
-			want:       "500ms",
+			want:       "5s",
 		},
 		{
 			name:         "one month timerange interval max points 10000 with 5 second base interval",
@@ -63,7 +63,7 @@ func Test_calculateStep(t *testing.T) {
 				To:   time.Now(),
 			},
 			resolution: 10000,
-			want:       "500ms",
+			want:       "2m0s",
 		},
 		{
 			name:         "two days time range with minimal resolution",

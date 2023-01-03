@@ -133,7 +133,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 				rawURL:      "http://127.0.0.1:8428",
 			},
 			wantErr: false,
-			want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28ingress_nginx_request_qps%7B%7D%5B10s%5D%29&start=1670226733&step=20ms",
+			want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28ingress_nginx_request_qps%7B%7D%5B10s%5D%29&start=1670226733&step=10s",
 		},
 	}
 	for _, tt := range tests {
