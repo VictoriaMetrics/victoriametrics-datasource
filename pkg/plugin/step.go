@@ -85,7 +85,7 @@ func calculateStep(minInterval time.Duration, from, to time.Time, maxDataPoints 
 	calculatedInterval := time.Duration(rangeValue / resolution)
 
 	if calculatedInterval < minInterval {
-		roundInterval(minInterval)
+		return roundInterval(minInterval)
 	}
 
 	return roundInterval(calculatedInterval)
