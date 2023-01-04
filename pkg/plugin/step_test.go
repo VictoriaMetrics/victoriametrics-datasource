@@ -43,7 +43,7 @@ func Test_calculateStep(t *testing.T) {
 				To:   time.Now(),
 			},
 			resolution: 10000,
-			want:       "4m19.2s",
+			want:       "5m0s",
 		},
 		{
 			name:         "one month timerange interval max points 10000 with 5 second base interval",
@@ -54,6 +54,36 @@ func Test_calculateStep(t *testing.T) {
 			},
 			resolution: 10000,
 			want:       "5s",
+		},
+		{
+			name:         "one month timerange interval max points 10000 with 5 second base interval",
+			baseInterval: 2 * time.Minute,
+			timeRange: backend.TimeRange{
+				From: time.Now().Add(-time.Hour * 1),
+				To:   time.Now(),
+			},
+			resolution: 10000,
+			want:       "2m0s",
+		},
+		{
+			name:         "two days time range with minimal resolution",
+			baseInterval: 60 * time.Second,
+			timeRange: backend.TimeRange{
+				From: time.Now().Add(-time.Hour * 2 * 24),
+				To:   time.Now(),
+			},
+			resolution: 100,
+			want:       "30m0s",
+		},
+		{
+			name:         "two days time range with minimal resolution",
+			baseInterval: 60 * time.Second,
+			timeRange: backend.TimeRange{
+				From: time.Now().Add(-time.Hour * 24 * 90),
+				To:   time.Now(),
+			},
+			resolution: 100000,
+			want:       "1m0s",
 		},
 	}
 	for _, tt := range tests {
@@ -342,7 +372,7 @@ func Test_replaceTemplateVariable(t *testing.T) {
 				interval:     0,
 				timeInterval: "",
 			},
-			want: "rate(ingress_nginx_request_qps{}[1m0s])",
+			want: "rate(ingress_nginx_request_qps{}[0s])",
 		},
 		{
 			name: "defined rate interval and time range",
@@ -352,7 +382,7 @@ func Test_replaceTemplateVariable(t *testing.T) {
 				interval:     time.Minute * 4,
 				timeInterval: "",
 			},
-			want: "rate(ingress_nginx_request_qps{}[4m15s])",
+			want: "rate(ingress_nginx_request_qps{}[4m0s])",
 		},
 		{
 			name: "defined interval ms with zero value",
@@ -398,11 +428,11 @@ func Test_replaceTemplateVariable(t *testing.T) {
 			name: "defined range ms but time range in milliseconds",
 			args: args{
 				expr:         "rate(ingress_nginx_request_qps{}[$__range])",
-				timerange:    time.Millisecond * 3,
+				timerange:    time.Millisecond * 500,
 				interval:     time.Second * 4,
-				timeInterval: "10s",
+				timeInterval: "500ms",
 			},
-			want: "rate(ingress_nginx_request_qps{}[0s])",
+			want: "rate(ingress_nginx_request_qps{}[1s])",
 		},
 		{
 			name: "defined range ms but time range",
@@ -422,7 +452,7 @@ func Test_replaceTemplateVariable(t *testing.T) {
 				interval:     time.Second * 5,
 				timeInterval: "10s",
 			},
-			want: "rate(ingress_nginx_request_qps{}[40s])",
+			want: "rate(ingress_nginx_request_qps{}[5s])",
 		},
 	}
 	for _, tt := range tests {
