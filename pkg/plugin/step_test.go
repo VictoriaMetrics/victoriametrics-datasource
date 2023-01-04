@@ -428,11 +428,11 @@ func Test_replaceTemplateVariable(t *testing.T) {
 			name: "defined range ms but time range in milliseconds",
 			args: args{
 				expr:         "rate(ingress_nginx_request_qps{}[$__range])",
-				timerange:    time.Millisecond * 3,
+				timerange:    time.Millisecond * 500,
 				interval:     time.Second * 4,
-				timeInterval: "10s",
+				timeInterval: "500ms",
 			},
-			want: "rate(ingress_nginx_request_qps{}[0s])",
+			want: "rate(ingress_nginx_request_qps{}[1s])",
 		},
 		{
 			name: "defined range ms but time range",
