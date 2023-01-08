@@ -22,6 +22,7 @@ import { CoreApp, LoadingState } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
 import { Button, ConfirmModal } from '@grafana/ui';
 
+import PromLink from "../../components/PromLink";
 import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../components/QueryEditor';
 import { PromQueryEditorProps } from '../../components/types';
 import { PromQuery } from '../../types';
@@ -41,7 +42,7 @@ import { PromQueryCodeEditor } from './PromQueryCodeEditor';
 type Props = PromQueryEditorProps;
 
 export const PromQueryEditorSelector = React.memo<Props>((props) => {
-  const { onChange, onRunQuery, data, app } = props;
+  const { onChange, onRunQuery, data, app, datasource } = props;
   const [parseModalOpen, setParseModalOpen] = useState(false);
   const [dataIsStale, setDataIsStale] = useState(false);
   const { flag: explain, setFlag: setExplain } = useFlag(promQueryEditorExplainKey);
@@ -141,6 +142,16 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
             Run queries
           </Button>
         )}
+        <PromLink query={query} datasource={datasource} panelData={data}>
+          <Button
+            variant={dataIsStale ? 'primary' : 'secondary'}
+            size="sm"
+            icon={data?.state === LoadingState.Loading ? 'fa fa-spinner' : undefined}
+            disabled={data?.state === LoadingState.Loading}
+          >
+            Run in VMUI
+          </Button>
+        </PromLink>
         <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange} />
       </EditorHeader>
       <Space v={0.5} />
