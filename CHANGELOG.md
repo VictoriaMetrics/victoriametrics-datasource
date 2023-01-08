@@ -2,6 +2,7 @@
 
 ## tip
 
+* FEATURE: Add links to VMUI from the query panel
 
 
 ## [v0.1.2](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.1.2)
