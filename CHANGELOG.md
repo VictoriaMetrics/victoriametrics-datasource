@@ -2,7 +2,7 @@
 
 ## tip
 
-
+* BUGFIX: fix ignore time range filter. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/47)
 
 ## [v0.1.2](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.1.2)
 
