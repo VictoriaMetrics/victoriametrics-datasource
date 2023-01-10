@@ -22,8 +22,8 @@ import { CoreApp, LoadingState } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
 import { Button, ConfirmModal } from '@grafana/ui';
 
-import PromLink from "../../components/PromLink";
 import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../components/QueryEditor';
+import VmuiLink from "../../components/VmuiLink";
 import { PromQueryEditorProps } from '../../components/types';
 import { PromQuery } from '../../types';
 import { promQueryModeller } from '../PromQueryModeller';
@@ -142,7 +142,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
             Run queries
           </Button>
         )}
-        <PromLink query={query} datasource={datasource} panelData={data}>
+        <VmuiLink query={query} datasource={datasource} panelData={data}>
           <Button
             variant={dataIsStale ? 'primary' : 'secondary'}
             size="sm"
@@ -151,7 +151,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
           >
             Run in VMUI
           </Button>
-        </PromLink>
+        </VmuiLink>
         <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange} />
       </EditorHeader>
       <Space v={0.5} />

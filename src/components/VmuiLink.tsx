@@ -52,7 +52,7 @@ export const relativeTimeOptionsVMUI = [
   ...o
 }))
 
-const PromLink: FC<Props> = (
+const VmuiLink: FC<Props> = (
   {
     panelData,
     query,
@@ -135,4 +135,4 @@ const PromLink: FC<Props> = (
   );
 };
 
-export default memo(PromLink);
+export default memo(VmuiLink);
