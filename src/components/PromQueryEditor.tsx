@@ -25,8 +25,8 @@ import { InlineFormLabel, LegacyForms, Select } from '@grafana/ui';
 
 import { PromQuery } from '../types';
 
-import PromLink from './PromLink';
 import PromQueryField from './PromQueryField';
+import VmuiLink from './VmuiLink';
 import { PromQueryEditorProps } from './types';
 
 const { Switch } = LegacyForms;
@@ -204,7 +204,7 @@ export class PromQueryEditor extends PureComponent<PromQueryEditorProps, State> 
               <Switch label="Instant" checked={instant} onChange={this.onInstantChange} />
 
               <InlineFormLabel width={10} tooltip="Link to Graph in Prometheus">
-                <PromLink
+                <VmuiLink
                   datasource={datasource}
                   query={this.query} // Use modified query
                   panelData={data}
