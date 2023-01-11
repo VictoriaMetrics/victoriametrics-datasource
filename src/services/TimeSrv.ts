@@ -20,6 +20,7 @@ import { cloneDeep, extend, isString } from 'lodash';
 
 import {
   dateMath,
+  DateTime,
   dateTime,
   getDefaultTimeRange,
   isDateTime,
@@ -29,15 +30,38 @@ import {
   TimeZone,
   toUtc,
 } from '@grafana/data';
-import { locationService } from '@grafana/runtime';
+import { locationService, config, getTemplateSrv } from '@grafana/runtime';
 
-import { AbsoluteTimeEvent, ShiftTimeEvent, ShiftTimeEventDirection, ZoomOutEvent } from '../types/events';
+import {
+  AbsoluteTimeEvent,
+  ShiftTimeEvent,
+  ShiftTimeEventDirection,
+  ZoomOutEvent
+} from '../types/events';
 import { getRefreshFromUrl } from '../utils/getRefreshFromUrl';
 import { getShiftedTimeRange, getZoomedTimeRange } from '../utils/timePicker';
 
-import appEvents from './app_events';
-import { config } from './config';
-import { contextSrv, ContextSrv } from './context_srv';
+import appEvents from "./app_events";
+import { contextSrv, ContextSrv } from "./context_srv";
+
+export const getTimeRange = (
+  time: { from: DateTime | string; to: DateTime | string },
+  timeModel?: TimeModel
+): TimeRange => {
+  // make copies if they are moment  (do not want to return out internal moment, because they are mutable!)
+  const raw = {
+    from: isDateTime(time.from) ? dateTime(time.from) : time.from,
+    to: isDateTime(time.to) ? dateTime(time.to) : time.to,
+  };
+
+  const timezone = timeModel ? timeModel.getTimezone() : undefined;
+
+  return {
+    from: dateMath.parse(raw.from, false, timezone, timeModel?.fiscalYearStartMonth)!,
+    to: dateMath.parse(raw.to, true, timezone, timeModel?.fiscalYearStartMonth)!,
+    raw: raw,
+  };
+};
 
 export interface TimeModel {
   time: any;
@@ -59,8 +83,8 @@ export class TimeSrv {
   private autoRefreshBlocked?: boolean;
 
   constructor(private contextSrv: ContextSrv) {
-    // default time
-    this.time = getDefaultTimeRange().raw;
+    // @ts-ignore default time
+    this.time = getTemplateSrv()?.timeRange?.raw || getDefaultTimeRange().raw;
     this.refreshTimeModel = this.refreshTimeModel.bind(this);
 
     appEvents.subscribe(ZoomOutEvent, (e) => {
@@ -91,7 +115,7 @@ export class TimeSrv {
     this.initTimeFromUrl();
     this.parseTime();
 
-    // remember time at load so we can go back to it
+    // remember time at load, so we can go back to it
     this.timeAtLoad = cloneDeep(this.time);
 
     const range = rangeUtil.convertRawToRange(
@@ -113,6 +137,14 @@ export class TimeSrv {
     if (this.refresh) {
       this.setAutoRefresh(this.refresh);
     }
+  }
+
+  getValidIntervals(intervals: string[]): string[] {
+    if (!this.contextSrv.minRefreshInterval) {
+      return intervals;
+    }
+
+    return intervals.filter((str) => str !== '').filter(this.contextSrv.isAllowedInterval);
   }
 
   private parseTime() {
@@ -167,6 +199,11 @@ export class TimeSrv {
   }
 
   private initTimeFromUrl() {
+    // If we are in a public dashboard ignore the time range in the url
+    if (config.isPublicDashboardView) {
+      return;
+    }
+
     const params = locationService.getSearch();
 
     if (params.get('time') && params.get('time.window')) {
@@ -199,6 +236,34 @@ export class TimeSrv {
       isAllowedIntervalFn: this.contextSrv.isAllowedInterval,
       minRefreshInterval: config.minRefreshInterval,
     });
+  }
+
+  updateTimeRangeFromUrl() {
+    const params = locationService.getSearch();
+
+    if (params.get('left')) {
+      return; // explore handles this;
+    }
+
+    const urlRange = this.timeRangeForUrl();
+    const from = params.get('from');
+    const to = params.get('to');
+
+    // check if url has time range
+    if (from && to) {
+      // is it different from what our current time range?
+      if (from !== urlRange.from || to !== urlRange.to) {
+        // issue update
+        this.initTimeFromUrl();
+        this.setTime(this.time, false);
+      }
+    } else if (this.timeHasChangedSinceLoad()) {
+      this.setTime(this.timeAtLoad, true);
+    }
+  }
+
+  private timeHasChangedSinceLoad() {
+    return this.timeAtLoad && (this.timeAtLoad.from !== this.time.from || this.timeAtLoad.to !== this.time.to);
   }
 
   setAutoRefresh(interval: any) {
@@ -253,7 +318,24 @@ export class TimeSrv {
     clearTimeout(this.refreshTimer);
   }
 
+  // store timeModel refresh value and pause auto-refresh in some places
+  // i.e panel edit
+  pauseAutoRefresh() {
+    this.autoRefreshPaused = true;
+  }
+
+  // resume auto-refresh based on old dashboard refresh property
+  resumeAutoRefresh() {
+    this.autoRefreshPaused = false;
+    this.refreshTimeModel();
+  }
+
   setTime(time: RawTimeRange, updateUrl = true) {
+    // If we are in a public dashboard ignore time range changes
+    if (config.isPublicDashboardView) {
+      return;
+    }
+
     extend(this.time, time);
 
     // disable refresh if zoom in or zoom out
@@ -265,7 +347,7 @@ export class TimeSrv {
       this.oldRefresh = null;
     }
 
-    if (updateUrl === true) {
+    if (updateUrl) {
       const urlRange = this.timeRangeForUrl();
       const urlParams = locationService.getSearchObject();
 
@@ -283,7 +365,7 @@ export class TimeSrv {
   }
 
   timeRangeForUrl = () => {
-    const range = this.timeRange().raw;
+    const range = getTimeRange(this.time, this.timeModel).raw;
 
     if (isDateTime(range.from)) {
       range.from = range.from.valueOf().toString();
@@ -296,19 +378,7 @@ export class TimeSrv {
   };
 
   timeRange(): TimeRange {
-    // make copies if they are moment  (do not want to return out internal moment, because they are mutable!)
-    const raw = {
-      from: isDateTime(this.time.from) ? dateTime(this.time.from) : this.time.from,
-      to: isDateTime(this.time.to) ? dateTime(this.time.to) : this.time.to,
-    };
-
-    const timezone = this.timeModel ? this.timeModel.getTimezone() : undefined;
-
-    return {
-      from: dateMath.parse(raw.from, false, timezone, this.timeModel?.fiscalYearStartMonth)!,
-      to: dateMath.parse(raw.to, true, timezone, this.timeModel?.fiscalYearStartMonth)!,
-      raw: raw,
-    };
+    return getTimeRange(this.time, this.timeModel);
   }
 
   zoomOut(factor: number, updateUrl = true) {
@@ -340,9 +410,30 @@ export class TimeSrv {
     const { from, to } = this.timeRange();
     this.setTime({ from, to }, true);
   }
+
+  // isRefreshOutsideThreshold function calculates the difference between last refresh and now
+  // if the difference is outside 5% of the current set time range then the function will return true
+  // if the difference is within 5% of the current set time range then the function will return false
+  // if the current time range is absolute (i.e. not using relative strings like now-5m) then the function will return false
+  isRefreshOutsideThreshold(lastRefresh: number, threshold = 0.05) {
+    const timeRange = this.timeRange();
+
+    if (dateMath.isMathString(timeRange.raw.from)) {
+      const totalRange = timeRange.to.diff(timeRange.from);
+      const msSinceLastRefresh = Date.now() - lastRefresh;
+      const msThreshold = totalRange * threshold;
+      return msSinceLastRefresh >= msThreshold;
+    }
+
+    return false;
+  }
 }
 
 let singleton: TimeSrv | undefined;
+
+export function setTimeSrv(srv: TimeSrv) {
+  singleton = srv;
+}
 
 export function getTimeSrv(): TimeSrv {
   if (!singleton) {
