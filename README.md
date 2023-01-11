@@ -19,7 +19,8 @@ Grafana docs can be found [here](https://grafana.com/docs/grafana/latest/setup-g
 2. To download plugin build and move contents into grafana plugins directory:
 
 ``` bash
-curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/v0.1.2/victoriametrics-datasource-v0.1.2.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
+ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oP '\Kv\d+\.\d+\.\d+' | head -1)
+curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
 tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
 rm /var/lib/grafana/plugins/plugin.tar.gz
 ```
@@ -42,7 +43,8 @@ extraInitContainers:
      - |
        set -ex
        mkdir -p /var/lib/grafana/plugins/
-       curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/v0.1.2/victoriametrics-datasource-v0.1.2.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
+       ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oP '\Kv\d+\.\d+\.\d+' | head -1)
+       curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
        tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
        rm /var/lib/grafana/plugins/plugin.tar.gz
        chown -R 472:472 /var/lib/grafana/plugins/
