@@ -67,7 +67,16 @@ extraInitContainers:
         mountPath: /var/lib/grafana
 ```
 
-This example uses init container to download and install plugin.
+This example uses init container to download and install plugin. To allow Grafana using this container as a sidecar
+set the following config:
+```yaml
+sidecar:
+ datasources:
+   initDatasources: true
+   enabled: true
+```
+See more about chart settings [here](https://github.com/grafana/helm-charts/blob/541d97051de87a309362e02d08741ffc868cfcd6/charts/grafana/values.yaml)
+
 Another option would be to build custom Grafana image with plugin based on same installation instructions.
 
 ## Getting started development
