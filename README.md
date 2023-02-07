@@ -73,7 +73,7 @@ set the following config:
 sidecar:
   datasources:
    initDatasources: true
-   enabled: true
+    enabled: true
 ```
 See more about chart settings [here](https://github.com/grafana/helm-charts/blob/541d97051de87a309362e02d08741ffc868cfcd6/charts/grafana/values.yaml)
 
