@@ -71,7 +71,7 @@ This example uses init container to download and install plugin. To allow Grafan
 set the following config:
 ```yaml
 sidecar:
- datasources:
+  datasources:
    initDatasources: true
    enabled: true
 ```
