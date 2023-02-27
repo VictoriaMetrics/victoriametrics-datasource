@@ -38,6 +38,7 @@ export interface PromQuery extends DataQuery {
   showingTable?: boolean;
   /** Code, Builder or Explain */
   editorMode?: QueryEditorMode;
+  trace?: number;
 }
 
 export interface PromOptions extends DataSourceJsonData {
@@ -82,6 +83,7 @@ export interface PromMetricsMetadata {
 export interface PromDataSuccessResponse<T = PromData> {
   status: 'success';
   data: T;
+  trace?: TracingData;
 }
 
 export interface PromDataErrorResponse<T = PromData> {
@@ -172,4 +174,10 @@ export enum LegendFormatMode {
   Auto = '__auto',
   Verbose = '__verbose',
   Custom = '__custom',
+}
+
+export interface TracingData {
+  message: string;
+  duration_msec: number;
+  children: TracingData[];
 }

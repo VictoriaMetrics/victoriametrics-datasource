@@ -26,13 +26,15 @@ import PromQueryField from '../../components/PromQueryField';
 import { PromQueryEditorProps } from '../../components/types';
 
 import { PromQueryBuilderExplained } from './PromQueryBuilderExplained';
+import { TraceView } from "./Trace";
 
 type Props = PromQueryEditorProps & {
   showExplain: boolean;
+  showTrace: boolean;
 };
 
 export function PromQueryCodeEditor(props: Props) {
-  const { query, datasource, range, onRunQuery, onChange, data, app, showExplain } = props;
+  const { query, datasource, range, onRunQuery, onChange, data, app, showExplain, showTrace } = props;
   const styles = useStyles2(getStyles);
 
   return (
@@ -50,6 +52,7 @@ export function PromQueryCodeEditor(props: Props) {
       />
 
       {showExplain && <PromQueryBuilderExplained query={query.expr} />}
+      {showTrace && <TraceView query={query} datasource={datasource} data={data} />}
     </div>
   );
 }

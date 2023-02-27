@@ -45,6 +45,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   const { onChange, onRunQuery, data, app, datasource } = props;
   const [parseModalOpen, setParseModalOpen] = useState(false);
   const [dataIsStale, setDataIsStale] = useState(false);
+  const [trace, setTrace] = useState(false);
   const { flag: explain, setFlag: setExplain } = useFlag(promQueryEditorExplainKey);
   const { flag: rawQuery, setFlag: setRawQuery } = useFlag(promQueryEditorRawQueryKey, true);
 
@@ -92,6 +93,12 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
     setExplain(e.currentTarget.checked);
   };
 
+  const onShowTracingChange = (e: SyntheticEvent<HTMLInputElement>) => {
+    setTrace(e.currentTarget.checked);
+    onChange({ ...query, trace: e.currentTarget.checked ? 1 : undefined });
+    onRunQuery();
+  };
+
   return (
     <>
       <ConfirmModal
@@ -123,14 +130,15 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
           options={promQueryModeller.getQueryPatterns().map((x) => ({ label: x.name, value: x }))}
         />
 
-        <QueryHeaderSwitch label="Explain" value={explain} onChange={onShowExplainChange} />
+        <QueryHeaderSwitch label="Explain" value={explain} onChange={onShowExplainChange}/>
+        <QueryHeaderSwitch label="Trace" value={trace} onChange={onShowTracingChange}/>
         {editorMode === QueryEditorMode.Builder && (
           <>
-            <QueryHeaderSwitch label="Raw query" value={rawQuery} onChange={onQueryPreviewChange} />
-            <FeedbackLink feedbackUrl="https://github.com/grafana/grafana/discussions/47693" />
+            <QueryHeaderSwitch label="Raw query" value={rawQuery} onChange={onQueryPreviewChange}/>
+            <FeedbackLink feedbackUrl="https://github.com/grafana/grafana/discussions/47693"/>
           </>
         )}
-        <FlexItem grow={1} />
+        <FlexItem grow={1}/>
         {app !== CoreApp.Explore && (
           <Button
             variant={dataIsStale ? 'primary' : 'secondary'}
@@ -152,11 +160,18 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
             Run in VMUI
           </Button>
         </VmuiLink>
-        <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange} />
+        <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange}/>
       </EditorHeader>
-      <Space v={0.5} />
+      <Space v={0.5}/>
       <EditorRows>
-        {editorMode === QueryEditorMode.Code && <PromQueryCodeEditor {...props} query={query} showExplain={explain} />}
+        {editorMode === QueryEditorMode.Code && (
+          <PromQueryCodeEditor
+            {...props}
+            query={query}
+            showExplain={explain}
+            showTrace={trace}
+          />
+        )}
         {editorMode === QueryEditorMode.Builder && (
           <PromQueryBuilderContainer
             query={query}
@@ -166,9 +181,10 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
             data={data}
             showRawQuery={rawQuery}
             showExplain={explain}
+            showTrace={trace}
           />
         )}
-        <PromQueryBuilderOptions query={query} app={props.app} onChange={onChange} onRunQuery={onRunQuery} />
+        <PromQueryBuilderOptions query={query} app={props.app} onChange={onChange} onRunQuery={onRunQuery}/>
       </EditorRows>
     </>
   );

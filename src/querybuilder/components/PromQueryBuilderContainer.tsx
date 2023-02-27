@@ -29,6 +29,7 @@ import { PromVisualQuery } from '../types';
 
 import { PromQueryBuilder } from './PromQueryBuilder';
 import { QueryPreview } from './QueryPreview';
+import { TraceView } from "./Trace";
 
 export interface Props {
   query: PromQuery;
@@ -38,6 +39,7 @@ export interface Props {
   data?: PanelData;
   showRawQuery?: boolean;
   showExplain: boolean;
+  showTrace: boolean;
 }
 
 export interface State {
@@ -49,7 +51,7 @@ export interface State {
  * This component is here just to contain the translation logic between string query and the visual query builder model.
  */
 export function PromQueryBuilderContainer(props: Props) {
-  const { query, onChange, onRunQuery, datasource, data, showRawQuery, showExplain } = props;
+  const { query, onChange, onRunQuery, datasource, data, showRawQuery, showExplain, showTrace } = props;
   const [state, dispatch] = useReducer(stateSlice.reducer, { expr: query.expr });
 
   // Only rebuild visual query if expr changes from outside
@@ -78,6 +80,7 @@ export function PromQueryBuilderContainer(props: Props) {
         showExplain={showExplain}
       />
       {showRawQuery && <QueryPreview query={query.expr} />}
+      {showTrace && <TraceView query={query} datasource={datasource} data={data} />}
     </>
   );
 }

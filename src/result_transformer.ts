@@ -150,14 +150,13 @@ export function transformV2(
 
   // Everything else is processed as time_series result and graph preferredVisualisationType
   const otherFrames = framesWithoutTableHeatmapsAndExemplars.map((dataFrame) => {
-    const df = {
+    return {
       ...dataFrame,
       meta: {
         ...dataFrame.meta,
         preferredVisualisationType: 'graph',
       },
     } as DataFrame;
-    return df;
   });
 
   const flattenedProcessedHeatmapFrames = flatten(processedHeatmapResultsGroupedByQuery);
@@ -180,7 +179,7 @@ export function transformDFToTable(dfs: DataFrame[]): DataFrame[] {
   const dataFramesByRefId = groupBy(dfs, 'refId');
   const refIds = Object.keys(dataFramesByRefId);
 
-  const frames = refIds.map((refId) => {
+  return refIds.map((refId) => {
     // Create timeField, valueField and labelFields
     const valueText = getValueText(refIds.length, refId);
     const valueField = getValueField({ data: [], valueName: valueText });
@@ -226,7 +225,6 @@ export function transformDFToTable(dfs: DataFrame[]): DataFrame[] {
       length: timeField.values.length,
     };
   });
-  return frames;
 }
 
 function getValueText(responseLength: number, refId = '') {
@@ -261,31 +259,44 @@ export function transform(
     },
   };
   const prometheusResult = response.data.data;
+  const traceResult = response.data?.trace
 
   if (isExemplarData(prometheusResult)) {
-    return [];
+    return {
+      dataFrame: [],
+      traceResult
+    };
   }
 
   if (!prometheusResult?.result) {
-    return [];
+    return {
+      dataFrame: [],
+      traceResult
+    };
   }
 
   // Return early if result type is scalar
   if (prometheusResult.resultType === 'scalar') {
-    return [
-      {
-        meta: options.meta,
-        refId: options.refId,
-        length: 1,
-        fields: [getTimeField([prometheusResult.result]), getValueField({ data: [prometheusResult.result] })],
-      },
-    ];
+    return {
+      dataFrame: [
+        {
+          meta: options.meta,
+          refId: options.refId,
+          length: 1,
+          fields: [getTimeField([prometheusResult.result]), getValueField({ data: [prometheusResult.result] })],
+        },
+      ],
+      traceResult
+    }
   }
 
   // Return early again if the format is table, this needs special transformation.
   if (options.format === 'table') {
     const tableData = transformMetricDataToTable(prometheusResult.result, options);
-    return [tableData];
+    return {
+      dataFrame: [tableData],
+      traceResult
+    };
   }
 
   // Process matrix and vector results to DataFrame
@@ -294,11 +305,14 @@ export function transform(
 
   // When format is heatmap use the already created data frames and transform it more
   if (options.format === 'heatmap') {
-    return mergeHeatmapFrames(transformToHistogramOverTime(dataFrame.sort(sortSeriesByLabel)));
+    return {
+      dataFrame: mergeHeatmapFrames(transformToHistogramOverTime(dataFrame.sort(sortSeriesByLabel))),
+      traceResult
+    };
   }
 
   // Return matrix or vector result as DataFrame[]
-  return dataFrame;
+  return { dataFrame, traceResult };
 }
 
 function getDataLinks(options: ExemplarTraceIdDestination): DataLink[] {
@@ -461,12 +475,12 @@ type ValueFieldOptions = {
 };
 
 function getValueField({
-  data,
-  valueName = TIME_SERIES_VALUE_FIELD_NAME,
-  parseValue = true,
-  labels,
-  displayNameFromDS,
-}: ValueFieldOptions): MutableField {
+                         data,
+                         valueName = TIME_SERIES_VALUE_FIELD_NAME,
+                         parseValue = true,
+                         labels,
+                         displayNameFromDS,
+                       }: ValueFieldOptions): MutableField {
   return {
     name: valueName,
     type: FieldType.number,
