@@ -6,7 +6,7 @@ import { Stack } from "../../../components/QueryEditor";
 import { PrometheusDatasource } from "../../../datasource";
 import { PromQuery, TracingData } from "../../../types";
 
-import NestedNav from "./NestedNav";
+import NestedNav from "./NestedNav/NestedNav";
 import Trace from "./Trace";
 
 interface Props {
