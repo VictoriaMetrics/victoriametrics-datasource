@@ -397,7 +397,7 @@ export class PrometheusDatasource
             responseListLength: queries.length,
           });
           return {
-            data,
+            data: data.dataFrame,
             key: query.requestId,
             state: runningQueriesCount === 0 ? LoadingState.Done : LoadingState.Loading,
           } as DataQueryResponse;
@@ -437,11 +437,12 @@ export class PrometheusDatasource
 
     return forkJoin(observables).pipe(
       map((results) => {
-        const data = results.reduce((result, current) => {
+        const data = results.map(r => r.dataFrame).reduce((result, current) => {
           return [...result, ...current];
         }, []);
         return {
-          data,
+          data: data,
+          trace: results.map((result) => result.traceResult).filter((result) => result),
           key: requestId,
           state: LoadingState.Done,
         };
@@ -518,6 +519,8 @@ export class PrometheusDatasource
     query.end = adjusted.end;
     this._addTracingHeaders(query, options);
 
+    query.trace = target.trace
+
     return query;
   }
 
@@ -554,6 +557,7 @@ export class PrometheusDatasource
       end,
       step: query.step,
     };
+    if (query.trace) {data.trace = "1"}
 
     if (this.queryTimeout) {
       data['timeout'] = this.queryTimeout;
@@ -582,6 +586,7 @@ export class PrometheusDatasource
       query: query.expr,
       time,
     };
+    if (query.trace) {data.trace = "1"}
 
     if (this.queryTimeout) {
       data['timeout'] = this.queryTimeout;

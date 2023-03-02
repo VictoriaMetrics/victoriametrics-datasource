@@ -46,6 +46,7 @@ export function AnnotationQueryEditor(props: Props) {
           {...props}
           query={query}
           showExplain={false}
+          showTrace={false}
           onChange={(query) => {
             onAnnotationChange({
               ...annotation,

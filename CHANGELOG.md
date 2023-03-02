@@ -3,6 +3,7 @@
 ## tip
 
 * FEATURE: Add links to VMUI from the query panel
+* FEATURE: Add option to show query trace
 
 * BUGFIX: respect time filter for variables update. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/47)
 
