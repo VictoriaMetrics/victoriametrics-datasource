@@ -46,16 +46,16 @@ export const TraceView = React.memo<Props>(({ query, data, datasource }) => {
   }
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null
+    let timeout: NodeJS.Timeout | null = null
     if (copied) {
-      interval = setTimeout(() => {
+      timeout = setTimeout(() => {
         setCopied(false)
       }, 2000)
     }
 
     return () => {
-      if (interval) {
-        clearInterval(interval)
+      if (timeout) {
+        clearInterval(timeout)
       }
     }
   }, [copied])
