@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { DataQueryRequest, DataQueryResponse, PanelData } from "@grafana/data";
-import { Button, Modal, useStyles2 } from "@grafana/ui";
+import { Button, Icon, Modal, useStyles2 } from "@grafana/ui";
 
 import { Stack } from "../../../components/QueryEditor";
 import { PrometheusDatasource } from "../../../datasource";
@@ -21,6 +21,7 @@ export const TraceView = React.memo<Props>(({ query, data, datasource }) => {
   const [trace, setTrace] = useState<Trace | null>(null)
   const [openModal, setOpenModal] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [copyError, setCopyError] = useState("")
   const styles = useStyles2(getStyles);
 
   const handleOpenModal = () => {
@@ -33,14 +34,21 @@ export const TraceView = React.memo<Props>(({ query, data, datasource }) => {
 
   const handleCopyToClipboard = () => {
     if (!trace || copied) {return}
-    navigator.clipboard.writeText(trace.JSON)
-    setCopied(true)
+    try {
+      navigator.clipboard.writeText(trace.JSON)
+      setCopied(true)
+    } catch (e) {
+      console.error('Failed to copy: ', e);
+      if (e instanceof Error) {
+        setCopyError(e.message)
+      }
+    }
   }
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null
     if (copied) {
-      setTimeout(() => {
+      interval = setTimeout(() => {
         setCopied(false)
       }, 2000)
     }
@@ -108,6 +116,10 @@ export const TraceView = React.memo<Props>(({ query, data, datasource }) => {
             <code lang="json">{trace.JSON}</code>
           </pre>
           <Modal.ButtonRow>
+            {copyError && (<div className={styles.error}>
+              <Icon name={"exclamation-triangle"} size="sm"/>
+              <span>{copyError}</span>
+            </div>)}
             <Button
               variant={copied ? "success" : "primary"}
               size="sm"

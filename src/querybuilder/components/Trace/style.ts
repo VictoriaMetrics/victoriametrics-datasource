@@ -15,4 +15,10 @@ export default (theme: GrafanaTheme2) => ({
     maxHeight: '50vh',
     overflow: 'auto'
   }),
+  error: css({
+    display: 'flex',
+    alignItems: 'center',
+    color: theme.colors.error.text,
+    gap: theme.spacing(1),
+  }),
 });
