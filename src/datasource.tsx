@@ -398,6 +398,7 @@ export class PrometheusDatasource
           });
           return {
             data: data.dataFrame,
+            trace: data.traceResult ? [data.traceResult] : [],
             key: query.requestId,
             state: runningQueriesCount === 0 ? LoadingState.Done : LoadingState.Loading,
           } as DataQueryResponse;
