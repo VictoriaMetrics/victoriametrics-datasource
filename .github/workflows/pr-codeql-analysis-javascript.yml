@@ -8,10 +8,9 @@ on:
       - '**/*.js'
       - '**/*.ts'
       - '**/*.tsx'
-    paths-ignore:
-      - '**/*.test.js'
-      - '**/*.test.ts'
-      - '**/*.test.tsx'
+      - '!**/*.test.js'
+      - '!**/*.test.ts'
+      - '!**/*.test.tsx'
 
 jobs:
   analyze:
