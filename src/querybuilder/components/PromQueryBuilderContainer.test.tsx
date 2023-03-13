@@ -1,6 +1,7 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 
 import { DataSourceInstanceSettings, DataSourcePluginMeta } from '@grafana/data';
 
@@ -15,15 +16,15 @@ import { PromQueryBuilderContainer } from './PromQueryBuilderContainer';
 const addOperation = async (section: string, op: string) => {
   const addOperationButton = screen.getByTitle('Add operation');
   expect(addOperationButton).toBeInTheDocument();
-  await userEvent.click(addOperationButton);
+  await act(async () => await userEvent.click(addOperationButton))
   const sectionItem = screen.getByTitle(section);
   expect(sectionItem).toBeInTheDocument();
   // Weirdly the await userEvent.click doesn't work here, it reports the item has pointer-events: none. Don't see that
   // anywhere when debugging so not sure what style is it picking up.
-  fireEvent.click(sectionItem.children[0]);
+  await act(async () => fireEvent.click(sectionItem.children[0]))
   const opItem = screen.getByTitle(op);
   expect(opItem).toBeInTheDocument();
-  fireEvent.click(opItem);
+  await act(async () => fireEvent.click(opItem))
 }
 
 describe('PromQueryBuilderContainer', () => {
@@ -40,7 +41,7 @@ describe('PromQueryBuilderContainer', () => {
 
   it('Can add rest param', async () => {
     const { container } = setup({ expr: 'sum(ALERTS)' });
-    await userEvent.click(screen.getByTestId('operations.0.add-rest-param'));
+    await act(async () => await userEvent.click(screen.getByTestId('operations.0.add-rest-param')))
 
     waitFor(() => {
       expect(container.querySelector(`${getOperationParamId(0, 0)}`)).toBeInTheDocument();
@@ -74,6 +75,6 @@ function setup(queryOverrides: Partial<PromQuery> = {}) {
     showTrace: false
   };
 
-  const { container } = render(<PromQueryBuilderContainer {...props} />);
+  const { container } = render(<PromQueryBuilderContainer {...props} />)
   return { languageProvider, datasource, container, props };
 }

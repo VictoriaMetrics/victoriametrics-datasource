@@ -7,6 +7,8 @@
     "build:zip": "npm run build && npm run zip",
     "dev": "TS_NODE_PROJECT=\"./.config/webpack/tsconfig.webpack.json\" webpack -w -c ./webpack.config.ts --env development",
     "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --collectCoverage",
     "test:ci": "jest --maxWorkers 4",
     "lint": "eslint --cache --ignore-path ./.gitignore --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "yarn lint --fix",
