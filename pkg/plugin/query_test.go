@@ -8,7 +8,7 @@ import (
 
 func TestQuery_getQueryURL(t *testing.T) {
 	type fields struct {
-		RefId         string
+		RefID         string
 		Instant       bool
 		Range         bool
 		Interval      string
@@ -33,7 +33,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		{
 			name: "empty values",
 			fields: fields{
-				RefId:         "1",
+				RefID:         "1",
 				Instant:       false,
 				Range:         false,
 				Interval:      "",
@@ -54,7 +54,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		{
 			name: "empty instant expression",
 			fields: fields{
-				RefId:         "1",
+				RefID:         "1",
 				Instant:       true,
 				Range:         false,
 				Interval:      "10s",
@@ -75,7 +75,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		{
 			name: "empty instant query with interval",
 			fields: fields{
-				RefId:         "1",
+				RefID:         "1",
 				Instant:       true,
 				Range:         false,
 				Interval:      "10s",
@@ -96,7 +96,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		{
 			name: "instant query with time interval",
 			fields: fields{
-				RefId:         "1",
+				RefID:         "1",
 				Instant:       true,
 				Range:         false,
 				Interval:      "20s",
@@ -117,7 +117,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		{
 			name: "range query with interval",
 			fields: fields{
-				RefId:         "1",
+				RefID:         "1",
 				Instant:       false,
 				Range:         true,
 				Interval:      "5s",
@@ -139,7 +139,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			q := Query{
-				RefId:         tt.fields.RefId,
+				RefID:         tt.fields.RefID,
 				Instant:       tt.fields.Instant,
 				Range:         tt.fields.Range,
 				Interval:      tt.fields.Interval,

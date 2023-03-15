@@ -16,7 +16,7 @@ const (
 
 // Query represents backend query object
 type Query struct {
-	RefId         string `json:"refId"`
+	RefID         string `json:"refId"`
 	Instant       bool   `json:"instant"`
 	Range         bool   `json:"range"`
 	Interval      string `json:"interval"`
