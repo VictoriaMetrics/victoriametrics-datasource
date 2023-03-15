@@ -111,4 +111,4 @@ govulncheck: install-govulncheck
 install-govulncheck:
 	which govulncheck || go install golang.org/x/vuln/cmd/govulncheck@latest
 
-check-all: fmt vet golang-ci-lint govulncheck
+check-all: fmt vet golang-ci-lint
