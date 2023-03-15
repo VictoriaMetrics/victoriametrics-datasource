@@ -43,7 +43,7 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        scenario: ["test", "test-race"]
+        scenario: ["golang-test", "golang-test-race"]
     name: test
     runs-on: ubuntu-latest
     steps:
