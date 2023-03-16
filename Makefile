@@ -105,10 +105,4 @@ fmt:
 vet:
 	go vet ./pkg/...
 
-govulncheck: install-govulncheck
-	govulncheck ./pkg/...
-
-install-govulncheck:
-	which govulncheck || go install golang.org/x/vuln/cmd/govulncheck@latest
-
 check-all: fmt vet golang-ci-lint
