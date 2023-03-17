@@ -13,9 +13,6 @@ func TestResponse_getDataFrames(t *testing.T) {
 		Status string
 		Data   Data
 	}
-	type args struct {
-		label string
-	}
 	tests := []struct {
 		name    string
 		label   string

@@ -86,3 +86,23 @@ build-release:
 
 frontend-build-release:
 	git checkout $(TAG) && $(MAKE) victoriametrics-datasource-frontend-plugin-release
+
+golang-test:
+	go test ./pkg/...
+
+golang-test-race:
+	go test -race ./pkg/...
+
+golang-ci-lint: install-golang-ci-lint
+	golangci-lint run ./pkg/...
+
+install-golang-ci-lint:
+	which golangci-lint || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.51.2
+
+fmt:
+	gofmt -l -w -s ./pkg
+
+vet:
+	go vet ./pkg/...
+
+check-all: fmt vet golang-ci-lint
