@@ -1,6 +1,15 @@
 name: "CodeQL for PR / javascript"
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**/*.js'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '!**/*.test.js'
+      - '!**/*.test.ts'
+      - '!**/*.test.tsx'
   pull_request:
     branches: [main]
     paths:

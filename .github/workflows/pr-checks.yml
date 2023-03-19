@@ -4,10 +4,18 @@ name: Jest Automatic Testing
 # Event triggers on pull request event
 # For more detail visit https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#on
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - "**.js"
+      - '**/*.ts'
+      - '**/*.tsx'
   pull_request:
     branches: [main]
     paths:
       - "**.js"
+      - '**/*.ts'
+      - '**/*.tsx'
 
 # The jobs this action will run. You can write as many jobs as you want.
 # For more detail on this section visit https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobs
