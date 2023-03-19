@@ -1,5 +1,5 @@
 # Name of this action
-name: Jest Automatic Testing
+name: check frontend
 
 # Event triggers on pull request event
 # For more detail visit https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#on
@@ -36,10 +36,10 @@ jobs:
 
       # Specify which version of Node this project is using. For more information visit.
       # https://docs.github.com/en/actions/guides/building-and-testing-nodejs#specifying-the-nodejs-version
-      - name: Set up NodeJS
+      - name: Set up node
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 16.14.2
 
       - name: Install all dependencies
         run: npm install
@@ -47,6 +47,27 @@ jobs:
       - name: Run Jest Tests
         run: npm run test
 
+      - uses: actions/cache@v3
+        with:
+          path: gocache-for-docker
+          key: gocache-docker-${{ runner.os }}-${{ steps.go.outputs.go-version }}-${{ hashFiles('go.mod') }}
+
+  run-build:
+    needs: run-jest-tests
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v3
+
+      - name: Set up node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.14.2
+
+      - name: Install all dependencies
+        run: npm install
+
       - name: Build
         run: |
-          make victorimetrics-frontend-plugin-build
+          make victoriametrics-backend-plugin-build
