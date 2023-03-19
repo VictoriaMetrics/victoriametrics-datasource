@@ -7,13 +7,11 @@ on:
   push:
     branches: [ main ]
     paths:
-      - "**.js"
       - '**/*.ts'
       - '**/*.tsx'
   pull_request:
     branches: [main]
     paths:
-      - "**.js"
       - '**/*.ts'
       - '**/*.tsx'
 
@@ -46,11 +44,6 @@ jobs:
 
       - name: Run Jest Tests
         run: npm run test
-
-      - uses: actions/cache@v3
-        with:
-          path: gocache-for-docker
-          key: gocache-docker-${{ runner.os }}-${{ steps.go.outputs.go-version }}-${{ hashFiles('go.mod') }}
 
   run-build:
     needs: run-jest-tests
