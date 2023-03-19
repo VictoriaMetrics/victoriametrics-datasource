@@ -70,4 +70,4 @@ jobs:
 
       - name: Build
         run: |
-          make victoriametrics-backend-plugin-build
+          make victorimetrics-frontend-plugin-build
