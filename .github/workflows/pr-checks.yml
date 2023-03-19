@@ -38,3 +38,7 @@ jobs:
 
       - name: Run Jest Tests
         run: npm run test
+
+      - name: Build
+        run: |
+          make victorimetrics-frontend-plugin-build
