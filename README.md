@@ -79,6 +79,67 @@ See more about chart settings [here](https://github.com/grafana/helm-charts/blob
 
 Another option would be to build custom Grafana image with plugin based on same installation instructions.
 
+## Plugin provision
+
+Provision of grafana plugin requires to:
+
+1. Create folder `./provisioning/datasource` with datasource example file:
+
+```yaml
+apiVersion: 1
+
+datasources:
+   - name: VictoriaMetrics
+     type: victoriametrics-datasource
+     access: proxy
+     url: http://victoriametrics:8428
+     isDefault: true
+
+   - name: VictoriaMetrics - cluster
+     type: victoriametrics-datasource
+     access: proxy
+     url: http://vmselect:8481/select/0/prometheus
+     isDefault: false
+```
+
+2. Build frontend and backend part of the plugin:
+
+```
+make victoriametrics-datasource-plugin-build
+```
+
+3. Create docker-compose file:
+
+```yaml
+  version: '3.0'
+
+  services:
+
+     grafana:
+        container_name: 'grafana-datasource'
+        build:
+           context: ./.config
+           args:
+              grafana_version: ${GRAFANA_VERSION:-9.1.2}
+        ports:
+           - 3000:3000/tcp
+        volumes:
+           - ./victoriametrics-datasource:/var/lib/grafana/plugins/grafana-datasource
+           - ./provisioning:/etc/grafana/provisioning
+```
+
+4. Run docker-compose file: 
+
+```
+docker-compose -f docker-compose.yaml up
+```
+
+When grafana starts successfully datasources should be present on the datasources tab
+
+<p>
+  <img src="docs/assets/provision_datasources.png" width="800">
+</p>
+
 ## Getting started development
 
 ### 1. Configure Grafana
