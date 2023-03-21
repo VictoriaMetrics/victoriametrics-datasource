@@ -1,14 +1,18 @@
 name: "CodeQL for PR / javascript"
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '!**/*.test.ts'
+      - '!**/*.test.tsx'
   pull_request:
     branches: [main]
     paths:
-      - '**/*.js'
       - '**/*.ts'
       - '**/*.tsx'
-      - '!**/*.test.js'
       - '!**/*.test.ts'
       - '!**/*.test.tsx'
 
