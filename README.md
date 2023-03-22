@@ -79,28 +79,57 @@ See more about chart settings [here](https://github.com/grafana/helm-charts/blob
 
 Another option would be to build custom Grafana image with plugin based on same installation instructions.
 
-## Plugin provision
+## Configure the Datasource with Provisioning
 
-Provision of grafana plugin requires to:
+Provision of grafana plugin requires to create datasource config file. 
+If you need more additional information about settings of the datasource 
+or you want to know how it works you can check [official provisioning doc](http://docs.grafana.org/administration/provisioning/#datasources).
+Some settings and security params are similar for different datasources.
 
-1. Create folder `./provisioning/datasource` with datasource example file:
+Provisioning datasource example file:
 
 ```yaml
 apiVersion: 1
 
+# List of data sources to insert/update depending on what's
+# available in the database.
 datasources:
+   # <string, required> Name of the VictoriaMetrics datasource 
+   # displayed in grafana panels and queries.
    - name: VictoriaMetrics
+      # <string, required> Sets the data source type.
      type: victoriametrics-datasource
+      # <string, required> Sets the access mode, either
+      # proxy or direct (Server or Browser in the UI).
+      # Some data sources are incompatible with any setting
+      # but proxy (Server).
      access: proxy
+     # <string> Sets default URL of the single node version of VictoriaMetrics
      url: http://victoriametrics:8428
+     # <string> Sets the pre-selected datasource for new panels. 
+     # You can set only one default data source per organization.
      isDefault: true
 
+     # <string, required> Name of the VictoriaMetrics datasource 
+     # displayed in grafana panels and queries.
    - name: VictoriaMetrics - cluster
+     # <string, required> Sets the data source type.
      type: victoriametrics-datasource
+     # <string, required> Sets the access mode, either
+     # proxy or direct (Server or Browser in the UI).
+     # Some data sources are incompatible with any setting
+     # but proxy (Server).
      access: proxy
+     # <string> Sets default URL of the cluster version of VictoriaMetrics
      url: http://vmselect:8481/select/0/prometheus
+     # <string> Sets the pre-selected datasource for new panels. 
+     # You can set only one default data source per organization.
      isDefault: false
 ```
+
+You can check your configuration by doing the following steps:
+
+1. Create folder `./provisioning/datasource` with datasource example file:
 
 2. Build frontend and backend part of the plugin:
 
