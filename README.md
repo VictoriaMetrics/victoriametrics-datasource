@@ -56,6 +56,7 @@ extraInitContainers:
      - "-c"
      - |
        set -ex
+       apk add --no-cache grep
        mkdir -p /var/lib/grafana/plugins/
        ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oP '\Kv\d+\.\d+\.\d+' | head -1)
        curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
