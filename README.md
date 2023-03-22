@@ -131,10 +131,13 @@ You can check your configuration by doing the following steps:
 
 1. Create folder `./provisioning/datasource` with datasource example file:
 
-2. Build frontend and backend part of the plugin:
+2. Download latest release:
 
-```
-make victoriametrics-datasource-plugin-build
+``` bash
+ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v\d+\.\d+\.\d+' | head -1)
+curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o plugin.tar.gz
+tar -xf plugin.tar.gz -C ./victoriametrics-datasource
+rm plugin.tar.gz
 ```
 
 3. Create docker-compose file:
