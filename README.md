@@ -79,6 +79,99 @@ See more about chart settings [here](https://github.com/grafana/helm-charts/blob
 
 Another option would be to build custom Grafana image with plugin based on same installation instructions.
 
+## Configure the Datasource with Provisioning
+
+Provision of grafana plugin requires to create datasource config file. 
+If you need more additional information about settings of the datasource 
+or you want to know how it works you can check [official provisioning doc](http://docs.grafana.org/administration/provisioning/#datasources).
+Some settings and security params are similar for different datasources.
+
+Provisioning datasource example file:
+
+```yaml
+apiVersion: 1
+
+# List of data sources to insert/update depending on what's
+# available in the database.
+datasources:
+   # <string, required> Name of the VictoriaMetrics datasource 
+   # displayed in grafana panels and queries.
+   - name: VictoriaMetrics
+      # <string, required> Sets the data source type.
+     type: victoriametrics-datasource
+      # <string, required> Sets the access mode, either
+      # proxy or direct (Server or Browser in the UI).
+      # Some data sources are incompatible with any setting
+      # but proxy (Server).
+     access: proxy
+     # <string> Sets default URL of the single node version of VictoriaMetrics
+     url: http://victoriametrics:8428
+     # <string> Sets the pre-selected datasource for new panels. 
+     # You can set only one default data source per organization.
+     isDefault: true
+
+     # <string, required> Name of the VictoriaMetrics datasource 
+     # displayed in grafana panels and queries.
+   - name: VictoriaMetrics - cluster
+     # <string, required> Sets the data source type.
+     type: victoriametrics-datasource
+     # <string, required> Sets the access mode, either
+     # proxy or direct (Server or Browser in the UI).
+     # Some data sources are incompatible with any setting
+     # but proxy (Server).
+     access: proxy
+     # <string> Sets default URL of the cluster version of VictoriaMetrics
+     url: http://vmselect:8481/select/0/prometheus
+     # <string> Sets the pre-selected datasource for new panels. 
+     # You can set only one default data source per organization.
+     isDefault: false
+```
+
+You can check your configuration by doing the following steps:
+
+1. Create folder `./provisioning/datasource` with datasource example file:
+
+2. Download latest release:
+
+``` bash
+ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v\d+\.\d+\.\d+' | head -1)
+curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o plugin.tar.gz
+tar -xf plugin.tar.gz -C ./victoriametrics-datasource
+rm plugin.tar.gz
+```
+
+3. Create docker-compose file:
+
+```yaml
+  version: '3.0'
+
+  services:
+
+     grafana:
+        container_name: 'grafana-datasource'
+        build:
+           context: ./.config
+           args:
+              grafana_version: ${GRAFANA_VERSION:-9.1.2}
+        ports:
+           - 3000:3000/tcp
+        volumes:
+           - ./victoriametrics-datasource:/var/lib/grafana/plugins/grafana-datasource
+           - ./provisioning:/etc/grafana/provisioning
+```
+
+4. Run docker-compose file: 
+
+```
+docker-compose -f docker-compose.yaml up
+```
+
+When grafana starts successfully datasources should be present on the datasources tab
+
+<p>
+  <img src="docs/assets/provision_datasources.png" width="800">
+</p>
+
 ## Getting started development
 
 ### 1. Configure Grafana
