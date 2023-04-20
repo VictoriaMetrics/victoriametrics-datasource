@@ -1,5 +1,6 @@
 import { binaryScalarOperations } from './binaryScalarOperations';
 import { LabelParamEditor } from './components/LabelParamEditor';
+import metricsqlOperations from "./metricsqlOperations";
 import {
   defaultAddOperationHandler,
   functionRendererLeft,
@@ -252,8 +253,8 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
     }),
     createFunction({ id: PromOperationId.Year }),
   ];
-
-  return list;
+  const metricsqlList = metricsqlOperations.map((definition) => createFunction(definition))
+  return list.concat(metricsqlList);
 }
 
 export function createFunction(definition: Partial<QueryBuilderOperationDef>): QueryBuilderOperationDef {

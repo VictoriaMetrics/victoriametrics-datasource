@@ -2,6 +2,8 @@
 
 ## tip
 
+* FEATURE: add suppoer MetricsQL to query builder. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/66).
+
 ## [v0.1.3](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.1.3)
 
 Released at 08-03-2022
