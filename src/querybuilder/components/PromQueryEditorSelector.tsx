@@ -28,10 +28,9 @@ import { PromQueryEditorProps } from '../../components/types';
 import { PromQuery } from '../../types';
 import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';
-import { FeedbackLink } from '../shared/FeedbackLink';
 import { QueryEditorModeToggle } from '../shared/QueryEditorModeToggle';
 import { QueryHeaderSwitch } from '../shared/QueryHeaderSwitch';
-import { promQueryEditorExplainKey, promQueryEditorRawQueryKey, useFlag } from '../shared/hooks/useFlag';
+import { promQueryEditorExplainKey, useFlag } from '../shared/hooks/useFlag';
 import { QueryEditorMode } from '../shared/types';
 import { changeEditorMode, getQueryWithDefaults } from '../state';
 
@@ -47,7 +46,6 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   const [dataIsStale, setDataIsStale] = useState(false);
   const [trace, setTrace] = useState(false);
   const { flag: explain, setFlag: setExplain } = useFlag(promQueryEditorExplainKey);
-  const { flag: rawQuery, setFlag: setRawQuery } = useFlag(promQueryEditorRawQueryKey, true);
 
   const query = getQueryWithDefaults(props.query, app);
   // This should be filled in from the defaults by now.
@@ -78,11 +76,6 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   useEffect(() => {
     setDataIsStale(false);
   }, [data]);
-
-  const onQueryPreviewChange = (event: SyntheticEvent<HTMLInputElement>) => {
-    const isEnabled = event.currentTarget.checked;
-    setRawQuery(isEnabled);
-  };
 
   const onChangeInternal = (query: PromQuery) => {
     setDataIsStale(true);
@@ -132,12 +125,6 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
 
         <QueryHeaderSwitch label="Explain" value={explain} onChange={onShowExplainChange}/>
         <QueryHeaderSwitch label="Trace" value={trace} onChange={onShowTracingChange}/>
-        {editorMode === QueryEditorMode.Builder && (
-          <>
-            <QueryHeaderSwitch label="Raw query" value={rawQuery} onChange={onQueryPreviewChange}/>
-            <FeedbackLink feedbackUrl="https://github.com/grafana/grafana/discussions/47693"/>
-          </>
-        )}
         <FlexItem grow={1}/>
         {app !== CoreApp.Explore && (
           <Button
@@ -179,7 +166,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
             onChange={onChangeInternal}
             onRunQuery={props.onRunQuery}
             data={data}
-            showRawQuery={rawQuery}
+            showRawQuery={true}
             showExplain={explain}
             showTrace={trace}
           />
