@@ -14,10 +14,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { map } from 'lodash';
-import React, { FC, useEffect, useState, memo, ReactNode } from 'react';
+import React, { FC, useEffect, useState, memo } from 'react';
 
-import { DataQueryRequest, PanelData, ScopedVars, textUtil, rangeUtil } from '@grafana/data';
+import { DataQueryRequest, PanelData, ScopedVars, textUtil, rangeUtil, LoadingState } from '@grafana/data';
 import { getBackendSrv } from "@grafana/runtime";
+import { Button } from "@grafana/ui";
 
 import { PrometheusDatasource } from '../datasource';
 import { PromQuery } from '../types';
@@ -27,7 +28,6 @@ interface Props {
   datasource: PrometheusDatasource;
   query: PromQuery;
   panelData?: PanelData;
-  children?: ReactNode;
 }
 
 export const relativeTimeOptionsVMUI = [
@@ -57,7 +57,6 @@ const VmuiLink: FC<Props> = (
     panelData,
     query,
     datasource,
-    children
   }
 ) => {
   const [href, setHref] = useState('');
@@ -112,9 +111,9 @@ const VmuiLink: FC<Props> = (
       const expr = {
         ...customQueryParameters,
         'g0.expr': queryOptions.expr,
-        'g0.range_input': getDurationFromMilliseconds(rangeDiff*1000),
+        'g0.range_input': getDurationFromMilliseconds(rangeDiff * 1000),
         'g0.end_input': endTime,
-        'g0.step_input': queryOptions.step ? getDurationFromMilliseconds(queryOptions.step*1000) : '',
+        'g0.step_input': queryOptions.step ? getDurationFromMilliseconds(queryOptions.step * 1000) : '',
         'g0.relative_time': relativeTimeId,
         'g0.tab': 0,
       };
@@ -130,7 +129,14 @@ const VmuiLink: FC<Props> = (
 
   return (
     <a href={textUtil.sanitizeUrl(href)} target="_blank" rel="noopener noreferrer">
-      {children || "Run in VMUI"}
+      <Button
+        variant={'primary'}
+        size="sm"
+        icon={panelData?.state === LoadingState.Loading ? 'fa fa-spinner' : undefined}
+        disabled={panelData?.state === LoadingState.Loading}
+      >
+        Run in vmui
+      </Button>
     </a>
   );
 };

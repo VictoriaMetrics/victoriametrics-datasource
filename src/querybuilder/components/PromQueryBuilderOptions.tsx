@@ -22,9 +22,9 @@ import { CoreApp, SelectableValue } from '@grafana/data';
 import { RadioButtonGroup, Select } from '@grafana/ui';
 
 import { getQueryTypeChangeHandler, getQueryTypeOptions } from '../../components/PromExploreExtraField';
-import { FORMAT_OPTIONS, INTERVAL_FACTOR_OPTIONS } from '../../components/PromQueryEditor';
 import { EditorField, EditorRow } from '../../components/QueryEditor';
 import { AutoSizeInput } from "../../components/QueryEditor/AutoSizeInput";
+import { FORMAT_OPTIONS, INTERVAL_FACTOR_OPTIONS } from "../../consts";
 import { PromQuery } from '../../types';
 import { QueryOptionGroup } from '../shared/QueryOptionGroup';
 

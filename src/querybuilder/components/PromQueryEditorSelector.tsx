@@ -28,7 +28,6 @@ import { PromQueryEditorProps } from '../../components/types';
 import { PromQuery } from '../../types';
 import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';
-import { FeedbackLink } from '../shared/FeedbackLink';
 import { QueryEditorModeToggle } from '../shared/QueryEditorModeToggle';
 import { QueryHeaderSwitch } from '../shared/QueryHeaderSwitch';
 import { promQueryEditorExplainKey, promQueryEditorRawQueryKey, useFlag } from '../shared/hooks/useFlag';
@@ -133,10 +132,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
         <QueryHeaderSwitch label="Explain" value={explain} onChange={onShowExplainChange}/>
         <QueryHeaderSwitch label="Trace" value={trace} onChange={onShowTracingChange}/>
         {editorMode === QueryEditorMode.Builder && (
-          <>
             <QueryHeaderSwitch label="Raw query" value={rawQuery} onChange={onQueryPreviewChange}/>
-            <FeedbackLink feedbackUrl="https://github.com/grafana/grafana/discussions/47693"/>
-          </>
         )}
         <FlexItem grow={1}/>
         {app !== CoreApp.Explore && (
@@ -150,16 +146,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
             Run queries
           </Button>
         )}
-        <VmuiLink query={query} datasource={datasource} panelData={data}>
-          <Button
-            variant={dataIsStale ? 'primary' : 'secondary'}
-            size="sm"
-            icon={data?.state === LoadingState.Loading ? 'fa fa-spinner' : undefined}
-            disabled={data?.state === LoadingState.Loading}
-          >
-            Run in VMUI
-          </Button>
-        </VmuiLink>
+        <VmuiLink query={query} datasource={datasource} panelData={data}/>
         <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange}/>
       </EditorHeader>
       <Space v={0.5}/>
