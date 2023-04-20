@@ -2,7 +2,9 @@
 
 ## tip
 
-* FEATURE: add suppoer MetricsQL to query builder. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/66).
+* FEATURE: add support MetricsQL to query builder. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/66).
+
+* BUGFIX: fix the tracing display for Grafana version 9.4.
 
 ## [v0.1.3](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.1.3)
 
