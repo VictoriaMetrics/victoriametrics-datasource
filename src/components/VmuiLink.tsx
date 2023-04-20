@@ -16,7 +16,7 @@
 import { map } from 'lodash';
 import React, { FC, useEffect, useState, memo } from 'react';
 
-import { DataQueryRequest, PanelData, ScopedVars, textUtil, rangeUtil, LoadingState } from '@grafana/data';
+import { DataQueryRequest, PanelData, ScopedVars, textUtil, rangeUtil } from '@grafana/data';
 import { getBackendSrv } from "@grafana/runtime";
 import { Button } from "@grafana/ui";
 
@@ -132,8 +132,6 @@ const VmuiLink: FC<Props> = (
       <Button
         variant={'primary'}
         size="sm"
-        icon={panelData?.state === LoadingState.Loading ? 'fa fa-spinner' : undefined}
-        disabled={panelData?.state === LoadingState.Loading}
       >
         Run in vmui
       </Button>
