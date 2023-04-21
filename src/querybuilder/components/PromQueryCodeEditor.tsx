@@ -21,7 +21,6 @@ import React from 'react';
 
 import { useStyles2 } from '@grafana/ui';
 
-import { testIds } from '../../components/PromQueryEditor';
 import PromQueryField from '../../components/PromQueryField';
 import { PromQueryEditorProps } from '../../components/types';
 
@@ -47,7 +46,7 @@ export function PromQueryCodeEditor(props: Props) {
         onChange={onChange}
         history={[]}
         data={data}
-        data-testid={testIds.editor}
+        data-testid={'prom-editor'}
         app={app}
       />
 
