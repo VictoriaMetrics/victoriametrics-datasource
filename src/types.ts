@@ -46,6 +46,7 @@ export interface PromOptions extends DataSourceJsonData {
   queryTimeout?: string;
   httpMethod?: string;
   directUrl?: string;
+  vmuiUrl?: string;
   customQueryParameters?: string;
   disableMetricsLookup?: boolean;
   exemplarTraceIdDestinations?: ExemplarTraceIdDestination[];
