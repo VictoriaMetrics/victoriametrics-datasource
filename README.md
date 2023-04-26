@@ -10,10 +10,11 @@ specifically for VictoriaMetrics. The benefits of using VictoriaMetrics plugin a
 
 * Plugin fixes [label names validation](https://github.com/grafana/grafana/issues/42615) issue;
 * [MetricsQL](https://docs.victoriametrics.com/MetricsQL.html) functions support;
-* Allows redirecting query execution from Grafana to [vmui](https://docs.victoriametrics.com/#vmui)
+* Allows redirecting query execution from Grafana to [vmui](https://docs.victoriametrics.com/#vmui);
+* Supports [query tracing](https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#query-tracing) 
+in Explore mode or right in panel's expressions.
 
-We plan to add support of [WITH expressions](https://play.victoriametrics.com/select/accounting/1/6a716b0f-38bc-4856-90ce-448fd713e3fe/expand-with-exprs?query=WITH+%28%0D%0A++++cpuSeconds+%3D+node_cpu_seconds_total%7Binstance%3D%7E%22%24node%3A%24port%22%2Cjob%3D%7E%22%24job%22%7D%2C%0D%0A++++cpuCount+%3D+count%28count%28cpuSeconds%29+by+%28cpu%29%29%2C%0D%0A++++cpuIdle+%3D+sum%28rate%28cpuSeconds%7Bmode%3D%27idle%27%7D%5B5m%5D%29%29%0D%0A%29%0D%0A%28%28cpuCount+-+cpuIdle%29+*+100%29+%2F+cpuCount%0D%0A),
-[query tracing](https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#query-tracing),
+We plan to add support of [WITH expressions](https://play.victoriametrics.com/select/accounting/1/6a716b0f-38bc-4856-90ce-448fd713e3fe/expand-with-exprs?query=WITH+%28%0D%0A++++cpuSeconds+%3D+node_cpu_seconds_total%7Binstance%3D%7E%22%24node%3A%24port%22%2Cjob%3D%7E%22%24job%22%7D%2C%0D%0A++++cpuCount+%3D+count%28count%28cpuSeconds%29+by+%28cpu%29%29%2C%0D%0A++++cpuIdle+%3D+sum%28rate%28cpuSeconds%7Bmode%3D%27idle%27%7D%5B5m%5D%29%29%0D%0A%29%0D%0A%28%28cpuCount+-+cpuIdle%29+*+100%29+%2F+cpuCount%0D%0A)
 and auto queries formatting in the future.
 
 ## Installation
