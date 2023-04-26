@@ -121,7 +121,9 @@ const VmuiLink: FC<Props> = (
       const args = map(expr, (v: string, k: string) => {
         return k + '=' + encodeURIComponent(v);
       }).join('&');
-      setHref(`${dsSettings.url}/graph?${args}`);
+
+      const vmuiUrl = dsSettings.jsonData.vmuiUrl || `${dsSettings.url}/graph`
+      setHref(`${vmuiUrl}?${args}`);
     };
 
     getExternalLink()

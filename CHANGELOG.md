@@ -3,6 +3,7 @@
 ## tip
 
 * FEATURE: add support MetricsQL to query builder. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/66).
+* FEATURE: Add the ability to change the link for [Run in VMUI](https://docs.victoriametrics.com/#vmui) button. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/61).
 
 * BUGFIX: fix the tracing display for Grafana version 9.4.
 

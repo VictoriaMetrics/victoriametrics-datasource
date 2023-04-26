@@ -141,6 +141,24 @@ export const PromSettings = (props: Props) => {
             />
           </div>
         </div>
+        <div className="gf-form-inline">
+          <div className="gf-form max-width-30">
+            <FormField
+              label="Link on vmui"
+              labelWidth={14}
+              tooltip={<>The link you want to use when clicking the <code>Run in vmui</code> button</>}
+              inputEl={
+                <Input
+                  className="width-25"
+                  value={options.jsonData.vmuiUrl}
+                  onChange={onChangeHandler('vmuiUrl', options, onOptionsChange)}
+                  spellCheck={false}
+                  placeholder={`${options.url}/graph?`}
+                />
+              }
+            />
+          </div>
+        </div>
       </div>
     </>
   );

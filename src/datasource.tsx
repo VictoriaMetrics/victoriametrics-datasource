@@ -92,6 +92,7 @@ export class PrometheusDatasource
   url: string;
   id: number;
   directUrl: string;
+  vmuiUrl: string;
   access: 'direct' | 'proxy';
   basicAuth: any;
   withCredentials: any;
@@ -127,9 +128,8 @@ export class PrometheusDatasource
     this.interval = instanceSettings.jsonData.timeInterval || '15s';
     this.queryTimeout = instanceSettings.jsonData.queryTimeout;
     this.httpMethod = instanceSettings.jsonData.httpMethod || 'GET';
-    // `directUrl` is never undefined, we set it at https://github.com/grafana/grafana/blob/main/pkg/api/frontendsettings.go#L108
-    // here we "fall back" to this.url to make typescript happy, but it should never happen
     this.directUrl = instanceSettings.jsonData.directUrl ?? this.url;
+    this.vmuiUrl = instanceSettings.jsonData.vmuiUrl || `${this.url}/graph`;
     this.exemplarTraceIdDestinations = instanceSettings.jsonData.exemplarTraceIdDestinations;
     this.ruleMappings = {};
     this.languageProvider = languageProvider ?? new PrometheusLanguageProvider(this);
