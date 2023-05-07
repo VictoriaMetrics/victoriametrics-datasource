@@ -29,6 +29,7 @@ import { AzureAuthSettings } from './AzureAuthSettings';
 import { hasCredentials, setDefaultCredentials, resetCredentials } from './AzureCredentialsConfig';
 import { PromSettings } from './PromSettings';
 import { TipsSetup } from "./TipsSetup";
+import WithTemplatesSettings from "./WithTemplateConfig/WithTemplatesSettings";
 
 export enum DataSourceType {
   Alertmanager = 'alertmanager',
@@ -63,13 +64,11 @@ export const ConfigEditor = (props: Props) => {
         renderSigV4Editor={<SIGV4ConnectionConfig {...props}></SIGV4ConnectionConfig>}
       />
 
-      <AlertingSettings<PromOptions>
-        alertmanagerDataSources={alertmanagers}
-        options={options}
-        onOptionsChange={onOptionsChange}
-      />
+      <AlertingSettings<PromOptions> alertmanagerDataSources={alertmanagers}{...props}/>
 
-      <PromSettings options={options} onOptionsChange={onOptionsChange}/>
+      <PromSettings {...props}/>
+
+      <WithTemplatesSettings  {...props}/>
     </>
   );
 };
