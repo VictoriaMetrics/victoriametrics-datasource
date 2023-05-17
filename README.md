@@ -31,6 +31,7 @@ Installing dev version of grafana plugin requires:
 allow_loading_unsigned_plugins = victoriametrics-datasource
 ```
 Grafana docs can be found [here](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#allow_loading_unsigned_plugins)
+
 2. To download plugin build and move contents into grafana plugins directory:
 
 ``` bash
