@@ -6,6 +6,7 @@
 * FEATURE: Add the ability to change the link for [Run in VMUI](https://docs.victoriametrics.com/#vmui) button. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/61).
 
 * BUGFIX: fix the tracing display for Grafana version 9.4.
+* BUGFIX: support label with dots in names for template function `label_values()`. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/74).
 
 ## [v0.1.3](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.1.3)
 
