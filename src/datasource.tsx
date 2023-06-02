@@ -841,7 +841,7 @@ export class PrometheusDatasource
         }
       })
       .catch((err: any) => {
-        console.error('Prometheus Error', err);
+        console.error('VictoriaMetrics Error', err);
         return { status: 'error', message: err.message };
       });
   }

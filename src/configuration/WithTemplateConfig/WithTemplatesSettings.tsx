@@ -1,7 +1,8 @@
 import { groupBy } from 'lodash';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 
-import { DataSourcePluginOptionsEditorProps } from "@grafana/data";
+import { DataSourceApi, DataSourcePluginOptionsEditorProps } from "@grafana/data";
+import { getDataSourceSrv } from "@grafana/runtime";
 import { HorizontalGroup, Icon, Tab, TabContent, TabsBar, useStyles2 } from "@grafana/ui";
 
 import { PromOptions } from "../../types";
@@ -21,6 +22,7 @@ const WithTemplatesSettings: FC<Props> = (props) => {
 
   const templates = useMemo(() => options.jsonData.withTemplates || [], [options.jsonData])
 
+  const [datasource, setDatasource] = useState<DataSourceApi>()
   const [dashboards, setDashboards] = useState<Record<string, DashboardType[]>>({})
   const [openFolder, setOpenFolder] = useState(generalFolderTitle)
   const [loading, setLoading] = useState(false)
@@ -42,20 +44,22 @@ const WithTemplatesSettings: FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    const fetchDashboards = async () => {
+    const fetchData = async () => {
       setLoading(true)
       try {
+        const ds = await getDataSourceSrv().get(options.name)
         const dashboardsData = await getDashboardList()
         const groupByFolder = groupBy(dashboardsData, 'folderTitle')
         setDashboards(groupByFolder)
+        setDatasource(ds)
       } catch (error) {
         console.error('Error fetching dashboards:', error);
       }
       setLoading(false)
     }
 
-    fetchDashboards()
-  }, [])
+    fetchData()
+  }, [options.name])
 
   return (
     <div className={styles.wrapper}>
@@ -91,6 +95,7 @@ const WithTemplatesSettings: FC<Props> = (props) => {
                 key={dashboard.uid}
                 dashboard={dashboard}
                 templates={templates}
+                datasource={datasource}
                 onChange={handleSaveTemplate}
               />
             ))}

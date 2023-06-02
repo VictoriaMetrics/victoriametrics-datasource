@@ -17,6 +17,10 @@ export default (theme: GrafanaTheme2) => ({
     
     ol {
       padding-left: ${theme.spacing(2)};
-    }
+      
+      pre {
+        margin: ${theme.spacing(1)} 0 ${theme.spacing(2)};
+      }
+    },
   `,
 });

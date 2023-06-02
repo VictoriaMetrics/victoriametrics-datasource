@@ -53,7 +53,7 @@ const WithTemplateTips = () => {
             <li>
               Thus, the entire query will look as follows:
               <pre><code>{exampleFullQuery}</code></pre>
-              To view the raw query in the interface, enable the <code>Raw</code> toggle.
+              <small>*To view the raw query in the interface, enable the <code>Raw</code> toggle.</small>
             </li>
           </ol>
         </p>

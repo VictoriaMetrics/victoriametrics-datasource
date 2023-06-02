@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useMemo, useState } from "react"
 
+import { DataSourceApi } from "@grafana/data";
 import { Collapse, HorizontalGroup, Icon, useStyles2 } from "@grafana/ui";
 
 import TemplateEditor from "../TemplateEditor/TemplateEditor";
@@ -11,10 +12,11 @@ interface Props {
   index: number
   dashboard: DashboardType
   templates: WithTemplate[]
+  datasource?: DataSourceApi
   onChange: (template: WithTemplate) => void
 }
 
-const DashboardItem: FC<Props> = ({ dashboard, index, templates, onChange }) => {
+const DashboardItem: FC<Props> = ({ dashboard, index, templates, datasource, onChange }) => {
   const styles = useStyles2(getStyles);
 
   const template = useMemo(() => {
@@ -28,8 +30,7 @@ const DashboardItem: FC<Props> = ({ dashboard, index, templates, onChange }) => 
     onChange({ uid: dashboard.uid, expr })
   }, [onChange, dashboard.uid])
 
-  const handleChangeExpression = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { value } = e.target;
+  const handleChangeExpression = (value: string) => {
     handleChange(value)
   }
 
@@ -50,7 +51,9 @@ const DashboardItem: FC<Props> = ({ dashboard, index, templates, onChange }) => 
     >
     <div className={styles.template}>
       <div>
-        <TemplateEditor value={template.expr} onChange={handleChangeExpression}/>
+        {datasource && (
+          <TemplateEditor value={template.expr} datasource={datasource} onChange={handleChangeExpression}/>
+        )}
       </div>
     </div>
     </Collapse>
