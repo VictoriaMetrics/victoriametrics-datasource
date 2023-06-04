@@ -18,14 +18,16 @@
 
 import React, { SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { CoreApp, LoadingState, SelectableValue } from '@grafana/data';
+import { CoreApp, LoadingState } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
 import { Button, ConfirmModal } from '@grafana/ui';
 
 import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../components/QueryEditor';
 import VmuiLink from "../../components/VmuiLink";
 import { PromQueryEditorProps } from '../../components/types';
+import WithTemplatePreview from "../../configuration/WithTemplateConfig/WithTemplatesPreview/WithTemplatePreview";
 import { getArrayFromTemplate } from "../../configuration/WithTemplateConfig/utils/getArrayFromTemplate";
+import PrometheusLanguageProvider from "../../language_provider";
 import { PromQuery } from '../../types';
 import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';
@@ -58,10 +60,6 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
     const dashboardUID = data?.request?.dashboardUID
     return datasource.withTemplates.find(t => t.uid === dashboardUID)
   }, [data, datasource])
-
-  const templateOptions = useMemo(() => {
-    return getArrayFromTemplate(withTemplate)
-  }, [withTemplate])
 
   const query = getQueryWithDefaults(props.query, app);
   // This should be filled in from the defaults by now.
@@ -98,12 +96,6 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
     onChange(query);
   };
 
-  const handleSelectTemplate = (e: SelectableValue<string>) => {
-    // TODO insert template to current position
-    const nextQuery: PromQuery = { ...query, expr: `${query.expr} ${e.label}` };
-    onChange(nextQuery);
-  }
-
   const onShowExplainChange = (e: SyntheticEvent<HTMLInputElement>) => {
     setExplain(e.currentTarget.checked);
   };
@@ -117,6 +109,11 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   const onShowRawChange = (e: SyntheticEvent<HTMLInputElement>) => {
     setRawQuery(e.currentTarget.checked)
   }
+
+  useEffect(() => {
+    const withTemplates = getArrayFromTemplate(withTemplate)
+    datasource.languageProvider = new PrometheusLanguageProvider(datasource, { withTemplates })
+  }, [datasource, withTemplate])
 
   return (
     <>
@@ -148,18 +145,11 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
           }}
           options={promQueryModeller.getQueryPatterns().map((x) => ({ label: x.name, value: x }))}
         />
-        <InlineSelect
-          value={null}
-          placeholder="With template"
-          allowCustomValue
-          onChange={handleSelectTemplate}
-          options={templateOptions}
-        />
-
         <QueryHeaderSwitch label="Explain" value={explain} onChange={onShowExplainChange}/>
         <QueryHeaderSwitch label="Trace" value={trace} onChange={onShowTracingChange}/>
         <QueryHeaderSwitch label="Raw" value={rawQuery} onChange={onShowRawChange}/>
         <FlexItem grow={1}/>
+        {withTemplate && <WithTemplatePreview value={withTemplate.expr} datasource={datasource}/>}
         {app !== CoreApp.Explore && (
           <Button
             variant={dataIsStale ? 'primary' : 'secondary'}

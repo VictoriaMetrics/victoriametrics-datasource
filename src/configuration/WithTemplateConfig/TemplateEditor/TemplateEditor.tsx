@@ -12,7 +12,8 @@ import getStyles from "./style";
 interface Props {
   value: string;
   datasource: DataSourceApi
-  onChange: (value: string) => void;
+  readOnly?: boolean;
+  onChange?: (value: string) => void;
 }
 
 interface ValidateResult {
@@ -22,7 +23,7 @@ interface ValidateResult {
   color?: 'blue' | 'red' | 'green'
 }
 
-const TemplateEditor: FC<Props> = ({ value, datasource, onChange }) => {
+const TemplateEditor: FC<Props> = ({ value, datasource, readOnly, onChange }) => {
   const styles = useStyles2(getStyles);
 
   const [validateResult, setValidateResult] = useState<ValidateResult>({ title: "" });
@@ -66,7 +67,7 @@ const TemplateEditor: FC<Props> = ({ value, datasource, onChange }) => {
   }
 
   const handleChange = (val: string) => {
-    onChange(val)
+    onChange && onChange(val)
     validateExpr(val)
   }
 
@@ -80,6 +81,7 @@ const TemplateEditor: FC<Props> = ({ value, datasource, onChange }) => {
         onRunQuery={() => {}}
         initialValue={value}
         placeholder="Enter a WITH expressions..."
+        readOnly={readOnly}
       />
 
       {validateResult.title && (
