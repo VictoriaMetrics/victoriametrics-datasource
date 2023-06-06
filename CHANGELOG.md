@@ -2,6 +2,8 @@
 
 ## tip
 
+## [v0.2.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.2.0)
+
 * FEATURE: add the ability to define expressions for each panel so that users can define WITH templates once and then reuse them. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/35).
 * FEATURE: add support MetricsQL to query builder. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/66).
 * FEATURE: add the ability to change the link for [Run in VMUI](https://docs.victoriametrics.com/#vmui) button. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/61).
