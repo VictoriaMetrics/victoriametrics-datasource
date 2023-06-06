@@ -45,14 +45,14 @@ describe('PromQueryCodeEditor', () => {
     const { datasource } = createDatasource();
     const props = createProps(datasource);
     props.showExplain = true;
-    render(<PromQueryCodeEditor {...props} showTrace={false} query={{ expr: '', refId: 'refid', interval: '1s' }} />);
+    render(<PromQueryCodeEditor {...props} query={{ expr: '', refId: 'refid', interval: '1s' }} />);
     expect(await screen.findByText(EXPLAIN_LABEL_FILTER_CONTENT)).toBeInTheDocument();
   });
 
   it('does not show explain section when showExplain is false', async () => {
     const { datasource } = createDatasource();
     const props = createProps(datasource);
-    render(<PromQueryCodeEditor {...props} showTrace={false} query={{ expr: '', refId: 'refid', interval: '1s' }} />);
+    render(<PromQueryCodeEditor {...props} query={{ expr: '', refId: 'refid', interval: '1s' }} />);
     expect(await screen.queryByText(EXPLAIN_LABEL_FILTER_CONTENT)).not.toBeInTheDocument();
   });
 });

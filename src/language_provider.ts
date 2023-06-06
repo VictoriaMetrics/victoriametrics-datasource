@@ -108,6 +108,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
   datasource: PrometheusDatasource;
   labelKeys: string[] = [];
   declare labelFetchTs: number;
+  withTemplates: Array<{label: string, value: string}>
 
   /**
    *  Cache for labels of series. This is bit simplistic in the sense that it just counts responses each as a 1 and does
@@ -123,6 +124,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     this.histogramMetrics = [];
     this.timeRange = { start: 0, end: 0 };
     this.metrics = [];
+    this.withTemplates = []
 
     Object.assign(this, initialValues);
   }

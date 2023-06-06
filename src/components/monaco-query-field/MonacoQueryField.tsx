@@ -76,7 +76,7 @@ const PROMQL_LANG_ID = promLanguageDefinition.id;
 let PROMQL_SETUP_STARTED = false;
 
 function ensurePromQL(monaco: Monaco) {
-  if (PROMQL_SETUP_STARTED === false) {
+  if (!PROMQL_SETUP_STARTED) {
     PROMQL_SETUP_STARTED = true;
     const { aliases, extensions, mimetypes, loader } = promLanguageDefinition;
     monaco.languages.register({ id: PROMQL_LANG_ID, aliases, extensions, mimetypes });
@@ -108,7 +108,7 @@ const MonacoQueryField = (props: Props) => {
   // we need only one instance of `overrideServices` during the lifetime of the react component
   const overrideServicesRef = useRef(getOverrideServices());
   const containerRef = useRef<HTMLDivElement>(null);
-  const { languageProvider, history, onBlur, onRunQuery, initialValue, placeholder } = props;
+  const { languageProvider, history, onBlur, onRunQuery, initialValue, placeholder, readOnly } = props;
 
   const lpRef = useLatest(languageProvider);
   const historyRef = useLatest(history);
@@ -136,7 +136,10 @@ const MonacoQueryField = (props: Props) => {
     >
       <ReactMonacoEditor
         overrideServices={overrideServicesRef.current}
-        options={options}
+        options={{
+          ...options,
+          readOnly
+        }}
         language="promql"
         value={initialValue}
         beforeMount={(monaco) => {
@@ -155,7 +158,8 @@ const MonacoQueryField = (props: Props) => {
             Promise.resolve(historyRef.current.map((h) => h.query.expr).filter((expr) => expr !== undefined));
 
           const getAllMetricNames = () => {
-            const { metrics, metricsMetadata } = lpRef.current;
+            const { metrics, metricsMetadata, withTemplates } = lpRef.current;
+            const templates = withTemplates.map(t => ({ name: t.label, help: t.value, type: "WITH template" }))
             const result = metrics.map((m) => {
               const metaItem = metricsMetadata?.[m];
               return {
@@ -163,7 +167,7 @@ const MonacoQueryField = (props: Props) => {
                 help: metaItem?.help ?? '',
                 type: metaItem?.type ?? '',
               };
-            });
+            }).concat(templates);
 
             return Promise.resolve(result);
           };

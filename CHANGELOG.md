@@ -2,8 +2,9 @@
 
 ## tip
 
+* FEATURE: add the ability to define expressions for each panel so that users can define WITH templates once and then reuse them. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/35).
 * FEATURE: add support MetricsQL to query builder. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/66).
-* FEATURE: Add the ability to change the link for [Run in VMUI](https://docs.victoriametrics.com/#vmui) button. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/61).
+* FEATURE: add the ability to change the link for [Run in VMUI](https://docs.victoriametrics.com/#vmui) button. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/61).
 
 * BUGFIX: fix the tracing display for Grafana version 9.4.
 * BUGFIX: support label with dots in names for template function `label_values()`. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/74).

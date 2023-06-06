@@ -18,6 +18,7 @@
 
 import { DataQuery, DataSourceJsonData, QueryResultMeta, ScopedVars } from '@grafana/data';
 
+import { WithTemplate } from "./configuration/WithTemplateConfig/types";
 import { QueryEditorMode } from './querybuilder/shared/types';
 
 export interface PromQuery extends DataQuery {
@@ -50,6 +51,7 @@ export interface PromOptions extends DataSourceJsonData {
   customQueryParameters?: string;
   disableMetricsLookup?: boolean;
   exemplarTraceIdDestinations?: ExemplarTraceIdDestination[];
+  withTemplates?: WithTemplate[];
 }
 
 export enum PromQueryType {

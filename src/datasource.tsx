@@ -55,6 +55,8 @@ import {
 } from '@grafana/runtime';
 
 import { addLabelToQuery } from './add_label_to_query';
+import { WithTemplate } from "./configuration/WithTemplateConfig/types";
+import { mergeTemplateWithQuery } from "./configuration/WithTemplateConfig/utils/getArrayFromTemplate";
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
 import PrometheusLanguageProvider from './language_provider';
 import { expandRecordingRules } from './language_utils';
@@ -107,6 +109,7 @@ export class PrometheusDatasource
   exemplarsAvailable: boolean;
   subType: PromApplication;
   rulerEnabled: boolean;
+  withTemplates: WithTemplate[];
 
   constructor(
     instanceSettings: DataSourceInstanceSettings<PromOptions>,
@@ -137,6 +140,7 @@ export class PrometheusDatasource
     this.customQueryParameters = new URLSearchParams(instanceSettings.jsonData.customQueryParameters);
     this.variables = new PrometheusVariableSupport(this, this.templateSrv, this.timeSrv);
     this.exemplarsAvailable = false;
+    this.withTemplates = instanceSettings.jsonData.withTemplates ?? [];
   }
 
   init = async () => {
@@ -510,6 +514,11 @@ export class PrometheusDatasource
     // Apply adhoc filters
     expr = this.enhanceExprWithAdHocFilters(expr);
 
+    // Apply WITH templates
+    // @ts-ignore
+    const dashboardUID = options.dashboardUID
+    expr = mergeTemplateWithQuery(expr, this.withTemplates.find(t => t.uid === dashboardUID))
+
     // Only replace vars in expression after having (possibly) updated interval vars
     query.expr = this.templateSrv.replace(expr, scopedVars, this.interpolateQueryExpr);
 
@@ -832,7 +841,7 @@ export class PrometheusDatasource
         }
       })
       .catch((err: any) => {
-        console.error('Prometheus Error', err);
+        console.error('VictoriaMetrics Error', err);
         return { status: 'error', message: err.message };
       });
   }
