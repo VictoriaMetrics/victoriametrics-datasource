@@ -1,4 +1,4 @@
-FROM node:16.18.1-alpine3.15
+FROM node:16.20.0-alpine
 
 RUN apk update && apk upgrade
 RUN apk add --update python3 make g++ # for Mac M1 processors
