@@ -378,7 +378,9 @@ export class TimeSrv {
   };
 
   timeRange(): TimeRange {
-    return getTimeRange(this.time, this.timeModel);
+    // @ts-ignore default time
+    const time = getTemplateSrv()?.timeRange?.raw || getDefaultTimeRange().raw;
+    return getTimeRange(time, this.timeModel)
   }
 
   zoomOut(factor: number, updateUrl = true) {
