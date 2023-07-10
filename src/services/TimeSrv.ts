@@ -69,6 +69,10 @@ export const getTimeRange = (
   };
 };
 
+const getCurrentTimeRange = (): RawTimeRange => {
+  return getTemplateSrv()?.timeRange?.raw || getDefaultTimeRange().raw;
+}
+
 export interface TimeModel {
   time: any;
   fiscalYearStartMonth?: number;
@@ -89,7 +93,7 @@ export class TimeSrv {
   private autoRefreshBlocked?: boolean;
 
   constructor(private contextSrv: ContextSrv) {
-    this.time = getTemplateSrv()?.timeRange?.raw || getDefaultTimeRange().raw;
+    this.time = getCurrentTimeRange()
     this.refreshTimeModel = this.refreshTimeModel.bind(this);
 
     appEvents.subscribe(ZoomOutEvent, (e) => {
@@ -383,8 +387,7 @@ export class TimeSrv {
   };
 
   timeRange(): TimeRange {
-    const time = getTemplateSrv()?.timeRange?.raw || getDefaultTimeRange().raw;
-    return getTimeRange(time, this.timeModel)
+    return getTimeRange(getCurrentTimeRange(), this.timeModel)
   }
 
   zoomOut(factor: number, updateUrl = true) {
