@@ -44,6 +44,12 @@ import { getShiftedTimeRange, getZoomedTimeRange } from '../utils/timePicker';
 import appEvents from "./app_events";
 import { contextSrv, ContextSrv } from "./context_srv";
 
+declare module '@grafana/runtime' {
+  interface TemplateSrv {
+    timeRange: TimeRange;
+  }
+}
+
 export const getTimeRange = (
   time: { from: DateTime | string; to: DateTime | string },
   timeModel?: TimeModel
@@ -62,6 +68,10 @@ export const getTimeRange = (
     raw: raw,
   };
 };
+
+const getCurrentTimeRange = (): RawTimeRange => {
+  return getTemplateSrv()?.timeRange?.raw || getDefaultTimeRange().raw;
+}
 
 export interface TimeModel {
   time: any;
@@ -83,8 +93,7 @@ export class TimeSrv {
   private autoRefreshBlocked?: boolean;
 
   constructor(private contextSrv: ContextSrv) {
-    // @ts-ignore default time
-    this.time = getTemplateSrv()?.timeRange?.raw || getDefaultTimeRange().raw;
+    this.time = getCurrentTimeRange()
     this.refreshTimeModel = this.refreshTimeModel.bind(this);
 
     appEvents.subscribe(ZoomOutEvent, (e) => {
@@ -378,7 +387,7 @@ export class TimeSrv {
   };
 
   timeRange(): TimeRange {
-    return getTimeRange(this.time, this.timeModel);
+    return getTimeRange(getCurrentTimeRange(), this.timeModel)
   }
 
   zoomOut(factor: number, updateUrl = true) {
