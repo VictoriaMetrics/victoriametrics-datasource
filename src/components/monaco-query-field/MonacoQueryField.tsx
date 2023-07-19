@@ -158,8 +158,7 @@ const MonacoQueryField = (props: Props) => {
             Promise.resolve(historyRef.current.map((h) => h.query.expr).filter((expr) => expr !== undefined));
 
           const getAllMetricNames = () => {
-            const { metrics, metricsMetadata, withTemplates } = lpRef.current;
-            const templates = withTemplates.map(t => ({ name: t.label, help: t.value, type: "WITH template" }))
+            const { metrics, metricsMetadata } = lpRef.current;
             const result = metrics.map((m) => {
               const metaItem = metricsMetadata?.[m];
               return {
@@ -167,7 +166,18 @@ const MonacoQueryField = (props: Props) => {
                 help: metaItem?.help ?? '',
                 type: metaItem?.type ?? '',
               };
-            }).concat(templates);
+            });
+
+            return Promise.resolve(result);
+          };
+
+          const getAllWithTemplates = () => {
+            const { withTemplates } = lpRef.current;
+            const result = withTemplates.map(t => ({
+              name: t.label,
+              help: t.comment || "",
+              value: t.value
+            }))
 
             return Promise.resolve(result);
           };
@@ -176,7 +186,14 @@ const MonacoQueryField = (props: Props) => {
 
           const getLabelValues = (labelName: string) => lpRef.current.getLabelValues(labelName);
 
-          const dataProvider = { getSeries, getHistory, getAllMetricNames, getAllLabelNames, getLabelValues };
+          const dataProvider = {
+            getSeries,
+            getHistory,
+            getAllMetricNames,
+            getAllWithTemplates,
+            getAllLabelNames,
+            getLabelValues
+          };
           const completionProvider = getCompletionProvider(monaco, dataProvider);
 
           // completion-providers in monaco are not registered directly to editor-instances,
