@@ -6,10 +6,20 @@ export const getArrayFromTemplate = (template?: WithTemplate) => {
   if (!template) {return []}
   const { expr } = template
   const arr = splitByCommaOutsideBrackets(expr)
-  return arr.filter(a => a).map(a => ({
-    label: a.split("=")[0].trim().replace(/\(.+\)/, ""),
-    value: a.trim()
-  }))
+
+  return arr.filter(a => a).map(a => {
+    const commentMatch = a.match(/#.*\n/gm);
+    const comment = commentMatch ? commentMatch.join('').trim() : '';
+
+    const variableMatch = a.match(/(.*?)=/);
+    const variableName = variableMatch ? variableMatch[0].slice(0, -2) : '';
+
+    return {
+      label: `${variableName}`,
+      comment: comment.replace(/#/gm, ''),
+      value: a.replace(comment, '').trim(),
+    }
+  })
 }
 
 export const formatTemplateString = (expr: string) => {

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { lastValueFrom } from "rxjs";
 
 import { DataSourceApi } from "@grafana/data";
@@ -28,8 +28,8 @@ const TemplateEditor: FC<Props> = ({ value, datasource, readOnly, onChange }) =>
 
   const [validateResult, setValidateResult] = useState<ValidateResult>({ title: "" });
 
-  const validateExpr = async (val: string) => {
-    if (!val) {
+  const validateExpr = async (expr: string) => {
+    if (!expr) {
       setValidateResult({ title: "" })
       return
     }
@@ -41,6 +41,8 @@ const TemplateEditor: FC<Props> = ({ value, datasource, readOnly, onChange }) =>
     })
 
     try {
+      // replace Grafana variables with '1s' for validation
+      const val = expr.replace(/\$__interval|\$__range|\$__rate_interval/gm, '1s')
       const withTemplate = encodeURIComponent(`WITH(${val})()`)
       const response = await lastValueFrom(await getBackendSrv().fetch({
         url: `api/datasources/proxy/${datasource.id}/expand-with-exprs?query=${withTemplate}&format=json`,
@@ -70,6 +72,11 @@ const TemplateEditor: FC<Props> = ({ value, datasource, readOnly, onChange }) =>
     onChange && onChange(val)
     validateExpr(val)
   }
+
+  useEffect(() => {
+    // get labels for languageProvider
+    datasource.languageProvider?.start?.()
+  }, [datasource])
 
   return (
     <>

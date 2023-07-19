@@ -59,6 +59,8 @@ function getMonacoCompletionItemKind(type: CompletionType, monaco: Monaco): mona
       return monaco.languages.CompletionItemKind.EnumMember;
     case 'METRIC_NAME':
       return monaco.languages.CompletionItemKind.Constructor;
+    case 'WITH_TEMPLATE':
+      return monaco.languages.CompletionItemKind.Constant;
     default:
       throw new NeverCaseError();
   }

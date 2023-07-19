@@ -113,6 +113,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   useEffect(() => {
     const withTemplates = getArrayFromTemplate(withTemplate)
     datasource.languageProvider = new PrometheusLanguageProvider(datasource, { withTemplates })
+    datasource.languageProvider.start()
   }, [datasource, withTemplate])
 
   return (
