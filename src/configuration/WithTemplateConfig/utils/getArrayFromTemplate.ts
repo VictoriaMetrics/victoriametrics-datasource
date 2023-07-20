@@ -9,10 +9,10 @@ export const getArrayFromTemplate = (template?: WithTemplate) => {
 
   return arr.filter(a => a).map(a => {
     const commentMatch = a.match(/#.*\n/gm);
-    const comment = commentMatch ? commentMatch.join('').trim() : '';
+    const comment = commentMatch?.join('')?.trim() || ''
 
     const variableMatch = a.match(/(.*?)=/);
-    const variableName = variableMatch ? variableMatch[0].slice(0, -2) : '';
+    const variableName = variableMatch?.[0]?.slice(0, -2) || '';
 
     return {
       label: `${variableName}`,
