@@ -32,7 +32,11 @@ export const mergeTemplateWithQuery = (query = "", template?: WithTemplate) => {
   const templateExpr = template?.expr
   if (!templateExpr) {return query}
   const labels = getArrayFromTemplate(template).map(a => a.label)
-  const includesWithTemplate = labels.some(l => query.includes(l))
+  const includesWithTemplate = labels.some(l => {
+    // remove arguments for functions
+    const name = l.replace(/(\w+)\(.*?\)/g, '$1')
+    return query.includes(name)
+  })
   if (!includesWithTemplate) {return query}
   return `WITH(
   ${formatTemplateString(templateExpr)}
