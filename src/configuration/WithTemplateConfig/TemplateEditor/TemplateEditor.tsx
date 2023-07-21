@@ -6,8 +6,11 @@ import { getBackendSrv } from "@grafana/runtime";
 import { Badge, useStyles2 } from "@grafana/ui";
 
 import { MonacoQueryFieldWrapper } from "../../../components/monaco-query-field/MonacoQueryFieldWrapper";
+import { PrometheusDatasource } from "../../../datasource";
+import PrometheusLanguageProvider from "../../../language_provider";
 
 import getStyles from "./style";
+
 
 interface Props {
   value: string;
@@ -74,7 +77,8 @@ const TemplateEditor: FC<Props> = ({ value, datasource, readOnly, onChange }) =>
   }
 
   useEffect(() => {
-    // get labels for languageProvider
+    // updating the languageProvider without using previous templates WITH
+    datasource.languageProvider = new PrometheusLanguageProvider(datasource as PrometheusDatasource )
     datasource.languageProvider?.start?.()
   }, [datasource])
 
