@@ -3,9 +3,11 @@
 ## tip
 
 * FEATURE: Improvements to WITH Templates (see [this comment](https://github.com/VictoriaMetrics/grafana-datasource/issues/35#issuecomment-1578649762)):
+  - The management of `WITH templates` has been transferred from datasource settings to the panel editing page;
   - Improved display of templates in auto-complete hints;
   - Enabled auto-complete within curly braces for filters defined in templates;
-  - Added support for Grafana variables such as `$__interval`, `$__rate_interval`, etc. in WITH expression validation.
+  - Added support for Grafana variables such as `$__interval`, `$__rate_interval`, etc. in WITH expression validation;
+  - Fixed the link to `vmui` when using `WITH templates`.
 
 ## [v0.2.1](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.2.1)
 

@@ -7,7 +7,7 @@ data from within Grafana.
 * [Configure the Datasource with Provisioning](#configure-the-datasource-with-provisioning)
 * [Getting started development](#configure-the-datasource-with-provisioning)
 * [How to make new release](#how-to-make-new-release)
-* [How to use WITH templates](#how-to-make-new-release)
+* [How to use WITH templates](#how-to-use-with-templates)
 * [Learn more](#learn-more)
 * [License](#license)
 
@@ -254,13 +254,13 @@ parts into `dist` folder.
 The `WITH` templates feature simplifies the construction and management of complex queries.
 You can try this feature in the [WITH templates playground](https://play.victoriametrics.com/select/accounting/1/6a716b0f-38bc-4856-90ce-448fd713e3fe/expand-with-exprs).
 
-The "WITH templates" settings section allows you to create expressions with templates that can be used in dashboards.
+The "WITH templates" section allows you to create expressions with templates that can be used in dashboards.
 
 ### Defining WITH Expressions
 
-1. Open the datasource settings. Scroll to the bottom of the page and find the "WITH templates" section.
-2. Find the dashboard for which you want to add a `WITH` template expression.
-3. Enter the expression in the input field. Once done, press the `Save` button on the datasource to apply the changes. For example:
+1. Navigate to the dashboard where you want to add a template. *Note: templates are available within the dashboard scope.*
+2. Click the `WITH templates` button.
+3. Enter the expression in the input field. Once done, press the `Save` button to apply the changes. For example:
    ```
    commonFilters = {instance=~"$node:$port",job=~"$job"},
    
@@ -271,15 +271,11 @@ The "WITH templates" settings section allows you to create expressions with temp
    cpuIdle = sum(rate(node_cpu_seconds_total{mode='idle',commonFilters}[5m]))
    ```
 
-You can specify a comment before the variable and use markdown in it. The comment will be displayed as a hint during auto-completion. The comment can span multiple lines.
-
-The expression will be validated when the input field loses focus and the validation result will be displayed below the input field.
+   You can specify a comment before the variable and use markdown in it. The comment will be displayed as a hint during auto-completion. The comment can span multiple lines.
 
 ### Using WITH Expressions
 
-1. Open the panel inside the dashboard for which you created the expression. As you type your query, auto-complete hints will appear, including the expressions you've defined.
-2. You can also see all the defined expressions for the current panel by clicking on the `WITH templates` button on the page.
-3. Enter the query in the input field:
+1. After saving the template, you can enter it into the query editor field:
    ```
    ((cpuCount - cpuIdle) * 100) / cpuCount
    ```

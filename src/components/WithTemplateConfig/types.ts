@@ -1,12 +1,17 @@
-export enum DashTypes {
-  FOLDER = 'dash-folder',
-  DASHBOARD = 'dash-db',
-}
-
 export interface WithTemplate {
   uid: string;
   expr: string;
 }
+
+export interface DashboardResponse {
+  dashboard: DashboardType
+  meta: {
+    folderTitle: string;
+    folderUid: string;
+    canEdit: boolean;
+  }
+}
+
 
 export interface DashboardType {
   id: number;

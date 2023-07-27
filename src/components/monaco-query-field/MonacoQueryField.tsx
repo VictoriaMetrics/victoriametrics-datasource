@@ -241,9 +241,11 @@ const MonacoQueryField = (props: Props) => {
           updateElementHeight();
 
           // handle: shift + enter
-          // FIXME: maybe move this functionality into CodeEditor?
-          editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => {
-            onRunQueryRef.current(editor.getValue());
+          editor.addAction({
+            id: "execute-shift-enter",
+            label: "Execute",
+            keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.Enter],
+            run: () => onRunQueryRef.current(editor.getValue() || "")
           });
 
           /* Something in this configuration of monaco doesn't bubble up [mod]+K, which the
