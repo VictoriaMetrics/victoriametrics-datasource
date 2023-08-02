@@ -19,8 +19,8 @@
 import React from 'react';
 
 import { EditorRow, EditorFieldGroup, EditorField } from '../../components/QueryEditor';
-import { WithTemplate } from "../../configuration/WithTemplateConfig/types";
-import { mergeTemplateWithQuery } from "../../configuration/WithTemplateConfig/utils/getArrayFromTemplate";
+import { WithTemplate } from "../../components/WithTemplateConfig/types";
+import { mergeTemplateWithQuery } from "../../components/WithTemplateConfig/utils/getArrayFromTemplate";
 import metricsqlGrammar from '../../metricsql';
 import { RawQuery } from '../shared/RawQuery';
 

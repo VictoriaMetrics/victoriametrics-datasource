@@ -108,7 +108,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
   datasource: PrometheusDatasource;
   labelKeys: string[] = [];
   declare labelFetchTs: number;
-  withTemplates: Array<{label: string, value: string}>
+  withTemplates: Array<{label: string, comment: string, value: string}>
 
   /**
    *  Cache for labels of series. This is bit simplistic in the sense that it just counts responses each as a 1 and does

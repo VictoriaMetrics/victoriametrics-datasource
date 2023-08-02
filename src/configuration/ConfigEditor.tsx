@@ -29,7 +29,6 @@ import { AzureAuthSettings } from './AzureAuthSettings';
 import { hasCredentials, setDefaultCredentials, resetCredentials } from './AzureCredentialsConfig';
 import { PromSettings } from './PromSettings';
 import { TipsSetup } from "./TipsSetup";
-import WithTemplatesSettings from "./WithTemplateConfig/WithTemplatesSettings";
 
 export enum DataSourceType {
   Alertmanager = 'alertmanager',
@@ -67,8 +66,6 @@ export const ConfigEditor = (props: Props) => {
       <AlertingSettings<PromOptions> alertmanagerDataSources={alertmanagers}{...props}/>
 
       <PromSettings {...props}/>
-
-      <WithTemplatesSettings  {...props}/>
     </>
   );
 };

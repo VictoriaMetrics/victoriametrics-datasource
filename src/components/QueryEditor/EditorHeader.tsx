@@ -36,7 +36,7 @@ const getStyles = stylesFactory((theme: GrafanaTheme2) => ({
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
-    gap: theme.spacing(2),
+    gap: theme.spacing(1),
     minHeight: theme.spacing(4),
   }),
 }));

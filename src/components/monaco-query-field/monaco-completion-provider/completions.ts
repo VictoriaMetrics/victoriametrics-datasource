@@ -23,7 +23,7 @@ import type { Situation, Label } from './situation';
 import { NeverCaseError } from './util';
 // FIXME: we should not load this from the "outside", but we cannot do that while we have the "old" query-field too
 
-export type CompletionType = 'HISTORY' | 'FUNCTION' | 'METRIC_NAME' | 'DURATION' | 'LABEL_NAME' | 'LABEL_VALUE';
+export type CompletionType = 'HISTORY' | 'FUNCTION' | 'METRIC_NAME' | 'WITH_TEMPLATE' | 'DURATION' | 'LABEL_NAME' | 'LABEL_VALUE';
 
 type Completion = {
   type: CompletionType;
@@ -40,9 +40,16 @@ type Metric = {
   type: string;
 };
 
+type WithTemplate = {
+  name: string;
+  help: string;
+  value: string;
+};
+
 export type DataProvider = {
   getHistory: () => Promise<string[]>;
   getAllMetricNames: () => Promise<Metric[]>;
+  getAllWithTemplates: () => Promise<WithTemplate[]>;
   getAllLabelNames: () => Promise<string[]>;
   getLabelValues: (labelName: string) => Promise<string[]>;
   getSeries: (selector: string) => Promise<Record<string, string[]>>;
@@ -61,6 +68,17 @@ async function getAllMetricNamesCompletions(dataProvider: DataProvider): Promise
   }));
 }
 
+async function getAllWithTemplatesCompletions(dataProvider: DataProvider): Promise<Completion[]> {
+  const metrics = await dataProvider.getAllWithTemplates();
+  return metrics.map((metric) => ({
+    type: 'WITH_TEMPLATE',
+    label: metric.name,
+    insertText: metric.name,
+    detail: metric.value,
+    documentation: metric.help,
+  }));
+}
+
 const FUNCTION_COMPLETIONS: Completion[] = FUNCTIONS.map((f) => ({
   type: 'FUNCTION',
   label: f.label,
@@ -71,7 +89,8 @@ const FUNCTION_COMPLETIONS: Completion[] = FUNCTIONS.map((f) => ({
 
 async function getAllFunctionsAndMetricNamesCompletions(dataProvider: DataProvider): Promise<Completion[]> {
   const metricNames = await getAllMetricNamesCompletions(dataProvider);
-  return [...FUNCTION_COMPLETIONS, ...metricNames];
+  const withTemplates = await getAllWithTemplatesCompletions(dataProvider);
+  return [...FUNCTION_COMPLETIONS, ...metricNames, ...withTemplates];
 }
 
 const DURATION_COMPLETIONS: Completion[] = [
@@ -142,12 +161,18 @@ async function getLabelNamesForCompletions(
   dataProvider: DataProvider
 ): Promise<Completion[]> {
   const labelNames = await getLabelNames(metric, otherLabels, dataProvider);
-  return labelNames.map((text) => ({
+  const labelNamesCompletion: Completion[] = labelNames.map((text) => ({
     type: 'LABEL_NAME',
     label: text,
     insertText: `${text}${suffix}`,
     triggerOnInsert,
-  }));
+  }))
+  const withTemplatesCompletions = await getAllWithTemplatesCompletions(dataProvider);
+  const withTemplatesCompletionsLabels = withTemplatesCompletions.filter((c) => {
+    const regexp = new RegExp(`${c.label}\\s?=\\s?`, 'gm')
+    return c.detail?.replace(regexp, '').charAt(0) === '{'
+  })
+  return labelNamesCompletion.concat(withTemplatesCompletionsLabels)
 }
 
 async function getLabelNamesForSelectorCompletions(

@@ -16,19 +16,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 
 import { CoreApp, LoadingState } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
-import { Button, ConfirmModal } from '@grafana/ui';
+import { Button, ConfirmModal, Tooltip } from '@grafana/ui';
 
 import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../components/QueryEditor';
 import VmuiLink from "../../components/VmuiLink";
+import WithTemplateConfig from "../../components/WithTemplateConfig";
+import { WithTemplate } from "../../components/WithTemplateConfig/types";
+import { getArrayFromTemplate } from "../../components/WithTemplateConfig/utils/getArrayFromTemplate";
 import { PromQueryEditorProps } from '../../components/types';
-import WithTemplatePreview from "../../configuration/WithTemplateConfig/WithTemplatesPreview/WithTemplatePreview";
-import { getArrayFromTemplate } from "../../configuration/WithTemplateConfig/utils/getArrayFromTemplate";
 import PrometheusLanguageProvider from "../../language_provider";
 import { PromQuery } from '../../types';
+import { ExtendedDataQueryRequest } from "../../types/datasource";
 import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';
 import { QueryEditorModeToggle } from '../shared/QueryEditorModeToggle';
@@ -55,11 +57,8 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   const [rawQuery, setRawQuery] = useState(false)
   const { flag: explain, setFlag: setExplain } = useFlag(promQueryEditorExplainKey);
 
-  const withTemplate = useMemo(() => {
-    // @ts-ignore
-    const dashboardUID = data?.request?.dashboardUID
-    return datasource.withTemplates.find(t => t.uid === dashboardUID)
-  }, [data, datasource])
+  const dashboardUID: string = (data?.request as ExtendedDataQueryRequest<PromQuery>)?.dashboardUID || ""
+  const [templateByDashboard, setTemplateByDashboard] = useState<WithTemplate>()
 
   const query = getQueryWithDefaults(props.query, app);
   // This should be filled in from the defaults by now.
@@ -111,9 +110,11 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   }
 
   useEffect(() => {
-    const withTemplates = getArrayFromTemplate(withTemplate)
+    const withTemplates = getArrayFromTemplate(templateByDashboard)
     datasource.languageProvider = new PrometheusLanguageProvider(datasource, { withTemplates })
-  }, [datasource, withTemplate])
+    datasource.languageProvider.start()
+    onRunQuery()
+  }, [onRunQuery, datasource, templateByDashboard])
 
   return (
     <>
@@ -149,33 +150,38 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
         <QueryHeaderSwitch label="Trace" value={trace} onChange={onShowTracingChange}/>
         <QueryHeaderSwitch label="Raw" value={rawQuery} onChange={onShowRawChange}/>
         <FlexItem grow={1}/>
-        {withTemplate && <WithTemplatePreview value={withTemplate.expr} datasource={datasource}/>}
+        <WithTemplateConfig
+          template={templateByDashboard}
+          setTemplate={setTemplateByDashboard}
+          dashboardUID={dashboardUID}
+          datasource={datasource}
+        />
+        <VmuiLink query={query} datasource={datasource} panelData={data} dashboardUID={dashboardUID}/>
         {app !== CoreApp.Explore && (
-          <Button
-            variant={dataIsStale ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={onRunQuery}
-            icon={data?.state === LoadingState.Loading ? 'fa fa-spinner' : undefined}
-            disabled={data?.state === LoadingState.Loading}
-          >
-            Run queries
-          </Button>
+          <Tooltip content={"Run queries"}>
+            <Button
+              variant={dataIsStale ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={onRunQuery}
+              icon={data?.state === LoadingState.Loading ? 'fa fa-spinner' : "play"}
+              disabled={data?.state === LoadingState.Loading}
+            />
+          </Tooltip>
         )}
-        <VmuiLink query={query} datasource={datasource} panelData={data}/>
         <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange}/>
       </EditorHeader>
       <Space v={0.5}/>
       <EditorRows>
         {editorMode === QueryEditorMode.Code && (
-           <>
-             <PromQueryCodeEditor
-               {...props}
-               key={withTemplate?.uid}
-               query={query}
-               showExplain={explain}
-             />
-             {rawQuery && <QueryPreview query={query.expr} withTemplate={withTemplate} />}
-           </>
+          <>
+            <PromQueryCodeEditor
+              {...props}
+              key={templateByDashboard?.expr}
+              query={query}
+              showExplain={explain}
+            />
+            {rawQuery && <QueryPreview query={query.expr} withTemplate={templateByDashboard}/>}
+          </>
         )}
         {editorMode === QueryEditorMode.Builder && (
           <PromQueryBuilderContainer
@@ -187,7 +193,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
             showExplain={explain}
           />
         )}
-        {trace && <TraceView query={query} datasource={datasource} data={data} />}
+        {trace && <TraceView query={query} datasource={datasource} data={data}/>}
         <PromQueryBuilderOptions query={query} app={props.app} onChange={onChange} onRunQuery={onRunQuery}/>
       </EditorRows>
     </>

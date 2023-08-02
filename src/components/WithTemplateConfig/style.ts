@@ -3,15 +3,14 @@ import { css } from '@emotion/css';
 import { GrafanaTheme2 } from "@grafana/data";
 
 export default (theme: GrafanaTheme2) => ({
-  wrapper: css`
+  body: css`
     display: grid;
     gap: ${theme.spacing(1)};
   `,
-  header: css`
+  button: css`
     display: flex;
     gap: ${theme.spacing(1)};
+    justify-content: space-between;
     align-items: center;
-    
-    h3 {margin: 0;}
-  `,
+  `
 });

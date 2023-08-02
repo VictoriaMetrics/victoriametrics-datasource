@@ -16,18 +16,20 @@
 import { map } from 'lodash';
 import React, { FC, useEffect, useState, memo } from 'react';
 
-import { DataQueryRequest, PanelData, ScopedVars, textUtil, rangeUtil } from '@grafana/data';
+import { PanelData, ScopedVars, textUtil, rangeUtil } from '@grafana/data';
 import { getBackendSrv } from "@grafana/runtime";
 import { Button } from "@grafana/ui";
 
 import { PrometheusDatasource } from '../datasource';
 import { PromQuery } from '../types';
+import { ExtendedDataQueryRequest } from "../types/datasource";
 import { getDurationFromMilliseconds } from "../utils/time";
 
 interface Props {
   datasource: PrometheusDatasource;
   query: PromQuery;
   panelData?: PanelData;
+  dashboardUID: string;
 }
 
 export const relativeTimeOptionsVMUI = [
@@ -52,13 +54,12 @@ export const relativeTimeOptionsVMUI = [
   ...o
 }))
 
-const VmuiLink: FC<Props> = (
-  {
+const VmuiLink: FC<Props> = ({
     panelData,
     query,
     datasource,
-  }
-) => {
+    dashboardUID,
+  }) => {
   const [href, setHref] = useState('');
 
   useEffect(() => {
@@ -96,8 +97,9 @@ const VmuiLink: FC<Props> = (
 
       const options = {
         interval,
+        dashboardUID,
         scopedVars: enrichedScopedVars,
-      } as DataQueryRequest<PromQuery>;
+      } as ExtendedDataQueryRequest<PromQuery>;
 
       const customQueryParameters: { [key: string]: string } = {};
       if (datasource.customQueryParameters) {
@@ -127,13 +129,14 @@ const VmuiLink: FC<Props> = (
     };
 
     getExternalLink()
-  }, [datasource, panelData, query]);
+  }, [dashboardUID, datasource, panelData, query]);
 
   return (
     <a href={textUtil.sanitizeUrl(href)} target="_blank" rel="noopener noreferrer">
       <Button
         variant={'primary'}
         size="sm"
+        icon={"external-link-alt"}
       >
         Run in vmui
       </Button>

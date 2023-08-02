@@ -55,8 +55,8 @@ import {
 } from '@grafana/runtime';
 
 import { addLabelToQuery } from './add_label_to_query';
-import { WithTemplate } from "./configuration/WithTemplateConfig/types";
-import { mergeTemplateWithQuery } from "./configuration/WithTemplateConfig/utils/getArrayFromTemplate";
+import { WithTemplate } from "./components/WithTemplateConfig/types";
+import { mergeTemplateWithQuery } from "./components/WithTemplateConfig/utils/getArrayFromTemplate";
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
 import PrometheusLanguageProvider from './language_provider';
 import { expandRecordingRules } from './language_utils';
@@ -77,6 +77,7 @@ import {
   PromScalarData,
   PromVectorData,
 } from './types';
+import { ExtendedDataQueryRequest } from "./types/datasource";
 import { safeStringifyValue } from './utils/safeStringifyValue';
 import { PrometheusVariableSupport } from './variables';
 
@@ -151,12 +152,11 @@ export class PrometheusDatasource
     return query.expr;
   }
 
-  _addTracingHeaders(httpOptions: PromQueryRequest, options: DataQueryRequest<PromQuery>) {
+  _addTracingHeaders(httpOptions: PromQueryRequest, options: ExtendedDataQueryRequest<PromQuery>) {
     httpOptions.headers = {};
     const proxyMode = !this.url.match(/^http/);
     if (proxyMode) {
       httpOptions.headers['X-Dashboard-Id'] = options.dashboardId;
-      // @ts-ignore
       httpOptions.headers['X-Dashboard-UID'] = options.dashboardUID || "";
       httpOptions.headers['X-Panel-Id'] = options.panelId;
     }
@@ -287,7 +287,7 @@ export class PrometheusDatasource
     return this.templateSrv.containsTemplate(target.expr);
   }
 
-  prepareTargets = (options: DataQueryRequest<PromQuery>, start: number, end: number) => {
+  prepareTargets = (options: ExtendedDataQueryRequest<PromQuery>, start: number, end: number) => {
     const queries: PromQueryRequest[] = [];
     const activeTargets: PromQuery[] = [];
     const clonedTargets = cloneDeep(options.targets);
@@ -351,7 +351,7 @@ export class PrometheusDatasource
     };
   }
 
-  query(request: DataQueryRequest<PromQuery>): Observable<DataQueryResponse> {
+  query(request: ExtendedDataQueryRequest<PromQuery>): Observable<DataQueryResponse> {
     if (this.access === 'proxy') {
       const targets = request.targets.map((target) => this.processTargetV2(target, request));
       return super
@@ -463,7 +463,7 @@ export class PrometheusDatasource
     return this.performTimeSeriesQuery(query, query.start, query.end).pipe(filter);
   }
 
-  createQuery(target: PromQuery, options: DataQueryRequest<PromQuery>, start: number, end: number) {
+  createQuery(target: PromQuery, options: ExtendedDataQueryRequest<PromQuery>, start: number, end: number) {
     const query: PromQueryRequest = {
       hinting: target.hinting,
       instant: target.instant,
@@ -515,7 +515,6 @@ export class PrometheusDatasource
     expr = this.enhanceExprWithAdHocFilters(expr);
 
     // Apply WITH templates
-    // @ts-ignore
     const dashboardUID = options.dashboardUID
     expr = mergeTemplateWithQuery(expr, this.withTemplates.find(t => t.uid === dashboardUID))
 
@@ -814,7 +813,7 @@ export class PrometheusDatasource
 
   async testDatasource() {
     const now = new Date().getTime();
-    const request: DataQueryRequest<PromQuery> = {
+    const request: ExtendedDataQueryRequest<PromQuery> = {
       targets: [{ refId: 'test', expr: '1+1', instant: true }],
       requestId: `${this.id}-health`,
       scopedVars: {},
@@ -987,6 +986,10 @@ export class PrometheusDatasource
 
   interpolateString(string: string) {
     return this.templateSrv.replace(string, undefined, this.interpolateQueryExpr);
+  }
+
+  withTemplatesUpdate(withTemplates: WithTemplate[]) {
+    this.withTemplates = withTemplates ?? [];
   }
 }
 
