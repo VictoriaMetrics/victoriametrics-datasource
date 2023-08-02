@@ -256,7 +256,7 @@ You can try this feature in the [WITH templates playground](https://play.victori
 
 The "WITH templates" section allows you to create expressions with templates that can be used in dashboards.
 
-WITH expressions are stored in the datasource. This means that if a dashboard is re-imported, the associated WITH templates will not be included unless they are also present in the datasource.
+WITH expressions are stored in the datasource object. If the dashboard gets exported, the associated WITH templates will not be included in the resulting JSON (due to technical limitations) and need to be migrated separately.
 
 ### Defining WITH Expressions
 
