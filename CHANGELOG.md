@@ -2,6 +2,8 @@
 
 ## tip
 
+## [v0.3.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.3.0)
+
 * FEATURE: Improvements to WITH Templates (see [this comment](https://github.com/VictoriaMetrics/grafana-datasource/issues/35#issuecomment-1578649762)):
   - The management of `WITH templates` has been transferred from datasource settings to the panel editing page;
   - Improved display of templates in auto-complete hints;
