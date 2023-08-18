@@ -485,8 +485,9 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
   fetchLabelValues = async (key: string): Promise<string[]> => {
     const params = this.datasource.getTimeRangeParams();
+    const limit = this.datasource.getLimitMetrics('maxTagValues');
     const url = `/api/v1/label/${this.datasource.interpolateString(key)}/values`;
-    return await this.request(url, [], params);
+    return await this.request(url, [], { ...params, limit });
   };
 
   async getLabelValues(key: string): Promise<string[]> {
@@ -499,9 +500,10 @@ export default class PromQlLanguageProvider extends LanguageProvider {
   async fetchLabels(): Promise<string[]> {
     const url = '/api/v1/labels';
     const params = this.datasource.getTimeRangeParams();
+    const limit = this.datasource.getLimitMetrics('maxTagKeys');
     this.labelFetchTs = Date.now().valueOf();
 
-    const res = await this.request(url, [], params);
+    const res = await this.request(url, [], { ...params, limit });
     if (Array.isArray(res)) {
       this.labelKeys = res.slice().sort();
     }
@@ -518,8 +520,10 @@ export default class PromQlLanguageProvider extends LanguageProvider {
   fetchSeriesLabels = async (name: string, withName?: boolean): Promise<Record<string, string[]>> => {
     const interpolatedName = this.datasource.interpolateString(name);
     const range = this.datasource.getTimeRangeParams();
+    const limit = this.datasource.getLimitMetrics('maxSeries');
     const urlParams = {
       ...range,
+      limit,
       'match[]': interpolatedName,
     };
     const url = `/api/v1/series`;
@@ -552,7 +556,8 @@ export default class PromQlLanguageProvider extends LanguageProvider {
   fetchSeries = async (match: string): Promise<Array<Record<string, string>>> => {
     const url = '/api/v1/series';
     const range = this.datasource.getTimeRangeParams();
-    const params = { ...range, 'match[]': match };
+    const limit = this.datasource.getLimitMetrics('maxSeries');
+    const params = { ...range, 'match[]': match, limit };
     return await this.request(url, {}, params);
   };
 

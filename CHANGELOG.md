@@ -1,6 +1,7 @@
 # Changelog
 
 ## tip
+* FEATURE: add support limit param for metrics discovery. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/82).
 
 ## [v0.3.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.3.0)
 

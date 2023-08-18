@@ -67,6 +67,7 @@ import { getOriginalMetricName, transform, transformV2 } from './result_transfor
 import { getTimeSrv, TimeSrv } from './services/TimeSrv';
 import {
   ExemplarTraceIdDestination,
+  LimitMetrics,
   PromDataErrorResponse,
   PromDataSuccessResponse,
   PromMatrixData,
@@ -111,6 +112,7 @@ export class PrometheusDatasource
   subType: PromApplication;
   rulerEnabled: boolean;
   withTemplates: WithTemplate[];
+  limitMetrics: LimitMetrics;
 
   constructor(
     instanceSettings: DataSourceInstanceSettings<PromOptions>,
@@ -142,6 +144,7 @@ export class PrometheusDatasource
     this.variables = new PrometheusVariableSupport(this, this.templateSrv, this.timeSrv);
     this.exemplarsAvailable = false;
     this.withTemplates = instanceSettings.jsonData.withTemplates ?? [];
+    this.limitMetrics = instanceSettings.jsonData.limitMetrics ?? {};
   }
 
   init = async () => {
@@ -801,13 +804,15 @@ export class PrometheusDatasource
       return uniqueLabels.map((value: any) => ({ text: value }));
     } else {
       // Get all tags
-      const result = await this.metadataRequest('/api/v1/labels');
+      const limit = this.getLimitMetrics('maxTagKeys');
+      const result = await this.metadataRequest('/api/v1/labels', { limit });
       return result?.data?.data?.map((value: any) => ({ text: value })) ?? [];
     }
   }
 
   async getTagValues(options: { key?: string } = {}) {
-    const result = await this.metadataRequest(`/api/v1/label/${options.key}/values`);
+    const limit = this.getLimitMetrics('maxTagValues');
+    const result = await this.metadataRequest(`/api/v1/label/${options.key}/values`, { limit });
     return result?.data?.data?.map((value: any) => ({ text: value })) ?? [];
   }
 
@@ -936,6 +941,10 @@ export class PrometheusDatasource
       start: this.getPrometheusTime(range.from, false).toString(),
       end: this.getPrometheusTime(range.to, true).toString(),
     };
+  }
+
+  getLimitMetrics(key: keyof LimitMetrics): number {
+    return this.limitMetrics[key] || 0;
   }
 
   getOriginalMetricName(labelData: { [key: string]: string }) {

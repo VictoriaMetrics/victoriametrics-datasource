@@ -27,6 +27,7 @@ import { PromOptions } from '../types';
 
 import { AzureAuthSettings } from './AzureAuthSettings';
 import { hasCredentials, setDefaultCredentials, resetCredentials } from './AzureCredentialsConfig';
+import { LimitsSettings } from "./LimitsSettings";
 import { PromSettings } from './PromSettings';
 import { TipsSetup } from "./TipsSetup";
 
@@ -66,6 +67,8 @@ export const ConfigEditor = (props: Props) => {
       <AlertingSettings<PromOptions> alertmanagerDataSources={alertmanagers}{...props}/>
 
       <PromSettings {...props}/>
+
+      <LimitsSettings {...props}/>
     </>
   );
 };
