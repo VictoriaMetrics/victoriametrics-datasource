@@ -27,8 +27,8 @@ import { PromOptions } from '../types';
 
 import { AzureAuthSettings } from './AzureAuthSettings';
 import { hasCredentials, setDefaultCredentials, resetCredentials } from './AzureCredentialsConfig';
+import { HelpfulLinks } from "./HelpfulLinks";
 import { PromSettings } from './PromSettings';
-import { TipsSetup } from "./TipsSetup";
 
 export enum DataSourceType {
   Alertmanager = 'alertmanager',
@@ -51,7 +51,7 @@ export const ConfigEditor = (props: Props) => {
 
   return (
     <>
-      <TipsSetup/>
+      <HelpfulLinks/>
 
       <DataSourceHttpSettings
         defaultUrl="http://localhost:8428"
