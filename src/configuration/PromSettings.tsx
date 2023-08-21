@@ -62,7 +62,7 @@ export const PromSettings = (props: Props) => {
               labelWidth={13}
               inputEl={
                 <Input
-                  className="width-6"
+                  className="width-7"
                   value={options.jsonData.timeInterval}
                   spellCheck={false}
                   placeholder="15s"
@@ -81,7 +81,7 @@ export const PromSettings = (props: Props) => {
               labelWidth={13}
               inputEl={
                 <Input
-                  className="width-6"
+                  className="width-7"
                   value={options.jsonData.queryTimeout}
                   onChange={onChangeHandler('queryTimeout', options, onOptionsChange)}
                   spellCheck={false}

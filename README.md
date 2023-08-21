@@ -1,6 +1,5 @@
-# VictoriaMetrics data source for Grafana
-The VictoriaMetrics data source plugin allows you to query and visualize VictoriaMetrics
-data from within Grafana.
+# VictoriaMetrics datasource for Grafana
+The VictoriaMetrics datasource plugin allows you to query and visualize VictoriaMetrics data from within Grafana.
 
 * [Motivation](#motivation)
 * [Installation](#installation)
@@ -20,11 +19,8 @@ specifically for VictoriaMetrics. The benefits of using VictoriaMetrics plugin a
 * Plugin fixes [label names validation](https://github.com/grafana/grafana/issues/42615) issue;
 * [MetricsQL](https://docs.victoriametrics.com/MetricsQL.html) functions support;
 * Allows redirecting query execution from Grafana to [vmui](https://docs.victoriametrics.com/#vmui);
-* Supports [query tracing](https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#query-tracing) 
-in Explore mode or right in panel's expressions.
-
-We plan to add support of [WITH expressions](https://play.victoriametrics.com/select/accounting/1/6a716b0f-38bc-4856-90ce-448fd713e3fe/expand-with-exprs?query=WITH+%28%0D%0A++++cpuSeconds+%3D+node_cpu_seconds_total%7Binstance%3D%7E%22%24node%3A%24port%22%2Cjob%3D%7E%22%24job%22%7D%2C%0D%0A++++cpuCount+%3D+count%28count%28cpuSeconds%29+by+%28cpu%29%29%2C%0D%0A++++cpuIdle+%3D+sum%28rate%28cpuSeconds%7Bmode%3D%27idle%27%7D%5B5m%5D%29%29%0D%0A%29%0D%0A%28%28cpuCount+-+cpuIdle%29+*+100%29+%2F+cpuCount%0D%0A)
-and auto queries formatting in the future.
+* Supports [query tracing](https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#query-tracing) in Explore mode or right in panel's expressions.
+* Supports [WITH expressions](https://github.com/VictoriaMetrics/grafana-datasource#how-to-use-with-templates)
 
 ## Installation
 
@@ -44,7 +40,7 @@ Grafana docs can be found [here](https://grafana.com/docs/grafana/latest/setup-g
 2. To download plugin build and move contents into grafana plugins directory:
 
 ``` bash
-ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v\d+\.\d+\.\d+' | head -1)
+ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
 curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
 tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
 rm /var/lib/grafana/plugins/plugin.tar.gz
@@ -68,7 +64,7 @@ extraInitContainers:
      - |
        set -ex
        mkdir -p /var/lib/grafana/plugins/
-       ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v\d+\.\d+\.\d+' | head -1)
+       ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
        curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
        tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
        rm /var/lib/grafana/plugins/plugin.tar.gz
@@ -145,7 +141,7 @@ You can check your configuration by doing the following steps:
 2. Download latest release:
 
 ``` bash
-ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v\d+\.\d+\.\d+' | head -1)
+ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
 curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o plugin.tar.gz
 tar -xf plugin.tar.gz -C ./victoriametrics-datasource
 rm plugin.tar.gz
@@ -180,7 +176,7 @@ docker-compose -f docker-compose.yaml up
 When grafana starts successfully datasources should be present on the datasources tab
 
 <p>
-  <img src="docs/assets/provision_datasources.png" width="800">
+  <img src="docs/assets/provision_datasources.png" width="800" alt="Configuration">
 </p>
 
 ## Getting started development
@@ -260,7 +256,8 @@ WITH expressions are stored in the datasource object. If the dashboard gets expo
 
 ### Defining WITH Expressions
 
-1. Navigate to the dashboard where you want to add a template. *Note: templates are available within the dashboard scope.*
+1. Navigate to the dashboard where you want to add a template.<br/> 
+   *Note: templates are available within the dashboard scope.*
 2. Click the `WITH templates` button.
 3. Enter the expression in the input field. Once done, press the `Save` button to apply the changes. For example:
    ```
@@ -296,11 +293,11 @@ WITH expressions are stored in the datasource object. If the dashboard gets expo
 
 ## Learn more
 
+- [VictoriaMetrics documentation](https://docs.victoriametrics.com/)
 - [Configure Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/)
 - [Build a data source plugin tutorial](https://grafana.com/tutorials/build-a-data-source-plugin)
 - [Grafana documentation](https://grafana.com/docs/)
 - [Grafana Tutorials](https://grafana.com/tutorials/) - Grafana Tutorials are step-by-step guides that help you make the most of Grafana
-- [Grafana UI Library](https://developers.grafana.com/ui) - UI components to help you build interfaces using Grafana Design System
 
 ## License
 
