@@ -29,7 +29,7 @@ locally, please checkout the [Plugin installation docs](https://grafana.com/docs
 
 ### Dev release installation
 
-Installing dev version of grafana plugin requires:
+Installing dev version of Grafana plugin requires:
 1. to change `grafana.ini` config to allow loading unsigned plugins:
 ``` ini
 [plugins]
@@ -37,7 +37,7 @@ allow_loading_unsigned_plugins = victoriametrics-datasource
 ```
 Grafana docs can be found [here](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#allow_loading_unsigned_plugins)
 
-2. To download plugin build and move contents into grafana plugins directory:
+2. To download plugin build and move contents into Grafana plugins directory:
 
 ``` bash
 ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
@@ -88,7 +88,7 @@ Another option would be to build custom Grafana image with plugin based on same 
 
 ## Configure the Datasource with Provisioning
 
-Provision of grafana plugin requires to create datasource config file. 
+Provision of Grafana plugin requires to create datasource config file. 
 If you need more additional information about settings of the datasource 
 or you want to know how it works you can check [official provisioning doc](http://docs.grafana.org/administration/provisioning/#datasources).
 Some settings and security params are similar for different datasources.
@@ -102,7 +102,7 @@ apiVersion: 1
 # available in the database.
 datasources:
    # <string, required> Name of the VictoriaMetrics datasource 
-   # displayed in grafana panels and queries.
+   # displayed in Grafana panels and queries.
    - name: VictoriaMetrics
       # <string, required> Sets the data source type.
      type: victoriametrics-datasource
@@ -118,7 +118,7 @@ datasources:
      isDefault: true
 
      # <string, required> Name of the VictoriaMetrics datasource 
-     # displayed in grafana panels and queries.
+     # displayed in Grafana panels and queries.
    - name: VictoriaMetrics - cluster
      # <string, required> Sets the data source type.
      type: victoriametrics-datasource
@@ -173,7 +173,7 @@ rm plugin.tar.gz
 docker-compose -f docker-compose.yaml up
 ```
 
-When grafana starts successfully datasources should be present on the datasources tab
+When Grafana starts successfully datasources should be present on the datasources tab
 
 <p>
   <img src="docs/assets/provision_datasources.png" width="800" alt="Configuration">
@@ -182,9 +182,9 @@ When grafana starts successfully datasources should be present on the datasource
 ## Getting started development
 
 ### 1. Configure Grafana
-Installing dev version of grafana plugin requires to change `grafana.ini` config to allow loading unsigned plugins:
+Installing dev version of Grafana plugin requires to change `grafana.ini` config to allow loading unsigned plugins:
 ``` ini
-# Directory where grafana will automatically scan and look for plugins
+# Directory where Grafana will automatically scan and look for plugins
 plugins = {{path to directory with plugin}}
 ```
 ``` ini
