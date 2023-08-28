@@ -1,99 +1,48 @@
 # VictoriaMetrics datasource for Grafana
-The VictoriaMetrics datasource plugin allows you to query and visualize VictoriaMetrics data from within Grafana.
+The [VictoriaMetrics](http://docs.victoriametrics.com/) datasource plugin allows you to query and visualize 
+data from VictoriaMetrics in Grafana.
 
 * [Motivation](#motivation)
 * [Installation](#installation)
-* [Configure the Datasource with Provisioning](#configure-the-datasource-with-provisioning)
-* [Getting started development](#configure-the-datasource-with-provisioning)
-* [How to make new release](#how-to-make-new-release)
 * [How to use WITH templates](#how-to-use-with-templates)
-* [Learn more](#learn-more)
+* [How to make new release](#how-to-make-new-release)
+* [Frequently Asked Questions](#faq)
 * [License](#license)
 
 ## Motivation
 
-VictoriaMetrics always recommended using [Prometheus datasource](https://docs.victoriametrics.com/#grafana-setup)
-in Grafana. With time, Prometheus and VictoriaMetrics diverge more and more. So we decided to create a datasource plugin
-specifically for VictoriaMetrics. The benefits of using VictoriaMetrics plugin are the following:
+Thanks to VictoriaMetrics compatibility with Prometheus API users can use 
+[Prometheus datasource](https://docs.victoriametrics.com/#grafana-setup) for Grafana to query data from VictoriaMetrics.
+But with time, Prometheus and VictoriaMetrics diverge more and more. After some unexpected changes to Prometheus datasource
+we decided to create a datasource plugin specifically for VictoriaMetrics. 
+The benefits of using VictoriaMetrics plugin are the following:
 
-* Plugin fixes [label names validation](https://github.com/grafana/grafana/issues/42615) issue;
 * [MetricsQL](https://docs.victoriametrics.com/MetricsQL.html) functions support;
-* Allows redirecting query execution from Grafana to [vmui](https://docs.victoriametrics.com/#vmui);
 * Supports [query tracing](https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#query-tracing) in Explore mode or right in panel's expressions.
 * Supports [WITH expressions](https://github.com/VictoriaMetrics/grafana-datasource#how-to-use-with-templates)
+* Plugin fixes [label names validation](https://github.com/grafana/grafana/issues/42615) issue;
+* Integration with [vmui](https://docs.victoriametrics.com/#vmui);
 
 ## Installation
 
-For detailed instructions on how to install the plugin on Grafana Cloud or
-locally, please checkout the [Plugin installation docs](https://grafana.com/docs/grafana/latest/plugins/installation/).
-
-### Dev release installation
-
-Installing dev version of Grafana plugin requires:
-1. to change `grafana.ini` config to allow loading unsigned plugins:
+Installing VictoriaMetrics Grafana datasource requires the following changes to Grafana's `grafana.ini` config:
 ``` ini
 [plugins]
 allow_loading_unsigned_plugins = victoriametrics-datasource
 ```
+
+See [why VictoriaMetrics datasource is unsigned](#why-victoriaMetrics-datasource-is-unsigned).
 Grafana docs can be found [here](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#allow_loading_unsigned_plugins)
 
-2. To download plugin build and move contents into Grafana plugins directory:
+For detailed instructions on how to install the plugin on Grafana Cloud or
+locally, please checkout the [Plugin installation docs](https://grafana.com/docs/grafana/latest/plugins/installation/).
 
-``` bash
-ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
-tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
-rm /var/lib/grafana/plugins/plugin.tar.gz
-```
-3. Restart Grafana
+### Grafana Provisioning
 
-#### Install in Kubernetes
+Provision of Grafana plugin requires to create 
+[datasource config file](http://docs.grafana.org/administration/provisioning/#datasources).
 
-Example with Grafana [helm chart](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md):
-
-``` yaml
-extraInitContainers:
-  - name: "load-vm-ds-plugin"
-    image: "curlimages/curl:7.85.0"
-    command: [ "/bin/sh" ]
-    workingDir: "/var/lib/grafana/plugins"
-    securityContext:
-      runAsUser: 0
-    args:
-     - "-c"
-     - |
-       set -ex
-       mkdir -p /var/lib/grafana/plugins/
-       ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-       curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
-       tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
-       rm /var/lib/grafana/plugins/plugin.tar.gz
-       chown -R 472:472 /var/lib/grafana/plugins/
-    volumeMounts:
-      - name: storage
-        mountPath: /var/lib/grafana
-```
-
-This example uses init container to download and install plugin. To allow Grafana using this container as a sidecar
-set the following config:
-```yaml
-sidecar:
-  datasources:
-    initDatasources: true
-    enabled: true
-```
-See more about chart settings [here](https://github.com/grafana/helm-charts/blob/541d97051de87a309362e02d08741ffc868cfcd6/charts/grafana/values.yaml)
-
-Another option would be to build custom Grafana image with plugin based on same installation instructions.
-
-## Configure the Datasource with Provisioning
-
-Provision of Grafana plugin requires to create datasource config file. 
-If you need more additional information about settings of the datasource 
-or you want to know how it works you can check [official provisioning doc](http://docs.grafana.org/administration/provisioning/#datasources).
-Some settings and security params are similar for different datasources.
-
-Provisioning datasource example file:
+Example of config file for provisioning VictoriaMetrics datasource is the following:
 
 ```yaml
 apiVersion: 1
@@ -134,11 +83,11 @@ datasources:
      isDefault: false
 ```
 
-You can check your configuration by doing the following steps:
+Please find the example of provisioning Grafana instance with VictoriaMetrics datasource below:
 
 1. Create folder `./provisioning/datasource` with datasource example file:
 
-2. Download latest release:
+2. Download the latest release:
 
 ``` bash
 ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
@@ -147,13 +96,11 @@ tar -xf plugin.tar.gz -C ./victoriametrics-datasource
 rm plugin.tar.gz
 ```
 
-3. Create docker-compose file:
+3. Define Grafana installation via docker-compose:
 
 ```yaml
   version: '3.0'
-
   services:
-
      grafana:
         container_name: 'grafana-datasource'
         build:
@@ -167,7 +114,7 @@ rm plugin.tar.gz
            - ./provisioning:/etc/grafana/provisioning
 ```
 
-4. Run docker-compose file: 
+4. Run docker-compose file:
 
 ```
 docker-compose -f docker-compose.yaml up
@@ -178,6 +125,60 @@ When Grafana starts successfully datasources should be present on the datasource
 <p>
   <img src="docs/assets/provision_datasources.png" width="800" alt="Configuration">
 </p>
+
+### Install in Kubernetes
+
+Example with Grafana [helm chart](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md):
+
+``` yaml
+extraInitContainers:
+  - name: "load-vm-ds-plugin"
+    image: "curlimages/curl:7.85.0"
+    command: [ "/bin/sh" ]
+    workingDir: "/var/lib/grafana/plugins"
+    securityContext:
+      runAsUser: 0
+    args:
+     - "-c"
+     - |
+       set -ex
+       mkdir -p /var/lib/grafana/plugins/
+       ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+       curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
+       tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
+       rm /var/lib/grafana/plugins/plugin.tar.gz
+       chown -R 472:472 /var/lib/grafana/plugins/
+    volumeMounts:
+      - name: storage
+        mountPath: /var/lib/grafana
+```
+
+This example uses init container to download and install plugin. To allow Grafana using this container as a sidecar
+set the following config:
+```yaml
+sidecar:
+  datasources:
+    initDatasources: true
+    enabled: true
+```
+See more about chart settings [here](https://github.com/grafana/helm-charts/blob/541d97051de87a309362e02d08741ffc868cfcd6/charts/grafana/values.yaml)
+
+Another option would be to build custom Grafana image with plugin based on same installation instructions.
+
+
+### Dev release installation
+
+
+2. To download plugin build and move contents into Grafana plugins directory:
+
+``` bash
+ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
+tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
+rm /var/lib/grafana/plugins/plugin.tar.gz
+```
+3. Restart Grafana
+
 
 ## Getting started development
 
@@ -234,17 +235,6 @@ make victoriametrics-datasource-plugin-build
 This command will build frontend part and backend part or the plugin and locate both 
 parts into `dist` folder. 
 
-## How to make new release
-
-0. Make sure there are no open security issues.
-1. Create a release tag:
-    * `git tag -s v1.xx.y` in `master` branch
-2. Run `TAG=v1.xx.y make build-release` to build and package binaries in `*.tar.gz` release archives.
-3. Run `git push origin v1.xx.y` to push the tag created `v1.xx.y` at step 2 to public GitHub repository
-4. Go to <https://github.com/VictoriaMetrics/grafana-datasource/releases> and verify that draft release with the name `TAG` has been created
-   and this release contains all the needed binaries and checksums.
-5. Remove the `draft` checkbox for the `TAG` release and manually publish it.
-
 ## How to use WITH templates
 
 The `WITH` templates feature simplifies the construction and management of complex queries.
@@ -291,13 +281,42 @@ WITH expressions are stored in the datasource object. If the dashboard gets expo
    ```
    To view the raw query in the interface, enable the `Raw` toggle.
 
-## Learn more
+## How to make new release
 
-- [VictoriaMetrics documentation](https://docs.victoriametrics.com/)
-- [Configure Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/)
-- [Build a data source plugin tutorial](https://grafana.com/tutorials/build-a-data-source-plugin)
-- [Grafana documentation](https://grafana.com/docs/)
-- [Grafana Tutorials](https://grafana.com/tutorials/) - Grafana Tutorials are step-by-step guides that help you make the most of Grafana
+0. Make sure there are no open security issues.
+1. Create a release tag:
+   * `git tag -s v1.xx.y` in `master` branch
+2. Run `TAG=v1.xx.y make build-release` to build and package binaries in `*.tar.gz` release archives.
+3. Run `git push origin v1.xx.y` to push the tag created `v1.xx.y` at step 2 to public GitHub repository
+4. Go to <https://github.com/VictoriaMetrics/grafana-datasource/releases> and verify that draft release with the name `TAG` has been created
+   and this release contains all the needed binaries and checksums.
+5. Remove the `draft` checkbox for the `TAG` release and manually publish it.
+
+
+## FAQ
+
+### Why VictoriaMetrics datasource is unsigned?
+
+Based on our previous experience of [developing Grafana plugins](https://grafana.com/grafana/plugins/vertamedia-clickhouse-datasource/)
+the signing procedure was a formal act. But when we tried [to sign the plugin](https://grafana.com/docs/grafana/latest/developers/plugins/publish-a-plugin/sign-a-plugin/)
+we were told by GrafanaLabs representative the plugin falls into a Commercial signature level. It matters not 
+if plugin or VictoriaMetrics itself are opensource. The announced cost of Commercial signature level was much higher
+than expected, so we interrupted the procedure.
+
+### How to convert dashboard from Prometheus to VictoriaMetrics datasource?
+
+Make sure that VictoriaMetrics datasource plugin is [installed](#installation), and a new datasource is created from the plugin.
+
+Each panel in Grafana dashboard has a datasource dropdown when in Edit mode. Just choose the VictoriaMetrics datasource
+instead of Prometheus datasource in dropdown.
+
+If datasource is configured via Grafana variable, then change variable to VictoriaMetrics datasource type.
+
+### Why VictoriaMetrics datasource doesn't support alerting?
+
+Grafana doesn't allow forwarding Alert requests to alerting API /api/v1/rules for plugins which are not of Prometheus
+or Loki type. See more details [here](https://github.com/VictoriaMetrics/grafana-datasource/issues/59#issuecomment-1541456768).
+
 
 ## License
 
