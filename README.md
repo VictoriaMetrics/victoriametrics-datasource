@@ -25,14 +25,14 @@ The benefits of using VictoriaMetrics plugin are the following:
 
 ## Installation
 
-Installing VictoriaMetrics Grafana datasource requires the following changes to Grafana's `grafana.ini` config:
+Installing VictoriaMetrics Grafana datasource [requires](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#allow_loading_unsigned_plugins)
+the following changes to Grafana's `grafana.ini` config:
 ``` ini
 [plugins]
 allow_loading_unsigned_plugins = victoriametrics-datasource
 ```
 
 See [why VictoriaMetrics datasource is unsigned](#why-victoriaMetrics-datasource-is-unsigned).
-Grafana docs can be found [here](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#allow_loading_unsigned_plugins)
 
 For detailed instructions on how to install the plugin on Grafana Cloud or
 locally, please checkout the [Plugin installation docs](https://grafana.com/docs/grafana/latest/plugins/installation/).
