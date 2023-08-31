@@ -88,18 +88,20 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 
-	reqURL, err := q.getQueryURL(minInterval, d.settings.URL)
-	if err != nil {
-		err = fmt.Errorf("failed to create request url: %w", err)
-		return newResponseError(err, backend.StatusBadRequest)
-	}
-
 	httpMethod := http.MethodPost
 	var settingsData struct {
-		HTTPMethod string `json:"httpMethod"`
+		HTTPMethod            string `json:"httpMethod"`
+		CustomQueryParameters string `json:"customQueryParameters"`
 	}
 	if err := json.Unmarshal(d.settings.JSONData, &settingsData); err == nil && settingsData.HTTPMethod != "" {
 		httpMethod = settingsData.HTTPMethod
+	}
+	customQueryParameters := settingsData.CustomQueryParameters
+
+	reqURL, err := q.getQueryURL(minInterval, d.settings.URL, customQueryParameters)
+	if err != nil {
+		err = fmt.Errorf("failed to create request url: %w", err)
+		return newResponseError(err, backend.StatusBadRequest)
 	}
 
 	req, err := http.NewRequestWithContext(ctx, httpMethod, reqURL, nil)

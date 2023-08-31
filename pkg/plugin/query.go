@@ -37,7 +37,7 @@ type TimeRange struct {
 
 // GetQueryURL calculates step and clear expression from template variables,
 // and after builds query url depends on query type
-func (q *Query) getQueryURL(minInterval time.Duration, rawURL string) (string, error) {
+func (q *Query) getQueryURL(minInterval time.Duration, rawURL string, customQueryParams string) (string, error) {
 	if rawURL == "" {
 		return "", fmt.Errorf("url can't be blank")
 	}
@@ -59,9 +59,9 @@ func (q *Query) getQueryURL(minInterval time.Duration, rawURL string) (string, e
 	}
 
 	if q.Instant {
-		return q.queryInstantURL(expr, step), nil
+		return q.queryInstantURL(expr, step, customQueryParams), nil
 	}
-	return q.queryRangeURL(expr, step), nil
+	return q.queryRangeURL(expr, step, customQueryParams), nil
 }
 
 // withIntervalVariable checks does query has interval variable
@@ -79,7 +79,7 @@ func (q *Query) calculateMinInterval() (time.Duration, error) {
 }
 
 // queryInstantURL prepare query url for instant query
-func (q *Query) queryInstantURL(expr string, step time.Duration) string {
+func (q *Query) queryInstantURL(expr string, step time.Duration, customQueryParams string) string {
 	q.url.Path = path.Join(q.url.Path, instantQueryPath)
 	values := q.url.Query()
 
@@ -88,11 +88,14 @@ func (q *Query) queryInstantURL(expr string, step time.Duration) string {
 	values.Add("step", step.String())
 
 	q.url.RawQuery = values.Encode()
+	if customQueryParams != "" {
+		q.url.RawQuery += "&" + customQueryParams
+	}
 	return q.url.String()
 }
 
 // queryRangeURL prepare query url for range query
-func (q *Query) queryRangeURL(expr string, step time.Duration) string {
+func (q *Query) queryRangeURL(expr string, step time.Duration, customQueryParams string) string {
 	q.url.Path = path.Join(q.url.Path, rangeQueryPath)
 	values := q.url.Query()
 
@@ -102,6 +105,9 @@ func (q *Query) queryRangeURL(expr string, step time.Duration) string {
 	values.Add("step", step.String())
 
 	q.url.RawQuery = values.Encode()
+	if customQueryParams != "" {
+		q.url.RawQuery += "&" + customQueryParams
+	}
 	return q.url.String()
 }
 
