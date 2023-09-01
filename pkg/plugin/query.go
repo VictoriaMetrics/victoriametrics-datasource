@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
 const (
@@ -86,11 +88,9 @@ func (q *Query) queryInstantURL(expr string, step time.Duration, customQueryPara
 	values.Add("query", expr)
 	values.Add("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
 	values.Add("step", step.String())
+	addCustomParams(values, customQueryParams)
 
 	q.url.RawQuery = values.Encode()
-	if customQueryParams != "" {
-		q.url.RawQuery += "&" + customQueryParams
-	}
 	return q.url.String()
 }
 
@@ -103,11 +103,9 @@ func (q *Query) queryRangeURL(expr string, step time.Duration, customQueryParams
 	values.Add("start", strconv.FormatInt(q.TimeRange.From.Unix(), 10))
 	values.Add("end", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
 	values.Add("step", step.String())
+	addCustomParams(values, customQueryParams)
 
 	q.url.RawQuery = values.Encode()
-	if customQueryParams != "" {
-		q.url.RawQuery += "&" + customQueryParams
-	}
 	return q.url.String()
 }
 
@@ -120,4 +118,17 @@ func (q *Query) parseLegend() string {
 		return q.Expr
 	}
 	return legend
+}
+
+func addCustomParams(values url.Values, customQueryParams string) url.Values {
+	params, err := url.ParseQuery(customQueryParams)
+	if err != nil {
+		log.DefaultLogger.Error("failed to parse custom query params", "err", err.Error())
+	}
+	for key, valueList := range params {
+		for _, value := range valueList {
+			values.Add(key, value)
+		}
+	}
+	return values
 }
