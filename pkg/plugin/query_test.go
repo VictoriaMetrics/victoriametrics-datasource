@@ -150,7 +150,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 				TimeRange:     tt.fields.getTimeRange(),
 				url:           tt.fields.url,
 			}
-			got, err := q.getQueryURL(tt.args.minInterval, tt.args.rawURL)
+			got, err := q.getQueryURL(tt.args.minInterval, tt.args.rawURL, "")
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getQueryURL() error = %v, wantErr %v", err, tt.wantErr)
 				return
