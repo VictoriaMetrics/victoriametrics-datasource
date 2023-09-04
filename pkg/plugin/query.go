@@ -7,8 +7,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
 const (
@@ -39,13 +37,17 @@ type TimeRange struct {
 
 // GetQueryURL calculates step and clear expression from template variables,
 // and after builds query url depends on query type
-func (q *Query) getQueryURL(minInterval time.Duration, rawURL string, customQueryParams string) (string, error) {
+func (q *Query) getQueryURL(minInterval time.Duration, rawURL string, queryParams string) (string, error) {
 	if rawURL == "" {
 		return "", fmt.Errorf("url can't be blank")
 	}
 	u, err := url.Parse(rawURL)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse datasource url: %s", err)
+	}
+	params, err := url.ParseQuery(queryParams)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse query params: %s", err.Error())
 	}
 
 	q.url = u
@@ -61,9 +63,9 @@ func (q *Query) getQueryURL(minInterval time.Duration, rawURL string, customQuer
 	}
 
 	if q.Instant {
-		return q.queryInstantURL(expr, step, customQueryParams), nil
+		return q.queryInstantURL(expr, step, params), nil
 	}
-	return q.queryRangeURL(expr, step, customQueryParams), nil
+	return q.queryRangeURL(expr, step, params), nil
 }
 
 // withIntervalVariable checks does query has interval variable
@@ -81,29 +83,37 @@ func (q *Query) calculateMinInterval() (time.Duration, error) {
 }
 
 // queryInstantURL prepare query url for instant query
-func (q *Query) queryInstantURL(expr string, step time.Duration, customQueryParams string) string {
+func (q *Query) queryInstantURL(expr string, step time.Duration, queryParams url.Values) string {
 	q.url.Path = path.Join(q.url.Path, instantQueryPath)
 	values := q.url.Query()
 
-	values.Add("query", expr)
-	values.Add("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
-	values.Add("step", step.String())
-	addCustomParams(values, customQueryParams)
+	for k, vl := range queryParams {
+		for _, v := range vl {
+			values.Add(k, v)
+		}
+	}
+	values.Set("query", expr)
+	values.Set("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
+	values.Set("step", step.String())
 
 	q.url.RawQuery = values.Encode()
 	return q.url.String()
 }
 
 // queryRangeURL prepare query url for range query
-func (q *Query) queryRangeURL(expr string, step time.Duration, customQueryParams string) string {
+func (q *Query) queryRangeURL(expr string, step time.Duration, queryParams url.Values) string {
 	q.url.Path = path.Join(q.url.Path, rangeQueryPath)
 	values := q.url.Query()
 
+	for k, vl := range queryParams {
+		for _, v := range vl {
+			values.Add(k, v)
+		}
+	}
 	values.Add("query", expr)
 	values.Add("start", strconv.FormatInt(q.TimeRange.From.Unix(), 10))
 	values.Add("end", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
 	values.Add("step", step.String())
-	addCustomParams(values, customQueryParams)
 
 	q.url.RawQuery = values.Encode()
 	return q.url.String()
@@ -118,17 +128,4 @@ func (q *Query) parseLegend() string {
 		return q.Expr
 	}
 	return legend
-}
-
-func addCustomParams(values url.Values, customQueryParams string) url.Values {
-	params, err := url.ParseQuery(customQueryParams)
-	if err != nil {
-		log.DefaultLogger.Error("failed to parse custom query params", "err", err.Error())
-	}
-	for key, valueList := range params {
-		for _, value := range valueList {
-			values.Add(key, value)
-		}
-	}
-	return values
 }
