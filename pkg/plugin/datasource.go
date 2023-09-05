@@ -132,8 +132,7 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 		return newResponseError(err, backend.StatusInternal)
 	}
 
-	legend := q.parseLegend()
-	frames, err := r.getDataFrames(legend)
+	frames, err := r.getDataFrames(q)
 	if err != nil {
 		err = fmt.Errorf("failed to prepare data from reponse: %w", err)
 		return newResponseError(err, backend.StatusInternal)

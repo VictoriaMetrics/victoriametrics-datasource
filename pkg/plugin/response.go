@@ -3,7 +3,10 @@ package plugin
 import (
 	"encoding/json"
 	"fmt"
+	"regexp"
+	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/data"
@@ -12,6 +15,10 @@ import (
 const (
 	vector, matrix, scalar = "vector", "matrix", "scalar"
 )
+
+const legendFormatAuto = "__auto"
+
+var legendFormatRegexp = regexp.MustCompile(`\{\{\s*(.+?)\s*\}\}`)
 
 // Result represents timeseries from query
 type Result struct {
@@ -40,25 +47,94 @@ type Response struct {
 	Data   Data   `json:"data"`
 }
 
+func addMetadataToMultiFrame(q Query, frame *data.Frame) {
+	if frame.Meta == nil {
+		frame.Meta = &data.FrameMeta{}
+	}
+	if len(frame.Fields) < 2 {
+		return
+	}
+
+	customName := getName(q, frame.Fields[1])
+	if customName != "" {
+		frame.Fields[1].Config = &data.FieldConfig{DisplayNameFromDS: customName}
+	}
+
+	frame.Name = customName
+}
+
+func metricNameFromLabels(f *data.Field) string {
+	labels := f.Labels
+	metricName, hasName := labels["__name__"]
+	numLabels := len(labels) - 1
+	if !hasName {
+		numLabels = len(labels)
+	}
+	labelStrings := make([]string, 0, numLabels)
+	for label, value := range labels {
+		if label != "__name__" {
+			labelStrings = append(labelStrings, fmt.Sprintf("%s=%q", label, value))
+		}
+	}
+
+	switch numLabels {
+	case 0:
+		if hasName {
+			return metricName
+		}
+		return "{}"
+	default:
+		sort.Strings(labelStrings)
+		return fmt.Sprintf("%s{%s}", metricName, strings.Join(labelStrings, ", "))
+	}
+}
+
+func getName(q Query, field *data.Field) string {
+	labels := field.Labels
+	legend := metricNameFromLabels(field)
+
+	if q.LegendFormat == legendFormatAuto {
+		if len(labels) > 0 {
+			legend = ""
+		}
+	} else if q.LegendFormat != "" {
+		result := legendFormatRegexp.ReplaceAllFunc([]byte(q.LegendFormat), func(in []byte) []byte {
+			labelName := strings.Replace(string(in), "{{", "", 1)
+			labelName = strings.Replace(labelName, "}}", "", 1)
+			labelName = strings.TrimSpace(labelName)
+			if val, exists := labels[labelName]; exists {
+				return []byte(val)
+			}
+			return []byte{}
+		})
+		legend = string(result)
+	}
+
+	// If legend is empty brackets, use query expression
+	if legend == "{}" {
+		return q.Expr
+	}
+
+	return legend
+}
+
 type promInstant struct {
 	Result []Result `json:"result"`
 }
 
-func (pi promInstant) dataframes(label string) (data.Frames, error) {
+func (pi promInstant) dataframes(q Query) (data.Frames, error) {
 	frames := make(data.Frames, len(pi.Result))
 	for i, res := range pi.Result {
 		f, err := strconv.ParseFloat(res.Value[1].(string), 64)
 		if err != nil {
 			return nil, fmt.Errorf("metric %v, unable to parse float64 from %s: %w", res, res.Value[1], err)
 		}
-		if val, ok := res.Labels[label]; ok {
-			label = val
-		}
 
 		ts := time.Unix(int64(res.Value[0].(float64)), 0)
-		frames[i] = data.NewFrame(label,
-			data.NewField("time", nil, []time.Time{ts}),
-			data.NewField("values", data.Labels(res.Labels), []float64{f}))
+		frames[i] = data.NewFrame("",
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{ts}),
+			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), []float64{f}))
+		addMetadataToMultiFrame(q, frames[i])
 	}
 
 	return frames, nil
@@ -68,7 +144,7 @@ type promRange struct {
 	Result []Result `json:"result"`
 }
 
-func (pr promRange) dataframes(label string) (data.Frames, error) {
+func (pr promRange) dataframes(q Query) (data.Frames, error) {
 	frames := make(data.Frames, len(pr.Result))
 	for i, res := range pr.Result {
 		timestamps := make([]time.Time, len(res.Values))
@@ -91,13 +167,10 @@ func (pr promRange) dataframes(label string) (data.Frames, error) {
 			return nil, fmt.Errorf("metric %v contains no values", res)
 		}
 
-		if val, ok := res.Labels[label]; ok {
-			label = val
-		}
-
-		frames[i] = data.NewFrame(label,
-			data.NewField("time", nil, timestamps),
-			data.NewField("values", data.Labels(res.Labels), values))
+		frames[i] = data.NewFrame("",
+			data.NewField(data.TimeSeriesTimeFieldName, nil, timestamps),
+			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), values))
+		addMetadataToMultiFrame(q, frames[i])
 	}
 
 	return frames, nil
@@ -121,20 +194,20 @@ func (ps promScalar) dataframes() (data.Frames, error) {
 	return frames, nil
 }
 
-func (r *Response) getDataFrames(label string) (data.Frames, error) {
+func (r *Response) getDataFrames(q Query) (data.Frames, error) {
 	switch r.Data.ResultType {
 	case vector:
 		var pi promInstant
 		if err := json.Unmarshal(r.Data.Result, &pi.Result); err != nil {
 			return nil, fmt.Errorf("umarshal err %s; \n %#v", err, string(r.Data.Result))
 		}
-		return pi.dataframes(label)
+		return pi.dataframes(q)
 	case matrix:
 		var pr promRange
 		if err := json.Unmarshal(r.Data.Result, &pr.Result); err != nil {
 			return nil, fmt.Errorf("umarshal err %s; \n %#v", err, string(r.Data.Result))
 		}
-		return pr.dataframes(label)
+		return pr.dataframes(q)
 	case scalar:
 		var ps promScalar
 		if err := json.Unmarshal(r.Data.Result, &ps); err != nil {

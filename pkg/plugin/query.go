@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"path"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -117,15 +116,4 @@ func (q *Query) queryRangeURL(expr string, step time.Duration, queryParams url.V
 
 	q.url.RawQuery = values.Encode()
 	return q.url.String()
-}
-
-var legendReplacer = strings.NewReplacer("{{", "", "}}", "")
-
-func (q *Query) parseLegend() string {
-	legend := legendReplacer.Replace(q.LegendFormat)
-
-	if legend == "{}" {
-		return q.Expr
-	}
-	return legend
 }
