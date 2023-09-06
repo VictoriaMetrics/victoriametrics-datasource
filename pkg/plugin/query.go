@@ -4,13 +4,19 @@ import (
 	"fmt"
 	"net/url"
 	"path"
+	"regexp"
+	"sort"
 	"strconv"
+	"strings"
 	"time"
+
+	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
 const (
 	instantQueryPath = "/api/v1/query"
 	rangeQueryPath   = "/api/v1/query_range"
+	legendFormatAuto = "__auto"
 )
 
 // Query represents backend query object
@@ -116,4 +122,73 @@ func (q *Query) queryRangeURL(expr string, step time.Duration, queryParams url.V
 
 	q.url.RawQuery = values.Encode()
 	return q.url.String()
+}
+
+var legendReplacer = regexp.MustCompile(`\{\{\s*(.+?)\s*\}\}`)
+
+func (q *Query) parseLegend(field *data.Field) string {
+	labels := field.Labels
+	legend := metricNameFromLabels(field)
+
+	if q.LegendFormat == legendFormatAuto {
+		if len(labels) > 0 {
+			legend = ""
+		}
+	} else if q.LegendFormat != "" {
+		result := legendReplacer.ReplaceAllStringFunc(q.LegendFormat, func(in string) string {
+			labelName := strings.Replace(in, "{{", "", 1)
+			labelName = strings.Replace(labelName, "}}", "", 1)
+			labelName = strings.TrimSpace(labelName)
+			if val, exists := labels[labelName]; exists {
+				return val
+			}
+			return ""
+		})
+		legend = result
+	}
+
+	// If legend is empty brackets, use query expression
+	if legend == "{}" {
+		return q.Expr
+	}
+
+	return legend
+}
+
+func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
+	if len(frame.Fields) < 2 {
+		return
+	}
+
+	customName := q.parseLegend(frame.Fields[1])
+	if customName != "" {
+		frame.Fields[1].Config = &data.FieldConfig{DisplayNameFromDS: customName}
+	}
+
+	frame.Name = customName
+}
+
+func metricNameFromLabels(f *data.Field) string {
+	labels := f.Labels
+	metricName, hasName := labels["__name__"]
+	numLabels := len(labels) - 1
+	if !hasName {
+		numLabels = len(labels)
+	}
+	labelStrings := make([]string, 0, numLabels)
+	for label, value := range labels {
+		if label != "__name__" {
+			labelStrings = append(labelStrings, fmt.Sprintf("%s=%q", label, value))
+		}
+	}
+
+	if numLabels == 0 {
+		if hasName {
+			return metricName
+		}
+		return "{}"
+	}
+
+	sort.Strings(labelStrings)
+	return fmt.Sprintf("%s{%s}", metricName, strings.Join(labelStrings, ", "))
 }

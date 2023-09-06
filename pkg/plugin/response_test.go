@@ -17,6 +17,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 		name    string
 		label   string
 		fields  fields
+		query   Query
 		want    func() data.Frames
 		wantErr bool
 	}{
@@ -29,6 +30,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 					Result:     nil,
 				},
 			},
+			query: Query{},
 			want: func() data.Frames {
 				return nil
 			},
@@ -43,6 +45,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 					Result:     nil,
 				},
 			},
+			query: Query{LegendFormat: "legend {{app}}"},
 			want: func() data.Frames {
 				return nil
 			},
@@ -57,6 +60,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 					Result:     []byte("{"),
 				},
 			},
+			query: Query{LegendFormat: "legend {{app}}"},
 			want: func() data.Frames {
 				return nil
 			},
@@ -71,10 +75,11 @@ func TestResponse_getDataFrames(t *testing.T) {
 					Result:     []byte(`[1583786142, "1"]`),
 				},
 			},
+			query: Query{LegendFormat: "legend {{app}}"},
 			label: "123",
 			want: func() data.Frames {
 				return []*data.Frame{
-					data.NewFrame("1",
+					data.NewFrame("legend ",
 						data.NewField("time", nil, []time.Time{time.Unix(1583786142, 0)}),
 						data.NewField("value", nil, []float64{1}),
 					),
@@ -91,14 +96,15 @@ func TestResponse_getDataFrames(t *testing.T) {
 					Result:     []byte(`[{"metric":{"__name__":"vm_rows"},"value":[1583786142,"13763"]},{"metric":{"__name__":"vm_requests"},"value":[1583786140,"2000"]}]`),
 				},
 			},
+			query: Query{LegendFormat: "legend {{app}}"},
 			label: "123",
 			want: func() data.Frames {
 				return []*data.Frame{
-					data.NewFrame("123",
+					data.NewFrame("legend ",
 						data.NewField("time", nil, []time.Time{time.Unix(1583786142, 0)}),
 						data.NewField("values", data.Labels{"__name__": "vm_rows"}, []float64{13763}),
 					),
-					data.NewFrame("123",
+					data.NewFrame("legend ",
 						data.NewField("time", nil, []time.Time{time.Unix(1583786140, 0)}),
 						data.NewField("values", data.Labels{"__name__": "vm_requests"}, []float64{2000}),
 					),
@@ -141,12 +147,20 @@ func TestResponse_getDataFrames(t *testing.T) {
 				Status: tt.fields.Status,
 				Data:   tt.fields.Data,
 			}
-			got, err := r.getDataFrames(tt.label)
+			got, err := r.getDataFrames()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getDataFrames() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+
 			w := tt.want()
+			for i := range w {
+				tt.query.addMetadataToMultiFrame(w[i])
+			}
+			for i := range got {
+				tt.query.addMetadataToMultiFrame(got[i])
+			}
+
 			if !reflect.DeepEqual(got, w) {
 				t.Errorf("getDataFrames() got = %v, want %v", got, w)
 			}
