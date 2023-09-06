@@ -3,6 +3,8 @@
 ## tip
 * FEATURE: add support limit param for metrics discovery. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/82).
 
+* BUGFIX: correctly handle custom query parameters in annotation queries. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/95)
+
 ## [v0.3.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.3.0)
 
 * FEATURE: Improvements to WITH Templates (see [this comment](https://github.com/VictoriaMetrics/grafana-datasource/issues/35#issuecomment-1578649762)):

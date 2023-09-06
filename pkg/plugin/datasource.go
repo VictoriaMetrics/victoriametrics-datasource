@@ -81,28 +81,31 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 
 	q.TimeRange = TimeRange(query.TimeRange)
 	q.MaxDataPoints = query.MaxDataPoints
-
 	minInterval, err := q.calculateMinInterval()
 	if err != nil {
 		err = fmt.Errorf("failed to calculate minimal interval: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 
-	reqURL, err := q.getQueryURL(minInterval, d.settings.URL)
+	var settings struct {
+		HTTPMethod  string `json:"httpMethod"`
+		QueryParams string `json:"customQueryParameters"`
+	}
+	if err := json.Unmarshal(d.settings.JSONData, &settings); err != nil {
+		err = fmt.Errorf("failed to parse datasource settings: %w", err)
+		return newResponseError(err, backend.StatusBadRequest)
+	}
+	if settings.HTTPMethod == "" {
+		settings.HTTPMethod = http.MethodPost
+	}
+
+	reqURL, err := q.getQueryURL(minInterval, d.settings.URL, settings.QueryParams)
 	if err != nil {
-		err = fmt.Errorf("failed to create request url: %w", err)
+		err = fmt.Errorf("failed to create request URL: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 
-	httpMethod := http.MethodPost
-	var settingsData struct {
-		HTTPMethod string `json:"httpMethod"`
-	}
-	if err := json.Unmarshal(d.settings.JSONData, &settingsData); err == nil && settingsData.HTTPMethod != "" {
-		httpMethod = settingsData.HTTPMethod
-	}
-
-	req, err := http.NewRequestWithContext(ctx, httpMethod, reqURL, nil)
+	req, err := http.NewRequestWithContext(ctx, settings.HTTPMethod, reqURL, nil)
 	if err != nil {
 		err = fmt.Errorf("failed to create new request with context: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
