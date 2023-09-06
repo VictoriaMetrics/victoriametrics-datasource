@@ -104,12 +104,11 @@ func (ps promScalar) dataframes() (data.Frames, error) {
 	if err != nil {
 		return nil, fmt.Errorf("metric %v, unable to parse float64 from %s: %w", ps, ps[1], err)
 	}
-	label := fmt.Sprintf("%g", f)
 
 	frames = append(frames,
-		data.NewFrame(label,
-			data.NewField("time", nil, []time.Time{time.Unix(int64(ps[0].(float64)), 0)}),
-			data.NewField("value", nil, []float64{f})))
+		data.NewFrame("",
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(int64(ps[0].(float64)), 0)}),
+			data.NewField(data.TimeSeriesValueFieldName, nil, []float64{f})))
 
 	return frames, nil
 }

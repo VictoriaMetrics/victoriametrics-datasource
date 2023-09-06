@@ -79,9 +79,9 @@ func TestResponse_getDataFrames(t *testing.T) {
 			label: "123",
 			want: func() data.Frames {
 				return []*data.Frame{
-					data.NewFrame("legend ",
-						data.NewField("time", nil, []time.Time{time.Unix(1583786142, 0)}),
-						data.NewField("value", nil, []float64{1}),
+					data.NewFrame("",
+						data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 0)}),
+						data.NewField(data.TimeSeriesValueFieldName, nil, []float64{1}),
 					),
 				}
 			},
@@ -100,13 +100,13 @@ func TestResponse_getDataFrames(t *testing.T) {
 			label: "123",
 			want: func() data.Frames {
 				return []*data.Frame{
-					data.NewFrame("legend ",
-						data.NewField("time", nil, []time.Time{time.Unix(1583786142, 0)}),
-						data.NewField("values", data.Labels{"__name__": "vm_rows"}, []float64{13763}),
+					data.NewFrame("",
+						data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 0)}),
+						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_rows"}, []float64{13763}),
 					),
-					data.NewFrame("legend ",
-						data.NewField("time", nil, []time.Time{time.Unix(1583786140, 0)}),
-						data.NewField("values", data.Labels{"__name__": "vm_requests"}, []float64{2000}),
+					data.NewFrame("",
+						data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786140, 0)}),
+						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_requests"}, []float64{2000}),
 					),
 				}
 			},
@@ -124,17 +124,17 @@ func TestResponse_getDataFrames(t *testing.T) {
 			label: "123",
 			want: func() data.Frames {
 				return []*data.Frame{
-					data.NewFrame("123",
-						data.NewField("time", nil, []time.Time{time.Unix(1670324477, 0)}),
-						data.NewField("values", data.Labels{"__name__": "ingress_nginx_request_qps", "status": "100"}, []float64{1}),
+					data.NewFrame("",
+						data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
+						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "100"}, []float64{1}),
 					),
-					data.NewFrame("123",
-						data.NewField("time", nil, []time.Time{time.Unix(1670324477, 0)}),
-						data.NewField("values", data.Labels{"__name__": "ingress_nginx_request_qps", "status": "500"}, []float64{2}),
+					data.NewFrame("",
+						data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
+						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "500"}, []float64{2}),
 					),
-					data.NewFrame("123",
-						data.NewField("time", nil, []time.Time{time.Unix(1670324477, 0)}),
-						data.NewField("values", data.Labels{"__name__": "ingress_nginx_request_qps", "status": "200"}, []float64{3}),
+					data.NewFrame("",
+						data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
+						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "200"}, []float64{3}),
 					),
 				}
 			},
