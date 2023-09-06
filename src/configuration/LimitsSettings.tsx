@@ -36,7 +36,7 @@ const limitFields = [
   },
   {
     label: "Max tag values",
-    tooltip: <><code>-search.maxTagValues</code> limits the number of items, which may be returned from <a href="https://prometheus.io/docs/prometheus/latest/querying/api/#querying-label-values" target="_blank" rel="noreferrer">/api/v1/label/.../values</a>. This endpoint is used mostly by Grafana for auto-completion of label values. Queries to this endpoint may take big amounts of CPU time and memory when the database contains big number of unique time series because of <a href="https://docs.victoriametrics.com/FAQ.html#what-is-high-churn-rate" target="_blank" rel="noreferrer">high churn rate</a>. In this case it might be useful to set the <code>-search.maxTagValues</code> to quite low value in order to limit CPU and memory usage.</>,
+    tooltip: <><code>-search.maxTagValues</code> limits the number of items, which may be returned from <a href="https://prometheus.io/docs/prometheus/latest/querying/api/#querying-label-values" target="_blank" rel="noreferrer">/api/v1/label/.../values</a>. This endpoint is used mostly by Grafana for auto-completion of label values. Queries to this endpoint may take big amounts of CPU time and memory when the database contains big number of unique time series because of <a href="https://docs.victoriametrics.com/FAQ.html#what-is-high-churn-rate" target="_blank" rel="noreferrer">high churn rate</a>. In this case, it might be useful to set the <code>Max tag values</code> to quite low value in order to limit CPU and memory usage of the datasource.</>,
     placeholder: "",
     key: "maxTagValues" as keyof LimitMetrics
   },
