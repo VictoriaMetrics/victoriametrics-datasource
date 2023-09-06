@@ -15,7 +15,6 @@ func TestResponse_getDataFrames(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		label   string
 		fields  fields
 		query   Query
 		want    func() data.Frames
@@ -76,7 +75,6 @@ func TestResponse_getDataFrames(t *testing.T) {
 				},
 			},
 			query: Query{LegendFormat: "legend {{app}}"},
-			label: "123",
 			want: func() data.Frames {
 				return []*data.Frame{
 					data.NewFrame("",
@@ -97,14 +95,13 @@ func TestResponse_getDataFrames(t *testing.T) {
 				},
 			},
 			query: Query{LegendFormat: "legend {{app}}"},
-			label: "123",
 			want: func() data.Frames {
 				return []*data.Frame{
-					data.NewFrame("",
+					data.NewFrame("legend ",
 						data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 0)}),
 						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_rows"}, []float64{13763}),
 					),
-					data.NewFrame("",
+					data.NewFrame("legend ",
 						data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786140, 0)}),
 						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_requests"}, []float64{2000}),
 					),
@@ -121,18 +118,18 @@ func TestResponse_getDataFrames(t *testing.T) {
 					Result:     []byte(`[{"metric":{"__name__":"ingress_nginx_request_qps","status":"100"},"values":[[1670324477.542,"1"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"500"},"values":[[1670324477.542,"2"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"200"},"values":[[1670324477.542,"3"]]}]`),
 				},
 			},
-			label: "123",
+			query: Query{LegendFormat: "legend {{app}}"},
 			want: func() data.Frames {
 				return []*data.Frame{
-					data.NewFrame("",
+					data.NewFrame("legend ",
 						data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
 						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "100"}, []float64{1}),
 					),
-					data.NewFrame("",
+					data.NewFrame("legend ",
 						data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
 						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "500"}, []float64{2}),
 					),
-					data.NewFrame("",
+					data.NewFrame("legend ",
 						data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
 						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "200"}, []float64{3}),
 					),
