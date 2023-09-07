@@ -71,9 +71,11 @@ export default class PrometheusMetricFindQuery {
   labelNamesQuery() {
     const start = this.datasource.getPrometheusTime(this.range.from, false);
     const end = this.datasource.getPrometheusTime(this.range.to, true);
+    const limit = this.datasource.getLimitMetrics('maxTagKeys');
     const params = {
       start: start.toString(),
       end: end.toString(),
+      limit,
     };
 
     const url = `/api/v1/labels`;
@@ -88,10 +90,12 @@ export default class PrometheusMetricFindQuery {
   labelValuesQuery(label: string, metric?: string) {
     const start = this.datasource.getPrometheusTime(this.range.from, false);
     const end = this.datasource.getPrometheusTime(this.range.to, true);
+    const limit = this.datasource.getLimitMetrics(!metric ? 'maxTagValues' : 'maxSeries')
     const params = {
       ...(metric && { 'match[]': metric }),
       start: start.toString(),
-      end: end.toString()
+      end: end.toString(),
+      limit
     };
 
     if (!metric) {
@@ -125,9 +129,11 @@ export default class PrometheusMetricFindQuery {
   metricNameQuery(metricFilterPattern: string) {
     const start = this.datasource.getPrometheusTime(this.range.from, false);
     const end = this.datasource.getPrometheusTime(this.range.to, true);
+    const limit = this.datasource.getLimitMetrics('maxTagValues');
     const params = {
       start: start.toString(),
       end: end.toString(),
+      limit,
     };
     const url = `/api/v1/label/__name__/values`;
 
@@ -188,10 +194,12 @@ export default class PrometheusMetricFindQuery {
   metricNameAndLabelsQuery(query: string): Promise<MetricFindValue[]> {
     const start = this.datasource.getPrometheusTime(this.range.from, false);
     const end = this.datasource.getPrometheusTime(this.range.to, true);
+    const limit = this.datasource.getLimitMetrics('maxSeries')
     const params = {
       'match[]': query,
       start: start.toString(),
       end: end.toString(),
+      limit,
     };
 
     const url = `/api/v1/series`;
