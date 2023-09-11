@@ -1,0 +1,28 @@
+{
+  "name": "lezer-metricsql",
+  "version": "0.1.0",
+  "main": "index.cjs",
+  "type": "module",
+  "exports": {
+    "import": "./dist/index.es.js",
+    "require": "./dist/index.cjs"
+  },
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "author": "VictoriaMetrics",
+  "scripts": {
+    "build": "bash build.sh",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "@lezer/generator": "^1.0.0",
+    "@lezer/highlight": "^1.0.0",
+    "@lezer/lr": "^1.0.0",
+    "@rollup/plugin-node-resolve": "^15.2.1",
+    "rollup": "^3.29.0"
+  },
+  "peerDependencies": {
+    "@lezer/highlight": "^1.0.0",
+    "@lezer/lr": "^1.0.0"
+  }
+}

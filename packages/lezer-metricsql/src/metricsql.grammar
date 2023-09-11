@@ -1,0 +1,638 @@
+@top MetricsQL { Expr }
+@top MetricName { MetricIdentifier }
+
+@precedence {
+  pow @right,
+  mul @left
+  add @left,
+  eql @left,
+  and @left,
+  or @left
+}
+
+Expr {
+  AggregateExpr |
+  BinaryExpr |
+  FunctionCall |
+  MatrixSelector |
+  NumberLiteral |
+  OffsetExpr |
+  ParenExpr |
+  StringLiteral |
+  SubqueryExpr |
+  UnaryExpr |
+  VectorSelector |
+  StepInvariantExpr
+}
+
+AggregateExpr {
+  AggregateOp AggregateModifier FunctionCallBody |
+  AggregateOp FunctionCallBody AggregateModifier |
+  AggregateOp FunctionCallBody
+}
+
+AggregateOp {
+  Avg |
+  Bottomk |
+  Count |
+  CountValues |
+  Group |
+  Max |
+  Min |
+  Quantile |
+  Stddev |
+  Stdvar |
+  Sum |
+  Topk
+}
+
+AggregateModifier {
+  By GroupingLabels |
+  Without GroupingLabels
+}
+
+BinaryExpr {
+  Expr !pow Pow    BinModifiers Expr |
+  Expr !mul Mul    BinModifiers Expr |
+  Expr !mul Div    BinModifiers Expr |
+  Expr !mul Mod    BinModifiers Expr |
+  Expr !mul Atan2  BinModifiers Expr |
+  Expr !add Add    BinModifiers Expr |
+  Expr !add Sub    BinModifiers Expr |
+  Expr !eql Eql    BinModifiers Expr |
+  Expr !eql Gte    BinModifiers Expr |
+  Expr !eql Gtr    BinModifiers Expr |
+  Expr !eql Lte    BinModifiers Expr |
+  Expr !eql Lss    BinModifiers Expr |
+  Expr !eql Neq    BinModifiers Expr |
+  Expr !and And    BinModifiers Expr |
+  Expr !and Unless BinModifiers Expr |
+  Expr !or  Or     BinModifiers Expr
+}
+
+OnOrIgnoring {
+  Ignoring GroupingLabels |
+  On GroupingLabels
+}
+
+BinModifiers {
+  Bool?
+  (
+    OnOrIgnoring
+    (
+      (GroupLeft | GroupRight)
+      (!mul GroupingLabels)?
+    )?
+  )?
+}
+
+GroupingLabels {
+  "(" GroupingLabelList ")" |
+  "(" GroupingLabelList "," ")" |
+  "(" ")"
+}
+
+GroupingLabelList {
+  GroupingLabelList "," GroupingLabel |
+  GroupingLabel
+}
+
+GroupingLabel {
+  LabelName
+}
+
+FunctionCall {
+  FunctionIdentifier FunctionCallBody
+}
+
+FunctionIdentifier {
+  AbsentOverTime |
+  Absent |
+  Abs |
+  Acos |
+  Acosh |
+  Asin |
+  Asinh |
+  Atan |
+  Atanh |
+  AvgOverTime |
+  Ceil |
+  Changes |
+  Clamp |
+  ClampMax |
+  ClampMin |
+  Cos |
+  Cosh |
+  CountOverTime |
+  DaysInMonth |
+  DayOfMonth |
+  DayOfWeek |
+  DayOfYear |
+  Deg |
+  Delta |
+  Deriv |
+  Exp |
+  Floor |
+  HistogramQuantile |
+  HoltWinters |
+  Hour |
+  Idelta |
+  Increase |
+  Irate |
+  LabelReplace |
+  LabelJoin |
+  LastOverTime |
+  Ln |
+  Log10 |
+  Log2 |
+  MaxOverTime |
+  MinOverTime |
+  Minute |
+  Month |
+  Pi |
+  PredictLinear |
+  PresentOverTime |
+  QuantileOverTime |
+  Rad |
+  Rate |
+  Resets |
+  Round |
+  Scalar |
+  Sgn |
+  Sin |
+  Sinh |
+  Sort |
+  SortDesc |
+  Sqrt |
+  StddevOverTime |
+  StdvarOverTime |
+  SumOverTime |
+  Tan |
+  Tanh |
+  Timestamp |
+  Time |
+  Vector |
+  Year |
+  AscentOverTime |
+  ChangesPrometheus |
+  DecreasesOverTime |
+  DefaultRollup |
+  DeltaPrometheus |
+  DerivFast |
+  DescentOverTime |
+  DistinctOverTime |
+  FirstOverTime |
+  GeomeanOverTime |
+  HistogramOverTime |
+  Ideriv |
+  IncreasePrometheus |
+  IncreasePure |
+  IncreasesOverTime |
+  Integrate |
+  Lag |
+  Lifetime |
+  MadOverTime |
+  MedianOverTime |
+  ModeOverTime |
+  RangeOverTime |
+  RateOverSum |
+  Rollup |
+  RollupCandlestick |
+  RollupDelta |
+  RollupDeriv |
+  RollupIncrease |
+  RollupRate |
+  RollupScrapeInterval |
+  ScrapeInterval |
+  StaleSamplesOverTime |
+  Sum2OverTime |
+  TimestampWithName |
+  TfirstOverTime |
+  TlastChangeOverTime |
+  TlastOverTime |
+  TmaxOverTime |
+  TminOverTime |
+  ZscoreOverTime |
+  HistogramAvg |
+  HistogramStddev |
+  HistogramStdvar |
+  PrometheusBuckets |
+  Interpolate |
+  KeepLastValue |
+  KeepNextValue |
+  RangeAvg |
+  RangeFirst |
+  RangeLast |
+  RangeLinearRegression |
+  RangeMad |
+  RangeMax |
+  RangeMedian |
+  RangeMin |
+  RangeStddev |
+  RangeStdvar |
+  RangeSum |
+  RangeZscore |
+  RemoveResets |
+  RunningAvg |
+  RunningMax |
+  RunningMin |
+  RunningSum |
+  Distinct |
+  Geomean |
+  Histogram |
+  BottomkAvg |
+  BottomkLast |
+  BottomkMax |
+  BottomkMedian |
+  BottomkMin |
+  TopkAvg |
+  TopkLast |
+  TopkMax |
+  TopkMedian |
+  TopkMin |
+  Any |
+  Limitk |
+  Mad |
+  Median |
+  Mode |
+  Share |
+  Sum2 |
+  Zscore |
+  LabelDel |
+  LabelKeep |
+  LabelLowercase |
+  LabelUppercase |
+  SortByLabel |
+  SortByLabelDesc |
+  SortByLabelNumeric |
+  SortByLabelNumericDesc |
+  Now |
+  Step |
+  CountEqOverTime |
+  CountGtOverTime |
+  CountLeOverTime |
+  CountNeOverTime |
+  DurationOverTime |
+  ShareGtOverTime |
+  ShareLeOverTime |
+  ShareEqOverTime |
+  BitmapAnd |
+  BitmapOr |
+  BitmapXor |
+  Rand |
+  RandExponential |
+  RandNormal |
+  TimezoneOffset
+}
+
+FunctionCallBody {
+  "(" FunctionCallArgs ")" |
+  "(" ")"
+}
+
+FunctionCallArgs {
+  FunctionCallArgs "," Expr |
+  Expr
+}
+
+ParenExpr {
+  "(" Expr ")"
+}
+
+OffsetExpr {
+  Expr Offset Sub? Duration
+}
+
+MatrixSelector {
+  Expr "[" Duration "]"
+}
+
+SubqueryExpr {
+  Expr "[" Duration ":" ("" | Duration) "]"
+}
+
+UnaryExpr {
+  !mul UnaryOp~signed Expr
+}
+
+UnaryOp {
+  "-" |
+  "+"
+}
+
+VectorSelector {
+  MetricIdentifier LabelMatchers |
+  MetricIdentifier |
+  LabelMatchers
+}
+
+LabelMatchers {
+  "{" LabelMatchList "}" |
+  "{" LabelMatchList "," "}" |
+  "{" "}"
+}
+
+LabelMatchList {
+  LabelMatchList "," LabelMatcher |
+  LabelMatcher
+}
+
+MatchOp {
+  EqlSingle |
+  Neq |
+  EqlRegex |
+  NeqRegex
+}
+
+LabelMatcher {
+  LabelName MatchOp StringLiteral
+}
+
+MetricIdentifier {
+  Identifier
+}
+
+StepInvariantExpr {
+  Expr At ( NumberLiteral | AtModifierPreprocessors "(" ")" )
+}
+
+AtModifierPreprocessors {
+  Start | End
+}
+
+NumberLiteral  {
+ ("-"|"+")?~signed (number | inf | nan)
+}
+
+@skip { whitespace | LineComment }
+
+@tokens {
+  whitespace { std.whitespace+ }
+  LineComment { "#" ![\n]* }
+
+  number {
+      (std.digit+ ("." std.digit*)? | "." std.digit+) (("e" | "E") ("+" | "-")? std.digit+)? |
+      "0x" (std.digit | $[a-fA-F])+
+  }
+  StringLiteral {
+    '"' (![\\\n"] | "\\" _)* '"'? |
+    "'" (![\\\n'] | "\\" _)* "'"? |
+    "`" ![`]* "`"
+  }
+
+  Duration {
+    // Each line below is just the same regex repeated over and over, but each time with one of the units made non-optional,
+    // to ensure that at least one <number>+<unit> pair is provided and an empty string is not recognized as a valid duration.
+    ( ( std.digit+ "y" ) ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" ) ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" ) ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" ) ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" ) ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" ) ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" ) )
+  }
+  Identifier { (std.asciiLetter | "_" | ":") (std.asciiLetter | std.digit | "_" | ":" )*}
+  LabelName { (std.asciiLetter | "_") (std.asciiLetter | std.digit | "_")* }
+
+  // Operator
+  Sub { "-" }
+  Add { "+" }
+  Mul { "*" }
+  Mod { "%" }
+  Div { "/" }
+  Eql { "==" }
+  Neq { "!=" }
+  Lte { "<=" }
+  Lss { "<" }
+  Gte { ">=" }
+  Gtr { ">" }
+  EqlRegex { "=~" }
+  EqlSingle { "=" }
+  NeqRegex { "!~" }
+  Pow { "^" }
+
+  // Special Modifier
+  At { "@" }
+}
+
+// Keywords
+
+@external specialize {Identifier} specializeIdentifier from "./tokens" {
+  inf,
+  nan,
+  Bool,
+  Ignoring,
+  On,
+  GroupLeft,
+  GroupRight,
+  Offset
+}
+
+// Contextual keywords
+
+@external extend {Identifier} extendIdentifier from "./tokens" {
+  Atan2,
+  Avg,
+  Bottomk,
+  Count,
+  CountValues,
+  Group,
+  Max,
+  Min,
+  Quantile,
+  Stddev,
+  Stdvar,
+  Sum,
+  Topk,
+  By,
+  Without,
+  And,
+  Or,
+  Unless,
+  Start,
+  End
+}
+
+@external propSource metricsQLHighLight from "./highlight"
+
+  // FunctionIdentifier definitions
+  Abs { condFn<"abs"> }
+  Absent { condFn<"absent"> }
+  AbsentOverTime { condFn<"absent_over_time"> }
+  Acos { condFn<"acos"> }
+  Acosh { condFn<"acosh"> }
+  Asin { condFn<"asin"> }
+  Asinh { condFn<"asinh">}
+  Atan { condFn<"atan"> }
+  Atanh { condFn<"atanh">}
+  AvgOverTime { condFn<"avg_over_time"> }
+  Ceil { condFn<"ceil"> }
+  Changes { condFn<"changes"> }
+  Clamp { condFn<"clamp"> }
+  ClampMax { condFn<"clamp_max"> }
+  ClampMin { condFn<"clamp_min"> }
+  Cos { condFn<"cos">}
+  Cosh { condFn<"cosh">}
+  CountOverTime { condFn<"count_over_time"> }
+  DaysInMonth { condFn<"days_in_month"> }
+  DayOfMonth { condFn<"day_of_month"> }
+  DayOfWeek { condFn<"day_of_week"> }
+  DayOfYear { condFn<"day_of_year"> }
+  Deg { condFn<"deg"> }
+  Delta { condFn<"delta"> }
+  Deriv { condFn<"deriv"> }
+  Exp { condFn<"exp"> }
+  Floor { condFn<"floor"> }
+  HistogramQuantile { condFn<"histogram_quantile"> }
+  HoltWinters { condFn<"holt_winters"> }
+  Hour { condFn<"hour"> }
+  Idelta { condFn<"idelta"> }
+  Increase { condFn<"increase"> }
+  Irate { condFn<"irate"> }
+  LabelReplace { condFn<"label_replace"> }
+  LabelJoin { condFn<"label_join"> }
+  LastOverTime {condFn<"last_over_time">}
+  Ln { condFn<"ln"> }
+  Log10 { condFn<"log10"> }
+  Log2 { condFn<"log2"> }
+  MaxOverTime { condFn<"max_over_time"> }
+  MinOverTime { condFn<"min_over_time"> }
+  Minute { condFn<"minute"> }
+  Month { condFn<"month"> }
+  Pi { condFn<"pi">}
+  PredictLinear { condFn<"predict_linear"> }
+  PresentOverTime { condFn<"present_over_time"> }
+  QuantileOverTime { condFn<"quantile_over_time"> }
+  Rad { condFn<"rad"> }
+  Rate { condFn<"rate"> }
+  Resets { condFn<"resets"> }
+  Round { condFn<"round"> }
+  Scalar { condFn<"scalar"> }
+  Sgn { condFn<"sgn"> }
+  Sin { condFn<"sin">}
+  Sinh { condFn<"sinh"> }
+  Sort { condFn<"sort"> }
+  SortDesc { condFn<"sort_desc"> }
+  Sqrt { condFn<"sqrt"> }
+  StddevOverTime { condFn<"stddev_over_time"> }
+  StdvarOverTime { condFn<"stdvar_over_time"> }
+  SumOverTime { condFn<"sum_over_time"> }
+  Tan { condFn<"tan"> }
+  Tanh { condFn<"tanh">}
+  Time { condFn<"time"> }
+  Timestamp { condFn<"timestamp"> }
+  Vector { condFn<"vector"> }
+  Year { condFn<"year"> }
+  AscentOverTime { condFn<"ascent_over_time"> }
+  ChangesPrometheus { condFn<"changes_prometheus"> }
+  DecreasesOverTime { condFn<"decreases_over_time"> }
+  DefaultRollup { condFn<"default_rollup"> }
+  DeltaPrometheus { condFn<"delta_prometheus"> }
+  DerivFast { condFn<"deriv_fast"> }
+  DescentOverTime { condFn<"descent_over_time"> }
+  DistinctOverTime { condFn<"distinct_over_time"> }
+  FirstOverTime { condFn<"first_over_time"> }
+  GeomeanOverTime { condFn<"geomean_over_time"> }
+  HistogramOverTime { condFn<"histogram_over_time"> }
+  Ideriv { condFn<"ideriv"> }
+  IncreasePrometheus { condFn<"increase_prometheus"> }
+  IncreasePure { condFn<"increase_pure"> }
+  IncreasesOverTime { condFn<"increases_over_time"> }
+  Integrate { condFn<"integrate"> }
+  Lag { condFn<"lag"> }
+  Lifetime { condFn<"lifetime"> }
+  MadOverTime { condFn<"mad_over_time"> }
+  MedianOverTime { condFn<"median_over_time"> }
+  ModeOverTime { condFn<"mode_over_time"> }
+  RangeOverTime { condFn<"range_over_time"> }
+  RateOverSum { condFn<"rate_over_sum"> }
+  Rollup { condFn<"rollup"> }
+  RollupCandlestick { condFn<"rollup_candlestick"> }
+  RollupDelta { condFn<"rollup_delta"> }
+  RollupDeriv { condFn<"rollup_deriv"> }
+  RollupIncrease { condFn<"rollup_increase"> }
+  RollupRate { condFn<"rollup_rate"> }
+  RollupScrapeInterval { condFn<"rollup_scrape_interval"> }
+  ScrapeInterval { condFn<"scrape_interval"> }
+  StaleSamplesOverTime { condFn<"stale_samples_over_time"> }
+  Sum2OverTime { condFn<"sum2_over_time"> }
+  TimestampWithName { condFn<"timestamp_with_name"> }
+  TfirstOverTime { condFn<"tfirst_over_time"> }
+  TlastChangeOverTime { condFn<"tlast_change_over_time"> }
+  TlastOverTime { condFn<"tlast_over_time"> }
+  TmaxOverTime { condFn<"tmax_over_time"> }
+  TminOverTime { condFn<"tmin_over_time"> }
+  ZscoreOverTime { condFn<"zscore_over_time"> }
+  HistogramAvg { condFn<"histogram_avg"> }
+  HistogramStddev { condFn<"histogram_stddev"> }
+  HistogramStdvar { condFn<"histogram_stdvar"> }
+  PrometheusBuckets { condFn<"prometheus_buckets"> }
+  Interpolate { condFn<"interpolate"> }
+  KeepLastValue { condFn<"keep_last_value"> }
+  KeepNextValue { condFn<"keep_next_value"> }
+  RangeAvg { condFn<"range_avg"> }
+  RangeFirst { condFn<"range_first"> }
+  RangeLast { condFn<"range_last"> }
+  RangeLinearRegression { condFn<"range_linear_regression"> }
+  RangeMad { condFn<"range_mad"> }
+  RangeMax { condFn<"range_max"> }
+  RangeMedian { condFn<"range_median"> }
+  RangeMin { condFn<"range_min"> }
+  RangeStddev { condFn<"range_stddev"> }
+  RangeStdvar { condFn<"range_stdvar"> }
+  RangeSum { condFn<"range_sum"> }
+  RangeZscore { condFn<"range_zscore"> }
+  RemoveResets { condFn<"remove_resets"> }
+  RunningAvg { condFn<"running_avg"> }
+  RunningMax { condFn<"running_max"> }
+  RunningMin { condFn<"running_min"> }
+  RunningSum { condFn<"running_sum"> }
+  Distinct { condFn<"distinct"> }
+  Geomean { condFn<"geomean"> }
+  Histogram { condFn<"histogram"> }
+  BottomkAvg { condFn<"bottomk_avg"> }
+  BottomkLast { condFn<"bottomk_last"> }
+  BottomkMax { condFn<"bottomk_max"> }
+  BottomkMedian { condFn<"bottomk_median"> }
+  BottomkMin { condFn<"bottomk_min"> }
+  TopkAvg { condFn<"topk_avg"> }
+  TopkLast { condFn<"topk_last"> }
+  TopkMax { condFn<"topk_max"> }
+  TopkMedian { condFn<"topk_median"> }
+  TopkMin { condFn<"topk_min"> }
+  Any { condFn<"any"> }
+  Limitk { condFn<"limitk"> }
+  Mad { condFn<"mad"> }
+  Median { condFn<"median"> }
+  Mode { condFn<"mode"> }
+  Share { condFn<"share"> }
+  Sum2 { condFn<"sum2"> }
+  Zscore { condFn<"zscore"> }
+  LabelDel { condFn<"label_del"> }
+  LabelKeep { condFn<"label_keep"> }
+  LabelLowercase { condFn<"label_lowercase"> }
+  LabelUppercase { condFn<"label_uppercase"> }
+  SortByLabel { condFn<"sort_by_label"> }
+  SortByLabelDesc { condFn<"sort_by_label_desc"> }
+  SortByLabelNumeric { condFn<"sort_by_label_numeric"> }
+  SortByLabelNumericDesc { condFn<"sort_by_label_numeric_desc"> }
+  Now { condFn<"now"> }
+  Step { condFn<"step"> }
+  CountEqOverTime { condFn<"count_eq_over_time"> }
+  CountGtOverTime { condFn<"count_gt_over_time"> }
+  CountLeOverTime { condFn<"count_le_over_time"> }
+  CountNeOverTime { condFn<"count_ne_over_time"> }
+  DurationOverTime { condFn<"duration_over_time"> }
+  ShareGtOverTime { condFn<"share_gt_over_time"> }
+  ShareLeOverTime { condFn<"share_le_over_time"> }
+  ShareEqOverTime { condFn<"share_eq_over_time"> }
+  BitmapAnd { condFn<"bitmap_and"> }
+  BitmapOr { condFn<"bitmap_or"> }
+  BitmapXor { condFn<"bitmap_xor"> }
+  Rand { condFn<"rand"> }
+  RandExponential { condFn<"rand_exponential"> }
+  RandNormal { condFn<"rand_normal"> }
+  TimezoneOffset { condFn<"timezone_offset"> }
+
+// Conditional function names (only parsed as function names when used as such).
+condFn<term> { @extend<Identifier, term> }
