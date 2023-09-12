@@ -130,12 +130,12 @@ func (q *Query) parseLegend(field *data.Field) string {
 		return ""
 	}
 	labels := field.Labels
+	legend := metricsFromLabels(field)
 
-	var legend string
 	switch {
 	case q.LegendFormat == legendFormatAuto:
 		if len(labels) > 0 {
-			legend = ""
+			return ""
 		}
 	case q.LegendFormat != "":
 		result := legendReplacer.ReplaceAllStringFunc(q.LegendFormat, func(in string) string {
@@ -147,7 +147,7 @@ func (q *Query) parseLegend(field *data.Field) string {
 			}
 			return ""
 		})
-		legend = result
+		return result
 	default:
 		// If legend is empty brackets, use query expression
 		if legend == "{}" {
@@ -155,7 +155,7 @@ func (q *Query) parseLegend(field *data.Field) string {
 		}
 	}
 
-	return metricsFromLabels(field)
+	return legend
 }
 
 func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
