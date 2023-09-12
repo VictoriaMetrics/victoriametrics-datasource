@@ -14,6 +14,7 @@ describe('Language completion provider', () => {
     getTimeRangeParams: () => ({ start: '0', end: '1' }),
     interpolateString: (string: string) => string,
     hasLabelsMatchAPISupport: () => false,
+    getLimitMetrics: () => 0,
   } as unknown as PrometheusDatasource;
 
   describe('fetchSeries', () => {
@@ -26,7 +27,7 @@ describe('Language completion provider', () => {
       expect(requestSpy).toHaveBeenCalledWith(
         '/api/v1/series',
         {},
-        { end: '1', 'match[]': '{job="grafana"}', start: '0' }
+        { end: '1', 'match[]': '{job="grafana"}', start: '0', limit: 0 }
       );
     });
   });
@@ -45,6 +46,7 @@ describe('Language completion provider', () => {
         end: '1',
         'match[]': 'interpolated-metric',
         start: '0',
+        limit: 0,
       });
     });
   });
@@ -62,6 +64,7 @@ describe('Language completion provider', () => {
       expect(requestSpy).toHaveBeenCalledWith('/api/v1/label/interpolated-job/values', [], {
         end: '1',
         start: '0',
+        limit: 0,
       });
     });
   });
@@ -97,7 +100,7 @@ describe('Language completion provider', () => {
       ];
       const items = { text: '', prefix: '', value, wrapperClasses: [] } as TypeaheadInput;
       const result = await instance.provideCompletionItems(
-          items,
+        items,
         { history }
       );
       expect(result.context).toBeUndefined();
@@ -260,6 +263,7 @@ describe('Language completion provider', () => {
         metadataRequest: () => ({ data: { data: [{ __name__: 'metric', bar: 'bazinga' }] } }),
         getTimeRangeParams: () => ({ start: '0', end: '1' }),
         interpolateString: (string: string) => string,
+        getLimitMetrics: () => 0,
       } as unknown as PrometheusDatasource;
       const instance = new LanguageProvider(datasources);
       const value = Plain.deserialize('metric{}');
@@ -295,6 +299,7 @@ describe('Language completion provider', () => {
         }),
         getTimeRangeParams: () => ({ start: '0', end: '1' }),
         interpolateString: (string: string) => string,
+        getLimitMetrics: () => 0,
       } as unknown as PrometheusDatasource;
       const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('{job1="foo",job2!="foo",job3=~"foo",__name__="metric",}');
@@ -546,6 +551,7 @@ describe('Language completion provider', () => {
         metadataRequest: jest.fn(() => ({ data: { data: [] } })),
         getTimeRangeParams: jest.fn(() => ({ start: '0', end: '1' })),
         interpolateString: (string: string) => string,
+        getLimitMetrics: () => 0,
       } as unknown as PrometheusDatasource;
 
       const mockedMetadataRequest = jest.mocked(datasource.metadataRequest);
@@ -577,6 +583,7 @@ describe('Language completion provider', () => {
         metadataRequest: jest.fn(() => ({ data: { data: ['foo', 'bar'] as string[] } })),
         getTimeRangeParams: jest.fn(() => ({ start: '0', end: '1' })),
         lookupsDisabled: true,
+        getLimitMetrics: () => 0,
       } as unknown as PrometheusDatasource;
       const mockedMetadataRequest = jest.mocked(datasource.metadataRequest);
       const instance = new LanguageProvider(datasource);
@@ -604,6 +611,7 @@ describe('Language completion provider', () => {
         getTimeRangeParams: jest.fn(() => ({ start: '0', end: '1' })),
         lookupsDisabled: false,
         interpolateString: (string: string) => string,
+        getLimitMetrics: () => 0,
       } as unknown as PrometheusDatasource;
       const mockedMetadataRequest = jest.mocked(datasource.metadataRequest);
       const instance = new LanguageProvider(datasource);

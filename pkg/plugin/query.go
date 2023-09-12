@@ -37,13 +37,17 @@ type TimeRange struct {
 
 // GetQueryURL calculates step and clear expression from template variables,
 // and after builds query url depends on query type
-func (q *Query) getQueryURL(minInterval time.Duration, rawURL string) (string, error) {
+func (q *Query) getQueryURL(minInterval time.Duration, rawURL string, queryParams string) (string, error) {
 	if rawURL == "" {
 		return "", fmt.Errorf("url can't be blank")
 	}
 	u, err := url.Parse(rawURL)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse datasource url: %s", err)
+	}
+	params, err := url.ParseQuery(queryParams)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse query params: %s", err.Error())
 	}
 
 	q.url = u
@@ -59,9 +63,9 @@ func (q *Query) getQueryURL(minInterval time.Duration, rawURL string) (string, e
 	}
 
 	if q.Instant {
-		return q.queryInstantURL(expr, step), nil
+		return q.queryInstantURL(expr, step, params), nil
 	}
-	return q.queryRangeURL(expr, step), nil
+	return q.queryRangeURL(expr, step, params), nil
 }
 
 // withIntervalVariable checks does query has interval variable
@@ -79,23 +83,33 @@ func (q *Query) calculateMinInterval() (time.Duration, error) {
 }
 
 // queryInstantURL prepare query url for instant query
-func (q *Query) queryInstantURL(expr string, step time.Duration) string {
+func (q *Query) queryInstantURL(expr string, step time.Duration, queryParams url.Values) string {
 	q.url.Path = path.Join(q.url.Path, instantQueryPath)
 	values := q.url.Query()
 
-	values.Add("query", expr)
-	values.Add("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
-	values.Add("step", step.String())
+	for k, vl := range queryParams {
+		for _, v := range vl {
+			values.Add(k, v)
+		}
+	}
+	values.Set("query", expr)
+	values.Set("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
+	values.Set("step", step.String())
 
 	q.url.RawQuery = values.Encode()
 	return q.url.String()
 }
 
 // queryRangeURL prepare query url for range query
-func (q *Query) queryRangeURL(expr string, step time.Duration) string {
+func (q *Query) queryRangeURL(expr string, step time.Duration, queryParams url.Values) string {
 	q.url.Path = path.Join(q.url.Path, rangeQueryPath)
 	values := q.url.Query()
 
+	for k, vl := range queryParams {
+		for _, v := range vl {
+			values.Add(k, v)
+		}
+	}
 	values.Add("query", expr)
 	values.Add("start", strconv.FormatInt(q.TimeRange.From.Unix(), 10))
 	values.Add("end", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
