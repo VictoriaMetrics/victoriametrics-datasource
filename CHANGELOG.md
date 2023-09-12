@@ -3,6 +3,7 @@
 ## tip
 
 * BUGFIX: correctly handle custom query parameters in annotation queries. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/95)
+* BUGFIX: fix the duplication of labels in the legend when using expressions. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/93)
 
 ## [v0.3.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.3.0)
 
