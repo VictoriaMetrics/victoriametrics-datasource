@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"path"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -127,14 +126,18 @@ func (q *Query) queryRangeURL(expr string, step time.Duration, queryParams url.V
 var legendReplacer = regexp.MustCompile(`\{\{\s*(.+?)\s*\}\}`)
 
 func (q *Query) parseLegend(field *data.Field) string {
+	if field == nil {
+		return ""
+	}
 	labels := field.Labels
-	legend := metricNameFromLabels(field)
 
-	if q.LegendFormat == legendFormatAuto {
+	var legend string
+	switch {
+	case q.LegendFormat == legendFormatAuto:
 		if len(labels) > 0 {
 			legend = ""
 		}
-	} else if q.LegendFormat != "" {
+	case q.LegendFormat != "":
 		result := legendReplacer.ReplaceAllStringFunc(q.LegendFormat, func(in string) string {
 			labelName := strings.Replace(in, "{{", "", 1)
 			labelName = strings.Replace(labelName, "}}", "", 1)
@@ -145,14 +148,14 @@ func (q *Query) parseLegend(field *data.Field) string {
 			return ""
 		})
 		legend = result
+	default:
+		// If legend is empty brackets, use query expression
+		if legend == "{}" {
+			return q.Expr
+		}
 	}
 
-	// If legend is empty brackets, use query expression
-	if legend == "{}" {
-		return q.Expr
-	}
-
-	return legend
+	return metricsFromLabels(field)
 }
 
 func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
@@ -168,27 +171,24 @@ func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
 	frame.Name = customName
 }
 
-func metricNameFromLabels(f *data.Field) string {
+func metricsFromLabels(f *data.Field) string {
 	labels := f.Labels
-	metricName, hasName := labels["__name__"]
 	numLabels := len(labels) - 1
-	if !hasName {
+
+	metricName, ok := labels["__name__"]
+	if !ok {
 		numLabels = len(labels)
 	}
-	labelStrings := make([]string, 0, numLabels)
+
+	var lbs string
+	var i int
 	for label, value := range labels {
-		if label != "__name__" {
-			labelStrings = append(labelStrings, fmt.Sprintf("%s=%q", label, value))
+		lbs += fmt.Sprintf("%s=%q", label, value)
+		if i < numLabels {
+			lbs += ","
 		}
+		i++
 	}
 
-	if numLabels == 0 {
-		if hasName {
-			return metricName
-		}
-		return "{}"
-	}
-
-	sort.Strings(labelStrings)
-	return fmt.Sprintf("%s{%s}", metricName, strings.Join(labelStrings, ", "))
+	return fmt.Sprintf("%s{%s}", metricName, lbs)
 }
