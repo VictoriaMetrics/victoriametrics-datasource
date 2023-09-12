@@ -7,13 +7,6 @@
     "import/external-module-folders": ["node_modules", ".yarn"]
   },
   "rules": {
-    "react/jsx-closing-bracket-location": [1, "line-aligned"],
-    "react/jsx-max-props-per-line":[1, { "maximum": 1 }],
-    "react/jsx-first-prop-new-line": [1, "multiline"],
-    "indent": ["error", 2, { "SwitchCase": 1 }],
-    "linebreak-style": ["error", "unix"],
-    "quotes": ["error", "double"],
-    "semi": ["error", "always"],
     "react/prop-types": "off",
     "@emotion/jsx-import": "error",
     "object-curly-spacing": [2, "always"],

@@ -282,7 +282,11 @@ FunctionIdentifier {
   Rand |
   RandExponential |
   RandNormal |
-  TimezoneOffset
+  TimezoneOffset |
+  LabelSet |
+  LabelCopy |
+  LabelMove |
+  LabelMap
 }
 
 FunctionCallBody {
@@ -633,6 +637,10 @@ NumberLiteral  {
   RandExponential { condFn<"rand_exponential"> }
   RandNormal { condFn<"rand_normal"> }
   TimezoneOffset { condFn<"timezone_offset"> }
+  LabelSet { condFn<"label_set"> }
+  LabelCopy { condFn<"label_copy"> }
+  LabelMove { condFn<"label_move"> }
+  LabelMap { condFn<"label_map"> }
 
 // Conditional function names (only parsed as function names when used as such).
 condFn<term> { @extend<Identifier, term> }

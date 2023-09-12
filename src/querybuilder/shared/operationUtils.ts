@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { capitalize } from "lodash";
-import pluralize from "pluralize";
+import { capitalize } from 'lodash';
+import pluralize from 'pluralize';
 
-import { SelectableValue } from "@grafana/data";
+import { SelectableValue } from '@grafana/data';
 
-import { LabelParamEditor } from "../components/LabelParamEditor";
-import { PromVisualQueryOperationCategory } from "../types";
+import { LabelParamEditor } from '../components/LabelParamEditor';
+import { PromVisualQueryOperationCategory } from '../types';
 
 import {
   QueryBuilderOperation,
@@ -30,28 +30,28 @@ import {
   QueryBuilderOperationParamDef,
   QueryBuilderOperationParamValue,
   QueryWithOperations,
-} from "./types";
+} from './types';
 
 export function functionRendererLeft(model: QueryBuilderOperation, def: QueryBuilderOperationDef, innerExpr: string) {
   const params = renderParams(model, def);
-  const str = model.id + "(";
+  const str = model.id + '(';
 
   if (innerExpr) {
     params.push(innerExpr);
   }
 
-  return str + params.join(", ") + ")";
+  return str + params.join(', ') + ')';
 }
 
 export function functionRendererRight(model: QueryBuilderOperation, def: QueryBuilderOperationDef, innerExpr: string) {
   const params = renderParams(model, def);
-  const str = model.id + "(";
+  const str = model.id + '(';
 
   if (innerExpr) {
     params.unshift(innerExpr);
   }
 
-  return str + params.join(", ") + ")";
+  return str + params.join(', ') + ')';
 }
 
 function rangeRendererWithParams(
@@ -64,7 +64,7 @@ function rangeRendererWithParams(
     throw `Cannot render a function with params of length [${def.params.length}]`;
   }
 
-  let rangeVector = (model.params ?? [])[0] ?? "5m";
+  let rangeVector = (model.params ?? [])[0] ?? '5m';
 
   // Next frame the remaining parameters, but get rid of the first one because it's used to move the
   // instant vector into a range vector.
@@ -80,7 +80,7 @@ function rangeRendererWithParams(
     }
   );
 
-  const str = model.id + "(";
+  const str = model.id + '(';
 
   // Depending on the renderLeft variable, render parameters to the left or right
   // renderLeft === true (renderLeft) => (param1, param2, rangeVector[...])
@@ -90,7 +90,7 @@ function rangeRendererWithParams(
   }
 
   // stick everything together
-  return str + params.join(", ") + ")";
+  return str + params.join(', ') + ')';
 }
 
 export function rangeRendererRightWithParams(
@@ -112,8 +112,8 @@ export function rangeRendererLeftWithParams(
 export function renderParams(model: QueryBuilderOperation, def: QueryBuilderOperationDef) {
   return (model.params ?? []).map((value, index) => {
     const paramDef = def.params[index];
-    if (paramDef.type === "string") {
-      return "\"" + value + "\"";
+    if (paramDef?.type === 'string') {
+      return '"' + value + '"';
     }
 
     return value;
@@ -133,7 +133,7 @@ export function defaultAddOperationHandler<T extends QueryWithOperations>(def: Q
 }
 
 export function getPromAndLokiOperationDisplayName(funcName: string) {
-  return capitalize(funcName.replace(/_/g, " "));
+  return capitalize(funcName.replace(/_/g, ' '));
 }
 
 export function getOperationParamId(operationIndex: number, paramIndex: number) {
@@ -142,26 +142,26 @@ export function getOperationParamId(operationIndex: number, paramIndex: number) 
 
 export function getRangeVectorParamDef(withRateInterval = false): QueryBuilderOperationParamDef {
   const param: QueryBuilderOperationParamDef = {
-    name: "Range",
-    type: "string",
+    name: 'Range',
+    type: 'string',
     options: [
       {
-        label: "$__interval",
-        value: "$__interval",
+        label: '$__interval',
+        value: '$__interval',
         // tooltip: 'Dynamic interval based on max data points, scrape and min interval',
       },
-      { label: "1m", value: "1m" },
-      { label: "5m", value: "5m" },
-      { label: "10m", value: "10m" },
-      { label: "1h", value: "1h" },
-      { label: "24h", value: "24h" },
+      { label: '1m', value: '1m' },
+      { label: '5m', value: '5m' },
+      { label: '10m', value: '10m' },
+      { label: '1h', value: '1h' },
+      { label: '24h', value: '24h' },
     ],
   };
 
   if (withRateInterval) {
     (param.options as Array<SelectableValue<string>>).unshift({
-      label: "$__rate_interval",
-      value: "$__rate_interval",
+      label: '$__rate_interval',
+      value: '$__rate_interval',
       // tooltip: 'Always above 4x scrape interval',
     });
   }
@@ -182,18 +182,18 @@ export function createAggregationOperation<T extends QueryWithOperations>(
       name: getPromAndLokiOperationDisplayName(name),
       params: [
         {
-          name: "By label",
-          type: "string",
+          name: 'By label',
+          type: 'string',
           restParam: true,
           optional: true,
         },
       ],
       defaultParams: [],
-      alternativesKey: "plain aggregations",
+      alternativesKey: 'plain aggregations',
       category: PromVisualQueryOperationCategory.Aggregations,
       renderer: functionRendererLeft,
       paramChangedHandler: getOnLabelAddedHandler(`__${name}_by`),
-      explainHandler: getAggregationExplainer(name, ""),
+      explainHandler: getAggregationExplainer(name, ''),
       addOperationHandler: defaultAddOperationHandler,
       ...overrides,
     },
@@ -202,19 +202,19 @@ export function createAggregationOperation<T extends QueryWithOperations>(
       name: `${getPromAndLokiOperationDisplayName(name)} by`,
       params: [
         {
-          name: "Label",
-          type: "string",
+          name: 'Label',
+          type: 'string',
           restParam: true,
           optional: true,
           editor: LabelParamEditor,
         },
       ],
-      defaultParams: [""],
-      alternativesKey: "aggregations by",
+      defaultParams: [''],
+      alternativesKey: 'aggregations by',
       category: PromVisualQueryOperationCategory.Aggregations,
       renderer: getAggregationByRenderer(name),
       paramChangedHandler: getLastLabelRemovedHandler(name),
-      explainHandler: getAggregationExplainer(name, "by"),
+      explainHandler: getAggregationExplainer(name, 'by'),
       addOperationHandler: defaultAddOperationHandler,
       hideFromList: true,
       ...overrides,
@@ -224,19 +224,19 @@ export function createAggregationOperation<T extends QueryWithOperations>(
       name: `${getPromAndLokiOperationDisplayName(name)} without`,
       params: [
         {
-          name: "Label",
-          type: "string",
+          name: 'Label',
+          type: 'string',
           restParam: true,
           optional: true,
           editor: LabelParamEditor,
         },
       ],
-      defaultParams: [""],
-      alternativesKey: "aggregations by",
+      defaultParams: [''],
+      alternativesKey: 'aggregations by',
       category: PromVisualQueryOperationCategory.Aggregations,
       renderer: getAggregationWithoutRenderer(name),
       paramChangedHandler: getLastLabelRemovedHandler(name),
-      explainHandler: getAggregationExplainer(name, "without"),
+      explainHandler: getAggregationExplainer(name, 'without'),
       addOperationHandler: defaultAddOperationHandler,
       hideFromList: true,
       ...overrides,
@@ -254,8 +254,8 @@ export function createAggregationOperationWithParam(
   operations[1].params.unshift(...paramsDef.params);
   operations[2].params.unshift(...paramsDef.params);
   operations[0].defaultParams = paramsDef.defaultParams;
-  operations[1].defaultParams = [...paramsDef.defaultParams, ""];
-  operations[2].defaultParams = [...paramsDef.defaultParams, ""];
+  operations[1].defaultParams = [...paramsDef.defaultParams, ''];
+  operations[2].defaultParams = [...paramsDef.defaultParams, ''];
   operations[1].renderer = getAggregationByRendererWithParameter(name);
   operations[2].renderer = getAggregationByRendererWithParameter(name);
   return operations;
@@ -263,28 +263,28 @@ export function createAggregationOperationWithParam(
 
 function getAggregationByRenderer(aggregation: string) {
   return function aggregationRenderer(model: QueryBuilderOperation, def: QueryBuilderOperationDef, innerExpr: string) {
-    return `${aggregation} by(${model.params.join(", ")}) (${innerExpr})`;
+    return `${aggregation} by(${model.params.join(', ')}) (${innerExpr})`;
   };
 }
 
 function getAggregationWithoutRenderer(aggregation: string) {
   return function aggregationRenderer(model: QueryBuilderOperation, def: QueryBuilderOperationDef, innerExpr: string) {
-    return `${aggregation} without(${model.params.join(", ")}) (${innerExpr})`;
+    return `${aggregation} without(${model.params.join(', ')}) (${innerExpr})`;
   };
 }
 
 /**
  * Very simple poc implementation, needs to be modified to support all aggregation operators
  */
-function getAggregationExplainer(aggregationName: string, mode: "by" | "without" | "") {
+function getAggregationExplainer(aggregationName: string, mode: 'by' | 'without' | '') {
   return function aggregationExplainer(model: QueryBuilderOperation) {
-    const labels = model.params.map((label) => `\`${label}\``).join(" and ");
-    const labelWord = pluralize("label", model.params.length);
+    const labels = model.params.map((label) => `\`${label}\``).join(' and ');
+    const labelWord = pluralize('label', model.params.length);
 
     switch (mode) {
-      case "by":
+      case 'by':
         return `Calculates ${aggregationName} over dimensions while preserving ${labelWord} ${labels}.`;
-      case "without":
+      case 'without':
         return `Calculates ${aggregationName} over the dimensions ${labels}. All other labels are preserved.`;
       default:
         return `Calculates ${aggregationName} over the dimensions.`;
@@ -298,9 +298,9 @@ function getAggregationByRendererWithParameter(aggregation: string) {
     const params = model.params.slice(0, restParamIndex);
     const restParams = model.params.slice(restParamIndex);
 
-    return `${aggregation} by(${restParams.join(", ")}) (${params
-      .map((param, idx) => (def.params[idx].type === "string" ? `\"${param}\"` : param))
-      .join(", ")}, ${innerExpr})`;
+    return `${aggregation} by(${restParams.join(', ')}) (${params
+      .map((param, idx) => (def.params[idx].type === 'string' ? `\"${param}\"` : param))
+      .join(', ')}, ${innerExpr})`;
   };
 }
 

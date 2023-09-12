@@ -26,7 +26,7 @@ import { Button, Cascader, CascaderOption, useStyles2 } from '@grafana/ui';
 
 import { Stack } from '../../components/QueryEditor';
 
-import { OperationEditor } from './OperationEditor';
+import { OperationEditor } from './OperationEditor/OperationEditor';
 import { QueryBuilderOperation, QueryWithOperations, VisualQueryModeller } from './types';
 
 export interface Props<T extends QueryWithOperations> {
@@ -103,13 +103,23 @@ export function OperationList<T extends QueryWithOperations>({
   };
 
   return (
-    <Stack gap={1} direction="column">
+    <Stack
+      gap={1}
+      direction="column"
+    >
       <Stack gap={1}>
         {operations.length > 0 && (
           <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="sortable-field-mappings" direction="horizontal">
+            <Droppable
+              droppableId="sortable-field-mappings"
+              direction="horizontal"
+            >
               {(provided) => (
-                <div className={styles.operationList} ref={provided.innerRef} {...provided.droppableProps}>
+                <div
+                  className={styles.operationList}
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
                   {operations.map((op, index) => {
                     return (
                       <OperationEditor
@@ -145,7 +155,12 @@ export function OperationList<T extends QueryWithOperations>({
               placeholder={'Search'}
             />
           ) : (
-            <Button icon={'plus'} variant={'secondary'} onClick={() => setCascaderOpen(true)} title={'Add operation'}>
+            <Button
+              icon={'plus'}
+              variant={'secondary'}
+              onClick={() => setCascaderOpen(true)}
+              title={'Add operation'}
+            >
               Operations
             </Button>
           )}

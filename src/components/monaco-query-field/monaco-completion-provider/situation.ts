@@ -35,10 +35,10 @@ import {
   Neq,
   NeqRegex,
   parser,
-  PromQL,
+  MetricsQL,
   StringLiteral,
   VectorSelector,
-} from '@prometheus-io/lezer-promql';
+} from 'lezer-metricsql';
 
 import { NeverCaseError } from './util';
 
@@ -56,7 +56,7 @@ type NodeTypeId =
   | typeof LabelMatchList
   | typeof LabelName
   | typeof MetricIdentifier
-  | typeof PromQL
+  | typeof MetricsQL
   | typeof StringLiteral
   | typeof VectorSelector
   | typeof MatrixSelector
@@ -190,7 +190,7 @@ const RESOLVERS: Resolver[] = [
     fun: resolveLabelKeysWithEquals,
   },
   {
-    path: [PromQL],
+    path: [MetricsQL],
     fun: resolveTopLevel,
   },
   {
@@ -551,7 +551,7 @@ export function getSituation(text: string, pos: number): Situation | null {
   }
 
   /*
-	PromQL
+	MetricsQL
   Expr
   VectorSelector
   LabelMatchers

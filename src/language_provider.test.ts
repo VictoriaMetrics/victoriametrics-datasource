@@ -1,4 +1,4 @@
-import {Block, Editor, Editor as SlateEditor, EditorProperties} from 'slate';
+import { Block, Editor, Editor as SlateEditor, EditorProperties } from 'slate';
 import Plain from 'slate-plain-serializer';
 
 import { AbstractLabelOperator, HistoryItem } from '@grafana/data';

@@ -25,7 +25,7 @@ import {
   StringLiteral,
   VectorSelector,
   Without,
-} from '@prometheus-io/lezer-promql';
+} from 'lezer-metricsql';
 
 import { binaryScalarOperatorToOperatorName } from './binaryScalarOperations';
 import {
@@ -242,7 +242,7 @@ function handleAggregation(expr: string, node: SyntaxNode, context: Context) {
   const labels = [];
 
   if (modifier) {
-    const byModifier = modifier.getChild(`By`);
+    const byModifier = modifier.getChild('By');
     if (byModifier && funcName) {
       funcName = `__${funcName}_by`;
     }
@@ -407,8 +407,5 @@ function getBinaryModifier(
 }
 
 function isEmptyQuery(query: PromVisualQuery) {
-  if (query.labels.length === 0 && query.operations.length === 0 && !query.metric) {
-    return true;
-  }
-  return false;
+  return query.labels.length === 0 && query.operations.length === 0 && !query.metric;
 }
