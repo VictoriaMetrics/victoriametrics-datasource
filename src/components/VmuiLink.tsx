@@ -18,7 +18,7 @@ import React, { FC, useEffect, useState, memo } from 'react';
 
 import { PanelData, ScopedVars, textUtil, rangeUtil } from '@grafana/data';
 import { getBackendSrv } from "@grafana/runtime";
-import { Button } from "@grafana/ui";
+import { IconButton } from "@grafana/ui";
 
 import { PrometheusDatasource } from '../datasource';
 import { PromQuery } from '../types';
@@ -55,11 +55,11 @@ export const relativeTimeOptionsVMUI = [
 }))
 
 const VmuiLink: FC<Props> = ({
-    panelData,
-    query,
-    datasource,
-    dashboardUID,
-  }) => {
+  panelData,
+  query,
+  datasource,
+  dashboardUID,
+}) => {
   const [href, setHref] = useState('');
 
   useEffect(() => {
@@ -132,14 +132,13 @@ const VmuiLink: FC<Props> = ({
   }, [dashboardUID, datasource, panelData, query]);
 
   return (
-    <a href={textUtil.sanitizeUrl(href)} target="_blank" rel="noopener noreferrer">
-      <Button
-        variant={'primary'}
-        size="sm"
-        icon={"external-link-alt"}
-      >
-        Run in vmui
-      </Button>
+    <a href={textUtil.sanitizeUrl(href)} target="_blank" rel="noopener noreferrer"
+      style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <IconButton
+        key="vmui"
+        name="external-link-alt"
+        tooltip="Run in vmui"
+      />
     </a>
   );
 };

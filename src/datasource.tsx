@@ -267,6 +267,24 @@ export class PrometheusDatasource
     ); // toPromise until we change getTagValues, getTagKeys to Observable
   }
 
+  async prettifyRequest<T = any>(query: string) {
+    // If URL includes endpoint that supports POST and GET method, try to use configured method. This might fail as POST is supported only in v2.10+.
+    try {
+      return await lastValueFrom(
+        this._request<T>(`/api/datasources/proxy/${this.id}/prettify-query`, {}, {
+          method: 'GET',
+          hideFromInspector: true,
+          showErrorAlert: false,
+          params: {
+            query
+          }
+        })
+      );
+    } catch (err) {
+      throw err;
+    }
+  }
+
   interpolateQueryExpr(value: string | string[] = [], variable: any) {
     // if no multi or include all do not regexEscape
     if (!variable.multi && !variable.includeAll) {
