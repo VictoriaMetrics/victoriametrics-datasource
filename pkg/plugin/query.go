@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"path"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -16,6 +17,7 @@ const (
 	instantQueryPath = "/api/v1/query"
 	rangeQueryPath   = "/api/v1/query_range"
 	legendFormatAuto = "__auto"
+	metricsName      = "__name__"
 )
 
 // Query represents backend query object
@@ -130,7 +132,7 @@ func (q *Query) parseLegend(field *data.Field) string {
 		return ""
 	}
 	labels := field.Labels
-	legend := metricsFromLabels(field)
+	legend := labelsToString(labels)
 
 	switch {
 	case q.LegendFormat == legendFormatAuto:
@@ -171,24 +173,23 @@ func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
 	frame.Name = customName
 }
 
-func metricsFromLabels(f *data.Field) string {
-	labels := f.Labels
-	numLabels := len(labels) - 1
-
-	metricName, ok := labels["__name__"]
-	if !ok {
-		numLabels = len(labels)
+func labelsToString(labels data.Labels) string {
+	if labels == nil {
+		return "{}"
 	}
 
-	var lbs string
-	var i int
+	labelStrings := make([]string, 0, len(labels))
 	for label, value := range labels {
-		lbs += fmt.Sprintf("%s=%q", label, value)
-		if i < numLabels {
-			lbs += ","
+		if label == metricsName {
+			continue
 		}
-		i++
+		labelStrings = append(labelStrings, fmt.Sprintf("%s=%q", label, value))
 	}
 
-	return fmt.Sprintf("%s{%s}", metricName, lbs)
+	sort.Strings(labelStrings)
+	lbs := strings.Join(labelStrings, ",")
+	if lbs == "" {
+		return labels[metricsName]
+	}
+	return fmt.Sprintf("%s{%s}", labels[metricsName], lbs)
 }

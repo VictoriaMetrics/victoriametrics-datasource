@@ -4,6 +4,8 @@ import (
 	"net/url"
 	"testing"
 	"time"
+
+	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
 func TestQuery_getQueryURL(t *testing.T) {
@@ -179,4 +181,58 @@ func getTimeRage() TimeRange {
 	from := time.Unix(1670226733, 0)
 	to := time.Unix(1670226793, 0)
 	return TimeRange{From: from, To: to}
+}
+
+func Test_labelsToString(t *testing.T) {
+	tests := []struct {
+		name   string
+		labels data.Labels
+		want   string
+	}{
+		{
+			name:   "empty labels",
+			labels: nil,
+			want:   "{}",
+		},
+		{
+			name: "set of labels",
+			labels: data.Labels{
+				"job":      "vmstorage-maas",
+				"instance": "127.0.0.1",
+			},
+			want: `{instance="127.0.0.1",job="vmstorage-maas"}`,
+		},
+		{
+			name: "has name label",
+			labels: data.Labels{
+				"__name__": "vm_http_requests_total",
+				"job":      "vmstorage-maas",
+				"instance": "127.0.0.1",
+			},
+			want: `vm_http_requests_total{instance="127.0.0.1",job="vmstorage-maas"}`,
+		},
+		{
+			name: "name label not from the start",
+			labels: data.Labels{
+				"job":      "vmstorage-maas",
+				"__name__": "vm_http_requests_total",
+				"instance": "127.0.0.1",
+			},
+			want: `vm_http_requests_total{instance="127.0.0.1",job="vmstorage-maas"}`,
+		},
+		{
+			name: "has only name label",
+			labels: data.Labels{
+				"__name__": "vm_http_requests_total",
+			},
+			want: `vm_http_requests_total`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := labelsToString(tt.labels); got != tt.want {
+				t.Errorf("metricsFromLabels() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
