@@ -236,3 +236,90 @@ func Test_labelsToString(t *testing.T) {
 		})
 	}
 }
+
+func TestQuery_parseLegend1(t *testing.T) {
+	tests := []struct {
+		name         string
+		legendFormat string
+		expr         string
+		labels       data.Labels
+		want         string
+	}{
+		{
+			name:         "empty labels and legend format no expression",
+			legendFormat: "",
+			labels:       nil,
+			expr:         "",
+			want:         "",
+		},
+		{
+			name:         "empty labels and legend format has expression",
+			legendFormat: "",
+			labels:       nil,
+			expr:         "sum(vm_http_request_total)",
+			want:         "sum(vm_http_request_total)",
+		},
+		{
+			name:         "empty labels and legend auto has expression",
+			legendFormat: "__auto",
+			labels:       nil,
+			expr:         "sum(vm_http_request_total)",
+			want:         "sum(vm_http_request_total)",
+		},
+		{
+			name:         "empty labels and legend auto has expression",
+			legendFormat: "{{job}}",
+			labels:       nil,
+			expr:         "sum(vm_http_request_total)",
+			want:         "sum(vm_http_request_total)",
+		},
+		{
+			name:         "has labels and legend auto has expression",
+			legendFormat: "__auto",
+			labels: data.Labels{
+				"job": "vmstorage-maas",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "sum(vm_http_request_total)",
+		},
+		{
+			name:         "has labels and legend auto has expression",
+			legendFormat: "{{job}}",
+			labels: data.Labels{
+				"job": "vmstorage-maas",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "vmstorage-maas",
+		},
+		{
+			name:         "do not have label",
+			legendFormat: "{{job}}",
+			labels: data.Labels{
+				"instance": "127.0.0.1",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "sum(vm_http_request_total)",
+		},
+		{
+			name:         "has complex label",
+			legendFormat: "{{job}} {{instance}}",
+			labels: data.Labels{
+				"job":      "vmstorage-maas",
+				"instance": "127.0.0.1",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "vmstorage-maas 127.0.0.1",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			q := &Query{
+				LegendFormat: tt.legendFormat,
+				Expr:         tt.expr,
+			}
+			if got := q.parseLegend(tt.labels); got != tt.want {
+				t.Errorf("parseLegend() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

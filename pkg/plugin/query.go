@@ -127,28 +127,25 @@ func (q *Query) queryRangeURL(expr string, step time.Duration, queryParams url.V
 
 var legendReplacer = regexp.MustCompile(`\{\{\s*(.+?)\s*\}\}`)
 
-func (q *Query) parseLegend(field *data.Field) string {
-	if field == nil {
-		return ""
-	}
-	labels := field.Labels
+func (q *Query) parseLegend(labels data.Labels) string {
 	legend := labelsToString(labels)
 
 	switch {
 	case q.LegendFormat == legendFormatAuto:
-		if len(labels) > 0 {
-			return ""
-		}
+		return q.Expr
 	case q.LegendFormat != "":
 		result := legendReplacer.ReplaceAllStringFunc(q.LegendFormat, func(in string) string {
 			labelName := strings.Replace(in, "{{", "", 1)
 			labelName = strings.Replace(labelName, "}}", "", 1)
 			labelName = strings.TrimSpace(labelName)
-			if val, exists := labels[labelName]; exists {
+			if val, ok := labels[labelName]; ok {
 				return val
 			}
 			return ""
 		})
+		if result == "" {
+			return q.Expr
+		}
 		return result
 	default:
 		// If legend is empty brackets, use query expression
@@ -165,7 +162,7 @@ func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
 		return
 	}
 
-	customName := q.parseLegend(frame.Fields[1])
+	customName := q.parseLegend(frame.Fields[1].Labels)
 	if customName != "" {
 		frame.Fields[1].Config = &data.FieldConfig{DisplayNameFromDS: customName}
 	}
