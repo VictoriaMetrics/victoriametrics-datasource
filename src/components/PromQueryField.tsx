@@ -22,7 +22,6 @@ import { Plugin } from 'slate';
 import { Editor } from 'slate-react';
 
 import { CoreApp, isDataFrame, QueryEditorProps, QueryHint, TimeRange, toLegacyResponseData } from '@grafana/data';
-import { reportInteraction } from '@grafana/runtime';
 import {
   BracesPlugin,
   Icon,
@@ -30,6 +29,7 @@ import {
 } from '@grafana/ui';
 
 import { PrometheusDatasource } from '../datasource';
+import PromQlLanguageProvider from "../language_provider";
 import { roundMsToMin } from '../language_utils';
 import { PromOptions, PromQuery } from '../types';
 import {
@@ -69,6 +69,7 @@ interface PromQueryFieldState {
   labelBrowserVisible: boolean;
   syntaxLoaded: boolean;
   hint: QueryHint | null;
+  hasMetrics: boolean;
 }
 
 class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryFieldState> {
@@ -96,6 +97,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
       labelBrowserVisible: false,
       syntaxLoaded: false,
       hint: null,
+      hasMetrics: false,
     };
   }
 
@@ -122,9 +124,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
     if (languageProvider !== prevProps.datasource.languageProvider) {
       // We reset this only on DS change so we do not flesh loading state on every rangeChange which happens on every
       // query run if using relative range.
-      this.setState({
-        syntaxLoaded: false,
-      });
+      this.setState({ syntaxLoaded: false });
     }
 
     const changedRangeToRefresh = this.rangeChangedToRefresh(range, prevProps.range);
@@ -144,9 +144,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
     const initHint = initHints.length > 0 ? initHints[0] : null;
 
     if (!data || data.series.length === 0) {
-      this.setState({
-        hint: initHint,
-      });
+      this.setState({ hint: initHint });
       return;
     }
 
@@ -167,7 +165,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
     try {
       const remainingTasks = await this.languageProviderInitializationPromise.promise;
       await Promise.all(remainingTasks);
-      this.onUpdateLanguage();
+      this.onUpdateLanguage(languageProvider);
     } catch (err) {
       if (isCancelablePromiseRejection(err) && err.isCanceled) {
         // do nothing, promise was canceled
@@ -210,11 +208,6 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
 
   onClickChooserButton = () => {
     this.setState((state) => ({ labelBrowserVisible: !state.labelBrowserVisible }));
-
-    reportInteraction('user_grafana_prometheus_metrics_browser_clicked', {
-      editorMode: this.state.labelBrowserVisible ? 'metricViewClosed' : 'metricViewOpen',
-      app: this.props?.app ?? '',
-    });
   };
 
   onClickHintFix = () => {
@@ -226,30 +219,26 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
     onRunQuery();
   };
 
-  onUpdateLanguage = () => {
-    const {
-      datasource: { languageProvider },
-    } = this.props;
+  onUpdateLanguage = (languageProvider: PromQlLanguageProvider) => {
     const { metrics } = languageProvider;
 
     if (!metrics) {
       return;
     }
-
-    this.setState({ syntaxLoaded: true });
+    this.setState({
+      syntaxLoaded: true,
+      hasMetrics: metrics.length > 0
+    })
   };
 
   render() {
     const {
       datasource,
-      datasource: { languageProvider },
       query,
       ExtraFieldElement,
       history = [],
     } = this.props;
-
-    const { labelBrowserVisible, syntaxLoaded, hint } = this.state;
-    const hasMetrics = languageProvider.metrics.length > 0;
+    const { labelBrowserVisible, syntaxLoaded, hint, hasMetrics } = this.state;
     const chooserText = getChooserText(datasource.lookupsDisabled, syntaxLoaded, hasMetrics);
     const buttonDisabled = !(syntaxLoaded && hasMetrics);
 
@@ -274,7 +263,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
                 <div className="gf-form gf-form--grow flex-shrink-1 min-width-15">
                   <MonacoQueryFieldWrapper
                     runQueryOnBlur={this.props.app !== CoreApp.Explore}
-                    languageProvider={languageProvider}
+                    languageProvider={datasource.languageProvider}
                     history={history}
                     onChange={this.onChangeQuery}
                     onRunQuery={this.props.onRunQuery}
@@ -286,7 +275,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
               {labelBrowserVisible && (
                 <div className="gf-form">
                   <PrometheusMetricsBrowser
-                    languageProvider={languageProvider}
+                    languageProvider={datasource.languageProvider}
                     onChange={this.onChangeLabelBrowser}
                     lastUsedLabels={lastUsedLabels || []}
                     storeLastUsedLabels={onLastUsedLabelsSave}
