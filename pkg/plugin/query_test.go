@@ -4,6 +4,8 @@ import (
 	"net/url"
 	"testing"
 	"time"
+
+	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
 func TestQuery_getQueryURL(t *testing.T) {
@@ -179,4 +181,170 @@ func getTimeRage() TimeRange {
 	from := time.Unix(1670226733, 0)
 	to := time.Unix(1670226793, 0)
 	return TimeRange{From: from, To: to}
+}
+
+func Test_labelsToString(t *testing.T) {
+	tests := []struct {
+		name   string
+		labels data.Labels
+		want   string
+	}{
+		{
+			name:   "empty labels",
+			labels: nil,
+			want:   "{}",
+		},
+		{
+			name: "set of labels",
+			labels: data.Labels{
+				"job":      "vmstorage-maas",
+				"instance": "127.0.0.1",
+			},
+			want: `{instance="127.0.0.1",job="vmstorage-maas"}`,
+		},
+		{
+			name: "has name label",
+			labels: data.Labels{
+				"__name__": "vm_http_requests_total",
+				"job":      "vmstorage-maas",
+				"instance": "127.0.0.1",
+			},
+			want: `vm_http_requests_total{instance="127.0.0.1",job="vmstorage-maas"}`,
+		},
+		{
+			name: "name label not from the start",
+			labels: data.Labels{
+				"job":      "vmstorage-maas",
+				"__name__": "vm_http_requests_total",
+				"instance": "127.0.0.1",
+			},
+			want: `vm_http_requests_total{instance="127.0.0.1",job="vmstorage-maas"}`,
+		},
+		{
+			name: "has only name label",
+			labels: data.Labels{
+				"__name__": "vm_http_requests_total",
+			},
+			want: `vm_http_requests_total`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := labelsToString(tt.labels); got != tt.want {
+				t.Errorf("metricsFromLabels() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestQuery_parseLegend1(t *testing.T) {
+	tests := []struct {
+		name         string
+		legendFormat string
+		expr         string
+		labels       data.Labels
+		want         string
+	}{
+		{
+			name:         "empty labels and legend format no expression",
+			legendFormat: "",
+			labels:       nil,
+			expr:         "",
+			want:         "",
+		},
+		{
+			name:         "empty labels and legend format has expression",
+			legendFormat: "",
+			labels:       nil,
+			expr:         "sum(vm_http_request_total)",
+			want:         "sum(vm_http_request_total)",
+		},
+		{
+			name:         "empty labels and legend auto has expression",
+			legendFormat: "__auto",
+			labels:       nil,
+			expr:         "sum(vm_http_request_total)",
+			want:         "sum(vm_http_request_total)",
+		},
+		{
+			name:         "empty labels and legend auto has expression",
+			legendFormat: "{{job}}",
+			labels:       nil,
+			expr:         "sum(vm_http_request_total)",
+			want:         "sum(vm_http_request_total)",
+		},
+		{
+			name:         "empty labels and legend with metric name",
+			legendFormat: "{{__name__}}",
+			labels:       nil,
+			expr:         "sum(vm_http_request_total)",
+			want:         "sum(vm_http_request_total)",
+		},
+		{
+			name:         "has labels and legend auto has expression",
+			legendFormat: "__auto",
+			labels: data.Labels{
+				"job": "vmstorage-maas",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "sum(vm_http_request_total)",
+		},
+		{
+			name:         "has labels and legend auto has expression",
+			legendFormat: "{{job}}",
+			labels: data.Labels{
+				"job": "vmstorage-maas",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "vmstorage-maas",
+		},
+		{
+			name:         "do not have label",
+			legendFormat: "{{job}}",
+			labels: data.Labels{
+				"instance": "127.0.0.1",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "sum(vm_http_request_total)",
+		},
+		{
+			name:         "has complex label",
+			legendFormat: "{{job}} {{instance}}",
+			labels: data.Labels{
+				"job":      "vmstorage-maas",
+				"instance": "127.0.0.1",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "vmstorage-maas 127.0.0.1",
+		},
+		{
+			name:         "auto label and only name present",
+			legendFormat: "__auto",
+			labels: data.Labels{
+				"__name__": "vm_http_request_total",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "sum(vm_http_request_total)",
+		},
+		{
+			name:         "use just name in legend format",
+			legendFormat: "{{__name__}}",
+			labels: data.Labels{
+				"__name__": "vm_http_request_total",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "vm_http_request_total",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			q := &Query{
+				LegendFormat: tt.legendFormat,
+				Expr:         tt.expr,
+			}
+			if got := q.parseLegend(tt.labels); got != tt.want {
+				t.Errorf("parseLegend() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

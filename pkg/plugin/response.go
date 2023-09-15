@@ -44,21 +44,18 @@ type promInstant struct {
 	Result []Result `json:"result"`
 }
 
-func (pi promInstant) dataframes(label string) (data.Frames, error) {
+func (pi promInstant) dataframes() (data.Frames, error) {
 	frames := make(data.Frames, len(pi.Result))
 	for i, res := range pi.Result {
 		f, err := strconv.ParseFloat(res.Value[1].(string), 64)
 		if err != nil {
 			return nil, fmt.Errorf("metric %v, unable to parse float64 from %s: %w", res, res.Value[1], err)
 		}
-		if val, ok := res.Labels[label]; ok {
-			label = val
-		}
 
 		ts := time.Unix(int64(res.Value[0].(float64)), 0)
-		frames[i] = data.NewFrame(label,
-			data.NewField("time", nil, []time.Time{ts}),
-			data.NewField("values", data.Labels(res.Labels), []float64{f}))
+		frames[i] = data.NewFrame("",
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{ts}),
+			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), []float64{f}))
 	}
 
 	return frames, nil
@@ -68,7 +65,7 @@ type promRange struct {
 	Result []Result `json:"result"`
 }
 
-func (pr promRange) dataframes(label string) (data.Frames, error) {
+func (pr promRange) dataframes() (data.Frames, error) {
 	frames := make(data.Frames, len(pr.Result))
 	for i, res := range pr.Result {
 		timestamps := make([]time.Time, len(res.Values))
@@ -91,13 +88,9 @@ func (pr promRange) dataframes(label string) (data.Frames, error) {
 			return nil, fmt.Errorf("metric %v contains no values", res)
 		}
 
-		if val, ok := res.Labels[label]; ok {
-			label = val
-		}
-
-		frames[i] = data.NewFrame(label,
-			data.NewField("time", nil, timestamps),
-			data.NewField("values", data.Labels(res.Labels), values))
+		frames[i] = data.NewFrame("",
+			data.NewField(data.TimeSeriesTimeFieldName, nil, timestamps),
+			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), values))
 	}
 
 	return frames, nil
@@ -111,30 +104,29 @@ func (ps promScalar) dataframes() (data.Frames, error) {
 	if err != nil {
 		return nil, fmt.Errorf("metric %v, unable to parse float64 from %s: %w", ps, ps[1], err)
 	}
-	label := fmt.Sprintf("%g", f)
 
 	frames = append(frames,
-		data.NewFrame(label,
-			data.NewField("time", nil, []time.Time{time.Unix(int64(ps[0].(float64)), 0)}),
-			data.NewField("value", nil, []float64{f})))
+		data.NewFrame("",
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(int64(ps[0].(float64)), 0)}),
+			data.NewField(data.TimeSeriesValueFieldName, nil, []float64{f})))
 
 	return frames, nil
 }
 
-func (r *Response) getDataFrames(label string) (data.Frames, error) {
+func (r *Response) getDataFrames() (data.Frames, error) {
 	switch r.Data.ResultType {
 	case vector:
 		var pi promInstant
 		if err := json.Unmarshal(r.Data.Result, &pi.Result); err != nil {
 			return nil, fmt.Errorf("umarshal err %s; \n %#v", err, string(r.Data.Result))
 		}
-		return pi.dataframes(label)
+		return pi.dataframes()
 	case matrix:
 		var pr promRange
 		if err := json.Unmarshal(r.Data.Result, &pr.Result); err != nil {
 			return nil, fmt.Errorf("umarshal err %s; \n %#v", err, string(r.Data.Result))
 		}
-		return pr.dataframes(label)
+		return pr.dataframes()
 	case scalar:
 		var ps promScalar
 		if err := json.Unmarshal(r.Data.Result, &ps); err != nil {
