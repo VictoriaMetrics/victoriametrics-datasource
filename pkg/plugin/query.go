@@ -128,7 +128,6 @@ func (q *Query) queryRangeURL(expr string, step time.Duration, queryParams url.V
 var legendReplacer = regexp.MustCompile(`\{\{\s*(.+?)\s*\}\}`)
 
 func (q *Query) parseLegend(labels data.Labels) string {
-	legend := labelsToString(labels)
 
 	switch {
 	case q.LegendFormat == legendFormatAuto:
@@ -149,12 +148,12 @@ func (q *Query) parseLegend(labels data.Labels) string {
 		return result
 	default:
 		// If legend is empty brackets, use query expression
+		legend := labelsToString(labels)
 		if legend == "{}" {
 			return q.Expr
 		}
+		return legend
 	}
-
-	return legend
 }
 
 func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
@@ -175,7 +174,7 @@ func labelsToString(labels data.Labels) string {
 		return "{}"
 	}
 
-	labelStrings := make([]string, 0, len(labels))
+	var labelStrings []string
 	for label, value := range labels {
 		if label == metricsName {
 			continue
@@ -183,10 +182,18 @@ func labelsToString(labels data.Labels) string {
 		labelStrings = append(labelStrings, fmt.Sprintf("%s=%q", label, value))
 	}
 
+	var metricName string
+	mn, ok := labels[metricsName]
+	if ok {
+		metricName = mn
+	}
+
+	if len(labelStrings) < 1 {
+		return metricName
+	}
+
 	sort.Strings(labelStrings)
 	lbs := strings.Join(labelStrings, ",")
-	if lbs == "" {
-		return labels[metricsName]
-	}
-	return fmt.Sprintf("%s{%s}", labels[metricsName], lbs)
+
+	return fmt.Sprintf("%s{%s}", metricName, lbs)
 }

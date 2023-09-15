@@ -274,6 +274,13 @@ func TestQuery_parseLegend1(t *testing.T) {
 			want:         "sum(vm_http_request_total)",
 		},
 		{
+			name:         "empty labels and legend with metric name",
+			legendFormat: "{{__name__}}",
+			labels:       nil,
+			expr:         "sum(vm_http_request_total)",
+			want:         "sum(vm_http_request_total)",
+		},
+		{
 			name:         "has labels and legend auto has expression",
 			legendFormat: "__auto",
 			labels: data.Labels{
@@ -309,6 +316,24 @@ func TestQuery_parseLegend1(t *testing.T) {
 			},
 			expr: "sum(vm_http_request_total)",
 			want: "vmstorage-maas 127.0.0.1",
+		},
+		{
+			name:         "auto label and only name present",
+			legendFormat: "__auto",
+			labels: data.Labels{
+				"__name__": "vm_http_request_total",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "sum(vm_http_request_total)",
+		},
+		{
+			name:         "use just name in legend format",
+			legendFormat: "{{__name__}}",
+			labels: data.Labels{
+				"__name__": "vm_http_request_total",
+			},
+			expr: "sum(vm_http_request_total)",
+			want: "vm_http_request_total",
 		},
 	}
 	for _, tt := range tests {
