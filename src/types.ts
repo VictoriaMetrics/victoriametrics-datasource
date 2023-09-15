@@ -52,11 +52,18 @@ export interface PromOptions extends DataSourceJsonData {
   disableMetricsLookup?: boolean;
   exemplarTraceIdDestinations?: ExemplarTraceIdDestination[];
   withTemplates?: WithTemplate[];
+  limitMetrics?: LimitMetrics;
 }
 
 export enum PromQueryType {
   timeSeriesQuery = 'timeSeriesQuery',
 }
+
+export type LimitMetrics = {
+  maxTagKeys?: number;
+  maxTagValues?: number;
+  maxSeries?: number;
+};
 
 export type ExemplarTraceIdDestination = {
   name: string;
