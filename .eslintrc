@@ -7,7 +7,6 @@
     "import/external-module-folders": ["node_modules", ".yarn"]
   },
   "rules": {
-    "indent": ["error", 2, { "SwitchCase": 1 }],
     "react/prop-types": "off",
     "@emotion/jsx-import": "error",
     "object-curly-spacing": [2, "always"],
