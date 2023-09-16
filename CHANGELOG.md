@@ -6,6 +6,8 @@
 * FEATURE: change the style of the buttons `WITH templates` and `Run in vmui` to icons.
 
 * BUGFIX: correctly handle custom query parameters in annotation queries. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/95)
+* BUGFIX: fix the duplication of labels in the legend when using expressions. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/93)
+* BUGFIX: fix the loading of metrics in the `metrics browser`. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/98)
 
 ## [v0.3.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.3.0)
 

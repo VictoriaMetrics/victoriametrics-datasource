@@ -4,14 +4,20 @@ import (
 	"fmt"
 	"net/url"
 	"path"
+	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
 const (
 	instantQueryPath = "/api/v1/query"
 	rangeQueryPath   = "/api/v1/query_range"
+	legendFormatAuto = "__auto"
+	metricsName      = "__name__"
 )
 
 // Query represents backend query object
@@ -119,13 +125,75 @@ func (q *Query) queryRangeURL(expr string, step time.Duration, queryParams url.V
 	return q.url.String()
 }
 
-var legendReplacer = strings.NewReplacer("{{", "", "}}", "")
+var legendReplacer = regexp.MustCompile(`\{\{\s*(.+?)\s*\}\}`)
 
-func (q *Query) parseLegend() string {
-	legend := legendReplacer.Replace(q.LegendFormat)
+func (q *Query) parseLegend(labels data.Labels) string {
 
-	if legend == "{}" {
+	switch {
+	case q.LegendFormat == legendFormatAuto:
 		return q.Expr
+	case q.LegendFormat != "":
+		result := legendReplacer.ReplaceAllStringFunc(q.LegendFormat, func(in string) string {
+			labelName := strings.Replace(in, "{{", "", 1)
+			labelName = strings.Replace(labelName, "}}", "", 1)
+			labelName = strings.TrimSpace(labelName)
+			if val, ok := labels[labelName]; ok {
+				return val
+			}
+			return ""
+		})
+		if result == "" {
+			return q.Expr
+		}
+		return result
+	default:
+		// If legend is empty brackets, use query expression
+		legend := labelsToString(labels)
+		if legend == "{}" {
+			return q.Expr
+		}
+		return legend
 	}
-	return legend
+}
+
+func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
+	if len(frame.Fields) < 2 {
+		return
+	}
+
+	customName := q.parseLegend(frame.Fields[1].Labels)
+	if customName != "" {
+		frame.Fields[1].Config = &data.FieldConfig{DisplayNameFromDS: customName}
+	}
+
+	frame.Name = customName
+}
+
+func labelsToString(labels data.Labels) string {
+	if labels == nil {
+		return "{}"
+	}
+
+	var labelStrings []string
+	for label, value := range labels {
+		if label == metricsName {
+			continue
+		}
+		labelStrings = append(labelStrings, fmt.Sprintf("%s=%q", label, value))
+	}
+
+	var metricName string
+	mn, ok := labels[metricsName]
+	if ok {
+		metricName = mn
+	}
+
+	if len(labelStrings) < 1 {
+		return metricName
+	}
+
+	sort.Strings(labelStrings)
+	lbs := strings.Join(labelStrings, ",")
+
+	return fmt.Sprintf("%s{%s}", metricName, lbs)
 }
