@@ -1,6 +1,5 @@
 import { binaryScalarOperations } from './binaryScalarOperations';
 import { LabelParamEditor } from './components/LabelParamEditor';
-import metricsqlOperations from "./metricsqlOperations";
 import {
   defaultAddOperationHandler,
   functionRendererLeft,
@@ -19,7 +18,7 @@ import {
 import { PromOperationId, PromVisualQuery, PromVisualQueryOperationCategory } from './types';
 
 export function getOperationDefinitions(): QueryBuilderOperationDef[] {
-  const list: QueryBuilderOperationDef[] = [
+  return [
     {
       id: PromOperationId.HistogramQuantile,
       name: 'Histogram quantile',
@@ -253,8 +252,6 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
     }),
     createFunction({ id: PromOperationId.Year }),
   ];
-  const metricsqlList = metricsqlOperations.map((definition) => createFunction(definition))
-  return list.concat(metricsqlList);
 }
 
 export function createFunction(definition: Partial<QueryBuilderOperationDef>): QueryBuilderOperationDef {
@@ -284,7 +281,7 @@ export function createRangeFunction(name: string, withRateInterval = false): Que
   };
 }
 
-function operationTypeChangedHandlerForRangeFunction(
+export function operationTypeChangedHandlerForRangeFunction(
   operation: QueryBuilderOperation,
   newDef: QueryBuilderOperationDef
 ) {

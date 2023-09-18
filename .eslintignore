@@ -23,3 +23,5 @@ public/locales/**/*.js
 
 # Auto-generated icon file
 packages/grafana-ui/src/components/Icon/iconBundle.ts
+/src/components/monaco-query-field/monaco-completion-provider/situation.ts
+

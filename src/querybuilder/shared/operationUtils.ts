@@ -109,10 +109,10 @@ export function rangeRendererLeftWithParams(
   return rangeRendererWithParams(model, def, innerExpr, true);
 }
 
-function renderParams(model: QueryBuilderOperation, def: QueryBuilderOperationDef) {
+export function renderParams(model: QueryBuilderOperation, def: QueryBuilderOperationDef) {
   return (model.params ?? []).map((value, index) => {
     const paramDef = def.params[index];
-    if (paramDef.type === 'string') {
+    if (paramDef?.type === 'string') {
       return '"' + value + '"';
     }
 
@@ -176,7 +176,7 @@ export function createAggregationOperation<T extends QueryWithOperations>(
   name: string,
   overrides: Partial<QueryBuilderOperationDef> = {}
 ): QueryBuilderOperationDef[] {
-  const operations: QueryBuilderOperationDef[] = [
+  return [
     {
       id: name,
       name: getPromAndLokiOperationDisplayName(name),
@@ -242,8 +242,6 @@ export function createAggregationOperation<T extends QueryWithOperations>(
       ...overrides,
     },
   ];
-
-  return operations;
 }
 
 export function createAggregationOperationWithParam(

@@ -39,7 +39,7 @@ export function getAggregationOperations(): QueryBuilderOperationDef[] {
   ];
 }
 
-function createAggregationOverTime(name: string): QueryBuilderOperationDef {
+export function createAggregationOverTime(name: string): QueryBuilderOperationDef {
   return {
     id: name,
     name: getPromAndLokiOperationDisplayName(name),

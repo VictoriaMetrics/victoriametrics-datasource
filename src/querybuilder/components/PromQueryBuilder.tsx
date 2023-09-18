@@ -16,29 +16,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState } from "react";
 
-import { DataSourceApi, PanelData, SelectableValue } from '@grafana/data';
+import { DataSourceApi, PanelData, SelectableValue } from "@grafana/data";
 
-import { EditorRow } from '../../components/QueryEditor';
-import { PrometheusDatasource } from '../../datasource';
-import { getMetadataString } from '../../language_provider';
-import metricsqlGrammar from '../../metricsql';
-import { promQueryModeller } from '../PromQueryModeller';
-import { buildVisualQueryFromString } from '../parsing';
-import { LabelFilters } from '../shared/LabelFilters';
-import { OperationExplainedBox } from '../shared/OperationExplainedBox';
-import { OperationList } from '../shared/OperationList';
-import { OperationListExplained } from '../shared/OperationListExplained';
-import { OperationsEditorRow } from '../shared/OperationsEditorRow';
-import { QueryBuilderHints } from '../shared/QueryBuilderHints';
-import { RawQuery } from '../shared/RawQuery';
-import { QueryBuilderLabelFilter, QueryBuilderOperation } from '../shared/types';
-import { PromVisualQuery } from '../types';
+import { EditorRow } from "../../components/QueryEditor";
+import { PrometheusDatasource } from "../../datasource";
+import { getMetadataString } from "../../language_provider";
+import metricsqlGrammar from "../../metricsql";
+import { promQueryModeller } from "../PromQueryModeller";
+import { buildVisualQueryFromString } from "../parsing";
+import { LabelFilters } from "../shared/LabelFilters";
+import { OperationExplainedBox } from "../shared/OperationExplainedBox";
+import { OperationList } from "../shared/OperationList";
+import { OperationListExplained } from "../shared/OperationListExplained";
+import { OperationsEditorRow } from "../shared/OperationsEditorRow";
+import { QueryBuilderHints } from "../shared/QueryBuilderHints";
+import { RawQuery } from "../shared/RawQuery";
+import { QueryBuilderLabelFilter, QueryBuilderOperation } from "../shared/types";
+import { PromVisualQuery } from "../types";
 
-import { MetricSelect } from './MetricSelect';
-import { NestedQueryList } from './NestedQueryList';
-import { EXPLAIN_LABEL_FILTER_CONTENT } from './PromQueryBuilderExplained';
+import { MetricSelect } from "./MetricSelect";
+import { NestedQueryList } from "./NestedQueryList";
+import { EXPLAIN_LABEL_FILTER_CONTENT } from "./PromQueryBuilderExplained";
 
 export interface Props {
   query: PromVisualQuery;
@@ -80,7 +80,7 @@ export const PromQueryBuilder = React.memo<Props>((props) => {
     }
 
     const labelsToConsider = query.labels.filter((x) => x !== forLabel);
-    labelsToConsider.push({ label: '__name__', op: '=', value: query.metric });
+    labelsToConsider.push({ label: "__name__", op: "=", value: query.metric });
     const expr = promQueryModeller.renderLabels(labelsToConsider);
     const labelsIndex = await datasource.languageProvider.fetchSeriesLabels(expr);
 
@@ -101,7 +101,7 @@ export const PromQueryBuilder = React.memo<Props>((props) => {
     }
 
     const labelsToConsider = query.labels.filter((x) => x !== forLabel);
-    labelsToConsider.push({ label: '__name__', op: '=', value: query.metric });
+    labelsToConsider.push({ label: "__name__", op: "=", value: query.metric });
     const expr = promQueryModeller.renderLabels(labelsToConsider);
     const result = await datasource.languageProvider.fetchSeriesLabels(expr);
     const forLabelInterpolated = datasource.interpolateString(forLabel.label);
@@ -112,12 +112,16 @@ export const PromQueryBuilder = React.memo<Props>((props) => {
     return withTemplateVariableOptions(getMetrics(datasource, query));
   }, [datasource, query, withTemplateVariableOptions]);
 
-  const lang = { grammar: metricsqlGrammar, name: 'promql' };
+  const lang = { grammar: metricsqlGrammar, name: "promql" };
 
   return (
     <>
       <EditorRow>
-        <MetricSelect query={query} onChange={onChange} onGetMetrics={onGetMetrics} />
+        <MetricSelect
+          query={query}
+          onChange={onChange}
+          onGetMetrics={onGetMetrics}
+        />
         <LabelFilters
           labelsFilters={query.labels}
           onChange={onChangeLabels}
@@ -132,7 +136,10 @@ export const PromQueryBuilder = React.memo<Props>((props) => {
       {showExplain && (
         <OperationExplainedBox
           stepNumber={1}
-          title={<RawQuery query={`${query.metric} ${promQueryModeller.renderLabels(query.labels)}`} lang={lang} />}
+          title={<RawQuery
+            query={`${query.metric} ${promQueryModeller.renderLabels(query.labels)}`}
+            lang={lang}
+          />}
         >
           {EXPLAIN_LABEL_FILTER_CONTENT}
         </OperationExplainedBox>
@@ -184,7 +191,7 @@ export const PromQueryBuilder = React.memo<Props>((props) => {
  * @param datasource
  * @param query
  */
-async function getMetrics(
+export async function getMetrics(
   datasource: PrometheusDatasource,
   query: PromVisualQuery
 ): Promise<Array<{ value: string; description?: string }>> {
@@ -202,9 +209,9 @@ async function getMetrics(
   let metrics;
   if (query.labels.length > 0) {
     const expr = promQueryModeller.renderLabels(query.labels);
-    metrics = (await datasource.languageProvider.getSeries(expr, true))['__name__'] ?? [];
+    metrics = (await datasource.languageProvider.getSeries(expr, true))["__name__"] ?? [];
   } else {
-    metrics = (await datasource.languageProvider.getLabelValues('__name__')) ?? [];
+    metrics = (await datasource.languageProvider.getLabelValues("__name__")) ?? [];
   }
 
   return metrics.map((m) => ({
@@ -213,4 +220,4 @@ async function getMetrics(
   }));
 }
 
-PromQueryBuilder.displayName = 'PromQueryBuilder';
+PromQueryBuilder.displayName = "PromQueryBuilder";

@@ -1,14 +1,14 @@
 import { FUNCTIONS } from '../metricsql';
 
 import { getAggregationOperations } from './aggregations';
+import { getMetricsqlFunctions } from './metricsql-functions';
 import { getOperationDefinitions } from './operations';
 import { LokiAndPromQueryModellerBase } from './shared/LokiAndPromQueryModellerBase';
 import { PromQueryPattern, PromVisualQueryOperationCategory } from './types';
-
 export class PromQueryModeller extends LokiAndPromQueryModellerBase {
   constructor() {
     super(() => {
-      const allOperations = [...getOperationDefinitions(), ...getAggregationOperations()];
+      const allOperations = [...getOperationDefinitions(), ...getAggregationOperations(), ...getMetricsqlFunctions()];
       for (const op of allOperations) {
         const func = FUNCTIONS.find((x) => x.insertText === op.id);
         if (func) {
@@ -18,14 +18,7 @@ export class PromQueryModeller extends LokiAndPromQueryModellerBase {
       return allOperations;
     });
 
-    this.setOperationCategories([
-      PromVisualQueryOperationCategory.Aggregations,
-      PromVisualQueryOperationCategory.RangeFunctions,
-      PromVisualQueryOperationCategory.Functions,
-      PromVisualQueryOperationCategory.BinaryOps,
-      PromVisualQueryOperationCategory.Trigonometric,
-      PromVisualQueryOperationCategory.Time,
-    ]);
+    this.setOperationCategories(Object.values(PromVisualQueryOperationCategory));
   }
 
   getQueryPatterns(): PromQueryPattern[] {
