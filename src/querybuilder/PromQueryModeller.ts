@@ -1,7 +1,7 @@
 import { FUNCTIONS } from '../metricsql';
 
 import { getAggregationOperations } from './aggregations';
-import { getMetricsqlFunctions } from './metricsql';
+import { getMetricsqlFunctions } from './metricsql-functions';
 import { getOperationDefinitions } from './operations';
 import { LokiAndPromQueryModellerBase } from './shared/LokiAndPromQueryModellerBase';
 import { PromQueryPattern, PromVisualQueryOperationCategory } from './types';
