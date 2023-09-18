@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
 
-import { Badge, Button, Modal, useStyles2 } from "@grafana/ui";
+import { Badge, Button, IconButton, Modal, useStyles2 } from "@grafana/ui";
 
 import { PrometheusDatasource } from "../../datasource";
 
@@ -82,14 +82,12 @@ const WithTemplateConfig: FC<Props> = ({ template, setTemplate, dashboardUID, da
 
   return (
     <>
-      <Button
-        variant={'secondary'}
-        size="sm"
+      <IconButton
+        key="with_templates"
+        name="cog"
+        tooltip="WITH templates"
         onClick={handleOpen}
-        icon={"cog"}
-      >
-        WITH templates
-      </Button>
+      />
       <Modal
         title={`${dashboardFolder} / ${dashboardTitle} / WITH templates`}
         isOpen={showTemplates}

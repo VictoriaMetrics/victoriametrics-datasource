@@ -20,8 +20,9 @@ import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 
 import { CoreApp, LoadingState } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
-import { Button, ConfirmModal, Tooltip } from '@grafana/ui';
+import { ConfirmModal, IconButton } from '@grafana/ui';
 
+import PrettifyQuery from "../../components/PrettifyQuery";
 import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../components/QueryEditor';
 import VmuiLink from "../../components/VmuiLink";
 import WithTemplateConfig from "../../components/WithTemplateConfig";
@@ -52,7 +53,6 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   const { onChange, onRunQuery, data, app, datasource } = props;
 
   const [parseModalOpen, setParseModalOpen] = useState(false);
-  const [dataIsStale, setDataIsStale] = useState(false);
   const [trace, setTrace] = useState(false);
   const [rawQuery, setRawQuery] = useState(false)
   const { flag: explain, setFlag: setExplain } = useFlag(promQueryEditorExplainKey);
@@ -86,12 +86,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
     [onChange, query, app]
   );
 
-  useEffect(() => {
-    setDataIsStale(false);
-  }, [data]);
-
   const onChangeInternal = (query: PromQuery) => {
-    setDataIsStale(true);
     onChange(query);
   };
 
@@ -156,17 +151,14 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
           dashboardUID={dashboardUID}
           datasource={datasource}
         />
+        <PrettifyQuery query={query} datasource={datasource} onChange={onChange}/>
         <VmuiLink query={query} datasource={datasource} panelData={data} dashboardUID={dashboardUID}/>
         {app !== CoreApp.Explore && (
-          <Tooltip content={"Run queries"}>
-            <Button
-              variant={dataIsStale ? 'primary' : 'secondary'}
-              size="sm"
-              onClick={onRunQuery}
-              icon={data?.state === LoadingState.Loading ? 'fa fa-spinner' : "play"}
-              disabled={data?.state === LoadingState.Loading}
-            />
-          </Tooltip>
+          <IconButton
+            key="run"
+            name={data?.state === LoadingState.Loading ? 'fa fa-spinner' : "play"}
+            tooltip="Run queries"
+          />
         )}
         <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange}/>
       </EditorHeader>
