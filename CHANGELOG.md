@@ -1,6 +1,9 @@
 # Changelog
 
 ## tip
+
+## [v0.4.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.4.0)
+
 * FEATURE: add datasource settings for limiting the number of metrics during discovery. The proper limits should protect users from slowing down the browser when datasource returns big amounts of discovered metrics in response.  See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/82).
 * FEATURE: add a `prettify query` icon, which when clicked, formats the query. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/86).
 * FEATURE: change the style of the buttons `WITH templates` and `Run in vmui` to icons.
