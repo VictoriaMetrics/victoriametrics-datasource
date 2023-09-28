@@ -17,8 +17,7 @@ func main() {
 	buildinfo.Init()
 	backend.Logger.Info("Starting VictoriaMetrics datasource backend ...")
 
-	factory := datasource.InstanceFactoryFunc(plugin.NewDatasource)
-	if err := datasource.Manage("victoriametrics-datasource-http-backend", factory, datasource.ManageOpts{}); err != nil {
+	if err := datasource.Manage("victoriametrics-datasource-http-backend", plugin.NewDatasource, datasource.ManageOpts{}); err != nil {
 		log.DefaultLogger.Error("Failed to process VictoriaMetrics datasource backend :%s", err.Error())
 		os.Exit(1)
 	}
