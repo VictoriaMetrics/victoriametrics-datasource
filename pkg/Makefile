@@ -18,3 +18,6 @@ victoriametrics-backend-plugin-amd64-prod:
 
 victoriametrics-backend-plugin-arm64-prod:
 	APP_NAME=victoriametrics_backend_plugin $(MAKE) app-via-docker-darwin-arm64
+
+victoriametrics-backend-plugin-windows-prod:
+	APP_NAME=victoriametrics_backend_plugin $(MAKE) app-via-docker-windows-amd64
