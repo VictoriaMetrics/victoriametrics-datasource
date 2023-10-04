@@ -54,7 +54,7 @@ app-via-docker-darwin-arm64:
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 $(MAKE) app-via-docker-goos-goarch
 
 app-via-docker-windows-amd64:
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(MAKE) app-via-docker-windows
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(MAKE) app-via-docker-windows-goarch
 
 victoriametrics-backend-plugin-build: \
 	victoriametrics-backend-plugin-linux-amd64-prod \
