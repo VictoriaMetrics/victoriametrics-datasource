@@ -50,7 +50,7 @@ app-via-docker-windows: package-builder
 		go build $(RACE) -trimpath -buildvcs=false \
 			-ldflags "-s -w -extldflags '-static' $(GO_BUILDINFO)" \
 			-tags 'netgo osusergo nethttpomithttp2' \
-			-o ./victoriametrics-datasource/$(APP_NAME)$(APP_SUFFIX) ./pkg/
+			-o ./victoriametrics-datasource/$(APP_NAME)$(APP_SUFFIX).exe ./pkg/
 
 frontend-package-base-image:
 	docker build -t frontent-builder-image -f deployment/docker/web/Dockerfile ./deployment/docker/web
