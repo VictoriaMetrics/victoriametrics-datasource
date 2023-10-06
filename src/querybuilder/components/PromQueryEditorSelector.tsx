@@ -158,6 +158,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
             key="run"
             name={data?.state === LoadingState.Loading ? 'fa fa-spinner' : "play"}
             tooltip="Run queries"
+            onClick={onRunQuery}
           />
         )}
         <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange}/>

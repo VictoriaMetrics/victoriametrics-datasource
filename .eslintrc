@@ -12,6 +12,7 @@
     "object-curly-spacing": [2, "always"],
     "lodash/import-scope": [2, "member"],
     "jest/no-focused-tests": "error",
+    "@typescript-eslint/array-type": 0,
     "import/order": [
       "error",
       {

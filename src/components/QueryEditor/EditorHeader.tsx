@@ -22,7 +22,9 @@ import React from 'react';
 import { GrafanaTheme2 } from '@grafana/data';
 import { stylesFactory, useTheme2 } from '@grafana/ui';
 
-interface EditorHeaderProps {}
+interface EditorHeaderProps {
+  children: React.ReactNode;
+}
 
 export const EditorHeader: React.FC<EditorHeaderProps> = ({ children }) => {
   const theme = useTheme2();

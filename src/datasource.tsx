@@ -159,7 +159,6 @@ export class PrometheusDatasource
     httpOptions.headers = {};
     const proxyMode = !this.url.match(/^http/);
     if (proxyMode) {
-      httpOptions.headers['X-Dashboard-Id'] = options.dashboardId;
       httpOptions.headers['X-Dashboard-UID'] = options.dashboardUID || "";
       httpOptions.headers['X-Panel-Id'] = options.panelId;
     }
@@ -271,13 +270,10 @@ export class PrometheusDatasource
     // If URL includes endpoint that supports POST and GET method, try to use configured method. This might fail as POST is supported only in v2.10+.
     try {
       return await lastValueFrom(
-        this._request<T>(`/api/datasources/proxy/${this.id}/prettify-query`, {}, {
+        this._request<T>(`/api/datasources/proxy/${this.id}/prettify-query`, { query }, {
           method: 'GET',
           hideFromInspector: true,
-          showErrorAlert: false,
-          params: {
-            query
-          }
+          showErrorAlert: false
         })
       );
     } catch (err) {
@@ -587,7 +583,9 @@ export class PrometheusDatasource
       end,
       step: query.step,
     };
-    if (query.trace) {data.trace = "1"}
+    if (query.trace) {
+      data.trace = "1"
+    }
 
     if (this.queryTimeout) {
       data['timeout'] = this.queryTimeout;
@@ -616,7 +614,9 @@ export class PrometheusDatasource
       query: query.expr,
       time,
     };
-    if (query.trace) {data.trace = "1"}
+    if (query.trace) {
+      data.trace = "1"
+    }
 
     if (this.queryTimeout) {
       data['timeout'] = this.queryTimeout;
@@ -674,6 +674,7 @@ export class PrometheusDatasource
     const metricFindQuery = new PrometheusMetricFindQuery(this, interpolated);
     return metricFindQuery.process();
   }
+
 
   getRangeScopedVars(range: TimeRange = this.timeSrv.timeRange()) {
     const msRange = range.to.diff(range.from);
@@ -845,9 +846,13 @@ export class PrometheusDatasource
       interval: '1m',
       intervalMs: 60000,
       maxDataPoints: 1,
+      timezone: '',
+      app: DATASOURCE_TYPE,
+      startTime: 0,
       range: {
         from: dateTime(now - 1000),
         to: dateTime(now),
+        raw: { from: 'now-1s', to: 'now' },
       },
     } as DataQueryRequest<PromQuery>;
 

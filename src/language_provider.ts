@@ -17,9 +17,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { once, chain, difference } from 'lodash';
-import LRU from 'lru-cache';
+import { LRUCache as LRU } from 'lru-cache'
 import Prism from 'prismjs';
-import { Value } from 'slate';
+import { Value } from "slate";
 
 import {
   AbstractLabelMatcher,

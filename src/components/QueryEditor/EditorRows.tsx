@@ -17,7 +17,9 @@ import React from 'react';
 
 import { Stack } from './Stack';
 
-interface EditorRowsProps {}
+interface EditorRowsProps {
+  children: React.ReactNode;
+}
 
 export const EditorRows: React.FC<EditorRowsProps> = ({ children }) => {
   return (

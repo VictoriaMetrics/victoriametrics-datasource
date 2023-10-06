@@ -24,7 +24,9 @@ import { useStyles2 } from '@grafana/ui';
 
 import { Stack } from './Stack';
 
-interface EditorRowProps {}
+interface EditorRowProps {
+  children: React.ReactNode;
+}
 
 export const EditorRow: React.FC<EditorRowProps> = ({ children }) => {
   const styles = useStyles2(getStyles);

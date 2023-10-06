@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 
 import '@testing-library/jest-dom';
 import { DataSourceInstanceSettings, DataSourcePluginMeta } from '@grafana/data';
@@ -45,14 +46,18 @@ describe('PromQueryCodeEditor', () => {
     const { datasource } = createDatasource();
     const props = createProps(datasource);
     props.showExplain = true;
-    render(<PromQueryCodeEditor {...props} query={{ expr: '', refId: 'refid', interval: '1s' }} />);
+    await act(async () => {
+      render(<PromQueryCodeEditor {...props} query={{ expr: '', refId: 'refid', interval: '1s' }} />);
+    });
     expect(await screen.findByText(EXPLAIN_LABEL_FILTER_CONTENT)).toBeInTheDocument();
   });
 
   it('does not show explain section when showExplain is false', async () => {
     const { datasource } = createDatasource();
     const props = createProps(datasource);
-    render(<PromQueryCodeEditor {...props} query={{ expr: '', refId: 'refid', interval: '1s' }} />);
+    await act(async () => {
+      render(<PromQueryCodeEditor {...props} query={{ expr: '', refId: 'refid', interval: '1s' }} />);
+    });
     expect(await screen.queryByText(EXPLAIN_LABEL_FILTER_CONTENT)).not.toBeInTheDocument();
   });
 });

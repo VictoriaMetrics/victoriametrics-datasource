@@ -54,7 +54,7 @@ const props = {
     operations: [],
   },
   onChange: jest.fn(),
-  onGetMetrics: jest.fn().mockResolvedValue(mockValues),
+  onGetMetrics: jest.fn(() => Promise.resolve(mockValues)),
 };
 
 describe('MetricSelect', () => {

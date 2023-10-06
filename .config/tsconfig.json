@@ -10,6 +10,6 @@
     "typeRoots": ["../node_modules/@types"],
     "resolveJsonModule": true
   },
-  "include": ["../src", "./types"],
+  "include": ["../src", "./types", "./jest-setup.ts"],
   "extends": "@grafana/tsconfig"
 }
