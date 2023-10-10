@@ -2,6 +2,8 @@
 
 ## tip
 
+* FEATURE: the annotation editor component has been migrated from using Angular template to React. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/102).
+
 ## [v0.4.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.4.0)
 
 * FEATURE: add datasource settings for limiting the number of metrics during discovery. The proper limits should protect users from slowing down the browser when datasource returns big amounts of discovered metrics in response.  See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/82).

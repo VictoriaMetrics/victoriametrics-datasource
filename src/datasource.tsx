@@ -23,7 +23,7 @@ import { catchError, filter, map, tap } from 'rxjs/operators';
 import {
   AbstractQuery,
   AnnotationEvent,
-  AnnotationQueryRequest,
+  AnnotationQuery,
   CoreApp,
   DataFrame,
   DataQueryError,
@@ -42,7 +42,6 @@ import {
   TimeRange,
 } from '@grafana/data';
 import {
-  BackendDataSourceResponse,
   BackendSrvRequest,
   DataSourceWithBackend,
   FetchError,
@@ -51,10 +50,12 @@ import {
   getBackendSrv,
   getTemplateSrv,
   isFetchError,
+  BackendDataSourceResponse,
   toDataQueryResponse,
 } from '@grafana/runtime';
 
 import { addLabelToQuery } from './add_label_to_query';
+import { AnnotationQueryEditor } from "./components/Annotations/AnnotationQueryEditor";
 import { WithTemplate } from "./components/WithTemplateConfig/types";
 import { mergeTemplateWithQuery } from "./components/WithTemplateConfig/utils/getArrayFromTemplate";
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
@@ -145,6 +146,11 @@ export class PrometheusDatasource
     this.exemplarsAvailable = false;
     this.withTemplates = instanceSettings.jsonData.withTemplates ?? [];
     this.limitMetrics = instanceSettings.jsonData.limitMetrics ?? {};
+    this.annotations = {
+      QueryEditor: AnnotationQueryEditor,
+      processEvents: this.processEvents,
+      prepareQuery: this.prepareQuery
+    }
   }
 
   init = async () => {
@@ -175,13 +181,6 @@ export class PrometheusDatasource
     data: Record<string, string> | null,
     overrides: Partial<BackendSrvRequest> = {}
   ): Observable<FetchResponse<T>> {
-    // if (this.access === 'direct') {
-    //   const error = new Error(
-    //     'Browser access mode in the Prometheus datasource is no longer available. Switch to server access mode.'
-    //   );
-    //   return throwError(() => error);
-    // }
-
     data = data || {};
     for (const [key, value] of this.customQueryParameters) {
       if (data[key] == null) {
@@ -387,6 +386,12 @@ export class PrometheusDatasource
       const start = this.getPrometheusTime(request.range.from, false);
       const end = this.getPrometheusTime(request.range.to, true);
       const { queries, activeTargets } = this.prepareTargets(request, start, end);
+
+
+      if (request.targets.every(t => t.refId === "Anno")) {
+        const query = request.targets[0] as PromQueryRequest
+        return this.performAnnotationQuery({ ...query, start, end })
+      }
 
       // No valid targets, return the empty result to save a round trip.
       if (!queries || !queries.length) {
@@ -685,54 +690,49 @@ export class PrometheusDatasource
     };
   }
 
-  async annotationQuery(options: AnnotationQueryRequest<PromQuery>): Promise<AnnotationEvent[]> {
-
-    const annotation = options.annotation;
-    const { expr = '' } = annotation;
+  prepareQuery = (annotation: AnnotationQuery<PromQuery>): PromQuery | undefined => {
+    const { expr = '', datasource, step, legendFormat } = annotation;
 
     if (!expr) {
-      return Promise.resolve([]);
+      return undefined
     }
 
-    const step = options.annotation.step || ANNOTATION_QUERY_STEP_DEFAULT;
-    const queryModel = {
+    return {
       expr,
       range: true,
       instant: false,
       exemplar: false,
-      interval: step,
-      queryType: PromQueryType.timeSeriesQuery,
+      interval: step || ANNOTATION_QUERY_STEP_DEFAULT,
       refId: 'X',
-      datasource: this.getRef(),
+      datasource,
+      legendFormat: legendFormat ?? ""
     };
-    return await lastValueFrom(
-      getBackendSrv()
-        .fetch<BackendDataSourceResponse>({
-          url: '/api/ds/query',
-          method: 'POST',
-          data: {
-            from: (this.getPrometheusTime(options.range.from, false) * 1000).toString(),
-            to: (this.getPrometheusTime(options.range.to, true) * 1000).toString(),
-            queries: [this.applyTemplateVariables(queryModel, {})],
-          },
-          requestId: `prom-query-${annotation.name}`,
+  };
+
+  performAnnotationQuery = (query: PromQueryRequest) => {
+    return getBackendSrv()
+      .fetch<BackendDataSourceResponse>({
+        url: '/api/ds/query',
+        method: 'POST',
+        data: {
+          from: (query.start * 1000).toString(),
+          to: (query.end * 1000).toString(),
+          queries: [{ ...query, refId: "X" }],
+        },
+        requestId: query.requestId,
+      }).pipe(
+        map((rsp: FetchResponse<BackendDataSourceResponse>) => {
+          return toDataQueryResponse({ data: rsp.data });
         })
-        .pipe(
-          map((rsp: FetchResponse<BackendDataSourceResponse>) => {
-            return this.processAnnotationResponse(options, rsp.data);
-          })
-        )
-    );
+      )
   }
 
-  processAnnotationResponse = (options: AnnotationQueryRequest<PromQuery>, data: BackendDataSourceResponse) => {
-    const frames: DataFrame[] = toDataQueryResponse({ data: data }).data;
+  processEvents = (annotation: AnnotationQuery<PromQuery>, frames: DataFrame[]) => {
     if (!frames || !frames.length) {
-      return [];
+      return of([])
     }
 
-    const annotation = options.annotation;
-    const { tagKeys = '', titleFormat = '', textFormat = '' } = annotation;
+    const { tagKeys = '', titleFormat = '', textFormat = '', useValueForTime } = annotation;
 
     const step = rangeUtil.intervalToSeconds(annotation.step || ANNOTATION_QUERY_STEP_DEFAULT) * 1000;
     const tagKeysArray = tagKeys.split(',');
@@ -740,6 +740,9 @@ export class PrometheusDatasource
     const eventList: AnnotationEvent[] = [];
 
     for (const frame of frames) {
+      if (frame.fields.length === 0) {
+        continue;
+      }
       const timeField = frame.fields[0];
       const valueField = frame.fields[1];
       const labels = valueField?.labels || {};
@@ -757,7 +760,7 @@ export class PrometheusDatasource
         const time = timeField.values.get(idx);
 
         // If we want to use value as a time, we use value as timeStampValue and valueValue will be 1
-        if (options.annotation.useValueForTime) {
+        if (useValueForTime) {
           timeStampValue = Math.floor(parseFloat(value));
           valueValue = 1;
         } else {
@@ -806,7 +809,7 @@ export class PrometheusDatasource
       }
     }
 
-    return eventList;
+    return of(eventList);
   };
 
   async getTagKeys(options?: any) {
