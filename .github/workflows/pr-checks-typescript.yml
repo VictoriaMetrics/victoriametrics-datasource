@@ -40,7 +40,7 @@ jobs:
           node-version: 16.14.2
 
       - name: Install all dependencies
-        run: npm install
+        run: yarn install
 
       - name: Run Jest Tests
         run: npm run test
