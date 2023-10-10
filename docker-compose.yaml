@@ -22,7 +22,7 @@ services:
       "
 
   frontend_builder:
-    image: node:16.18.1
+    image: node:18.13.0
     working_dir: /victoriametrics-datasource
     volumes:
       - ./:/victoriametrics-datasource
