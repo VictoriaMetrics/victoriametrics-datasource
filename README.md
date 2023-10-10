@@ -218,6 +218,7 @@ This command will build executable multi-platform files to the `dist` folder for
 * linux/386
 * amd64
 * arm64
+* windows
 
 ### 4.How to build frontend plugin
 From the root folder of the project run the following command:

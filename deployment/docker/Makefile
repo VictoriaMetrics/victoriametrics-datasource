@@ -38,6 +38,20 @@ app-via-docker: package-builder
 			-tags 'netgo osusergo nethttpomithttp2 musl' \
 			-o ./victoriametrics-datasource/$(APP_NAME)$(APP_SUFFIX) ./pkg/
 
+app-via-docker-windows: package-builder
+	mkdir -p gocache-for-docker
+	docker run --rm \
+		-v "$(shell pwd):/usr/local/go/src/victoriametrics-datasource" \
+        -w /usr/local/go/src/victoriametrics-datasource \
+        -v "$(shell pwd)/gocache-for-docker:/gocache" \
+        --env GOCACHE=/gocache \
+		$(DOCKER_OPTS) \
+		$(BUILDER_IMAGE) \
+		go build $(RACE) -trimpath -buildvcs=false \
+			-ldflags "-s -w -extldflags '-static' $(GO_BUILDINFO)" \
+			-tags 'netgo osusergo nethttpomithttp2' \
+			-o ./victoriametrics-datasource/$(APP_NAME)$(APP_SUFFIX).exe ./pkg/
+
 frontend-package-base-image:
 	docker build -t frontent-builder-image -f deployment/docker/web/Dockerfile ./deployment/docker/web
 
