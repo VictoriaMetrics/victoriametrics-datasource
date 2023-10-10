@@ -65,12 +65,13 @@ export const AzureAuthSettings = (props: HttpSettingsBaseProps) => {
 
   return (
     <>
-      <h6>Azure Authentication</h6>
+      <h6>Azure authentication</h6>
       <AzureCredentialsForm
         managedIdentityEnabled={config.azure.managedIdentityEnabled}
         credentials={credentials}
         azureCloudOptions={KnownAzureClouds}
         onCredentialsChange={onCredentialsChange}
+        disabled={dataSourceConfig.readOnly}
       />
       <h6>Azure configuration</h6>
       <div className="gf-form-group">

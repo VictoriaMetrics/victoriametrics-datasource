@@ -59,11 +59,11 @@ describe('getRefreshFromUrl', () => {
       'when called with refresh:{$refresh}, isAllowedInterval:{$isAllowedInterval}, minRefreshInterval:{$minRefreshInterval}, refreshIntervals:{$refreshIntervals} then it should return: $expected',
       ({ refresh, isAllowedInterval, minRefreshInterval, refreshIntervals, expected }) => {
         const actual = getRefreshFromUrl({
-          urlRefresh: `${refresh}`,
+          urlRefresh: refresh,
           currentRefresh: 'currentRefresh',
-          minRefreshInterval: `${minRefreshInterval}`,
-          isAllowedIntervalFn: () => !!isAllowedInterval,
-          refreshIntervals: Array.isArray(refreshIntervals) ? refreshIntervals.map(s => `${s}`) : undefined,
+          minRefreshInterval,
+          isAllowedIntervalFn: () => isAllowedInterval,
+          refreshIntervals,
         });
 
         expect(actual).toBe(expected);

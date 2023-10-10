@@ -1,9 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { getByTestId, render, screen, waitFor } from '@testing-library/react';
 // @ts-ignore
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
-import { PanelData, LoadingState, DataFrame } from '@grafana/data';
+import { PanelData, LoadingState, DataFrame, CoreApp } from '@grafana/data';
 
 import { PrometheusDatasource } from '../datasource';
 import PromQlLanguageProvider from '../language_provider';
@@ -148,6 +148,22 @@ describe('PromQueryField', () => {
     await waitFor(() => {
       expect(labelBrowser).toHaveTextContent('Metrics browser');
     });
+  });
+
+  it('should not run query onBlur', async () => {
+    const onRunQuery = jest.fn();
+    const { container } = render(<PromQueryField {...defaultProps} app={CoreApp.Explore} onRunQuery={onRunQuery} />);
+
+    // wait for component to rerender
+    await screen.findByRole('button');
+
+    const input = getByTestId(container, 'dummy-code-input');
+    expect(input).toBeInTheDocument();
+    await userEvent.type(input, 'metric');
+
+    // blur element
+    await userEvent.click(document.body);
+    expect(onRunQuery).not.toHaveBeenCalled();
   });
 });
 

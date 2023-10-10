@@ -31,14 +31,9 @@ import { HelpfulLinks } from "./HelpfulLinks";
 import { LimitsSettings } from "./LimitsSettings";
 import { PromSettings } from './PromSettings';
 
-// export enum DataSourceType {
-//   Alertmanager = 'alertmanager',
-// }
-
 export type Props = DataSourcePluginOptionsEditorProps<PromOptions>;
 export const ConfigEditor = (props: Props) => {
   const { options, onOptionsChange } = props;
-  // const alertmanagers = Object.values(config.datasources).filter((ds) => ds.type === DataSourceType.Alertmanager);
   // use ref so this is evaluated only first time it renders and the select does not disappear suddenly.
   const showAccessOptions = useRef(props.options.access === 'direct');
 
