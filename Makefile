@@ -24,6 +24,11 @@ app-via-docker-goos-goarch:
 	DOCKER_OPTS='--env CGO_ENABLED=$(CGO_ENABLED) --env GOOS=$(GOOS) --env GOARCH=$(GOARCH)' \
 	$(MAKE) app-via-docker
 
+app-via-docker-windows-goarch:
+	APP_SUFFIX='_$(GOOS)_$(GOARCH)' \
+	DOCKER_OPTS='--env CGO_ENABLED=$(CGO_ENABLED) --env GOOS=$(GOOS) --env GOARCH=$(GOARCH)' \
+	$(MAKE) app-via-docker-windows
+
 app-via-docker-linux-amd64:
 	CGO_ENABLED=1 GOOS=linux GOARCH=amd64 $(MAKE) app-via-docker-goos-goarch
 
@@ -48,13 +53,17 @@ app-via-docker-darwin-amd64:
 app-via-docker-darwin-arm64:
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 $(MAKE) app-via-docker-goos-goarch
 
+app-via-docker-windows-amd64:
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(MAKE) app-via-docker-windows-goarch
+
 victoriametrics-backend-plugin-build: \
 	victoriametrics-backend-plugin-linux-amd64-prod \
 	victoriametrics-backend-plugin-linux-arm-prod \
 	victoriametrics-backend-plugin-linux-arm64-prod \
 	victoriametrics-backend-plugin-linux-386-prod \
 	victoriametrics-backend-plugin-amd64-prod \
-	victoriametrics-backend-plugin-arm64-prod
+	victoriametrics-backend-plugin-arm64-prod \
+	victoriametrics-backend-plugin-windows-prod
 
 victorimetrics-frontend-plugin-build: \
 	frontend-build

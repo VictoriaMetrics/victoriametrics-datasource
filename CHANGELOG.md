@@ -2,7 +2,9 @@
 
 ## tip
 
-* FEATURE: add a `--version` flag for backend datasource, update backend plugin to a latest release version. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/68).
+* FEATURE: add Windows support for backend plugin. See how to build backend plugin for various platforms [here](https://github.com/VictoriaMetrics/grafana-datasource#3-how-to-build-backend-plugin). See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/67).  
+* FEATURE: the annotation editor component has been migrated from using Angular template to React. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/102).
+* FEATURE: add `--version` flag for backend datasource binary. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/68).
 
 ## [v0.4.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.4.0)
 
