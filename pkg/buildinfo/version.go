@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var version = flag.Bool("version", false, "Show VictoriaMetrics version")
+var version = flag.Bool("version", false, "Show VictoriaMetrics Grafana datasource version")
 
 // Version must be set via -ldflags '-X'
 var Version string
