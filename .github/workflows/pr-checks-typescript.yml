@@ -37,10 +37,10 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@v1
         with:
-          node-version: 16.14.2
+          node-version: 18.13.0
 
       - name: Install all dependencies
-        run: npm install
+        run: yarn install
 
       - name: Run Jest Tests
         run: npm run test
@@ -56,10 +56,10 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@v1
         with:
-          node-version: 16.14.2
+          node-version: 18.13.0
 
       - name: Install all dependencies
-        run: npm install
+        run: yarn install
 
       - name: Build
         shell: 'script -q -e -c "bash {0}"'

@@ -58,7 +58,7 @@ const config = (env): Configuration => ({
     ({ request }, callback) => {
       const prefix = 'grafana/';
       const hasPrefix = (request) => request.indexOf(prefix) === 0;
-      const stripPrefix = (request) => request.substr(prefix.length);
+      const stripPrefix = (request) => request.substring(prefix.length);
 
       if (hasPrefix(request)) {
         return callback(null, stripPrefix(request));
@@ -79,7 +79,7 @@ const config = (env): Configuration => ({
           loader: 'swc-loader',
           options: {
             jsc: {
-              baseUrl: './src',
+              baseUrl: '/src',
               target: 'es2015',
               loose: false,
               parser: {
@@ -118,7 +118,7 @@ const config = (env): Configuration => ({
   },
 
   output: {
-    clean: true,
+    clean: false,
     filename: '[name].js',
     libraryTarget: 'amd',
     path: path.resolve(process.cwd(), DIST_DIR),

@@ -24,6 +24,7 @@ import {
   SelectableValue,
 } from '@grafana/data';
 import {
+  Select,
   InlineField,
   InlineSwitch,
   EventsWithValidation,
@@ -34,7 +35,7 @@ import {
 
 import { PromOptions } from '../types';
 
-const { Select, Input, FormField } = LegacyForms;
+const { Input, FormField } = LegacyForms;
 
 const httpOptions = [
   { value: 'POST', label: 'POST' },
@@ -105,7 +106,7 @@ export const PromSettings = (props: Props) => {
             options={httpOptions}
             value={httpOptions.find((o) => o.value === options.jsonData.httpMethod)}
             onChange={onChangeHandler('httpMethod', options, onOptionsChange)}
-            width={7}
+            width={14}
           />
         </div>
       </div>

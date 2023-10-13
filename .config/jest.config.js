@@ -27,5 +27,8 @@ module.exports = {
       },
     ],
   },
-  setupFilesAfterEnv: ['<rootDir>/jest-setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
+  transformIgnorePatterns: [
+    "!node_modules/d3-interpolate"
+  ]
 };

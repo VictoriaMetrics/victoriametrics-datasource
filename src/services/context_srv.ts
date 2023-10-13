@@ -18,20 +18,20 @@
 
 import { extend } from 'lodash';
 
-import { OrgRole, rangeUtil, WithAccessControlMetadata } from '@grafana/data';
+import { AnalyticsSettings, OrgRole, rangeUtil, WithAccessControlMetadata } from '@grafana/data';
 import { config as config1 } from '@grafana/runtime';
 
 import { AccessControlAction, UserPermission } from '../types/accessControl';
 import { CurrentUserInternal } from '../types/config';
 
-export class User implements CurrentUserInternal {
+export class User implements Omit<CurrentUserInternal, 'lightTheme'> {
   isSignedIn: boolean;
   id: number;
   login: string;
   email: string;
   name: string;
   externalUserId: string;
-  lightTheme: boolean;
+  theme: string;
   orgCount: number;
   orgId: number;
   orgName: string;
@@ -41,10 +41,13 @@ export class User implements CurrentUserInternal {
   timezone: string;
   weekStart: string;
   locale: string;
+  language: string;
   helpFlags1: number;
   hasEditPermissionInFolders: boolean;
   permissions?: UserPermission;
+  analytics: AnalyticsSettings;
   fiscalYearStartMonth: number;
+  authenticatedBy: string;
 
   constructor() {
     this.id = 0;
@@ -59,13 +62,18 @@ export class User implements CurrentUserInternal {
     this.timezone = '';
     this.fiscalYearStartMonth = 0;
     this.helpFlags1 = 0;
-    this.lightTheme = false;
+    this.theme = 'dark';
     this.hasEditPermissionInFolders = false;
     this.email = '';
     this.name = '';
     this.locale = '';
+    this.language = '';
     this.weekStart = '';
     this.gravatarUrl = '';
+    this.analytics = {
+      identifier: '',
+    };
+    this.authenticatedBy = '';
 
     if (config1.bootData.user) {
       extend(this, config1.bootData.user);

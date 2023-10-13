@@ -90,7 +90,7 @@ export const NestedQuery = React.memo<Props>((props) => {
           />
         </div>
         <FlexItem grow={1} />
-        <IconButton name="times" size="sm" onClick={() => onRemove(index)} />
+        <IconButton aria-label="" name="times" size="sm" onClick={() => onRemove(index)} />
       </div>
       <div className={styles.body}>
         <EditorRows>

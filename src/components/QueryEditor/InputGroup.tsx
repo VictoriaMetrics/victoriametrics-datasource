@@ -21,7 +21,9 @@ import React from 'react';
 
 import { useStyles2 } from '@grafana/ui';
 
-interface InputGroupProps {}
+interface InputGroupProps {
+  children: React.ReactNode;
+}
 
 export const InputGroup: React.FC<InputGroupProps> = ({ children }) => {
   const styles = useStyles2(getStyles);
