@@ -135,9 +135,11 @@ extraInitContainers:
   - name: "load-vm-ds-plugin"
     image: "curlimages/curl:7.85.0"
     command: [ "/bin/sh" ]
-    workingDir: "/var/lib/grafana/plugins"
+    workingDir: "/var/lib/grafana"
     securityContext:
-      runAsUser: 0
+      runAsUser: 472
+      runAsNonRoot: true
+      runAsGroup: 472
     args:
      - "-c"
      - |
@@ -147,7 +149,6 @@ extraInitContainers:
        curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
        tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
        rm /var/lib/grafana/plugins/plugin.tar.gz
-       chown -R 472:472 /var/lib/grafana/plugins/
     volumeMounts:
       - name: storage
         mountPath: /var/lib/grafana
