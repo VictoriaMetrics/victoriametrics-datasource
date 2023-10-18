@@ -163,6 +163,9 @@ extraInitContainers:
         mountPath: /var/lib/grafana
 ```
 
+For `grafana-operator` users, the above configuration should be done for the part
+`/spec/deployment/spec/template/spec/initContainers` of your `kind=Grafana` resource.
+
 This example uses init container to download and install plugin. To allow Grafana using this container as a sidecar
 set the following config:
 ```yaml
