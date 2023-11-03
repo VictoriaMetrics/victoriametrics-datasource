@@ -87,34 +87,34 @@ Please find the example of provisioning Grafana instance with VictoriaMetrics da
 
 1. Create folder `./provisioning/datasource` with datasource example file:
 
-2. Download the latest release:
+1. Download the latest release:
+   
+   ``` bash
+   ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+   curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o plugin.tar.gz
+   tar -xf plugin.tar.gz -C ./victoriametrics-datasource
+   rm plugin.tar.gz
+   ```
 
-``` bash
-ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o plugin.tar.gz
-tar -xf plugin.tar.gz -C ./victoriametrics-datasource
-rm plugin.tar.gz
-```
+1. Define Grafana installation via docker-compose:
+   
+   ```yaml
+     version: '3.0'
+     services:
+        grafana:
+           container_name: 'grafana-datasource'
+           build:
+              context: ./.config
+              args:
+                 grafana_version: ${GRAFANA_VERSION:-9.1.2}
+           ports:
+              - 3000:3000/tcp
+           volumes:
+              - ./victoriametrics-datasource:/var/lib/grafana/plugins/grafana-datasource
+              - ./provisioning:/etc/grafana/provisioning
+   ```
 
-3. Define Grafana installation via docker-compose:
-
-```yaml
-  version: '3.0'
-  services:
-     grafana:
-        container_name: 'grafana-datasource'
-        build:
-           context: ./.config
-           args:
-              grafana_version: ${GRAFANA_VERSION:-9.1.2}
-        ports:
-           - 3000:3000/tcp
-        volumes:
-           - ./victoriametrics-datasource:/var/lib/grafana/plugins/grafana-datasource
-           - ./provisioning:/etc/grafana/provisioning
-```
-
-4. Run docker-compose file:
+1. Run docker-compose file:
 
 ```
 docker-compose -f docker-compose.yaml up
@@ -127,6 +127,8 @@ When Grafana starts successfully datasources should be present on the datasource
 </p>
 
 ### Install in Kubernetes
+
+#### Grafana helm chart
 
 Example with Grafana [helm chart](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md):
 
@@ -166,19 +168,70 @@ See more about chart settings [here](https://github.com/grafana/helm-charts/blob
 
 Another option would be to build custom Grafana image with plugin based on same installation instructions.
 
+#### Grafana operator
+
+Example with Grafana [operator](https://github.com/grafana-operator/grafana-operator):
+
+```yaml
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana-vm
+spec:
+  persistentVolumeClaim:
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 200Mi
+  deployment:
+    spec:
+      template:
+        spec:
+          initContainers:
+            - name: "load-vm-ds-plugin"
+              image: "curlimages/curl:7.85.0"
+              command: [ "/bin/sh" ]
+              workingDir: "/var/lib/grafana"
+              securityContext:
+                runAsUser: 10001
+                runAsNonRoot: true
+                runAsGroup: 10001
+              args:
+                - "-c"
+                - |
+                  set -ex
+                  mkdir -p /var/lib/grafana/plugins/
+                  ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+                  curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
+                  tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
+                  rm /var/lib/grafana/plugins/plugin.tar.gz
+              volumeMounts:
+                - name: grafana-data
+                  mountPath: /var/lib/grafana
+  config:
+    plugins:
+      allow_loading_unsigned_plugins: victoriametrics-datasource
+```
+
+See [Grafana operator reference](https://grafana-operator.github.io/grafana-operator/docs/grafana/) to find more about
+Grafana operator.
+This example uses init container to download and install plugin.
 
 ### Dev release installation
 
 
-2. To download plugin build and move contents into Grafana plugins directory:
+1. To download plugin build and move contents into Grafana plugins directory:
+   
+   ``` bash
+   ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+   curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
+   tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
+   rm /var/lib/grafana/plugins/plugin.tar.gz
+   ```
 
-``` bash
-ver=$(curl -s https://api.github.com/repos/VictoriaMetrics/grafana-datasource/releases/latest | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-curl -L https://github.com/VictoriaMetrics/grafana-datasource/releases/download/$ver/victoriametrics-datasource-$ver.tar.gz -o /var/lib/grafana/plugins/plugin.tar.gz
-tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
-rm /var/lib/grafana/plugins/plugin.tar.gz
-```
-3. Restart Grafana
+1. Restart Grafana
 
 
 ## Getting started development
@@ -250,8 +303,8 @@ WITH expressions are stored in the datasource object. If the dashboard gets expo
 
 1. Navigate to the dashboard where you want to add a template.<br/> 
    *Note: templates are available within the dashboard scope.*
-2. Click the `WITH templates` button.
-3. Enter the expression in the input field. Once done, press the `Save` button to apply the changes. For example:
+1. Click the `WITH templates` button.
+1. Enter the expression in the input field. Once done, press the `Save` button to apply the changes. For example:
    ```
    commonFilters = {instance=~"$node:$port",job=~"$job"},
    
@@ -266,33 +319,33 @@ WITH expressions are stored in the datasource object. If the dashboard gets expo
 
 ### Using WITH Expressions
 
-1. After saving the template, you can enter it into the query editor field:
-   ```
-   ((cpuCount - cpuIdle) * 100) / cpuCount
-   ```
-   
-   Thus, the entire query will look as follows:
-    
-   ```
-   WITH (
-    commonFilters = {instance=~"$node:$port",job=~"$job"},
-    cpuCount = count(count(node_cpu_seconds_total{commonFilters}) by (cpu)),
-    cpuIdle = sum(rate(node_cpu_seconds_total{mode='idle',commonFilters}[5m]))
-   )
-   ((cpuCount - cpuIdle) * 100) / cpuCount
-   ```
-   To view the raw query in the interface, enable the `Raw` toggle.
+After saving the template, you can enter it into the query editor field:
+```
+((cpuCount - cpuIdle) * 100) / cpuCount
+```
+
+Thus, the entire query will look as follows:
+ 
+```
+WITH (
+ commonFilters = {instance=~"$node:$port",job=~"$job"},
+ cpuCount = count(count(node_cpu_seconds_total{commonFilters}) by (cpu)),
+ cpuIdle = sum(rate(node_cpu_seconds_total{mode='idle',commonFilters}[5m]))
+)
+((cpuCount - cpuIdle) * 100) / cpuCount
+```
+To view the raw query in the interface, enable the `Raw` toggle.
 
 ## How to make new release
 
-0. Make sure there are no open security issues.
+1. Make sure there are no open security issues.
 1. Create a release tag:
    * `git tag -s v1.xx.y` in `master` branch
-2. Run `TAG=v1.xx.y make build-release` to build and package binaries in `*.tar.gz` release archives.
-3. Run `git push origin v1.xx.y` to push the tag created `v1.xx.y` at step 2 to public GitHub repository
-4. Go to <https://github.com/VictoriaMetrics/grafana-datasource/releases> and verify that draft release with the name `TAG` has been created
+1. Run `TAG=v1.xx.y make build-release` to build and package binaries in `*.tar.gz` release archives.
+1. Run `git push origin v1.xx.y` to push the tag created `v1.xx.y` at step 2 to public GitHub repository
+1. Go to <https://github.com/VictoriaMetrics/grafana-datasource/releases> and verify that draft release with the name `TAG` has been created
    and this release contains all the needed binaries and checksums.
-5. Remove the `draft` checkbox for the `TAG` release and manually publish it.
+1. Remove the `draft` checkbox for the `TAG` release and manually publish it.
 
 
 ## FAQ
