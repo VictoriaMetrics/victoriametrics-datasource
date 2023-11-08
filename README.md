@@ -375,4 +375,4 @@ or Loki type. See more details [here](https://github.com/VictoriaMetrics/grafana
 
 ## License
 
-This project is licensed under the [AGPL-3.0-only](LICENSE).
+This project is licensed under the [AGPL-3.0-only](https://github.com/VictoriaMetrics/grafana-datasource/blob/main/LICENSE).
