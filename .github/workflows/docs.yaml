@@ -44,8 +44,7 @@ jobs:
       # Copies README.md and assets from docs/assets
       - name: Update ds docs in VM repo
         run: |
-          echo '
-          ---
+          echo '---
           sort: 38
           weight: 38
           title: Grafana datasource
@@ -56,7 +55,7 @@ jobs:
           aliases:
           - /grafana-datasource.html"
           ---
-          ' > docs.md > ../__vm-docs-repo/docs/grafana-datasource.md
+          ' > ../__vm-docs-repo/docs/grafana-datasource.md
 
           cat ./README.md >>  ../__vm-docs-repo/docs/grafana-datasource.md
           sed -i 's|docs/assets/||g' ../__vm-docs-repo/docs/grafana-datasource.md
