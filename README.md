@@ -47,6 +47,45 @@ locally, please checkout the [Plugin installation docs](https://grafana.com/docs
 
 ### Grafana Provisioning
 
+#### Run from the main repository
+In the VictoriaMetrics repository, we have prepared configurations to facilitate the execution of either the single 
+version or all components of the cluster version of the [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics).  
+
+To begin, clone [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) repository. 
+
+If it is needed a [single version of the VicrtoriaMetrics](https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html), 
+use the following commands:
+
+```bash
+make docker-single-vm-datasource-up
+```
+
+To shut down the installation, simply execute:
+
+```bash
+make docker-single-vm-datasource-down
+```
+
+For the [cluster version of the VictoriaMetrics](https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html),
+use the following commands: 
+
+```bash
+make docker-cluster-vm-datasource-up
+```
+
+To shut down the cluster installation, use:
+
+```bash
+make docker-cluster-vm-datasource-down
+```
+
+When executing any of the up commands, all components will be installed, 
+and the datasource will be configured for use with Grafana. No additional changes are required.
+
+Similarly, when executing any of the down commands, all services will be shut down, 
+and associated volumes will be deleted.
+
+#### Prepare own installation
 Provision of Grafana plugin requires to create
 [datasource config file](http://docs.grafana.org/administration/provisioning/#datasources).
 
