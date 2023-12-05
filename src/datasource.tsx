@@ -92,7 +92,6 @@ export class PrometheusDatasource
   extends DataSourceWithBackend<PromQuery, PromOptions>
   implements DataSourceWithQueryImportSupport<PromQuery>, DataSourceWithQueryExportSupport<PromQuery> {
   type: string;
-  editorSrc: string;
   ruleMappings: { [index: string]: string };
   url: string;
   id: number;
@@ -126,7 +125,6 @@ export class PrometheusDatasource
     this.type = DATASOURCE_TYPE;
     this.subType = PromApplication.VictoriaMetrics;
     this.rulerEnabled = false;
-    this.editorSrc = 'app/features/prometheus/partials/query.editor.html';
     this.id = instanceSettings.id;
     this.url = instanceSettings.url!;
     this.access = 'direct' //instanceSettings.access;
