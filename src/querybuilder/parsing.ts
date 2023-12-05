@@ -206,7 +206,7 @@ function handleFunction(expr: string, node: SyntaxNode, context: Context) {
   //   the query model.
   // - it is easier to handle template variables this way as template variable is an error for the parser
   if (rangeFunctions.includes(funcName) || funcName.endsWith('_over_time')) {
-    let match = getString(expr, node).match(/\[(.+)\]/);
+    let match = getString(expr, node).match(/(?<!\{[^}]*)\[(.+?)](?![^{]*})/);
     if (match?.[1]) {
       interval = match[1];
       params.push(match[1]);
