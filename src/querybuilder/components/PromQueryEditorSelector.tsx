@@ -146,6 +146,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
         <QueryHeaderSwitch label="Raw" value={rawQuery} onChange={onShowRawChange}/>
         <FlexItem grow={1}/>
         <WithTemplateConfig
+          app={app}
           template={templateByDashboard}
           setTemplate={setTemplateByDashboard}
           dashboardUID={dashboardUID}

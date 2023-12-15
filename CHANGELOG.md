@@ -5,6 +5,8 @@
 * FEATURE: add Windows support for backend plugin. See how to build backend plugin for various platforms [here](https://github.com/VictoriaMetrics/grafana-datasource#3-how-to-build-backend-plugin). See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/67).  
 * FEATURE: migrate to React to prevent warnings about the discontinuation of Angular support. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/102).
 * FEATURE: add `--version` flag for backend datasource binary. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/68).
+* FEATURE: add a warning window about using `WITH templates` for not yet created dashboards. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/123).
+* FEATURE: add a separate scope for storing `WITH templates` for the Explore tab.
 
 * BUGFIX: fix incorrect parsing when switching between code/builder modes in query editor. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/112)
 
