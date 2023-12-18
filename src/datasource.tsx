@@ -535,7 +535,7 @@ export class PrometheusDatasource
     expr = this.enhanceExprWithAdHocFilters(expr);
 
     // Apply WITH templates
-    const dashboardUID = options.dashboardUID
+    const dashboardUID = options.dashboardUID || options.app || ""
     expr = mergeTemplateWithQuery(expr, this.withTemplates.find(t => t.uid === dashboardUID))
 
     // Only replace vars in expression after having (possibly) updated interval vars
