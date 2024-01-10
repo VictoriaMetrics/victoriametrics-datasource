@@ -2,7 +2,7 @@
 
 ## tip
 
-## [v0.5.1]
+## [v0.5.1](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.5.1)
 
 * BUGFIX: fix query builder logic to correctly parse metric names with dots. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/128)
 
