@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix query builder logic to correctly parse metric names with dots. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/128)
+
 ## [v0.5.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.5.0)
 
 * FEATURE: add Windows support for backend plugin. See how to build backend plugin for various platforms [here](https://github.com/VictoriaMetrics/grafana-datasource#3-how-to-build-backend-plugin). See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/67).  
