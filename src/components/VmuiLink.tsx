@@ -32,6 +32,8 @@ interface Props {
   dashboardUID: string;
 }
 
+export const getDefaultVmuiUrl = (serverUrl: string) => `${serverUrl.replace(/\/$/, "")}/vmui/`
+
 export const relativeTimeOptionsVMUI = [
   { title: "Last 5 minutes", duration: "5m" },
   { title: "Last 15 minutes", duration: "15m" },
@@ -124,7 +126,7 @@ const VmuiLink: FC<Props> = ({
         return k + '=' + encodeURIComponent(v);
       }).join('&');
 
-      const vmuiUrl = dsSettings.jsonData.vmuiUrl || `${dsSettings.url}/graph`
+      const vmuiUrl = dsSettings.jsonData.vmuiUrl || getDefaultVmuiUrl(dsSettings.url)
       setHref(`${vmuiUrl}?${args}`);
     };
 

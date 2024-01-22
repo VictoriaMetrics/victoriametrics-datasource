@@ -56,6 +56,7 @@ import {
 
 import { addLabelToQuery } from './add_label_to_query';
 import { AnnotationQueryEditor } from "./components/Annotations/AnnotationQueryEditor";
+import { getDefaultVmuiUrl } from "./components/VmuiLink";
 import { WithTemplate } from "./components/WithTemplateConfig/types";
 import { mergeTemplateWithQuery } from "./components/WithTemplateConfig/utils/getArrayFromTemplate";
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
@@ -134,7 +135,7 @@ export class PrometheusDatasource
     this.queryTimeout = instanceSettings.jsonData.queryTimeout;
     this.httpMethod = instanceSettings.jsonData.httpMethod || 'GET';
     this.directUrl = instanceSettings.jsonData.directUrl ?? this.url;
-    this.vmuiUrl = instanceSettings.jsonData.vmuiUrl || `${this.url}/graph`;
+    this.vmuiUrl = instanceSettings.jsonData.vmuiUrl || getDefaultVmuiUrl(this.url);
     this.exemplarTraceIdDestinations = instanceSettings.jsonData.exemplarTraceIdDestinations;
     this.ruleMappings = {};
     this.languageProvider = languageProvider ?? new PrometheusLanguageProvider(this);
