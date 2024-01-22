@@ -2,9 +2,19 @@
 
 ## tip
 
+## [v0.5.1](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.5.1)
+
+* BUGFIX: fix query builder logic to correctly parse metric names with dots. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/128)
+
+## [v0.5.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.5.0)
+
 * FEATURE: add Windows support for backend plugin. See how to build backend plugin for various platforms [here](https://github.com/VictoriaMetrics/grafana-datasource#3-how-to-build-backend-plugin). See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/67).  
-* FEATURE: the annotation editor component has been migrated from using Angular template to React. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/102).
+* FEATURE: migrate to React to prevent warnings about the discontinuation of Angular support. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/102).
 * FEATURE: add `--version` flag for backend datasource binary. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/68).
+* FEATURE: add a warning window about using `WITH templates` for not yet created dashboards. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/123).
+* FEATURE: add a separate scope for storing `WITH templates` for the Explore tab.
+
+* BUGFIX: fix incorrect parsing when switching between code/builder modes in query editor. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/112)
 
 ## [v0.4.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.4.0)
 

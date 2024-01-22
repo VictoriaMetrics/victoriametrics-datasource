@@ -1,84 +1,62 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import { Badge, Button, IconButton, Modal, useStyles2 } from "@grafana/ui";
+import { CoreApp } from "@grafana/data";
+import { IconButton, Modal } from "@grafana/ui";
 
 import { PrometheusDatasource } from "../../datasource";
 
-import TemplateEditor from "./TemplateEditor/TemplateEditor";
+import WarningNewDashboard from "./WarningSavedDashboard/WarningSavedDashboard";
+import WithTemplateBody from "./WithTemplateBody/WithTemplateBody";
 import getDashboardByUID from "./api/getDashboardList";
-import useUpdateDatasource from "./hooks/useUpdateDatasource";
-import useValidateExpr from "./hooks/useValidateExpr";
-import getStyles from "./style";
 import { DashboardResponse, WithTemplate } from "./types";
 
-interface Props {
+export interface WithTemplateConfigProps {
   template?: WithTemplate;
   setTemplate: React.Dispatch<React.SetStateAction<WithTemplate | undefined>>
   datasource: PrometheusDatasource;
   dashboardUID: string;
+  app?: CoreApp;
 }
 
-const WithTemplateConfig: FC<Props> = ({ template, setTemplate, dashboardUID, datasource }) => {
-  const styles = useStyles2(getStyles);
+const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate, dashboardUID, datasource, app }) => {
+  const [isValidDashboard, setIsValidDashboard] = useState(app === CoreApp.Explore)
 
-  const { validateResult, isValidExpr } = useValidateExpr(datasource.id)
-  const { updateDatasource } = useUpdateDatasource({
-    datasourceUID: datasource.uid,
-    dashboardUID
-  })
-
-  const [value, setValue] = useState(template?.expr || "")
   const [dashboardResponse, setDashboardResponse] = useState<DashboardResponse | null>()
-  const [isLoading, setIsLoading] = useState(false)
 
-  const dashboardTitle = `${dashboardResponse?.dashboard?.title || "current"}`
-  const dashboardFolder = `${dashboardResponse?.meta?.folderTitle || "General"}`
+  const modalTitle = useMemo(() => {
+    const explore = app === CoreApp.Explore ? "Explore" : ""
+    const folderTitle = dashboardResponse?.meta?.folderTitle
+    const dashboardTitle = dashboardResponse?.dashboard?.title
+    const templatesTitle = "WITH templates"
+    const fullTitle = [explore, folderTitle, dashboardTitle, templatesTitle].filter(Boolean).join(" / ")
+    return isValidDashboard ? fullTitle : templatesTitle
+  }, [isValidDashboard, dashboardResponse, app])
 
   const [showTemplates, setShowTemplates] = useState(false);
   const handleClose = () => setShowTemplates(false);
   const handleOpen = () => setShowTemplates(true);
-
-  const handleSave = useCallback(async () => {
-    setIsLoading(true)
-    const isValid = await isValidExpr(value)
-    if (!isValid) {
-      setIsLoading(false)
-      return
-    }
-    try {
-      const templates = await updateDatasource(value)
-      datasource.withTemplatesUpdate(templates)
-      setTemplate(templates.find(t => t?.uid === dashboardUID))
-      handleClose()
-    } catch (e) {
-      console.error(e)
-    }
-    setIsLoading(false)
-  }, [value, isValidExpr, updateDatasource, datasource, dashboardUID, setTemplate])
+  const handleAcceptWarning = () => setIsValidDashboard(true)
 
   useEffect(() => {
     setTemplate(datasource.withTemplates.find(t => t.uid === dashboardUID))
   }, [setTemplate, datasource, dashboardUID])
 
   useEffect(() => {
-    value && isValidExpr(value)
-  }, [value, isValidExpr])
-
-  useEffect(() => {
-    setValue(template?.expr || "")
-  }, [template])
-
-  useEffect(() => {
     const fetchDashboard = async () => {
       try {
         const dashboardResponse = await getDashboardByUID(dashboardUID)
         setDashboardResponse(dashboardResponse)
+        setIsValidDashboard(true)
       } catch (e) {
         console.error(e)
       }
     }
-    if (dashboardUID) {fetchDashboard()}
-  }, [dashboardUID]);
+    if (dashboardUID) {
+      fetchDashboard()
+    } else if (app !== CoreApp.Explore) {
+      setIsValidDashboard(false)
+    }
+  }, [dashboardUID, app]);
 
   return (
     <>
@@ -89,47 +67,26 @@ const WithTemplateConfig: FC<Props> = ({ template, setTemplate, dashboardUID, da
         onClick={handleOpen}
       />
       <Modal
-        title={`${dashboardFolder} / ${dashboardTitle} / WITH templates`}
+        title={modalTitle}
         isOpen={showTemplates}
         closeOnEscape={true}
         closeOnBackdropClick={false}
         onDismiss={handleClose}
       >
-        <div className={styles.body}>
-          <TemplateEditor
-            initialValue={value}
+        {isValidDashboard ? (
+          <WithTemplateBody
             datasource={datasource}
-            onChange={setValue}
+            dashboardUID={dashboardUID || app || ""}
+            handleClose={handleClose}
+            template={template}
+            setTemplate={setTemplate}
           />
-          <Badge
-            icon={validateResult.icon || "info"}
-            color={validateResult.color || "blue"}
-            text={validateResult.error || validateResult.title}
+        ) : (
+          <WarningNewDashboard
+            onAccept={handleAcceptWarning}
+            onClose={handleClose}
           />
-          <div className={styles.button}>
-            <a
-              className="text-link"
-              target="_blank"
-              href={"https://github.com/VictoriaMetrics/grafana-datasource#how-to-use-with-templates"} rel="noreferrer"
-            >
-              <Button
-                variant={'secondary'}
-                fill={"text"}
-                icon={"book"}
-                size={"sm"}
-              >
-                How it works?
-              </Button>
-            </a>
-            <Button
-              variant={'success'}
-              onClick={handleSave}
-              disabled={isLoading}
-            >
-              Save
-            </Button>
-          </div>
-        </div>
+        )}
       </Modal>
     </>
   )
