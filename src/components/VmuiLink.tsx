@@ -32,7 +32,7 @@ interface Props {
   dashboardUID: string;
 }
 
-export const getDefaultVmuiUrl = (serverUrl: string) => `${serverUrl.replace(/\/$/, "")}/vmui/`
+export const getDefaultVmuiUrl = (serverUrl = "#") => `${serverUrl.replace(/\/$/, "")}/vmui/`
 
 export const relativeTimeOptionsVMUI = [
   { title: "Last 5 minutes", duration: "5m" },
