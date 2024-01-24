@@ -5,6 +5,7 @@
 ## [v0.5.1](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.5.1)
 
 * BUGFIX: fix query builder logic to correctly parse metric names with dots. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/128)
+* BUGFIX: fix the parsing logic in `renderLegendFormat` to correctly replace legend label names. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/133)
 
 ## [v0.5.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.5.0)
 
