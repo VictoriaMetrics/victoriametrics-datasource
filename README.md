@@ -45,6 +45,16 @@ See [why VictoriaMetrics datasource is unsigned](#why-victoriaMetrics-datasource
 For detailed instructions on how to install the plugin on Grafana Cloud or
 locally, please checkout the [Plugin installation docs](https://grafana.com/docs/grafana/latest/plugins/installation/).
 
+### Install via Docker
+
+[VictoriaMetrics repo](https://github.com/victoriaMetrics/victoriaMetrics) provides a complete
+[docker-compose](https://github.com/VictoriaMetrics/VictoriaMetrics/tree/master/deployment/docker#docker-compose-environment-for-victoriametrics)
+environment to spin-up all required components via Docker.
+
+To begin, clone [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) repository and follow 
+steps described in the [README](https://github.com/VictoriaMetrics/VictoriaMetrics/tree/master/deployment/docker#docker-compose-environment-for-victoriametrics).
+ 
+
 ### Grafana Provisioning
 
 Provision of Grafana plugin requires to create
