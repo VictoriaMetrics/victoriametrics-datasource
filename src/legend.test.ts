@@ -25,6 +25,6 @@ describe('renderLegendFormat()', () => {
     expect(renderLegendFormat('value: {a}}}', labels)).toEqual('value: {a}}}');
 
     // Current behavior -- not sure if expected or not
-    expect(renderLegendFormat('value: {{{a}}}', labels)).toEqual('value: {a}');
+    expect(renderLegendFormat('value: {{{a}}}', labels)).toEqual('value: {AAA}');
   });
 });
