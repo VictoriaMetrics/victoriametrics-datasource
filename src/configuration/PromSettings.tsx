@@ -33,6 +33,7 @@ import {
   regexValidation,
 } from '@grafana/ui';
 
+import { getDefaultVmuiUrl } from "../components/VmuiLink";
 import { PromOptions } from '../types';
 
 const { Input, FormField } = LegacyForms;
@@ -154,7 +155,7 @@ export const PromSettings = (props: Props) => {
                   value={options.jsonData.vmuiUrl}
                   onChange={onChangeHandler('vmuiUrl', options, onOptionsChange)}
                   spellCheck={false}
-                  placeholder={`${options.url}/graph?`}
+                  placeholder={getDefaultVmuiUrl(options.url)}
                 />
               }
             />
