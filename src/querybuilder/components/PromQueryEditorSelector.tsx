@@ -108,8 +108,10 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
     const withTemplates = getArrayFromTemplate(templateByDashboard)
     datasource.languageProvider = new PrometheusLanguageProvider(datasource, { withTemplates })
     datasource.languageProvider.start()
-    onRunQuery()
-  }, [onRunQuery, datasource, templateByDashboard])
+    if (app !== CoreApp.UnifiedAlerting){
+      onRunQuery();
+    }
+  }, [onRunQuery, datasource, templateByDashboard, app])
 
   return (
     <>
