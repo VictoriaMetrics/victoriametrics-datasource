@@ -282,6 +282,11 @@ export function escapeLabelValueInRegexSelector(labelValue: string): string {
   return escapeLabelValueInExactSelector(escapePrometheusRegexp(labelValue));
 }
 
+export function escapeMetricNameSpecialCharacters(metricName: string) {
+  const specialChars = /[-+*\/%^=]/g;
+  return metricName.replace(specialChars, (match) => '\\' + match);
+}
+
 export enum AbstractLabelOperator {
   Equal = "Equal",
   NotEqual = "NotEqual",

@@ -20,6 +20,8 @@ import { IMarkdownString } from "monaco-editor";
 
 import type { Monaco, monacoTypes } from '@grafana/ui';
 
+import { escapeMetricNameSpecialCharacters } from "../../../language_utils";
+
 import { getCompletions, DataProvider, CompletionType } from './completions';
 import { getSituation } from './situation';
 import { NeverCaseError } from './util';
@@ -100,7 +102,7 @@ export function getCompletionProvider(
       const suggestions: monacoTypes.languages.CompletionItem[] = items.map((item, index) => ({
         kind: getMonacoCompletionItemKind(item.type, monaco),
         label: item.label,
-        insertText: item.insertText,
+        insertText: item.type === "METRIC_NAME" ? escapeMetricNameSpecialCharacters(item.insertText) : item.insertText,
         detail: item.detail,
         documentation: { value: item.documentation } as IMarkdownString,
         sortText: index.toString().padStart(maxIndexDigits, '0'), // to force the order we have
