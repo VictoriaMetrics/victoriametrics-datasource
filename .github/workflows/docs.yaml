@@ -53,7 +53,7 @@ jobs:
               parent: 'victoriametrics'
               weight: 38
           aliases:
-          - /grafana-datasource.html"
+          - /grafana-datasource.html
           ---
           ' > ../__vm-docs-repo/docs/grafana-datasource.md
 
