@@ -2,6 +2,8 @@
 
 ## tip
 
+## [v0.6.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.6.0)
+
 * FEATURE: add support metrics with special characters in query builder. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/131)
 
 * BUGFIX: fix the default link to vmui. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/132)
