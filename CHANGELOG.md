@@ -2,6 +2,8 @@
 
 ## tip
 
+* FEATURE: add support metrics with special characters in query builder. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/131)
+
 * BUGFIX: fix the default link to vmui. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/132)
 * BUGFIX: fix the parsing logic in `renderLegendFormat` to correctly replace legend label names. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/133)
 * BUGFIX: fix query editor which produce a lot of requests for alerting rule evaluation. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/134)

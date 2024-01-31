@@ -20,7 +20,9 @@ import { IMarkdownString } from "monaco-editor";
 
 import type { Monaco, monacoTypes } from '@grafana/ui';
 
-import { getCompletions, DataProvider, CompletionType } from './completions';
+import { escapeMetricNameSpecialCharacters } from "../../../language_utils";
+
+import { CompletionType, DataProvider, getCompletions } from './completions';
 import { getSituation } from './situation';
 import { NeverCaseError } from './util';
 
@@ -47,19 +49,19 @@ export function getSuggestOptions(): monacoTypes.editor.ISuggestOptions {
 
 function getMonacoCompletionItemKind(type: CompletionType, monaco: Monaco): monacoTypes.languages.CompletionItemKind {
   switch (type) {
-    case 'DURATION':
+    case CompletionType.duration:
       return monaco.languages.CompletionItemKind.Unit;
-    case 'FUNCTION':
+    case CompletionType.function:
       return monaco.languages.CompletionItemKind.Variable;
-    case 'HISTORY':
+    case CompletionType.history:
       return monaco.languages.CompletionItemKind.Snippet;
-    case 'LABEL_NAME':
+    case CompletionType.labelName:
       return monaco.languages.CompletionItemKind.Enum;
-    case 'LABEL_VALUE':
+    case CompletionType.labelValue:
       return monaco.languages.CompletionItemKind.EnumMember;
-    case 'METRIC_NAME':
+    case CompletionType.metricName:
       return monaco.languages.CompletionItemKind.Constructor;
-    case 'WITH_TEMPLATE':
+    case CompletionType.withTemplate:
       return monaco.languages.CompletionItemKind.Constant;
     default:
       throw new NeverCaseError();
@@ -100,7 +102,7 @@ export function getCompletionProvider(
       const suggestions: monacoTypes.languages.CompletionItem[] = items.map((item, index) => ({
         kind: getMonacoCompletionItemKind(item.type, monaco),
         label: item.label,
-        insertText: item.insertText,
+        insertText: item.type === CompletionType.metricName ? escapeMetricNameSpecialCharacters(item.insertText) : item.insertText,
         detail: item.detail,
         documentation: { value: item.documentation } as IMarkdownString,
         sortText: index.toString().padStart(maxIndexDigits, '0'), // to force the order we have

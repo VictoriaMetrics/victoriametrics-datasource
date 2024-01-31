@@ -23,7 +23,15 @@ import type { Situation, Label } from './situation';
 import { NeverCaseError } from './util';
 // FIXME: we should not load this from the "outside", but we cannot do that while we have the "old" query-field too
 
-export type CompletionType = 'HISTORY' | 'FUNCTION' | 'METRIC_NAME' | 'WITH_TEMPLATE' | 'DURATION' | 'LABEL_NAME' | 'LABEL_VALUE';
+export enum CompletionType {
+  history = 'HISTORY',
+  function = 'FUNCTION',
+  metricName = 'METRIC_NAME',
+  withTemplate = 'WITH_TEMPLATE',
+  duration = 'DURATION',
+  labelName = 'LABEL_NAME',
+  labelValue = 'LABEL_VALUE',
+}
 
 type Completion = {
   type: CompletionType;
@@ -60,7 +68,7 @@ export type DataProvider = {
 async function getAllMetricNamesCompletions(dataProvider: DataProvider): Promise<Completion[]> {
   const metrics = await dataProvider.getAllMetricNames();
   return metrics.map((metric) => ({
-    type: 'METRIC_NAME',
+    type: CompletionType.metricName,
     label: metric.name,
     insertText: metric.name,
     detail: `${metric.name} : ${metric.type}`,
@@ -71,7 +79,7 @@ async function getAllMetricNamesCompletions(dataProvider: DataProvider): Promise
 async function getAllWithTemplatesCompletions(dataProvider: DataProvider): Promise<Completion[]> {
   const metrics = await dataProvider.getAllWithTemplates();
   return metrics.map((metric) => ({
-    type: 'WITH_TEMPLATE',
+    type: CompletionType.withTemplate,
     label: metric.name,
     insertText: metric.name,
     detail: metric.value,
@@ -80,7 +88,7 @@ async function getAllWithTemplatesCompletions(dataProvider: DataProvider): Promi
 }
 
 const FUNCTION_COMPLETIONS: Completion[] = FUNCTIONS.map((f) => ({
-  type: 'FUNCTION',
+  type: CompletionType.function,
   label: f.label,
   insertText: f.insertText ?? '', // i don't know what to do when this is nullish. it should not be.
   detail: f.detail,
@@ -104,7 +112,7 @@ const DURATION_COMPLETIONS: Completion[] = [
   '1h',
   '1d',
 ].map((text) => ({
-  type: 'DURATION',
+  type: CompletionType.duration,
   label: text,
   insertText: text,
 }));
@@ -115,7 +123,7 @@ async function getAllHistoryCompletions(dataProvider: DataProvider): Promise<Com
   const allHistory = await dataProvider.getHistory();
   // FIXME: find a better history-limit
   return allHistory.slice(0, 10).map((expr) => ({
-    type: 'HISTORY',
+    type: CompletionType.history,
     label: expr,
     insertText: expr,
   }));
@@ -162,7 +170,7 @@ async function getLabelNamesForCompletions(
 ): Promise<Completion[]> {
   const labelNames = await getLabelNames(metric, otherLabels, dataProvider);
   const labelNamesCompletion: Completion[] = labelNames.map((text) => ({
-    type: 'LABEL_NAME',
+    type: CompletionType.labelName,
     label: text,
     insertText: `${text}${suffix}`,
     triggerOnInsert,
@@ -215,7 +223,7 @@ async function getLabelValuesForMetricCompletions(
 ): Promise<Completion[]> {
   const values = await getLabelValues(metric, labelName, otherLabels, dataProvider);
   return values.map((text) => ({
-    type: 'LABEL_VALUE',
+    type: CompletionType.labelValue,
     label: text,
     insertText: betweenQuotes ? text : `"${text}"`, // FIXME: escaping strange characters?
   }));

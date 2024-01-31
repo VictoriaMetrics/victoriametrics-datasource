@@ -24,6 +24,7 @@ import { SelectableValue, toOption, GrafanaTheme2 } from '@grafana/data';
 import { Select, FormatOptionLabelMeta, useStyles2 } from '@grafana/ui';
 
 import { EditorField, EditorFieldGroup } from '../../components/QueryEditor';
+import { escapeMetricNameSpecialCharacters } from "../../language_utils";
 import { PromVisualQuery } from '../types';
 
 // We are matching words split with space
@@ -95,7 +96,7 @@ export function MetricSelect({ query, onChange, onGetMetrics }: Props) {
           options={state.metrics}
           onChange={({ value }) => {
             if (value) {
-              onChange({ ...query, metric: value });
+              onChange({ ...query, metric: escapeMetricNameSpecialCharacters(value) });
             }
           }}
         />
