@@ -61,7 +61,11 @@ import { WithTemplate } from "./components/WithTemplateConfig/types";
 import { mergeTemplateWithQuery } from "./components/WithTemplateConfig/utils/getArrayFromTemplate";
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
 import PrometheusLanguageProvider from './language_provider';
-import { expandRecordingRules } from './language_utils';
+import {
+  escapeMetricNameSpecialCharacters,
+  expandRecordingRules,
+  unescapeMetricNameSpecialCharacters
+} from './language_utils';
 import { renderLegendFormat } from './legend';
 import PrometheusMetricFindQuery from './metric_find_query';
 import { getInitHints, getQueryHints } from './query_hints';
@@ -1019,7 +1023,10 @@ export class PrometheusDatasource
   }
 
   interpolateString(string: string) {
-    return this.templateSrv.replace(string, undefined, this.interpolateQueryExpr);
+    const operation = string.includes("__name__")
+      ? unescapeMetricNameSpecialCharacters
+      : escapeMetricNameSpecialCharacters;
+    return this.templateSrv.replace(operation(string), undefined, this.interpolateQueryExpr);
   }
 
   withTemplatesUpdate(withTemplates: WithTemplate[]) {
