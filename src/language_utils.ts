@@ -287,6 +287,11 @@ export function escapeMetricNameSpecialCharacters(metricName: string) {
   return metricName.replace(specialChars, (match) => '\\' + match);
 }
 
+export function unescapeMetricNameSpecialCharacters(escapedMetricName: string) {
+  const escapedSpecialChars = /\\([-+*\/%^=])/g;
+  return escapedMetricName.replace(escapedSpecialChars, (match, p1) => p1);
+}
+
 export enum AbstractLabelOperator {
   Equal = "Equal",
   NotEqual = "NotEqual",
