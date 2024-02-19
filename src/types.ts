@@ -94,6 +94,7 @@ export interface PromDataSuccessResponse<T = PromData> {
   status: 'success';
   data: T;
   trace?: TracingData;
+  isPartial?: boolean;
 }
 
 export interface PromDataErrorResponse<T = PromData> {

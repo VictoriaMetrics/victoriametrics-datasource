@@ -1,6 +1,7 @@
 # Changelog
 
 ## tip
+* FEATURE: add visually highlight partial responses. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/142)
 
 * BUGFIX: correct the queries for `Label Filters` and `Metrics Browser` for metrics with special characters. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/140)
 
