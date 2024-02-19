@@ -34,6 +34,7 @@ import {
   Labels,
   MutableField,
   PreferredVisualisationType,
+  QueryResultMetaNotice,
   ScopedVars,
   TIME_SERIES_TIME_FIELD_NAME,
   TIME_SERIES_VALUE_FIELD_NAME,
@@ -260,6 +261,17 @@ export function transform(
   };
   const prometheusResult = response.data.data;
   const traceResult = response.data?.trace
+
+  if (response.data.isPartial) {
+    const partialWarning = {
+      severity: "warning",
+      text: `The shown results are marked as PARTIAL. The result is marked as partial if one or more vmstorage nodes failed to respond to the query.`
+    } as QueryResultMetaNotice
+
+    Array.isArray(options.meta.notices)
+      ? options.meta.notices.push(partialWarning)
+      : options.meta.notices = [partialWarning]
+  }
 
   if (isExemplarData(prometheusResult)) {
     return {
