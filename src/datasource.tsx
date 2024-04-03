@@ -35,6 +35,8 @@ import {
   dateMath,
   DateTime,
   dateTime,
+  getDefaultTimeRange,
+  LegacyMetricFindQueryOptions,
   LoadingState,
   QueryFixAction,
   rangeUtil,
@@ -64,6 +66,7 @@ import PrometheusLanguageProvider from './language_provider';
 import {
   escapeMetricNameSpecialCharacters,
   expandRecordingRules,
+  getVictoriaMetricsTime,
   unescapeMetricNameSpecialCharacters
 } from './language_utils';
 import { renderLegendFormat } from './legend';
@@ -145,7 +148,7 @@ export class PrometheusDatasource
     this.languageProvider = languageProvider ?? new PrometheusLanguageProvider(this);
     this.lookupsDisabled = instanceSettings.jsonData.disableMetricsLookup ?? false;
     this.customQueryParameters = new URLSearchParams(instanceSettings.jsonData.customQueryParameters);
-    this.variables = new PrometheusVariableSupport(this, this.templateSrv, this.timeSrv);
+    this.variables = new PrometheusVariableSupport(this, this.templateSrv);
     this.exemplarsAvailable = false;
     this.withTemplates = instanceSettings.jsonData.withTemplates ?? [];
     this.limitMetrics = instanceSettings.jsonData.limitMetrics ?? {};
@@ -668,19 +671,20 @@ export class PrometheusDatasource
     return error;
   };
 
-  metricFindQuery(query: string) {
+  metricFindQuery(query: string, options?: LegacyMetricFindQueryOptions) {
     if (!query) {
       return Promise.resolve([]);
     }
 
+    const range = options?.range ?? getDefaultTimeRange()
     const scopedVars = {
       __interval: { text: this.interval, value: this.interval },
       __interval_ms: { text: rangeUtil.intervalToMs(this.interval), value: rangeUtil.intervalToMs(this.interval) },
-      ...this.getRangeScopedVars(this.timeSrv.timeRange()),
+      ...this.getRangeScopedVars(range),
     };
     const interpolated = this.templateSrv.replace(query, scopedVars, this.interpolateQueryExpr);
     const metricFindQuery = new PrometheusMetricFindQuery(this, interpolated);
-    return metricFindQuery.process();
+    return metricFindQuery.process(range);
   }
 
 
@@ -1031,6 +1035,13 @@ export class PrometheusDatasource
 
   withTemplatesUpdate(withTemplates: WithTemplate[]) {
     this.withTemplates = withTemplates ?? [];
+  }
+
+  getAdjustedInterval(timeRange: TimeRange): { start: string; end: string } {
+    return {
+      start: getVictoriaMetricsTime(timeRange.from, false).toString(),
+      end: getVictoriaMetricsTime(timeRange.to, true).toString(),
+    };
   }
 }
 

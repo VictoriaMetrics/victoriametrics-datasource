@@ -187,6 +187,39 @@ export enum LegendFormatMode {
   Custom = '__custom',
 }
 
+export interface QueryBuilderLabelFilter {
+  label: string;
+  op: string;
+  value: string;
+}
+
+export enum PromVariableQueryType {
+  LabelNames,
+  LabelValues,
+  MetricNames,
+  VarQueryResult,
+  SeriesQuery,
+  ClassicQuery,
+}
+
+export interface PromVariableQuery extends DataQuery {
+  query?: string;
+  expr?: string;
+  qryType?: PromVariableQueryType;
+  label?: string;
+  metric?: string;
+  varQuery?: string;
+  seriesQuery?: string;
+  labelFilters?: QueryBuilderLabelFilter[];
+  match?: string;
+  classicQuery?: string;
+}
+
+export type StandardPromVariableQuery = {
+  query: string;
+  refId: string;
+};
+
 export interface TracingData {
   message: string;
   duration_msec: number;

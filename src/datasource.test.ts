@@ -494,7 +494,7 @@ describe('PrometheusDatasource', () => {
   describe('metricFindQuery', () => {
     beforeEach(() => {
       const query = 'query_result(topk(5,rate(http_request_duration_microseconds_count[$__interval])))';
-      ds.metricFindQuery(query);
+      ds.metricFindQuery(query, { range: timeSrvStub.timeRange() });
     });
 
     it('should call templateSrv.replace with scopedVars', () => {
@@ -505,6 +505,7 @@ describe('PrometheusDatasource', () => {
       const range = replaceMock.mock.calls[0][1].__range;
       const rangeMs = replaceMock.mock.calls[0][1].__range_ms;
       const rangeS = replaceMock.mock.calls[0][1].__range_s;
+      console.log({ range, rangeMs, rangeS })
       expect(range).toEqual({ text: '21s', value: '21s' });
       expect(rangeMs).toEqual({ text: 21031, value: 21031 });
       expect(rangeS).toEqual({ text: 21, value: 21 });
