@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 import { cloneDeep, defaults } from 'lodash';
 import { forkJoin, lastValueFrom, merge, Observable, of, OperatorFunction, pipe, throwError } from 'rxjs';
 import { catchError, filter, map, tap } from 'rxjs/operators';
@@ -388,7 +389,7 @@ export class PrometheusDatasource
 
 
       if (request.targets.every(t => t.refId === "Anno")) {
-        const query = request.targets[0] as PromQueryRequest
+        const query = { ...request.targets[0], expr: queries[0].expr } as PromQueryRequest
         return this.performAnnotationQuery({ ...query, start, end })
       }
 
@@ -714,6 +715,7 @@ export class PrometheusDatasource
   };
 
   performAnnotationQuery = (query: PromQueryRequest) => {
+    const correctQuery = { ...query, datasource: { uid: this.templateSrv.replace(query.datasource!.uid, {}), type: query.datasource!.type } };
     return getBackendSrv()
       .fetch<BackendDataSourceResponse>({
         url: '/api/ds/query',
@@ -721,7 +723,7 @@ export class PrometheusDatasource
         data: {
           from: (query.start * 1000).toString(),
           to: (query.end * 1000).toString(),
-          queries: [{ ...query, refId: "X" }],
+          queries: [{ ...correctQuery, refId: "X" }],
         },
         requestId: query.requestId,
       }).pipe(
