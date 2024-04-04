@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { once, chain, difference } from 'lodash';
+import { chain, difference, once } from 'lodash';
 import { LRUCache as LRU } from 'lru-cache'
 import Prism from 'prismjs';
 import { Value } from "slate";
@@ -486,18 +486,14 @@ export default class PromQlLanguageProvider extends LanguageProvider {
   }
 
   getSeriesLabels = async (selector: string, otherLabels: Label[]): Promise<string[]> => {
-    let possibleLabelNames, data: Record<string, string[]>;
-
     // Exclude __name__ from output
     otherLabels.push({ name: '__name__', value: '', op: '!=' });
-    data = await this.fetchSeriesLabelsMatch(selector);
-    possibleLabelNames = Object.keys(data);
-
+    const possibleLabelNames = await this.fetchSeriesLabelsMatch(selector);
     const usedLabelNames = new Set(otherLabels.map((l) => l.name)); // names used in the query
     return possibleLabelNames.filter((l) => !usedLabelNames.has(l));
   };
 
-  fetchSeriesLabelsMatch = async (name: string): Promise<Record<string, string[]>> => {
+  fetchSeriesLabelsMatch = async (name: string): Promise<string[]> => {
     const interpolatedName = this.datasource.interpolateString(name);
     const range = this.datasource.getAdjustedInterval(this.timeRange);
     const urlParams = {
@@ -506,9 +502,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     };
     const url = `/api/v1/labels`;
 
-    const data: string[] = await this.request(url, [], urlParams);
-    // Convert string array to Record<string , []>
-    return data.reduce((ac, a) => ({ ...ac, [a]: '' }), {});
+    return await this.request(url, [], urlParams)
   };
 
   fetchSeriesValuesWithMatch = async (

@@ -85,10 +85,10 @@ export function MetricsLabelsSection({
     labelsToConsider.push({ label: '__name__', op: '=', value: query.metric });
     const expr = promQueryModeller.renderLabels(labelsToConsider);
 
-    let labelsIndex: Record<string, string[]> = await datasource.languageProvider.fetchSeriesLabelsMatch(expr);
+    const labelNames = await datasource.languageProvider.fetchSeriesLabelsMatch(expr);
 
     // filter out already used labels
-    return Object.keys(labelsIndex)
+    return labelNames
       .filter((labelName) => !labelsToConsider.find((filter) => filter.label === labelName))
       .map((k) => ({ value: k }));
   };

@@ -122,8 +122,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
       const labelToConsider = [{ label: '__name__', op: '=', value: metric }];
       const expr = promQueryModeller.renderLabels(labelToConsider);
 
-      datasource.languageProvider.fetchSeriesLabelsMatch(expr).then((labelsIndex: Record<string, string[]>) => {
-        const labelNames = Object.keys(labelsIndex);
+      datasource.languageProvider.fetchSeriesLabelsMatch(expr).then((labelNames: string[]) => {
         const names = labelNames.map((value) => ({ label: value, value: value }));
         setLabelOptions([...variables, ...names]);
       });
