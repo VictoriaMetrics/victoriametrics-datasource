@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: correct parsing the Annotations queries when template variables are used. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/146)
+
 ## [v0.7.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.7.0)
 
 * FEATURE: add visually highlight partial responses. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/142)
@@ -22,7 +24,7 @@
 
 ## [v0.5.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.5.0)
 
-* FEATURE: add Windows support for backend plugin. See how to build backend plugin for various platforms [here](https://github.com/VictoriaMetrics/grafana-datasource#3-how-to-build-backend-plugin). See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/67).  
+* FEATURE: add Windows support for backend plugin. See how to build backend plugin for various platforms [here](https://github.com/VictoriaMetrics/grafana-datasource#3-how-to-build-backend-plugin). See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/67).
 * FEATURE: migrate to React to prevent warnings about the discontinuation of Angular support. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/102).
 * FEATURE: add `--version` flag for backend datasource binary. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/68).
 * FEATURE: add a warning window about using `WITH templates` for not yet created dashboards. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/123).
