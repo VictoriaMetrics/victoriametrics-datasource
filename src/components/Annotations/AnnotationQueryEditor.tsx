@@ -3,7 +3,6 @@ import React from 'react';
 import { AnnotationQuery } from '@grafana/data';
 import { AutoSizeInput, LegacyForms } from '@grafana/ui';
 
-
 const { Input } = LegacyForms;
 import { PromQueryCodeEditor } from '../../querybuilder/components/PromQueryCodeEditor';
 import { PromQuery } from '../../types';
