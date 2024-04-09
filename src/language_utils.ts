@@ -19,7 +19,8 @@
 import { invert } from 'lodash';
 import { Token } from 'prismjs';
 
-import { DataQuery, AbstractQuery, AbstractLabelMatcher } from '@grafana/data';
+import { AbstractQuery, AbstractLabelMatcher, DateTime, dateMath } from '@grafana/data';
+import { DataQuery } from '@grafana/schema'
 
 import { addLabelToQuery } from './add_label_to_query';
 import { SUGGESTIONS_LIMIT } from './language_provider';
@@ -378,4 +379,20 @@ export function extractLabelMatchers(tokens: Array<string | Token>): AbstractLab
   }
 
   return labelMatchers;
+}
+
+export function getVictoriaMetricsTime(date: string | DateTime, roundUp: boolean) {
+  if (typeof date === 'string') {
+    date = dateMath.parse(date, roundUp)!;
+  }
+
+  return Math.ceil(date.valueOf() / 1000);
+}
+
+export function truncateResult<T>(array: T[], limit?: number): T[] {
+  if (limit === undefined) {
+    limit = 1000;
+  }
+  array.length = Math.min(array.length, limit);
+  return array;
 }

@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { once, chain, difference } from 'lodash';
+import { chain, difference, once } from 'lodash';
 import { LRUCache as LRU } from 'lru-cache'
 import Prism from 'prismjs';
 import { Value } from "slate";
@@ -25,12 +25,15 @@ import {
   AbstractLabelMatcher,
   AbstractQuery,
   dateTime,
+  getDefaultTimeRange,
   HistoryItem,
   LanguageProvider,
+  TimeRange,
 } from '@grafana/data';
 import { BackendSrvRequest } from '@grafana/runtime';
 import { CompletionItem, CompletionItemGroup, SearchFunctionType, TypeaheadInput, TypeaheadOutput } from '@grafana/ui';
 
+import { Label } from "./components/monaco-query-field/monaco-completion-provider/situation";
 import { PrometheusDatasource } from './datasource';
 import {
   AbstractLabelOperator,
@@ -101,7 +104,7 @@ interface AutocompleteContext {
 }
 export default class PromQlLanguageProvider extends LanguageProvider {
   histogramMetrics: string[];
-  timeRange?: { start: number; end: number };
+  timeRange: TimeRange;
   metrics: string[];
   metricsMetadata?: PromMetricsMetadata;
   declare startTask: Promise<any>;
@@ -122,7 +125,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
     this.datasource = datasource;
     this.histogramMetrics = [];
-    this.timeRange = { start: 0, end: 0 };
+    this.timeRange = getDefaultTimeRange();
     this.metrics = [];
     this.withTemplates = []
 
@@ -144,17 +147,16 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     return defaultValue;
   };
 
-  start = async (): Promise<any[]> => {
+  start = async (timeRange?: TimeRange): Promise<any[]> => {
+    this.timeRange = timeRange ?? getDefaultTimeRange();
+
     if (this.datasource.lookupsDisabled) {
       return [];
     }
 
-    // TODO #33976: make those requests parallel
-    await this.fetchLabels();
     this.metrics = (await this.fetchLabelValues('__name__')) || [];
-    await this.loadMetricsMetadata();
     this.histogramMetrics = processHistogramMetrics(this.metrics).sort();
-    return [];
+    return Promise.all([this.loadMetricsMetadata(), this.fetchLabels()]);
   };
 
   async loadMetricsMetadata() {
@@ -482,6 +484,43 @@ export default class PromQlLanguageProvider extends LanguageProvider {
       return {};
     }
   }
+
+  getSeriesLabels = async (selector: string, otherLabels: Label[]): Promise<string[]> => {
+    // Exclude __name__ from output
+    otherLabels.push({ name: '__name__', value: '', op: '!=' });
+    const possibleLabelNames = await this.fetchSeriesLabelsMatch(selector);
+    const usedLabelNames = new Set(otherLabels.map((l) => l.name)); // names used in the query
+    return possibleLabelNames.filter((l) => !usedLabelNames.has(l));
+  };
+
+  fetchSeriesLabelsMatch = async (name: string): Promise<string[]> => {
+    const interpolatedName = this.datasource.interpolateString(name);
+    const range = this.datasource.getAdjustedInterval(this.timeRange);
+    const urlParams = {
+      ...range,
+      'match[]': interpolatedName,
+    };
+    const url = `/api/v1/labels`;
+
+    return await this.request(url, [], urlParams)
+  };
+
+  fetchSeriesValuesWithMatch = async (
+    name: string,
+    match?: string,
+    timeRange: TimeRange = this.timeRange
+  ): Promise<string[]> => {
+    const interpolatedName = name ? this.datasource.interpolateString(name) : null;
+    const interpolatedMatch = match ? this.datasource.interpolateString(match) : null;
+    const range = this.datasource.getAdjustedInterval(timeRange);
+    const urlParams = {
+      ...range,
+      ...(interpolatedMatch && { 'match[]': interpolatedMatch }),
+    };
+
+    const value = await this.request(`/api/v1/label/${interpolatedName}/values`, [], urlParams);
+    return value ?? [];
+  };
 
   fetchLabelValues = async (key: string): Promise<string[]> => {
     const params = this.datasource.getTimeRangeParams();
