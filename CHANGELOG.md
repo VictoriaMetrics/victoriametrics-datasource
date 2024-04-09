@@ -2,6 +2,8 @@
 
 ## tip
 
+## [v0.8.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.8.0)
+
 * FEATURE: add variable type selector to optimize API usage, favoring [/api/v1/labels](https://docs.victoriametrics.com/url-examples/#apiv1labels) and [/api/v1/label/.../values](https://docs.victoriametrics.com/url-examples/#apiv1labelvalues) over [/api/v1/series](https://docs.victoriametrics.com/url-examples/#apiv1series). See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/144)
 
 * BUGFIX: correct parsing the Annotations queries when template variables are used. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/146)
