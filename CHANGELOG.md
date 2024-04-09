@@ -2,6 +2,8 @@
 
 ## tip
 
+## [v0.7.1](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.7.1)
+
 * BUGFIX: correct parsing the Annotations queries when template variables are used. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/146)
 
 ## [v0.7.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.7.0)
