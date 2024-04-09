@@ -21,7 +21,7 @@ import React, { useCallback, useState } from 'react';
 import Highlighter from 'react-highlight-words';
 
 import { SelectableValue, toOption, GrafanaTheme2 } from '@grafana/data';
-import { Select, FormatOptionLabelMeta, useStyles2 } from '@grafana/ui';
+import { Select, FormatOptionLabelMeta, useStyles2, InlineField, InlineFieldRow } from '@grafana/ui';
 
 import { EditorField, EditorFieldGroup } from '../../components/QueryEditor';
 import { escapeMetricNameSpecialCharacters } from "../../language_utils";
@@ -34,9 +34,10 @@ export interface Props {
   query: PromVisualQuery;
   onChange: (query: PromVisualQuery) => void;
   onGetMetrics: () => Promise<SelectableValue[]>;
+  variableEditor?: boolean;
 }
 
-export function MetricSelect({ query, onChange, onGetMetrics }: Props) {
+export function MetricSelect({ query, onChange, onGetMetrics, variableEditor }: Props) {
   const styles = useStyles2(getStyles);
   const [state, setState] = useState<{
     metrics?: Array<SelectableValue<any>>;
@@ -76,32 +77,52 @@ export function MetricSelect({ query, onChange, onGetMetrics }: Props) {
     [styles.highlight]
   );
 
+  const handleOpenMenu = async () => {
+    setState({ isLoading: true });
+    const metrics = await onGetMetrics();
+    setState({ metrics, isLoading: undefined });
+  }
+
+  const handleChange = ({ value }: SelectableValue) => {
+    if (value) {
+      onChange({ ...query, metric: escapeMetricNameSpecialCharacters(value) });
+    }
+  }
+
+  const metricSelect = () => (
+    <Select
+      inputId="vm-metric-select"
+      className={styles.select}
+      value={query.metric ? toOption(query.metric) : undefined}
+      placeholder="Select metric"
+      allowCustomValue
+      formatOptionLabel={formatOptionLabel}
+      filterOption={customFilterOption}
+      onOpenMenu={handleOpenMenu}
+      isLoading={state.isLoading}
+      options={state.metrics}
+      onChange={handleChange}
+    />
+  )
+
   return (
-    <EditorFieldGroup>
-      <EditorField label="Metric">
-        <Select
-          inputId="prometheus-metric-select"
-          className={styles.select}
-          value={query.metric ? toOption(query.metric) : undefined}
-          placeholder="Select metric"
-          allowCustomValue
-          formatOptionLabel={formatOptionLabel}
-          filterOption={customFilterOption}
-          onOpenMenu={async () => {
-            setState({ isLoading: true });
-            const metrics = await onGetMetrics();
-            setState({ metrics, isLoading: undefined });
-          }}
-          isLoading={state.isLoading}
-          options={state.metrics}
-          onChange={({ value }) => {
-            if (value) {
-              onChange({ ...query, metric: escapeMetricNameSpecialCharacters(value) });
-            }
-          }}
-        />
-      </EditorField>
-    </EditorFieldGroup>
+    variableEditor ? (
+      <InlineFieldRow>
+        <InlineField
+          label="Metric"
+          labelWidth={20}
+          tooltip={<div>Optional: returns a list of label values for the label name in the specified metric.</div>}
+        >
+          {metricSelect()}
+        </InlineField>
+      </InlineFieldRow>
+    ) : (
+      <EditorFieldGroup>
+        <EditorField label="Metric">
+          {metricSelect()}
+        </EditorField>
+      </EditorFieldGroup>
+    )
   );
 }
 

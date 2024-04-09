@@ -494,7 +494,7 @@ describe('PrometheusDatasource', () => {
   describe('metricFindQuery', () => {
     beforeEach(() => {
       const query = 'query_result(topk(5,rate(http_request_duration_microseconds_count[$__interval])))';
-      ds.metricFindQuery(query);
+      ds.metricFindQuery(query, { range: timeSrvStub.timeRange() });
     });
 
     it('should call templateSrv.replace with scopedVars', () => {
