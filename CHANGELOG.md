@@ -2,6 +2,8 @@
 
 ## tip
 
+## [v0.8.1](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.8.1)
+
 * BUGFIX: fix an issue in the template variable service where accessing the `datasource` property of `undefined` caused a failure. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/150).
 
 ## [v0.8.0](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.8.0)
