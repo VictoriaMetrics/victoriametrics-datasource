@@ -42,7 +42,7 @@ export class PrometheusVariableSupport extends CustomVariableSupport<PrometheusD
 
   editor = VariableQueryEditor;
 
-  query(request: DataQueryRequest<PromVariableQuery>): Observable<DataQueryResponse> {
+  query = (request: DataQueryRequest<PromVariableQuery>): Observable<DataQueryResponse> => {
     // Handling grafana as code from jsonnet variable queries which are strings and not objects
     // Previously, when using StandardVariableSupport
     // the variable query string was changed to be on the expr attribute
