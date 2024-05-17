@@ -398,7 +398,7 @@ NumberLiteral  {
   EscapedChar {("\\" AnyEscapesChar) ("\\" AnyEscapesChar)*}
   AnyEscapesChar { "-" | "+" | "*" | "/" | "%" | "^" | "=" }
   Identifier {(std.asciiLetter | "_" | ":" | "." | EscapedChar) (std.asciiLetter | std.digit | "_" | ":" | "." | "-" | EscapedChar)*}
-  LabelName { (std.asciiLetter | "_") (std.asciiLetter | std.digit | "_")* }
+  LabelName {(std.asciiLetter | "_" | ":" | "." | EscapedChar) (std.asciiLetter | std.digit | "_" | ":" | "." | "-" | EscapedChar)*}
 
   // Operator
   Sub { "-" }
