@@ -139,7 +139,14 @@ env:
   GF_INSTALL_PLUGINS: "https://github.com/VictoriaMetrics/grafana-datasource/releases/download/v0.8.2/victoriametrics-datasource-v0.8.2.zip;victoriametrics-datasource"
 ```
 
-Option 2. Using init container:
+Option 2. Using Grafana plugins section in `values.yaml`:
+
+``` yaml
+plugins:
+  - https://github.com/VictoriaMetrics/grafana-datasource/releases/download/v0.8.2/victoriametrics-datasource-v0.8.2zip;victoriametrics-datasource
+```
+
+Option 3. Using init container:
 ``` yaml
 extraInitContainers:
   - name: "load-vm-ds-plugin"
