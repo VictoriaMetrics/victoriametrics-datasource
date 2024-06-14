@@ -139,7 +139,14 @@ env:
   GF_INSTALL_PLUGINS: "https://github.com/VictoriaMetrics/grafana-datasource/releases/download/v0.8.2/victoriametrics-datasource-v0.8.2.zip;victoriametrics-datasource"
 ```
 
-Option 2. Using init container:
+Option 2. Using Grafana plugins section in `values.yaml`:
+
+``` yaml
+plugins:
+  - https://github.com/VictoriaMetrics/grafana-datasource/releases/download/v0.8.2/victoriametrics-datasource-v0.8.2zip;victoriametrics-datasource
+```
+
+Option 3. Using init container:
 ``` yaml
 extraInitContainers:
   - name: "load-vm-ds-plugin"
@@ -178,7 +185,7 @@ sidecar:
 
 See more about chart settings [here](https://github.com/grafana/helm-charts/blob/541d97051de87a309362e02d08741ffc868cfcd6/charts/grafana/values.yaml)
 
-Option 3 would be to build custom Grafana image with plugin based on same installation instructions.
+Option 4 would be to build custom Grafana image with plugin based on same installation instructions.
 
 #### Grafana operator
 
