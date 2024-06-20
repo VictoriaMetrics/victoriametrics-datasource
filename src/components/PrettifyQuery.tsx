@@ -32,24 +32,29 @@ const PrettifyQuery: FC<Props> = ({
   query,
   onChange
 }) => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+
 
   const handleClickPrettify = async () => {
     setLoading(true)
     try {
       let { expr } = query;
-      const grafanaVariable = GRAFANA_VARIABLES.find(variable => expr.includes(variable));
-      if (grafanaVariable) {
-        const regex = new RegExp(`\\${grafanaVariable}`, 'g');
-        expr = expr.replace(regex, DEFAULT_LOOKBEHIND_WINDOW);
-      }
+      let grafanaVariable = '';
+      GRAFANA_VARIABLES.forEach(variable => {
+        const regex = new RegExp(`\\[(\\${variable})\\]`, 'g');
+        if (regex.test(expr)) {
+          expr = expr.replace(regex, `[${DEFAULT_LOOKBEHIND_WINDOW}]`);
+          grafanaVariable = variable
+          return;
+        }
+      });
       const response = await datasource.prettifyRequest(expr);
       const { data, status } = response
       if (data?.status === ResponseStatus.Success) {
         let { query } = data;
         if (grafanaVariable) {
-            const regex = new RegExp(DEFAULT_LOOKBEHIND_WINDOW, 'g');
-            query = query.replace(regex, grafanaVariable);
+            const regex = new RegExp(`\\[(${DEFAULT_LOOKBEHIND_WINDOW})\\]`, 'g');
+            query = query.replace(regex, `[${grafanaVariable}]`);
         }
         onChange({ ...query, expr: query });
       } else {
