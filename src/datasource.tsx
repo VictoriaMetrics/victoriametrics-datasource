@@ -539,16 +539,15 @@ export class PrometheusDatasource
 
     let expr = target.expr;
 
-    // Apply adhoc filters
-    expr = this.enhanceExprWithAdHocFilters(expr);
-
     // Apply WITH templates
     const dashboardUID = options.dashboardUID || options.app || ""
     expr = mergeTemplateWithQuery(expr, this.withTemplates.find(t => t.uid === dashboardUID))
 
     // Only replace vars in expression after having (possibly) updated interval vars
-    query.expr = this.templateSrv.replace(expr, scopedVars, this.interpolateQueryExpr);
+    expr = this.templateSrv.replace(expr, scopedVars, this.interpolateQueryExpr);
 
+    // Apply adhoc filters
+    query.expr = this.enhanceExprWithAdHocFilters(expr);
     // Align query interval with step to allow query caching and to ensure
     // that about-same-time query results look the same.
     const adjusted = alignRange(start, end, query.step, this.timeSrv.timeRange().to.utcOffset() * 60);
@@ -1016,12 +1015,12 @@ export class PrometheusDatasource
     delete variables.__interval_ms;
 
     //Add ad hoc filters
-    const expr = this.enhanceExprWithAdHocFilters(target.expr);
+    const expr = this.templateSrv.replace(target.expr, variables, this.interpolateQueryExpr);
 
     return {
       ...target,
       legendFormat: this.templateSrv.replace(target.legendFormat, variables),
-      expr: this.templateSrv.replace(expr, variables, this.interpolateQueryExpr),
+      expr: this.enhanceExprWithAdHocFilters(expr),
       interval: this.templateSrv.replace(target.interval, variables),
     };
   }
