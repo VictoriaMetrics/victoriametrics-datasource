@@ -16,6 +16,17 @@ enum ResponseStatus {
   Error = 'error'
 }
 
+const GRAFANA_VARIABLES = [
+  "$__interval",
+  "$__interval_ms",
+  "$__range",
+  "$__range_s",
+  "$__range_ms",
+  "$__rate_interval",
+]
+
+const DEFAULT_LOOKBEHIND_WINDOW = "1i"
+
 const PrettifyQuery: FC<Props> = ({
   datasource,
   query,
@@ -26,10 +37,21 @@ const PrettifyQuery: FC<Props> = ({
   const handleClickPrettify = async () => {
     setLoading(true)
     try {
-      const response = await datasource.prettifyRequest(query.expr)
+      let { expr } = query;
+      const grafanaVariable = GRAFANA_VARIABLES.find(variable => expr.includes(variable));
+      if (grafanaVariable) {
+        const regex = new RegExp(`\\${grafanaVariable}`, 'g');
+        expr = expr.replace(regex, DEFAULT_LOOKBEHIND_WINDOW);
+      }
+      const response = await datasource.prettifyRequest(expr);
       const { data, status } = response
       if (data?.status === ResponseStatus.Success) {
-        onChange({ ...query, expr: data.query });
+        let { query } = data;
+        if (grafanaVariable) {
+            const regex = new RegExp(DEFAULT_LOOKBEHIND_WINDOW, 'g');
+            query = query.replace(regex, grafanaVariable);
+        }
+        onChange({ ...query, expr: query });
       } else {
         console.error(`Error requesting /prettify-query, status: ${status}`)
       }

@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix an issue with prettify query if the query includes Grafana variables in the lookbehind window. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/166).
+
 ## [v0.8.2](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.8.2)
 
 * BUGFIX: fix parsing of label names with special characters for the query builder. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/131#issuecomment-2105662179).
