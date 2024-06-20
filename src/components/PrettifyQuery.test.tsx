@@ -49,26 +49,27 @@ const testQueries = [
   }
 ]
 
+const datasource = {
+  languageProvider: {
+    start: () => Promise.resolve([]),
+    syntax: () => {},
+    getLabelKeys: () => [],
+    metrics: [],
+  },
+  getInitHints: () => [],
+  prettifyRequest: async (expr: string) => {
+    return {
+      data: {
+        query: expr,
+        status: 'success'
+      }
+    }
+  }
+} as unknown as PrometheusDatasource;
+
 describe("Prettyfied Query", () => {
   testQueries.forEach(async ({ name, got, want }) => {
     it(`should prettify the query ${name}`, async () => {
-      const datasource = {
-        languageProvider: {
-          start: () => Promise.resolve([]),
-          syntax: () => {},
-          getLabelKeys: () => [],
-          metrics: [],
-        },
-        getInitHints: () => [],
-        prettifyRequest: async (_: string) => {
-          return {
-            data: {
-              query: got,
-              status: 'success'
-            }
-          }
-        }
-      } as unknown as PrometheusDatasource;
 
       const mockCallback = jest.fn(resp => {
         const { expr } = resp;
