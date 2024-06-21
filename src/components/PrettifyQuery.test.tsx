@@ -46,6 +46,16 @@ const testQueries = [
     name: 'query with grafana $__rate_interval variable',
     got: 'sum(rate(node_cpu_seconds_total{mode="idle"}[$__rate_interval]))',
     want:'sum(rate(node_cpu_seconds_total{mode="idle"}[$__rate_interval]))'
+  },
+  {
+    name: 'query with two grafana variables',
+    got: 'rate(metric_name[$__interval]) + rate(metric_name[$__range]) ',
+    want:'rate(metric_name[$__interval]) + rate(metric_name[$__range]) '
+  },
+  {
+    name: 'query with grafana variable and label value as lookbehind window',
+    got: 'rate(metric_name{mode="idle"}[$__interval]) + up{instance="[1i]"} ',
+    want:'rate(metric_name{mode="idle"}[$__interval]) + up{instance="[1i]"} '
   }
 ]
 

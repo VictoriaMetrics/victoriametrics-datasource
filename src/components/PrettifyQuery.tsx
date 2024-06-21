@@ -23,9 +23,12 @@ const GRAFANA_VARIABLES = [
   "$__range_s",
   "$__range_ms",
   "$__rate_interval",
-]
+];
 
-const DEFAULT_LOOKBEHIND_WINDOW = "1i"
+interface GrafanaVariableReplacer {
+  variable: string;
+  defaultWindow: string;
+}
 
 const PrettifyQuery: FC<Props> = ({
   datasource,
@@ -39,22 +42,26 @@ const PrettifyQuery: FC<Props> = ({
     setLoading(true)
     try {
       let { expr } = query;
-      let grafanaVariable = '';
-      GRAFANA_VARIABLES.forEach(variable => {
-        const regex = new RegExp(`\\[(\\${variable})\\]`, 'g');
+      let grafanaVariables = [] as GrafanaVariableReplacer[];
+      GRAFANA_VARIABLES.forEach((variable, idx) => {
+        const regex = new RegExp(`\\[(\\${variable})\\]\\)`, 'g');
         if (regex.test(expr)) {
-          expr = expr.replace(regex, `[${DEFAULT_LOOKBEHIND_WINDOW}]`);
-          grafanaVariable = variable
-          return;
+          expr = expr.replace(regex, `[${idx+1}i])`);
+          grafanaVariables.push({
+            variable,
+            defaultWindow: `${idx+1}i`,
+          })
         }
       });
       const response = await datasource.prettifyRequest(expr);
       const { data, status } = response
       if (data?.status === ResponseStatus.Success) {
         let { query } = data;
-        if (grafanaVariable) {
-            const regex = new RegExp(`\\[(${DEFAULT_LOOKBEHIND_WINDOW})\\]`, 'g');
-            query = query.replace(regex, `[${grafanaVariable}]`);
+        if (grafanaVariables.length > 0) {
+            grafanaVariables.forEach(grafanaVariable => {
+              const regex = new RegExp(`\\[(${grafanaVariable.defaultWindow})\\]\\)`, 'g');
+              query = query.replace(regex, `[${grafanaVariable.variable}])`);
+            });
         }
         onChange({ ...query, expr: query });
       } else {
