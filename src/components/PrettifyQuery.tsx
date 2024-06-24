@@ -16,20 +16,54 @@ enum ResponseStatus {
   Error = 'error'
 }
 
+const GRAFANA_VARIABLES = [
+  "$__interval",
+  "$__interval_ms",
+  "$__range",
+  "$__range_s",
+  "$__range_ms",
+  "$__rate_interval",
+];
+
+interface GrafanaVariableReplacer {
+  variable: string;
+  defaultWindow: string;
+}
+
 const PrettifyQuery: FC<Props> = ({
   datasource,
   query,
   onChange
 }) => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+
 
   const handleClickPrettify = async () => {
     setLoading(true)
     try {
-      const response = await datasource.prettifyRequest(query.expr)
+      let { expr } = query;
+      let grafanaVariables = [] as GrafanaVariableReplacer[];
+      GRAFANA_VARIABLES.forEach((variable, idx) => {
+        const regex = new RegExp(`\\[(\\${variable})\\]\\)`, 'g');
+        if (regex.test(expr)) {
+          expr = expr.replace(regex, `[${idx+1}i])`);
+          grafanaVariables.push({
+            variable,
+            defaultWindow: `${idx+1}i`,
+          })
+        }
+      });
+      const response = await datasource.prettifyRequest(expr);
       const { data, status } = response
       if (data?.status === ResponseStatus.Success) {
-        onChange({ ...query, expr: data.query });
+        let { query } = data;
+        if (grafanaVariables.length > 0) {
+            grafanaVariables.forEach(grafanaVariable => {
+              const regex = new RegExp(`\\[(${grafanaVariable.defaultWindow})\\]\\)`, 'g');
+              query = query.replace(regex, `[${grafanaVariable.variable}])`);
+            });
+        }
+        onChange({ ...query, expr: query });
       } else {
         console.error(`Error requesting /prettify-query, status: ${status}`)
       }
