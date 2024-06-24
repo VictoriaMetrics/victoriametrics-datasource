@@ -209,6 +209,22 @@ describe('PrometheusDatasource', () => {
         expr: `metric{job="foo", k1=~"v.*", k2=~"v\\\\'.*"} - metric{k1=~"v.*", k2=~"v\\\\'.*"}`,
       });
     });
+
+    it('should add filters to expression', () => {
+      getAdhocFiltersMock.mockReturnValue([
+        {
+          key: 'k1',
+          operator: '=',
+          value: 'v1',
+        }
+      ]);
+      replaceMock.mockImplementation((str, params) => {
+        return str.replace('$topk', '5');
+      });
+      const caseTarget: PromQuery = { expr: 'topk_max($topk, vmalert_iteration_duration_seconds_sum)', refId: 'A' };
+      const result = ds.createQuery(caseTarget, { interval: '15s', scopedVars: { 'topk': { text: 'topk', value: '5' } } as ScopedVars} as DataQueryRequest<PromQuery>, 0, 0);
+      expect(result).toMatchObject({ expr: 'topk_max(5, vmalert_iteration_duration_seconds_sum{k1="v1"})'});
+    });
   });
 
   describe('alignRange', () => {
@@ -488,6 +504,26 @@ describe('PrometheusDatasource', () => {
 
       const result = ds.applyTemplateVariables(query, {});
       expect(result).toMatchObject({ expr: 'test{job="bar", k1="v1", k2!="v2"}' });
+    });
+
+    it('should add filters to expression', () => {
+      getAdhocFiltersMock.mockReturnValue([
+        {
+          key: 'k1',
+          operator: '=',
+          value: 'v1',
+        }
+      ]);
+      replaceMock.mockImplementation((str, params) => {
+        return str?.replace('$topk', '5');
+      });
+      const query: PromQuery = { 
+        expr: 'topk_max($topk, vmalert_iteration_duration_seconds_sum)', 
+        refId: 'A' 
+      };
+      const result = ds.applyTemplateVariables(query, { 'topk': { text: 'topk', value: '5' } } as ScopedVars);
+      console.log(result);
+      expect(result).toMatchObject({ expr: 'topk_max(5, vmalert_iteration_duration_seconds_sum{k1="v1"})'});
     });
   });
 
