@@ -1,6 +1,7 @@
 
 import { cloneDeep } from 'lodash';
 import { of } from 'rxjs';
+import { ScopedVar, ScopedVars } from '@grafana/data';
 
 import {
   CoreApp,
