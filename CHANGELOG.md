@@ -3,6 +3,7 @@
 ## tip
 
 * BUGFIX: fix label join function in builder mode. See [this issue](https://github.com/VictoriaMetrics/grafana-datasource/issues/162).
+  Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/grafana-datasource/pull/174).
 
 ## [v0.8.3](https://github.com/VictoriaMetrics/grafana-datasource/releases/tag/v0.8.3)
 
