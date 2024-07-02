@@ -19,7 +19,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         with:
-          repository: VictoriaMetrics/grafana-datasource
+          repository: VictoriaMetrics/victoriametrics-datasource
           ref: main
           token: ${{ secrets.VM_BOT_GH_TOKEN }}
           path: "__vm-datasource-repo"
