@@ -1,4 +1,4 @@
-module github.com/VictoriaMetrics/grafana-datasource
+module github.com/VictoriaMetrics/victoriametrics-datasource
 
 go 1.21
 
