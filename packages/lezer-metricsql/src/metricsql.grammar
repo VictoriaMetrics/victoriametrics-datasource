@@ -43,7 +43,22 @@ AggregateOp {
   Stddev |
   Stdvar |
   Sum |
-  Topk
+  Topk |
+  Median |
+  Distinct |
+  Geomean |
+  Histogram |
+  Any |
+  Mad |
+  Mode |
+  Share |
+  Sum2 |
+  Zscore |
+  HistogramAvg |
+  HistogramQuantile |
+  HistogramStddev |
+  HistogramStdvar |
+  LimitK
 }
 
 AggregateModifier {
@@ -133,7 +148,6 @@ FunctionIdentifier {
   Deriv |
   Exp |
   Floor |
-  HistogramQuantile |
   HoltWinters |
   Hour |
   Idelta |
@@ -213,9 +227,6 @@ FunctionIdentifier {
   TmaxOverTime |
   TminOverTime |
   ZscoreOverTime |
-  HistogramAvg |
-  HistogramStddev |
-  HistogramStdvar |
   PrometheusBuckets |
   Interpolate |
   KeepLastValue |
@@ -237,9 +248,6 @@ FunctionIdentifier {
   RunningMax |
   RunningMin |
   RunningSum |
-  Distinct |
-  Geomean |
-  Histogram |
   BottomkAvg |
   BottomkLast |
   BottomkMax |
@@ -250,14 +258,6 @@ FunctionIdentifier {
   TopkMax |
   TopkMedian |
   TopkMin |
-  Any |
-  Limitk |
-  Mad |
-  Median |
-  Mode |
-  Share |
-  Sum2 |
-  Zscore |
   LabelDel |
   LabelKeep |
   LabelLowercase |
