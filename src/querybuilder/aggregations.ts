@@ -15,6 +15,9 @@ export function getAggregationOperations(): QueryBuilderOperationDef[] {
     ...createAggregationOperation(PromOperationId.Min),
     ...createAggregationOperation(PromOperationId.Max),
     ...createAggregationOperation(PromOperationId.Count),
+    ...createAggregationOperation(PromOperationId.Distinct),
+    ...createAggregationOperation(PromOperationId.Geomean),
+    ...createAggregationOperation(PromOperationId.Histogram),
     ...createAggregationOperationWithParam(PromOperationId.TopK, {
       params: [{ name: 'K-value', type: 'number' }],
       defaultParams: [5],

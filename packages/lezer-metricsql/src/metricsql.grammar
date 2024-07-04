@@ -43,7 +43,18 @@ AggregateOp {
   Stddev |
   Stdvar |
   Sum |
-  Topk
+  Topk |
+  Median |
+  Distinct |
+  Geomean |
+  Histogram |
+  Any |
+  Mad |
+  Mode |
+  Share |
+  Sum2 |
+  Zscore |
+  Limitk
 }
 
 AggregateModifier {
@@ -237,9 +248,6 @@ FunctionIdentifier {
   RunningMax |
   RunningMin |
   RunningSum |
-  Distinct |
-  Geomean |
-  Histogram |
   BottomkAvg |
   BottomkLast |
   BottomkMax |
@@ -250,14 +258,6 @@ FunctionIdentifier {
   TopkMax |
   TopkMedian |
   TopkMin |
-  Any |
-  Limitk |
-  Mad |
-  Median |
-  Mode |
-  Share |
-  Sum2 |
-  Zscore |
   LabelDel |
   LabelKeep |
   LabelLowercase |

@@ -24,9 +24,6 @@ const basicFunctions = [
   PromOperationId.RunningMax,
   PromOperationId.RunningMin,
   PromOperationId.RunningSum,
-  PromOperationId.Distinct,
-  PromOperationId.Geomean,
-  PromOperationId.Histogram
 ]
 
 export function getBasicFunctions(): QueryBuilderOperationDef[] {
