@@ -58,7 +58,7 @@ AggregateOp {
   HistogramQuantile |
   HistogramStddev |
   HistogramStdvar |
-  LimitK
+  Limitk
 }
 
 AggregateModifier {
