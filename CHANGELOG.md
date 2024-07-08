@@ -2,13 +2,14 @@
 
 ## tip
 
+## [v0.8.4](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.4)
+
 * BUGFIX: fix label join function in builder mode. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/162).
   Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/174).
 * BUGFIX: add missing rollup functions to the builder suggestion list. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/152).
   Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/180).
 * BUGFIX: properly apply ad-hoc filters for some rollup functions. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/175).
   Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/180).
-
 
 ## [v0.8.3](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.3)
 
