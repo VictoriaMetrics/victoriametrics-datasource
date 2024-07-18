@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: restore support for Grafana versions below `10.0.0`. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/159).
+
 ## [v0.8.4](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.4)
 
 * BUGFIX: fix label join function in builder mode. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/162).
