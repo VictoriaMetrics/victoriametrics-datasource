@@ -31,6 +31,10 @@ import { HelpfulLinks } from "./HelpfulLinks";
 import { LimitsSettings } from "./LimitsSettings";
 import { PromSettings } from './PromSettings';
 
+export enum DataSourceType {
+  Alertmanager = 'alertmanager',
+}
+
 export type Props = DataSourcePluginOptionsEditorProps<PromOptions>;
 export const ConfigEditor = (props: Props) => {
   const { options, onOptionsChange } = props;
@@ -44,6 +48,8 @@ export const ConfigEditor = (props: Props) => {
       enabled ? setDefaultCredentials(config) : resetCredentials(config),
     azureSettingsUI: AzureAuthSettings,
   };
+
+  const alertmanagers = Object.values(config.datasources).filter((ds) => ds.type === DataSourceType.Alertmanager);
 
   return (
     <>
@@ -59,7 +65,8 @@ export const ConfigEditor = (props: Props) => {
         renderSigV4Editor={<SIGV4ConnectionConfig {...props}></SIGV4ConnectionConfig>}
       />
 
-      <AlertingSettings<PromOptions> {...props}/>
+      {/*// @ts-ignore The prop `alertmanagerDataSources` is absent in Grafana > 10.0.0. */}
+      <AlertingSettings<PromOptions> {...props} alertmanagerDataSources={alertmanagers}/>
 
       <PromSettings {...props}/>
 
