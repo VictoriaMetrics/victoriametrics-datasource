@@ -2,6 +2,9 @@
 
 ## tip
 
+* BUGFIX: fix issue with forwarding headers from datasource to the backend or proxy. 
+  It might be helpful if a user wants to use some kind of authentication. See [this issue](https://github.com/VictoriaMetrics/victorialogs-datasource/issues/54).
+
 ## [v0.8.4](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.4)
 
 * BUGFIX: fix label join function in builder mode. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/162).
