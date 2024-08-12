@@ -202,7 +202,7 @@ func newResponseError(err error, httpStatus backend.Status) backend.DataResponse
 	return backend.DataResponse{Status: httpStatus, Error: err}
 }
 
-// isTrivialNetworkError returns true if the err can be ignored during logging.
+// isTrivialNetworkError returns true for trivial network errors which should be retried.
 func isTrivialNetworkError(err error) bool {
 	// Suppress trivial network errors, which could occur at remote side.
 	s := err.Error()
