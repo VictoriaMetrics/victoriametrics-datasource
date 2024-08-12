@@ -2,6 +2,8 @@
 
 ## tip
 
+* FEATURE: retry failed request to the datasource if the request faced EOF error or any network error. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/193)  
+
 ## [v0.8.5](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.5)
 
 * BUGFIX: restore support for Grafana versions below `10.0.0`. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/159).
