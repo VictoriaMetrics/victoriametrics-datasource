@@ -117,7 +117,7 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 	}
 	resp, err := d.httpClient.Do(req)
 	if err != nil {
-		if !errors.Is(err, io.EOF) && !errors.Is(err, io.ErrUnexpectedEOF) && !isTrivialNetworkError(err) {
+		if !isTrivialError(err) {
 			// Return unexpected error to the caller.
 			return newResponseError(err, backend.StatusBadRequest)
 		}
@@ -202,8 +202,11 @@ func newResponseError(err error, httpStatus backend.Status) backend.DataResponse
 	return backend.DataResponse{Status: httpStatus, Error: err}
 }
 
-// isTrivialNetworkError returns true for trivial network errors which should be retried.
-func isTrivialNetworkError(err error) bool {
+// isTrivialError returns true if the err is temporary and can be retried.
+func isTrivialError(err error) bool {
+	if errors.Is(err, io.EOF) || errors.Is(err, io.ErrUnexpectedEOF) {
+		return true
+	}
 	// Suppress trivial network errors, which could occur at remote side.
 	s := err.Error()
 	if strings.Contains(s, "broken pipe") || strings.Contains(s, "reset by peer") {

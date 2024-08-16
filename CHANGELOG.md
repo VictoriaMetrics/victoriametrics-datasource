@@ -2,7 +2,7 @@
 
 ## tip
 
-* FEATURE: retry failed request to the datasource if the request faced any network error. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/193)  
+* FEATURE: make retry attempt for datasource requests if returned error is a temporary network error. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/193)  
 
 ## [v0.8.5](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.5)
 
