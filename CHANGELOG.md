@@ -1,6 +1,6 @@
 # Changelog
 
-## tip
+## [v0.9.0](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.9.0)
 
 * FEATURE: make retry attempt for datasource requests if returned error is a temporary network error. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/193)  
 
