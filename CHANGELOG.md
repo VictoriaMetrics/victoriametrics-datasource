@@ -1,9 +1,23 @@
 # Changelog
 
-## tip
+## [v0.9.0](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.9.0)
+
+* FEATURE: make retry attempt for datasource requests if returned error is a temporary network error. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/193)  
+
+## [v0.8.5](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.5)
+
+* BUGFIX: restore support for Grafana versions below `10.0.0`. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/159).
+* BUGFIX: fix issue with forwarding headers from datasource to the backend or proxy. 
+  It might be helpful if a user wants to use some kind of authentication. See [this issue](https://github.com/VictoriaMetrics/victorialogs-datasource/issues/54).
+
+## [v0.8.4](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.4)
 
 * BUGFIX: fix label join function in builder mode. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/162).
   Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/174).
+* BUGFIX: add missing rollup functions to the builder suggestion list. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/152).
+  Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/180).
+* BUGFIX: properly apply ad-hoc filters for some rollup functions. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/175).
+  Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/180).
 
 ## [v0.8.3](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.3)
 
