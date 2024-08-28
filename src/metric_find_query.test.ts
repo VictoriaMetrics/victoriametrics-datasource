@@ -1,4 +1,3 @@
-// Core Grafana history https://github.com/grafana/grafana/blob/v11.0.0-preview/public/app/plugins/datasource/prometheus/metric_find_query.test.ts
 import { Observable, of } from 'rxjs';
 
 import { DataSourceInstanceSettings, TimeRange, toUtc } from '@grafana/data';
