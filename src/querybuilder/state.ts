@@ -42,7 +42,7 @@ export function getQueryWithDefaults(query: PromQuery, app: CoreApp | undefined)
     result = { ...query, editorMode: getDefaultEditorMode(query.expr) };
   }
 
-  if (query.expr == null) {
+  if (!query.expr) {
     result = { ...result, expr: '', legendFormat: LegendFormatMode.Auto };
   }
 
@@ -56,5 +56,10 @@ export function getQueryWithDefaults(query: PromQuery, app: CoreApp | undefined)
     }
   }
 
+  // Unified Alerting does not support "both" for query type – fall back to "range".
+  if (app === CoreApp.UnifiedAlerting) {
+    const isBothInstantAndRange = query.instant && query.range;
+    result = { ...result, range: isBothInstantAndRange, instant: !isBothInstantAndRange };
+  }
   return result;
 }

@@ -2,6 +2,8 @@
 
 ## tip 
 
+* FEATURE: set the default value of `Type` to `instant` when creating alerting rules. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/205).
+
 ## [v0.9.1](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.9.1)
 
 * BUGFIX: fix parsing dots in the the `label_values` function in the query builder. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/198).
