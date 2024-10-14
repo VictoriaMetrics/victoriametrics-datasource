@@ -4,6 +4,8 @@
 
 * FEATURE: set the default query type to `instant` when creating alerting rules. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/205).
 
+* BUGFIX: removed `/select/`-prefixed part of path for /health endpoint requests. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/208).
+
 ## [v0.9.1](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.9.1)
 
 * BUGFIX: fix parsing dots in the the `label_values` function in the query builder. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/198).
