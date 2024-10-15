@@ -1,6 +1,6 @@
 # Changelog
 
-## tip 
+## [v0.10.0](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.0) 
 
 * FEATURE: set the default query type to `instant` when creating alerting rules. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/205).
 
