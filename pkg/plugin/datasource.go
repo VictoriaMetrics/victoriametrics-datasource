@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"path"
 	"strings"
 	"sync"
 	"time"
@@ -171,9 +170,9 @@ func (d *Datasource) CheckHealth(ctx context.Context, _ *backend.CheckHealthRequ
 	endpoint := d.settings.URL
 	idx := strings.Index(endpoint, "/select/")
 	if idx > 0 {
-		endpoint = path.Join(endpoint[:idx], health)
+		endpoint = fmt.Sprintf("%s%s", endpoint[:idx], health)
 	} else {
-		endpoint = path.Join(endpoint, health)
+		endpoint = fmt.Sprintf("%s%s", strings.TrimRight(endpoint, "/"), health)
 	}
 	r, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
