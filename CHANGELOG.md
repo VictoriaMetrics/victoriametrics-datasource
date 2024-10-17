@@ -2,6 +2,8 @@
 
 ## tip
 
+## [v0.10.1](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.1)
+
 * BUGFIX: fixed healthcheck
 
 ## [v0.10.0](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.0) 
