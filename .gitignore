@@ -33,7 +33,7 @@ packages/lezer-metricsql/src/parser.terms.js
 # Editor
 .idea
 .vscode
-
+.npm
 .eslintcache
 
 # Cypress
