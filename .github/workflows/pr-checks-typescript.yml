@@ -64,4 +64,4 @@ jobs:
       - name: Build
         shell: 'script -q -e -c "bash {0}"'
         run: |
-          make victorimetrics-frontend-plugin-build
+          make victoriametrics-frontend-plugin-build

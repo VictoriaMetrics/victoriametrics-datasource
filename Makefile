@@ -65,11 +65,11 @@ victoriametrics-backend-plugin-build: \
 	victoriametrics-backend-plugin-arm64-prod \
 	victoriametrics-backend-plugin-windows-prod
 
-victorimetrics-frontend-plugin-build: \
+victoriametrics-frontend-plugin-build: \
 	frontend-build
 
 victoriametrics-datasource-plugin-build: \
-	victorimetrics-frontend-plugin-build \
+	victoriametrics-frontend-plugin-build \
 	victoriametrics-backend-plugin-build
 
 victoriametrics-datasource-plugin-pack:
@@ -82,11 +82,11 @@ victoriametrics-datasource-frontend-plugin-pack: \
 	frontend-pack
 
 victoriametrics-datasource-frontend-plugin-release: \
-	victorimetrics-frontend-plugin-build \
+	victoriametrics-frontend-plugin-build \
 	victoriametrics-datasource-frontend-plugin-pack
 
 victoriametrics-datasource-plugin-release: \
-	victorimetrics-frontend-plugin-build \
+	victoriametrics-frontend-plugin-build \
 	victoriametrics-backend-plugin-build \
 	victoriametrics-datasource-plugin-pack
 

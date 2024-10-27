@@ -167,7 +167,14 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 // CheckHealth performs a request to the specified data source and returns an error if the HTTP handler did not return
 // a 200 OK response.
 func (d *Datasource) CheckHealth(ctx context.Context, _ *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
-	r, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("%s%s", d.settings.URL, health), nil)
+	endpoint := d.settings.URL
+	idx := strings.Index(endpoint, "/select/")
+	if idx > 0 {
+		endpoint = fmt.Sprintf("%s%s", endpoint[:idx], health)
+	} else {
+		endpoint = fmt.Sprintf("%s%s", strings.TrimRight(endpoint, "/"), health)
+	}
+	r, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
 		return newHealthCheckErrorf("could not create request"), nil
 	}

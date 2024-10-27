@@ -1,8 +1,25 @@
 # Changelog
 
+## tip
+
+## [v0.10.1](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.1)
+
+* BUGFIX: fixed healthcheck
+
+## [v0.10.0](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.0) 
+
+* FEATURE: set the default query type to `instant` when creating alerting rules. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/205).
+
+* BUGFIX: removed `/select/`-prefixed part of path for /health endpoint requests. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/208).
+
+## [v0.9.1](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.9.1)
+
+* BUGFIX: fix parsing dots in the the `label_values` function in the query builder. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/198).
+  Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/199).
+
 ## [v0.9.0](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.9.0)
 
-* FEATURE: make retry attempt for datasource requests if returned error is a temporary network error. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/193)  
+* FEATURE: make retry attempt for datasource requests if returned error is a temporary network error. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/193)
 
 ## [v0.8.5](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.5)
 
