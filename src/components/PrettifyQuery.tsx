@@ -53,6 +53,7 @@ const PrettifyQuery: FC<Props> = ({
           })
         }
       });
+      const refId = query.refId;
       const response = await datasource.prettifyRequest(expr);
       const { data, status } = response
       if (data?.status === ResponseStatus.Success) {
@@ -63,7 +64,7 @@ const PrettifyQuery: FC<Props> = ({
               query = query.replace(regex, `[${grafanaVariable.variable}])`);
             });
         }
-        onChange({ ...query, expr: query });
+        onChange({ ...query, expr: query, refId: refId });
       } else {
         console.error(`Error requesting /prettify-query, status: ${status}`)
       }
