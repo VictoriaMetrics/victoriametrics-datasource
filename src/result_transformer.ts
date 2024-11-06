@@ -257,7 +257,8 @@ export function transform(
     meta: {
       // Fix for showing of Prometheus results in Explore table
       preferredVisualisationType: transformOptions.query.instant ? 'table' : 'graph',
-      executedQueryString: "Expr: " + transformOptions.query.expr + "\n" + "Step: " + transformOptions.query.step
+      executedQueryString: `Expr: ${transformOptions.query.expr}\nStep: ${transformOptions.query.step}`
+
     },
   };
   const prometheusResult = response.data.data;
