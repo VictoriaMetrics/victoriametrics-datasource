@@ -2,6 +2,12 @@
 
 ## tip
 
+* BUGFIX: fix the inspector query while press on refresh button. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/215).
+  Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/216).
+
+* BUGFIX: fix shows the value after prettified request in the table view. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/218).
+  Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/219).
+
 ## [v0.10.1](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.1)
 
 * BUGFIX: fixed healthcheck
