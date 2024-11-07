@@ -2,6 +2,9 @@
 
 ## tip
 
+
+## [v0.10.2](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.2)
+
 * BUGFIX: fix the inspector query while press on refresh button. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/215).
   Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/216).
 
