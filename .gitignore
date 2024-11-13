@@ -26,6 +26,7 @@ work/
 ci/
 e2e-results/
 victoriametrics-datasource/
+plugins/
 packages/lezer-metricsql/src/parser.js
 packages/lezer-metricsql/src/parser.terms.js
 
