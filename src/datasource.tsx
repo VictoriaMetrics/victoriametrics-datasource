@@ -64,10 +64,8 @@ import { mergeTemplateWithQuery } from "./components/WithTemplateConfig/utils/ge
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
 import PrometheusLanguageProvider from './language_provider';
 import {
-  escapeMetricNameSpecialCharacters,
   expandRecordingRules,
   getVictoriaMetricsTime,
-  unescapeMetricNameSpecialCharacters
 } from './language_utils';
 import { renderLegendFormat } from './legend';
 import PrometheusMetricFindQuery from './metric_find_query';
@@ -1029,11 +1027,8 @@ export class PrometheusDatasource
     return this.templateSrv.getVariables().map((v) => `$${v.name}`);
   }
 
-  interpolateString(string: string) {
-    const operation = string.includes("__name__")
-      ? unescapeMetricNameSpecialCharacters
-      : escapeMetricNameSpecialCharacters;
-    return this.templateSrv.replace(operation(string), undefined, this.interpolateQueryExpr);
+  interpolateString(string: string, scopedVars?: ScopedVars) {
+    return this.templateSrv.replace(string, scopedVars, this.interpolateQueryExpr);
   }
 
   withTemplatesUpdate(withTemplates: WithTemplate[]) {
