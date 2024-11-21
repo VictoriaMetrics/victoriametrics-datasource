@@ -390,7 +390,7 @@ export class PrometheusDatasource
 
       if (request.targets.every(t => t.refId === "Anno")) {
         const query = { ...request.targets[0], expr: queries[0].expr } as PromQueryRequest
-        return this.performAnnotationQuery({ ...query, start, end })
+        return this.performAnnotationQuery({ ...query, start, end }, request.maxDataPoints);
       }
 
       // No valid targets, return the empty result to save a round trip.
@@ -714,7 +714,7 @@ export class PrometheusDatasource
     };
   };
 
-  performAnnotationQuery = (query: PromQueryRequest) => {
+  performAnnotationQuery = (query: PromQueryRequest, maxDataPoints?: number) => {
     const datasource = {
       uid: this.templateSrv.replace(query.datasource!.uid, {}),
       type: query.datasource!.type
@@ -726,7 +726,7 @@ export class PrometheusDatasource
         data: {
           from: (query.start * 1000).toString(),
           to: (query.end * 1000).toString(),
-          queries: [{ ...query, datasource, refId: "X" }],
+          queries: [{ ...query, datasource, refId: "X", maxDataPoints }],
         },
         requestId: query.requestId,
       }).pipe(
