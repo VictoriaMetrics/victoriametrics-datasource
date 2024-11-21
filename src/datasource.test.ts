@@ -1,9 +1,10 @@
 
 import { cloneDeep } from 'lodash';
 import { of } from 'rxjs';
-import { ScopedVar, ScopedVars } from '@grafana/data';
 
 import {
+  ScopedVar,
+  ScopedVars,
   CoreApp,
   DataQueryRequest,
   DataQueryResponse,
@@ -224,8 +225,8 @@ describe('PrometheusDatasource', () => {
         return str.replace('$topk', topk.value);
       });
       const caseTarget: PromQuery = { expr: 'topk_max($topk, vmalert_iteration_duration_seconds_sum)', refId: 'A' };
-      const result = ds.createQuery(caseTarget, { interval: '15s', scopedVars: { 'topk': { text: 'topk', value: '5' } } as ScopedVars} as DataQueryRequest<PromQuery>, 0, 0);
-      expect(result).toMatchObject({ expr: 'topk_max(5, vmalert_iteration_duration_seconds_sum{k1="v1"})'});
+      const result = ds.createQuery(caseTarget, { interval: '15s', scopedVars: { 'topk': { text: 'topk', value: '5' } } as ScopedVars } as DataQueryRequest<PromQuery>, 0, 0);
+      expect(result).toMatchObject({ expr: 'topk_max(5, vmalert_iteration_duration_seconds_sum{k1="v1"})' });
     });
   });
 
@@ -525,7 +526,7 @@ describe('PrometheusDatasource', () => {
         refId: 'A'
       };
       const result = ds.applyTemplateVariables(query, { 'topk': { text: 'topk', value: '5' } } as ScopedVars);
-      expect(result).toMatchObject({ expr: 'topk_max(5, vmalert_iteration_duration_seconds_sum{k1="v1"})'});
+      expect(result).toMatchObject({ expr: 'topk_max(5, vmalert_iteration_duration_seconds_sum{k1="v1"})' });
     });
   });
 
@@ -653,7 +654,6 @@ function getPrepareTargetsContext({
   const options = {
     targets,
     interval: '1s',
-    requestId: "request_id",
     panelId,
     app,
     ...queryOptions,
@@ -680,7 +680,7 @@ describe('prepareTargets', () => {
       const target: PromQuery = {
         refId: 'A',
         expr: 'up',
-        requestId: 'request_id',
+        requestId: '2A',
       };
 
       const { queries, activeTargets, panelId, end, start } = getPrepareTargetsContext({ targets: [target] });
@@ -698,7 +698,7 @@ describe('prepareTargets', () => {
         hinting: undefined,
         instant: undefined,
         refId: target.refId,
-        requestId: target.requestId,
+        requestId: panelId + target.refId,
         start,
         step: 1,
       });
@@ -782,7 +782,7 @@ describe('prepareTargets', () => {
           expr: 'up',
           range: true,
           instant: true,
-          requestId: 'request_id',
+          requestId: '2A',
         };
 
         const { queries, activeTargets, panelId, end, start } = getPrepareTargetsContext({
@@ -803,7 +803,7 @@ describe('prepareTargets', () => {
           hinting: undefined,
           instant: true,
           refId: target.refId,
-          requestId: target.requestId + "_instant",
+          requestId: panelId + target.refId + '_instant',
           start,
           step: 1,
         });
@@ -811,7 +811,7 @@ describe('prepareTargets', () => {
           ...target,
           format: 'table',
           instant: true,
-          requestId: target.requestId + "_instant",
+          requestId: panelId + target.refId + '_instant',
           valueWithRefId: true,
         });
         expect(queries[1]).toEqual({
@@ -825,7 +825,7 @@ describe('prepareTargets', () => {
           hinting: undefined,
           instant: false,
           refId: target.refId,
-          requestId: target.requestId,
+          requestId: panelId + target.refId,
           start,
           step: 1,
         });
@@ -833,7 +833,7 @@ describe('prepareTargets', () => {
           ...target,
           format: 'time_series',
           instant: false,
-          requestId: target.requestId,
+          requestId: panelId + target.refId,
         });
       });
     });
@@ -845,7 +845,7 @@ describe('prepareTargets', () => {
           expr: 'up',
           instant: true,
           range: false,
-          requestId: 'request_id',
+          requestId: '2A',
         };
 
         const { queries, activeTargets, panelId, end, start } = getPrepareTargetsContext({
@@ -866,7 +866,7 @@ describe('prepareTargets', () => {
           hinting: undefined,
           instant: true,
           refId: target.refId,
-          requestId: target.requestId,
+          requestId: panelId + target.refId,
           start,
           step: 1,
         });
@@ -882,7 +882,7 @@ describe('prepareTargets', () => {
         expr: 'up',
         range: true,
         instant: false,
-        requestId: 'request_id',
+        requestId: '2A',
       };
 
       const { queries, activeTargets, panelId, end, start } = getPrepareTargetsContext({
@@ -903,7 +903,7 @@ describe('prepareTargets', () => {
         hinting: undefined,
         instant: false,
         refId: target.refId,
-        requestId: target.requestId,
+        requestId: panelId + target.refId,
         start,
         step: 1,
         trace: undefined

@@ -317,7 +317,7 @@ export class PrometheusDatasource
         continue;
       }
 
-      target.requestId = options.requestId
+      target.requestId = options.panelId + target.refId;
       // const metricName = this.languageProvider.histogramMetrics.find((m) => target.expr.includes(m));
 
       // In Explore, we run both (instant and range) queries if both are true (selected) or both are undefined (legacy Explore queries)
@@ -365,7 +365,7 @@ export class PrometheusDatasource
     return {
       ...target,
       queryType: PromQueryType.timeSeriesQuery,
-      requestId: request.requestId,
+      requestId: request.panelId + target.refId,
       // We need to pass utcOffsetSec to backend to calculate aligned range
       utcOffsetSec: this.timeSrv.timeRange().to.utcOffset() * 60,
     };
