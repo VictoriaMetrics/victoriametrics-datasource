@@ -74,15 +74,15 @@ victoriametrics-datasource-plugin-build: \
 
 victoriametrics-datasource-plugin-pack-tar:
 	cd plugins && \
-	tar -czf ../victorialogs-datasource-$(PKG_TAG).tar.gz ./victorialogs-datasource \
-	&& sha256sum ../victorialogs-datasource-$(PKG_TAG).tar.gz \
-	> ../victorialogs-datasource-$(PKG_TAG)_checksums_tar.txt && cd ..
+	tar -czf ../victoriametrics-datasource-$(PKG_TAG).tar.gz ./victoriametrics-datasource \
+	&& sha256sum ../victoriametrics-datasource-$(PKG_TAG).tar.gz \
+	> ../victoriametrics-datasource-$(PKG_TAG)_checksums_tar.txt && cd ..
 
 victoriametrics-datasource-plugin-pack-zip:
 	cd plugins && \
-	zip -r ../victorialogs-datasource-$(PKG_TAG).zip ./victorialogs-datasource \
-	&& sha256sum ../victorialogs-datasource-$(PKG_TAG).zip \
-	> ../victorialogs-datasource-$(PKG_TAG)_checksums_zip.txt && cd ..
+	zip -r ../victoriametrics-datasource-$(PKG_TAG).zip ./victoriametrics-datasource \
+	&& sha256sum ../victoriametrics-datasource-$(PKG_TAG).zip \
+	> ../victoriametrics-datasource-$(PKG_TAG)_checksums_zip.txt && cd ..
 
 victoriametrics-datasource-plugin-clean:
 	rm -rf ./plugins
