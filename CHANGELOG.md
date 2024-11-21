@@ -2,7 +2,9 @@
 
 ## tip
 
-BUGFIX: fix query loading when using multiple visible queries in a panel. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/223).
+* BUGFIX: fix query loading when using multiple visible queries in a panel. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/223).
+* BUGFIX: fix escaping when selecting metrics in the metrics browser. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/214).
+* BUGFIX: fix incorrect step calculation in annotation queries. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/217).
 
 ## [v0.10.2](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.2)
 

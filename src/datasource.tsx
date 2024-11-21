@@ -64,10 +64,8 @@ import { mergeTemplateWithQuery } from "./components/WithTemplateConfig/utils/ge
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
 import PrometheusLanguageProvider from './language_provider';
 import {
-  escapeMetricNameSpecialCharacters,
   expandRecordingRules,
   getVictoriaMetricsTime,
-  unescapeMetricNameSpecialCharacters
 } from './language_utils';
 import { renderLegendFormat } from './legend';
 import PrometheusMetricFindQuery from './metric_find_query';
@@ -392,7 +390,7 @@ export class PrometheusDatasource
 
       if (request.targets.every(t => t.refId === "Anno")) {
         const query = { ...request.targets[0], expr: queries[0].expr } as PromQueryRequest
-        return this.performAnnotationQuery({ ...query, start, end })
+        return this.performAnnotationQuery({ ...query, start, end }, request.maxDataPoints);
       }
 
       // No valid targets, return the empty result to save a round trip.
@@ -716,7 +714,7 @@ export class PrometheusDatasource
     };
   };
 
-  performAnnotationQuery = (query: PromQueryRequest) => {
+  performAnnotationQuery = (query: PromQueryRequest, maxDataPoints?: number) => {
     const datasource = {
       uid: this.templateSrv.replace(query.datasource!.uid, {}),
       type: query.datasource!.type
@@ -728,7 +726,7 @@ export class PrometheusDatasource
         data: {
           from: (query.start * 1000).toString(),
           to: (query.end * 1000).toString(),
-          queries: [{ ...query, datasource, refId: "X" }],
+          queries: [{ ...query, datasource, refId: "X", maxDataPoints }],
         },
         requestId: query.requestId,
       }).pipe(
@@ -1029,11 +1027,8 @@ export class PrometheusDatasource
     return this.templateSrv.getVariables().map((v) => `$${v.name}`);
   }
 
-  interpolateString(string: string) {
-    const operation = string.includes("__name__")
-      ? unescapeMetricNameSpecialCharacters
-      : escapeMetricNameSpecialCharacters;
-    return this.templateSrv.replace(operation(string), undefined, this.interpolateQueryExpr);
+  interpolateString(string: string, scopedVars?: ScopedVars) {
+    return this.templateSrv.replace(string, scopedVars, this.interpolateQueryExpr);
   }
 
   withTemplatesUpdate(withTemplates: WithTemplate[]) {
