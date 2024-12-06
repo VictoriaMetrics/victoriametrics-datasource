@@ -12,7 +12,7 @@
   "author": "VictoriaMetrics",
   "scripts": {
     "build": "bash build.sh",
-    "prepare": "npm run build"
+    "prepare": "yarn build"
   },
   "devDependencies": {
     "@lezer/generator": "^1.0.0",

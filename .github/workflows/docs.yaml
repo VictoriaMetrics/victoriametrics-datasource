@@ -1,13 +1,13 @@
-name: Update docs
+name: update docs
 
 on:
   push:
     branches:
       - main
     paths:
-      - ".github/workflows/docs.yaml"
-      - "README.md"
-      - "docs/**"
+      - .github/workflows/docs.yaml
+      - README.md
+      - docs/**
 
 jobs:
   update-docs:
