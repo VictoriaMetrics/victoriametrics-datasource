@@ -1,0 +1,51 @@
+name: codeql / frontend
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflow/pr-codeql-frontend.yml'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '!**/*.test.ts'
+      - '!**/*.test.tsx'
+      - '**/yarn.lock'
+      - '**/package.json'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflow/pr-codeql-frontend.yml'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '!**/*.test.ts'
+      - '!**/*.test.tsx'
+      - '**/yarn.lock'
+      - '**/package.json'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: "javascript"
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
