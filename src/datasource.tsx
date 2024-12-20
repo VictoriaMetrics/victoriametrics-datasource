@@ -317,7 +317,7 @@ export class PrometheusDatasource
         continue;
       }
 
-      target.requestId = options.panelId + target.refId;
+      target.requestId = options.requestId + options.panelId + target.refId;
       // const metricName = this.languageProvider.histogramMetrics.find((m) => target.expr.includes(m));
 
       // In Explore, we run both (instant and range) queries if both are true (selected) or both are undefined (legacy Explore queries)
