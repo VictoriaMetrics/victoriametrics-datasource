@@ -654,6 +654,7 @@ function getPrepareTargetsContext({
   const options = {
     targets,
     interval: '1s',
+    requestId: "request_id",
     panelId,
     app,
     ...queryOptions,
@@ -671,6 +672,7 @@ function getPrepareTargetsContext({
     start,
     end,
     panelId,
+    options,
   };
 }
 
@@ -680,10 +682,10 @@ describe('prepareTargets', () => {
       const target: PromQuery = {
         refId: 'A',
         expr: 'up',
-        requestId: '2A',
+        requestId: 'request_id2A',
       };
 
-      const { queries, activeTargets, panelId, end, start } = getPrepareTargetsContext({ targets: [target] });
+      const { queries, activeTargets, panelId, end, start, options } = getPrepareTargetsContext({ targets: [target] });
 
       expect(queries.length).toBe(1);
       expect(activeTargets.length).toBe(1);
@@ -698,7 +700,7 @@ describe('prepareTargets', () => {
         hinting: undefined,
         instant: undefined,
         refId: target.refId,
-        requestId: panelId + target.refId,
+        requestId: options.requestId + panelId + target.refId,
         start,
         step: 1,
       });
@@ -785,7 +787,7 @@ describe('prepareTargets', () => {
           requestId: '2A',
         };
 
-        const { queries, activeTargets, panelId, end, start } = getPrepareTargetsContext({
+        const { queries, activeTargets, panelId, end, start, options } = getPrepareTargetsContext({
           targets: [target],
           app: CoreApp.Explore,
         });
@@ -803,7 +805,7 @@ describe('prepareTargets', () => {
           hinting: undefined,
           instant: true,
           refId: target.refId,
-          requestId: panelId + target.refId + '_instant',
+          requestId: options.requestId + panelId + target.refId + '_instant',
           start,
           step: 1,
         });
@@ -811,7 +813,7 @@ describe('prepareTargets', () => {
           ...target,
           format: 'table',
           instant: true,
-          requestId: panelId + target.refId + '_instant',
+          requestId: options.requestId + panelId + target.refId + '_instant',
           valueWithRefId: true,
         });
         expect(queries[1]).toEqual({
@@ -825,7 +827,7 @@ describe('prepareTargets', () => {
           hinting: undefined,
           instant: false,
           refId: target.refId,
-          requestId: panelId + target.refId,
+          requestId: options.requestId + panelId + target.refId,
           start,
           step: 1,
         });
@@ -833,7 +835,7 @@ describe('prepareTargets', () => {
           ...target,
           format: 'time_series',
           instant: false,
-          requestId: panelId + target.refId,
+          requestId: options.requestId + panelId + target.refId,
         });
       });
     });
@@ -845,10 +847,10 @@ describe('prepareTargets', () => {
           expr: 'up',
           instant: true,
           range: false,
-          requestId: '2A',
+          requestId: 'request_id2A',
         };
 
-        const { queries, activeTargets, panelId, end, start } = getPrepareTargetsContext({
+        const { queries, activeTargets, panelId, end, start, options } = getPrepareTargetsContext({
           targets: [target],
           app: CoreApp.Explore,
         });
@@ -866,7 +868,7 @@ describe('prepareTargets', () => {
           hinting: undefined,
           instant: true,
           refId: target.refId,
-          requestId: panelId + target.refId,
+          requestId: options.requestId + panelId + target.refId,
           start,
           step: 1,
         });
@@ -882,10 +884,10 @@ describe('prepareTargets', () => {
         expr: 'up',
         range: true,
         instant: false,
-        requestId: '2A',
+        requestId: 'request_id2A',
       };
 
-      const { queries, activeTargets, panelId, end, start } = getPrepareTargetsContext({
+      const { queries, activeTargets, panelId, end, start, options } = getPrepareTargetsContext({
         targets: [target],
         app: CoreApp.Explore,
       });
@@ -903,7 +905,7 @@ describe('prepareTargets', () => {
         hinting: undefined,
         instant: false,
         refId: target.refId,
-        requestId: panelId + target.refId,
+        requestId: options.requestId + panelId + target.refId,
         start,
         step: 1,
         trace: undefined
