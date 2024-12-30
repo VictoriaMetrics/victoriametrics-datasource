@@ -20,13 +20,14 @@ lib-cov
 coverage
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
+bin/
 dist/
+victoriametrics-datasource/
+plugins/
 artifacts/
 work/
 ci/
 e2e-results/
-victoriametrics-datasource/
-plugins/
 packages/lezer-metricsql/src/parser.js
 packages/lezer-metricsql/src/parser.terms.js
 
