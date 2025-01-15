@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix issue with variables not working in adhoc filters. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/235).
+
 ## [v0.10.3](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.3)
 
 * BUGFIX: fix query loading when using multiple visible queries in a panel. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/223).
