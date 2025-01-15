@@ -9,25 +9,21 @@ import (
 )
 
 func TestResponse_getDataFrames(t *testing.T) {
-	type fields struct {
-		Status string
-		Data   Data
-	}
 	tests := []struct {
-		name    string
-		fields  fields
-		query   Query
-		want    func() data.Frames
-		wantErr bool
+		name        string
+		status      string
+		data        Data
+		forAlerting bool
+		query       Query
+		want        func() data.Frames
+		wantErr     bool
 	}{
 		{
-			name: "empty data",
-			fields: fields{
-				Status: "",
-				Data: Data{
-					ResultType: "",
-					Result:     nil,
-				},
+			name:   "empty data",
+			status: "",
+			data: Data{
+				ResultType: "",
+				Result:     nil,
 			},
 			query: Query{},
 			want: func() data.Frames {
@@ -36,13 +32,11 @@ func TestResponse_getDataFrames(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "incorrect result type",
-			fields: fields{
-				Status: "success",
-				Data: Data{
-					ResultType: "abc",
-					Result:     nil,
-				},
+			name:   "incorrect result type",
+			status: "success",
+			data: Data{
+				ResultType: "abc",
+				Result:     nil,
 			},
 			query: Query{LegendFormat: "legend {{app}}"},
 			want: func() data.Frames {
@@ -51,13 +45,11 @@ func TestResponse_getDataFrames(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "bad json",
-			fields: fields{
-				Status: "success",
-				Data: Data{
-					ResultType: "success",
-					Result:     []byte("{"),
-				},
+			name:   "bad json",
+			status: "success",
+			data: Data{
+				ResultType: "success",
+				Result:     []byte("{"),
 			},
 			query: Query{LegendFormat: "legend {{app}}"},
 			want: func() data.Frames {
@@ -66,13 +58,11 @@ func TestResponse_getDataFrames(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "scalar response",
-			fields: fields{
-				Status: "success",
-				Data: Data{
-					ResultType: "scalar",
-					Result:     []byte(`[1583786142, "1"]`),
-				},
+			name:   "scalar response",
+			status: "success",
+			data: Data{
+				ResultType: "scalar",
+				Result:     []byte(`[1583786142, "1"]`),
 			},
 			query: Query{LegendFormat: "legend {{app}}"},
 			want: func() data.Frames {
@@ -86,13 +76,11 @@ func TestResponse_getDataFrames(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "vector response",
-			fields: fields{
-				Status: "success",
-				Data: Data{
-					ResultType: "vector",
-					Result:     []byte(`[{"metric":{"__name__":"vm_rows"},"value":[1583786142,"13763"]},{"metric":{"__name__":"vm_requests"},"value":[1583786140,"2000"]}]`),
-				},
+			name:   "vector response",
+			status: "success",
+			data: Data{
+				ResultType: "vector",
+				Result:     []byte(`[{"metric":{"__name__":"vm_rows"},"value":[1583786142,"13763"]},{"metric":{"__name__":"vm_requests"},"value":[1583786140,"2000"]}]`),
 			},
 			query: Query{LegendFormat: "legend {{app}}"},
 			want: func() data.Frames {
@@ -110,13 +98,11 @@ func TestResponse_getDataFrames(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "matrix response",
-			fields: fields{
-				Status: "success",
-				Data: Data{
-					ResultType: "matrix",
-					Result:     []byte(`[{"metric":{"__name__":"ingress_nginx_request_qps","status":"100"},"values":[[1670324477.542,"1"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"500"},"values":[[1670324477.542,"2"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"200"},"values":[[1670324477.542,"3"]]}]`),
-				},
+			name:   "matrix response",
+			status: "success",
+			data: Data{
+				ResultType: "matrix",
+				Result:     []byte(`[{"metric":{"__name__":"ingress_nginx_request_qps","status":"100"},"values":[[1670324477.542,"1"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"500"},"values":[[1670324477.542,"2"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"200"},"values":[[1670324477.542,"3"]]}]`),
 			},
 			query: Query{LegendFormat: "legend {{app}}"},
 			want: func() data.Frames {
@@ -137,12 +123,34 @@ func TestResponse_getDataFrames(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name:   "vector response for alerting",
+			status: "success",
+			data: Data{
+				ResultType: "vector",
+				Result:     []byte(`[{"metric":{"__name__":"vm_rows"},"value":[1583786142,"13763"]},{"metric":{"__name__":"vm_requests"},"value":[1583786140,"2000"]}]`),
+			},
+			forAlerting: true,
+			query:       Query{LegendFormat: "legend {{app}}"},
+			want: func() data.Frames {
+				return []*data.Frame{
+					data.NewFrame("",
+						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_rows"}, []float64{13763}),
+					),
+					data.NewFrame("",
+						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_requests"}, []float64{2000}),
+					),
+				}
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := &Response{
-				Status: tt.fields.Status,
-				Data:   tt.fields.Data,
+				Status:      tt.status,
+				Data:        tt.data,
+				ForAlerting: tt.forAlerting,
 			}
 			got, err := r.getDataFrames()
 			if (err != nil) != tt.wantErr {
