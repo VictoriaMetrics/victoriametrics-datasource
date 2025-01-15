@@ -18,6 +18,7 @@
 
 import { css } from '@emotion/css';
 import { promLanguageDefinition } from 'monaco-promql';
+import { language, languageConfiguration } from 'monaco-promql/promql/promql';
 import React, { useRef, useEffect } from 'react';
 import { useLatest } from 'react-use';
 
@@ -78,13 +79,11 @@ let PROMQL_SETUP_STARTED = false;
 function ensurePromQL(monaco: Monaco) {
   if (!PROMQL_SETUP_STARTED) {
     PROMQL_SETUP_STARTED = true;
-    const { aliases, extensions, mimetypes, loader } = promLanguageDefinition;
+    const { aliases, extensions, mimetypes } = promLanguageDefinition;
     monaco.languages.register({ id: PROMQL_LANG_ID, aliases, extensions, mimetypes });
 
-    loader().then((mod) => {
-      monaco.languages.setMonarchTokensProvider(PROMQL_LANG_ID, mod.language);
-      monaco.languages.setLanguageConfiguration(PROMQL_LANG_ID, mod.languageConfiguration);
-    });
+    monaco.languages.setMonarchTokensProvider(PROMQL_LANG_ID, language);
+    monaco.languages.setLanguageConfiguration(PROMQL_LANG_ID, languageConfiguration);
   }
 }
 
