@@ -2,6 +2,10 @@
 
 ## tip
 
+* FEATURE: include request url in the `got unexpected response status code` error message for troubleshooting.
+  Thanks to @chenlujjj for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/243).
+
+* BUGFIX: fix issue with variables not working in adhoc filters. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/235).
 * BUGFIX: fix query type switching when creating alerts in Grafana. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/237)
 
 ## [v0.10.3](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.3)
@@ -22,7 +26,7 @@
 
 * BUGFIX: fixed healthcheck
 
-## [v0.10.0](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.0) 
+## [v0.10.0](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.0)
 
 * FEATURE: set the default query type to `instant` when creating alerting rules. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/205).
 
@@ -40,7 +44,7 @@
 ## [v0.8.5](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.5)
 
 * BUGFIX: restore support for Grafana versions below `10.0.0`. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/159).
-* BUGFIX: fix issue with forwarding headers from datasource to the backend or proxy. 
+* BUGFIX: fix issue with forwarding headers from datasource to the backend or proxy.
   It might be helpful if a user wants to use some kind of authentication. See [this issue](https://github.com/VictoriaMetrics/victorialogs-datasource/issues/54).
 
 ## [v0.8.4](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.4)

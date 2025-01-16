@@ -152,7 +152,7 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery, forAler
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		err = fmt.Errorf("got unexpected response status code: %d", resp.StatusCode)
+		err = fmt.Errorf("got unexpected response status code: %d with request url: %q", resp.StatusCode, reqURL)
 		return newResponseError(err, backend.Status(resp.StatusCode))
 	}
 
