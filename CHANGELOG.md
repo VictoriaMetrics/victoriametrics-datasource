@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix query type switching when creating alerts in Grafana. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/237)
+
 ## [v0.10.3](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.3)
 
 * BUGFIX: fix query loading when using multiple visible queries in a panel. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/223).
