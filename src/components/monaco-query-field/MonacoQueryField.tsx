@@ -18,7 +18,6 @@
 
 import { css } from '@emotion/css';
 import { promLanguageDefinition } from 'monaco-promql';
-import { language, languageConfiguration } from 'monaco-promql/promql/promql';
 import React, { useRef, useEffect } from 'react';
 import { useLatest } from 'react-use';
 
@@ -29,6 +28,7 @@ import { useTheme2, ReactMonacoEditor, Monaco, monacoTypes } from '@grafana/ui';
 import { Props } from './MonacoQueryFieldProps';
 import { getOverrideServices } from './getOverrideServices';
 import { getCompletionProvider, getSuggestOptions } from './monaco-completion-provider';
+import { language, languageConfiguration } from "./promql";
 
 const options: monacoTypes.editor.IStandaloneEditorConstructionOptions = {
   codeLens: false,
@@ -82,7 +82,9 @@ function ensurePromQL(monaco: Monaco) {
     const { aliases, extensions, mimetypes } = promLanguageDefinition;
     monaco.languages.register({ id: PROMQL_LANG_ID, aliases, extensions, mimetypes });
 
+    // @ts-ignore
     monaco.languages.setMonarchTokensProvider(PROMQL_LANG_ID, language);
+    // @ts-ignore
     monaco.languages.setLanguageConfiguration(PROMQL_LANG_ID, languageConfiguration);
   }
 }
