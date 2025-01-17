@@ -36,8 +36,9 @@ type Data struct {
 
 // Response contains fields from query response
 type Response struct {
-	Status string `json:"status"`
-	Data   Data   `json:"data"`
+	Status      string `json:"status"`
+	Data        Data   `json:"data"`
+	ForAlerting bool   `json:"-"`
 }
 
 type promInstant struct {
@@ -55,6 +56,21 @@ func (pi promInstant) dataframes() (data.Frames, error) {
 		ts := time.Unix(int64(res.Value[0].(float64)), 0)
 		frames[i] = data.NewFrame("",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{ts}),
+			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), []float64{f}))
+	}
+
+	return frames, nil
+}
+
+func (pi *promInstant) alertingDataFrames() (data.Frames, error) {
+	frames := make(data.Frames, len(pi.Result))
+	for i, res := range pi.Result {
+		f, err := strconv.ParseFloat(res.Value[1].(string), 64)
+		if err != nil {
+			return nil, fmt.Errorf("metric %v, unable to parse float64 from %s: %w", res, res.Value[1], err)
+		}
+
+		frames[i] = data.NewFrame("",
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), []float64{f}))
 	}
 
@@ -119,6 +135,9 @@ func (r *Response) getDataFrames() (data.Frames, error) {
 		var pi promInstant
 		if err := json.Unmarshal(r.Data.Result, &pi.Result); err != nil {
 			return nil, fmt.Errorf("unmarshal err %s; \n %#v", err, string(r.Data.Result))
+		}
+		if r.ForAlerting {
+			return pi.alertingDataFrames()
 		}
 		return pi.dataframes()
 	case matrix:
