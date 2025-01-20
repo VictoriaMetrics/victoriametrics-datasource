@@ -54,8 +54,8 @@ vm-plugin-pack: vm-plugin-build
 	tar -czf ../dist/$(PACKAGE_NAME).tar.gz ./$(PLUGIN_ID) && \
 	zip -q -r ../dist/$(PACKAGE_NAME).zip ./$(PLUGIN_ID) && \
 	cd - && \
-	sha256sum dist/$(PACKAGE_NAME).zip > dist/$(PACKAGE_NAME)_checksums_zip.txt && \
-	sha256sum dist/$(PACKAGE_NAME).tar.gz > dist/$(PACKAGE_NAME)_checksums_tar.gz.txt
+	sha1sum dist/$(PACKAGE_NAME).zip > dist/$(PACKAGE_NAME)_checksums_zip.txt && \
+	sha1sum dist/$(PACKAGE_NAME).tar.gz > dist/$(PACKAGE_NAME)_checksums_tar.gz.txt
 
 vm-plugin-cleanup:
 	rm -rf ./victoriametrics-datasource plugins
