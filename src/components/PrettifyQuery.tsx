@@ -29,7 +29,7 @@ const GRAFANA_VARIABLES = [
 
 const GRAFANA_VARIABLES_TPM = new Map(
   GRAFANA_VARIABLES.map((variable) => {
-    const value = variable.replace('$', TMP_ID);
+    const value = variable.replace(/\$/g, TMP_ID);
     return [variable, value];
   })
 );
