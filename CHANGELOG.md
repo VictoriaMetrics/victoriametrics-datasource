@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix checksum calculation for release files.
+
 ## v0.11.0
 
 * FEATURE: include request url in the `got unexpected response status code` error message for troubleshooting.
