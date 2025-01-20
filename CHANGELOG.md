@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.11.0
+
 * FEATURE: include request url in the `got unexpected response status code` error message for troubleshooting.
   Thanks to @chenlujjj for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/243).
 
