@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.11.1
+
 * BUGFIX: fix checksum calculation for release files.
 
 ## v0.11.0
