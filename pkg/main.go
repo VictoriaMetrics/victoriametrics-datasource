@@ -13,7 +13,7 @@ import (
 func main() {
 	backend.Logger.Info("Starting VictoriaMetrics datasource backend ...")
 
-	if err := datasource.Manage("victoriametrics-datasource-http-backend", plugin.NewDatasource, datasource.ManageOpts{}); err != nil {
+	if err := datasource.Manage("victoriametrics-metrics-datasource", plugin.NewDatasource, datasource.ManageOpts{}); err != nil {
 		log.DefaultLogger.Error("Failed to process VictoriaMetrics datasource backend :%s", err.Error())
 		os.Exit(1)
 	}

@@ -1,5 +1,5 @@
 {
-  "name": "victoriametrics-datasource",
+  "name": "victoriametrics-metrics-datasource",
   "version": "0.11.1",
   "description": "Showcase how to build a basic datasource plugin",
   "scripts": {

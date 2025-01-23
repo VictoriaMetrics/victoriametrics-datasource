@@ -9,5 +9,5 @@ services:
       GF_AUTH_BASIC_ENABLED: "false"
       GF_DEFAULT_APP_MODE: development
     volumes:
-      - ./plugins/victoriametrics-datasource:/var/lib/grafana/plugins/victoriametrics-datasource
+      - ./plugins/victoriametrics-metrics-datasource:/var/lib/grafana/plugins/victoriametrics-metrics-datasource
       - ./provisioning:/etc/grafana/provisioning
