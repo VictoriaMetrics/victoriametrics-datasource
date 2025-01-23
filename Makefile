@@ -9,10 +9,10 @@ ifeq ($(PKG_TAG),)
 PKG_TAG := $(BUILDINFO_TAG)
 endif
 
-PLUGIN_ID=victoriametrics-datasource
-APP_NAME=victoriametrics_backend_plugin
+PLUGIN_ID=victoriametrics-metrics-datasource
+APP_NAME=victoriametrics_metrics_backend_plugin
 
-GO_BUILDINFO = -X '$(PKG_PREFIX)/victoriametrics-datasource/buildinfo.Version=$(APP_NAME)-$(DATEINFO_TAG)-$(BUILDINFO_TAG)'
+GO_BUILDINFO = -X 'github.com/grafana/grafana-plugin-sdk-go/build.buildInfoJSON={\"time\":${DATEINFO_TAG},\"id\":\"${PLUGIN_ID}\",\"version\":\"${BUILDINFO_TAG}\",\"branch\":\"${PKG_TAG}\"}'
 
 .PHONY: $(MAKECMDGOALS)
 

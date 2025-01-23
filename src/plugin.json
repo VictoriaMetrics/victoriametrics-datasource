@@ -1,7 +1,7 @@
 {
   "type": "datasource",
   "name": "VictoriaMetrics",
-  "id": "victoriametrics-datasource",
+  "id": "victoriametrics-metrics-datasource",
   "category": "tsdb",
   "routes": [
     {
@@ -54,7 +54,7 @@
   "alerting": true,
   "annotations": true,
   "backend": true,
-  "executable": "victoriametrics_backend_plugin",
+  "executable": "victoriametrics_metrics_backend_plugin",
   "queryOptions": {
     "minInterval": true
   },
