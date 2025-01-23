@@ -1,6 +1,6 @@
 {
-  "name": "victoriametrics-datasource",
-  "version": "0.10.3",
+  "name": "victoriametrics-metrics-datasource",
+  "version": "0.12.0",
   "description": "Showcase how to build a basic datasource plugin",
   "scripts": {
     "build": "TS_NODE_PROJECT=\"./.config/webpack/tsconfig.webpack.json\" webpack -c ./webpack.config.ts --env production",
@@ -57,7 +57,7 @@
     "node-notifier": "10.0.1",
     "replace-in-file-webpack-plugin": "^1.0.6",
     "typescript": "^5.0.4",
-    "webpack": "5.88.2",
+    "webpack": "5.97.1",
     "webpack-cli": "^5.0.1",
     "webpack-livereload-plugin": "^3.0.2",
     "webpack-merge": "5.9.0"

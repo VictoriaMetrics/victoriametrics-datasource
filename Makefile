@@ -9,10 +9,10 @@ ifeq ($(PKG_TAG),)
 PKG_TAG := $(BUILDINFO_TAG)
 endif
 
-PLUGIN_ID=victoriametrics-datasource
-APP_NAME=victoriametrics_backend_plugin
+PLUGIN_ID=victoriametrics-metrics-datasource
+APP_NAME=victoriametrics_metrics_backend_plugin
 
-GO_BUILDINFO = -X '$(PKG_PREFIX)/victoriametrics-datasource/buildinfo.Version=$(APP_NAME)-$(DATEINFO_TAG)-$(BUILDINFO_TAG)'
+GO_BUILDINFO = -X 'github.com/grafana/grafana-plugin-sdk-go/build.buildInfoJSON={\"time\":${DATEINFO_TAG},\"id\":\"${PLUGIN_ID}\",\"version\":\"${BUILDINFO_TAG}\",\"branch\":\"${PKG_TAG}\"}'
 
 .PHONY: $(MAKECMDGOALS)
 
@@ -31,7 +31,7 @@ frontend-build: frontend-package-base-image
 		--user $(shell id -u):$(shell id -g) \
 		--env YARN_CACHE_FOLDER="/victoriametrics-datasource/.cache" \
 		--entrypoint=/bin/bash \
-		frontent-builder-image -c "yarn install --omit=dev && yarn build"
+		frontent-builder-image -c "yarn preinstall && yarn install --omit=dev && yarn build"
 
 app-via-docker-local:
 	$(eval OS := $(shell docker run $(GO_BUILDER_IMAGE) go env GOOS))
@@ -54,8 +54,8 @@ vm-plugin-pack: vm-plugin-build
 	tar -czf ../dist/$(PACKAGE_NAME).tar.gz ./$(PLUGIN_ID) && \
 	zip -q -r ../dist/$(PACKAGE_NAME).zip ./$(PLUGIN_ID) && \
 	cd - && \
-	sha256sum dist/$(PACKAGE_NAME).zip > dist/$(PACKAGE_NAME)_checksums_zip.txt && \
-	sha256sum dist/$(PACKAGE_NAME).tar.gz > dist/$(PACKAGE_NAME)_checksums_tar.gz.txt
+	sha1sum dist/$(PACKAGE_NAME).zip > dist/$(PACKAGE_NAME)_checksums_zip.txt && \
+	sha1sum dist/$(PACKAGE_NAME).tar.gz > dist/$(PACKAGE_NAME)_checksums_tar.gz.txt
 
 vm-plugin-cleanup:
 	rm -rf ./victoriametrics-datasource plugins

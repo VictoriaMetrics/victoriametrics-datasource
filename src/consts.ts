@@ -2,7 +2,7 @@ import { map } from "lodash";
 
 import { SelectableValue } from "@grafana/data";
 
-export const DATASOURCE_TYPE = 'victoriametrics-datasource'
+export const DATASOURCE_TYPE = 'victoriametrics-metrics-datasource'
 export const ANNOTATION_QUERY_STEP_DEFAULT = '60s';
 
 export const FORMAT_OPTIONS: Array<SelectableValue<string>> = [
