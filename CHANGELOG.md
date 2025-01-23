@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix issue with including the lezer-metricsql package to the build and fix public folder. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/256).
+
 ## v0.12.0
 
 ⚠️ **Breaking Change: Plugin ID Updated**  
