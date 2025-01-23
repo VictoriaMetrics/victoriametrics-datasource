@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.12.1
+
 * BUGFIX: fix issue with including the lezer-metricsql package to the build and fix public folder. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/256).
 * BUGFIX: fix plugin loading for query formatting in the editor. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/234).
 * BUGFIX: fix issue with "Prettify query" functionality corrupting dashboard JSON model. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/242).
