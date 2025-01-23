@@ -7101,7 +7101,7 @@ levn@^0.4.1:
     type-check "~0.4.0"
 
 "lezer-metricsql@file:packages/lezer-metricsql":
-  version "0.1.4"
+  version "0.1.5"
 
 lines-and-columns@^1.1.6:
   version "1.2.4"

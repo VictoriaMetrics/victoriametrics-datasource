@@ -31,7 +31,7 @@ frontend-build: frontend-package-base-image
 		--user $(shell id -u):$(shell id -g) \
 		--env YARN_CACHE_FOLDER="/victoriametrics-datasource/.cache" \
 		--entrypoint=/bin/bash \
-		frontent-builder-image -c "yarn install --omit=dev && yarn build"
+		frontent-builder-image -c "yarn preinstall && yarn install --omit=dev && yarn build"
 
 app-via-docker-local:
 	$(eval OS := $(shell docker run $(GO_BUILDER_IMAGE) go env GOOS))

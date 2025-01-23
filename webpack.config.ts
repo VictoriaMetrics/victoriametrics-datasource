@@ -18,7 +18,7 @@ const config = (env) => {
       path: path.resolve(__dirname, 'plugins/victoriametrics-metrics-datasource'),
       filename: '[name].js',
       // Keep publicPath relative for host.com/grafana/ deployments
-      publicPath: '/public/plugins/plugins/victoriametrics-metrics-datasource/',
+      publicPath: '/public/plugins/victoriametrics-metrics-datasource/',
     },
     resolve: {
       alias: {
