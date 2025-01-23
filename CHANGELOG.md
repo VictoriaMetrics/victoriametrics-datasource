@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.12.0
+
 ⚠️ **Breaking Change: Plugin ID Updated**  
 **Update Note 1:**  
 In the new version of the plugin, the plugin ID has been updated. The new plugin ID is `victoriametrics-metrics-datasource`. **This is a breaking change**: Grafana will treat this as a new plugin.
