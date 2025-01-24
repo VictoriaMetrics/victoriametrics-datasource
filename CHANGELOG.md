@@ -2,7 +2,9 @@
 
 ## tip
 
-* FEATURE: updated `localStorage` keys to improve uniqueness. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/259).
+* FEATURE: change `localStorage` key names to avoid collisions with other systems. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/259).
+
+* BUGFIX: clean up the plugin codebase after the plugin verification procedure. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/260) and [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/261).
 
 ## v0.12.1
 
