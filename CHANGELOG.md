@@ -2,6 +2,8 @@
 
 ## tip
 
+* FEATURE: updated `localStorage` keys to improve uniqueness. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/259).
+
 ## v0.12.1
 
 * BUGFIX: fix issue with including the lezer-metricsql package to the build and fix public folder. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/256).
