@@ -12,7 +12,8 @@
     "lint": "eslint --cache --ignore-path ./.gitignore --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "yarn lint --fix",
     "server": "docker compose up",
-    "preinstall": "cd packages/lezer-metricsql && yarn install && cd ../.. && yarn upgrade lezer-metricsql"
+    "preinstall": "cd packages/lezer-metricsql && yarn install && cd ../.. && yarn upgrade lezer-metricsql",
+    "sign": "[ -z $GRAFANA_ACCESS_POLICY_TOKEN ] || npx --yes @grafana/sign-plugin@latest"
   },
   "author": "VictoriaMetrics",
   "license": "AGPL-3.0-only",
