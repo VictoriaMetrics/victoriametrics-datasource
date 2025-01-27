@@ -30,8 +30,9 @@ frontend-build: frontend-package-base-image
 		-w /victoriametrics-datasource \
 		--user $(shell id -u):$(shell id -g) \
 		--env YARN_CACHE_FOLDER="/victoriametrics-datasource/.cache" \
+		--env GRAFANA_ACCESS_POLICY_TOKEN=$$GRAFANA_ACCESS_POLICY_TOKEN \
 		--entrypoint=/bin/bash \
-		frontent-builder-image -c "yarn install --omit=dev && yarn build"
+		frontent-builder-image -c "yarn install --omit=dev && yarn build && yarn sign --distDir plugins/$(PLUGIN_ID)"
 
 app-via-docker-local:
 	$(eval OS := $(shell docker run $(GO_BUILDER_IMAGE) go env GOOS))
@@ -45,7 +46,7 @@ vm-frontend-plugin-build: frontend-build
 
 vm-plugin-build-local: vm-frontend-plugin-build app-via-docker-local
 
-vm-plugin-build: vm-frontend-plugin-build vm-backend-plugin-build
+vm-plugin-build: vm-backend-plugin-build vm-frontend-plugin-build
 
 vm-plugin-pack: vm-plugin-build
 	mkdir -p dist && \
