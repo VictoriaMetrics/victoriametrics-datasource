@@ -20,16 +20,12 @@ import { useCallback, useState } from 'react';
 
 import store from '../../../store';
 
-export const promQueryEditorExplainKey = 'PrometheusQueryEditorExplainDefault';
-export const promQueryEditorRawQueryKey = 'PrometheusQueryEditorRawQueryDefault';
-export const lokiQueryEditorExplainKey = 'LokiQueryEditorExplainDefault';
-export const lokiQueryEditorRawQueryKey = 'LokiQueryEditorRawQueryDefault';
+export const queryEditorExplainKey = 'VictoriaMetricsQueryEditorExplainDefault';
+export const queryEditorRawQueryKey = 'VictoriaMetricsQueryEditorRawQueryDefault';
 
 export type QueryEditorFlags =
-  | typeof promQueryEditorExplainKey
-  | typeof promQueryEditorRawQueryKey
-  | typeof lokiQueryEditorExplainKey
-  | typeof lokiQueryEditorRawQueryKey;
+  | typeof queryEditorExplainKey
+  | typeof queryEditorRawQueryKey
 
 function getFlagValue(key: QueryEditorFlags, defaultValue = false): boolean {
   const val = store.get(key);

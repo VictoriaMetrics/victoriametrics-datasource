@@ -2,6 +2,18 @@
 
 ## tip
 
+* FEATURE: change `localStorage` key names to avoid collisions with other systems. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/259).
+
+* BUGFIX: clean up the plugin codebase after the plugin verification procedure. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/260) and [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/261).
+
+## v0.12.1
+
+* BUGFIX: fix issue with including the lezer-metricsql package to the build and fix public folder. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/256).
+* BUGFIX: fix plugin loading for query formatting in the editor. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/234).
+* BUGFIX: fix issue with "Prettify query" functionality corrupting dashboard JSON model. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/242).
+
+## v0.12.0
+
 ⚠️ **Breaking Change: Plugin ID Updated**  
 **Update Note 1:**  
 In the new version of the plugin, the plugin ID has been updated. The new plugin ID is `victoriametrics-metrics-datasource`. **This is a breaking change**: Grafana will treat this as a new plugin.
@@ -26,6 +38,7 @@ In the new version of the plugin, the plugin ID has been updated. The new plugin
 
 * BUGFIX: fix issue with variables not working in adhoc filters. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/235).
 * BUGFIX: fix query type switching when creating alerts in Grafana. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/237)
+
 
 ## [v0.10.3](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.3)
 
