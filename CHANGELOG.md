@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.13.0
+
 * FEATURE: enable plugin sign procedure for new releases. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/264) and [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/265).
 
 ## v0.12.2
