@@ -370,12 +370,10 @@ To view the raw query in the interface, enable the `Raw` toggle.
 ## How to make new release
 
 1. Make sure there are no open security issues.
-1. Push a new release tag in `master` branch:
-
-```
-git tag -s v1.xx.y
-git push origin v1.xx.y
-```
+1. Change version in `package.json` in a `main` branch
+1. Push changes to the github repository and be shure that the `main` branch is up to date.
+1. Trigger [release pipeline](https://github.com/VictoriaMetrics/victoriametrics-datasource/actions/workflows/release.yaml).
+1. Go to [releases page](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases) once pipeline is finished and verify release with the name `TAG` has been created and has all the needed binaries and checksums attached.
 
 ## FAQ
 
