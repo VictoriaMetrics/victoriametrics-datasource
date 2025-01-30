@@ -4,6 +4,10 @@
 
 * BUGFIX: cleanup README.md for the plugin. Clarify how to make release. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/269).
 
+## v0.13.0
+
+* FEATURE: enable plugin sign procedure for new releases. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/264) and [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/265).
+
 ## v0.12.2
 
 * FEATURE: change `localStorage` key names to avoid collisions with other systems. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/259).

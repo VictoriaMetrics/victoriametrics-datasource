@@ -4,7 +4,7 @@ The VictoriaMetrics Grafana plugin allows Grafana to query, visualize,
 and interact with [VictoriaMetrics](https://docs.victoriametrics.com/),
 a high-performance metrics storage and processing system.
 
-![dashboard.png](https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/img/dashboard.png)
+<img alt="Grafana Dashboard Screenshot" src="https://raw.githubusercontent.com/VictoriaMetrics/victoriametrics-datasource/b8bf7398a9a14ba917094385d8fee08cb7e303a1/src/img/dashboard.png">
 
 ## Capabilities
 
@@ -13,7 +13,7 @@ a high-performance metrics storage and processing system.
 1. Show live-streaming logs.
 1. Build dashboards and setup alerts.
 1. Use Ad Hoc filters.
-1. [Template](#how-to-use-with-templates) queries and expressions.
+1. [Template](https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/README.md#how-to-use-with-templates) queries and expressions.
 1. Get insights about query execution bottlenecks via [tracing](https://docs.victoriametrics.com/#query-tracing).
 1. Automatically format queries via `Prettify` button.
 
@@ -34,40 +34,17 @@ Provision of Grafana plugin requires to create [datasource config file](http://d
 
 ```yaml
 apiVersion: 1
-
-# List of data sources to insert/update depending on what's
-# available in the database.
 datasources:
-  # <string, required> Name of the VictoriaMetrics datasource
-  # displayed in Grafana panels and queries.
   - name: VictoriaMetrics
-    # <string, required> Sets the data source type.
     type: victoriametrics-metrics-datasource
-      # <string, required> Sets the access mode, either
-      # proxy or direct (Server or Browser in the UI).
-      # Some data sources are incompatible with any setting
-    # but proxy (Server).
     access: proxy
-    # <string> Sets default URL of the single node version of VictoriaMetrics
     url: http://victoriametrics:8428
-    # <string> Sets the pre-selected datasource for new panels.
-    # You can set only one default data source per organization.
     isDefault: true
-
-    # <string, required> Name of the VictoriaMetrics datasource
-    # displayed in Grafana panels and queries.
+    
   - name: VictoriaMetrics - cluster
-    # <string, required> Sets the data source type.
     type: victoriametrics-metrics-datasource
-    # <string, required> Sets the access mode, either
-    # proxy or direct (Server or Browser in the UI).
-    # Some data sources are incompatible with any setting
-    # but proxy (Server).
     access: proxy
-    # <string> Sets default URL of the cluster version of VictoriaMetrics
     url: http://vmselect:8481/select/0/prometheus
-    # <string> Sets the pre-selected datasource for new panels.
-    # You can set only one default data source per organization.
     isDefault: false
 ```
 
@@ -85,7 +62,7 @@ See panels examples at [VictoriaMetrics playground](https://play-grafana.victori
 
 ## How to use WITH templates
 
-The `WITH` templates feature simplifies the construction and management of complex queries. You can try this feature in the [WITH templates playground](https://play.victoriametrics.com/select/accounting/1/6a716b0f-38bc-4856-90ce-448fd713e3fe/expand-with-exprs).
+The `WITH` templates feature simplifies the construction and management of complex queries. You can try this feature in the [WITH templates playground](https://play.victoriametrics.com/select/accounting/1/6a716b0f-38bc-4856-90ce-448fd713e3fe/prometheus/graph/#/expand-with-exprs).
 
 The "WITH templates" section allows you to create expressions with templates that can be used in dashboards.
 
@@ -97,15 +74,15 @@ WITH expressions are stored in the datasource object. If the dashboard gets expo
    *Note: templates are available within the dashboard scope.*
 1. Click the `WITH templates` button.
 1. Enter the expression in the input field. Once done, press the `Save` button to apply the changes. For example:
-   ```
-   commonFilters = {instance=~"$node:$port",job=~"$job"},
+```
+commonFilters = {instance=~"$node:$port",job=~"$job"},
 
-   # `cpuCount` is the number of CPUs on the node
-   cpuCount = count(count(node_cpu_seconds_total{commonFilters}) by (cpu)),
+# cpuCount is the number of CPUs on the node
+cpuCount = count(count(node_cpu_seconds_total{commonFilters}) by (cpu)),
 
-   # `cpuIdle` is the sum of idle CPU cores
-   cpuIdle = sum(rate(node_cpu_seconds_total{mode='idle',commonFilters}[5m]))
-   ```
+# cpuIdle is the sum of idle CPU cores
+cpuIdle = sum(rate(node_cpu_seconds_total{mode='idle',commonFilters}[5m]))
+```
 
    You can specify a comment before the variable and use markdown in it. The comment will be displayed as a hint during
    auto-completion. The comment can span multiple lines.
@@ -143,7 +120,8 @@ If datasource is configured via Grafana variable, then change variable to Victor
 
 ### Why VictoriaMetrics datasource doesn't support alerting?
 
-Grafana doesn't allow forwarding Alert requests to alerting API /api/v1/rules for plugins which are not of Prometheus or Loki type. See more details [here](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/59#issuecomment-1541456768).
+Grafana doesn't allow forwarding Alert requests to alerting API `/api/v1/rules` for plugins which are not of Prometheus or Loki type. 
+See more details [here](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/59#issuecomment-1541456768).
 
 ## License
 
