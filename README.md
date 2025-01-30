@@ -1,9 +1,10 @@
 # VictoriaMetrics datasource for Grafana
 
-The [VictoriaMetrics datasource plugin](https://github.com/VictoriaMetrics/victoriametrics-datasource) 
+The [VictoriaMetrics datasource plugin](https://grafana.com/grafana/plugins/victoriametrics-metrics-datasource) 
 allows to query and visualize data from VictoriaMetrics in Grafana. 
 
 * [Motivation](#motivation)
+* [Capabilities](#capabilities)
 * [Installation](#installation)
 * [How to use WITH templates](#how-to-use-with-templates)
 * [How to make new release](#how-to-make-new-release)
@@ -12,10 +13,8 @@ allows to query and visualize data from VictoriaMetrics in Grafana.
 
 ## Motivation
 
-Thanks to VictoriaMetrics compatibility with Prometheus API users can use
-[Prometheus datasource](https://docs.victoriametrics.com/#grafana-setup) for Grafana to query data from VictoriaMetrics.
-But with time, Prometheus and VictoriaMetrics diverge more and more. After some unexpected changes to Prometheus
-datasource  we decided to create a datasource plugin specifically for VictoriaMetrics.
+Thanks to VictoriaMetrics compatibility with Prometheus API most users can use [Prometheus datasource](https://docs.victoriametrics.com/#grafana-setup) 
+for Grafana to query data from VictoriaMetrics. But with time, Prometheus and VictoriaMetrics diverge more and more.
 The benefits of using VictoriaMetrics plugin are the following:
 
 * [MetricsQL](https://docs.victoriametrics.com/metricsql) functions support;
@@ -24,30 +23,25 @@ The benefits of using VictoriaMetrics plugin are the following:
 * Plugin fixes [label names validation](https://github.com/grafana/grafana/issues/42615) issue;
 * Integration with [vmui](https://docs.victoriametrics.com/#vmui).
 
+## Capabilities
+
+1. Use [MetricsQL](https://docs.victoriametrics.com/metricsql/) to query metrics in Grafana.
+1. Use Explore mode with Grafana.
+1. Build dashboards and setup alerts.
+1. Use Ad Hoc filters.
+1. [Template](https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/README.md#how-to-use-with-templates) queries and expressions.
+1. Get insights about query execution bottlenecks via [tracing](https://docs.victoriametrics.com/#query-tracing).
+1. Automatically format queries via `Prettify` button.
+
+Try it at [VictoriaMetrics playground](https://play-grafana.victoriametrics.com/d/oS7Bi_0Wz_vm)!
+
 ## Installation
 
-Installing VictoriaMetrics Grafana datasource [requires](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#allow_loading_unsigned_plugins) the following changes to Grafana's `grafana.ini` config:
-
-``` ini
-[plugins]
-allow_loading_unsigned_plugins = victoriametrics-metrics-datasource
-```
-
-For `grafana-operator` users, please adjust `config:` section in your `kind=Grafana` resource as below
-
-```
-  config:
-    plugins:
-      allow_loading_unsigned_plugins: "victoriametrics-metrics-datasource"
-```
-
-See [why VictoriaMetrics datasource is unsigned](#why-victoriaMetrics-datasource-is-unsigned).
-
-For detailed instructions on how to install the plugin on Grafana Cloud or locally, please checkout the [Plugin installation docs](https://grafana.com/docs/grafana/latest/plugins/installation/).
+For detailed instructions on how to install the plugin on Grafana Cloud or locally, please checkout the [Plugin installation docs](https://grafana.com/grafana/plugins/victoriametrics-metrics-datasource/?tab=installation).
 
 ### Install via Docker
 
-[VictoriaMetrics repo](https://github.com/victoriaMetrics/victoriaMetrics) provides a complete [docker-compose](https://github.com/VictoriaMetrics/VictoriaMetrics/tree/master/deployment/docker#docker-compose-environment-for-victoriametrics) environment to spin-up all required components via Docker.
+[VictoriaMetrics repo](https://github.com/victoriaMetrics/victoriaMetrics) provides a complete [docker-compose](https://github.com/VictoriaMetrics/VictoriaMetrics/tree/master/deployment/docker#grafana) environment to spin-up all required components via Docker.
 
 To begin, clone [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) repository and follow steps described in the [README](https://github.com/VictoriaMetrics/VictoriaMetrics/tree/master/deployment/docker#docker-compose-environment-for-victoriametrics).
 
@@ -108,8 +102,7 @@ Please find the example of provisioning Grafana instance with VictoriaMetrics da
        grafana:
          image: grafana/grafana:11.0.0
          environment:
-         - GF_INSTALL_PLUGINS=https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/download/v0.13.1/victoriametrics-metrics-datasource-v0.13.1.zip;victoriametrics-metrics-datasource
-         - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=victoriametrics-metrics-datasource
+         - GF_INSTALL_PLUGINS=victoriametrics-metrics-datasource
          ports:
          - 3000:3000/tcp
          volumes:
@@ -136,14 +129,14 @@ Option 1. Using Grafana provisioning:
 
 ``` yaml
 env:
-  GF_INSTALL_PLUGINS: "https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/download/v0.13.1/victoriametrics-metrics-datasource-v0.13.1.zip;victoriametrics-metrics-datasource"
+  GF_INSTALL_PLUGINS: victoriametrics-metrics-datasource
 ```
 
 Option 2. Using Grafana plugins section in `values.yaml`:
 
 ``` yaml
 plugins:
-  - https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/download/v0.13.1/victoriametrics-metrics-datasource-v0.13.1.zip;victoriametrics-metrics-datasource
+  - victoriametrics-metrics-datasource
 ```
 
 Option 3. Using init container:
@@ -229,13 +222,45 @@ spec:
               volumeMounts:
                 - name: grafana-data
                   mountPath: /var/lib/grafana
-  config:
-    plugins:
-      allow_loading_unsigned_plugins: victoriametrics-metrics-datasource
 ```
 
 See [Grafana operator reference](https://grafana-operator.github.io/grafana-operator/docs/grafana/) to find more about  Grafana operator.
 This example uses init container to download and install plugin.
+
+It is also possible to request plugin at `GrafanaDatasource` or `GrafanaDashboard` CRDs.
+For example:
+```yaml
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: vm-datasource
+spec:
+  datasource:
+    access: proxy
+    type: victoriametrics-metrics-datasource
+    name: VM
+    url: http://vmsingle-vm-stack-victoria-metrics-k8s-stack.monitoring.svc.cluster.local:8429
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  plugins:
+    - name: victoriametrics-metrics-datasource
+      version: "0.13.1"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: vm-dashboard
+spec:
+  resyncPeriod: 30s
+  plugins:
+    - name: victoriametrics-metrics-datasource
+      version: "0.13.1"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: "https://raw.githubusercontent.com/VictoriaMetrics/VictoriaMetrics/refs/heads/master/dashboards/vm/victoriametrics.json"
+```
 
 ### Dev release installation
 
@@ -259,11 +284,6 @@ Installing dev version of Grafana plugin requires to change `grafana.ini` config
 ``` ini
 # Directory where Grafana will automatically scan and look for plugins
 plugins = {{path to directory with plugin}}
-```
-
-``` ini
-[plugins]
-allow_loading_unsigned_plugins = victoriametrics-metrics-datasource
 ```
 
 ### 2. Run the plugin
@@ -376,12 +396,6 @@ To view the raw query in the interface, enable the `Raw` toggle.
 1. Go to [releases page](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases) once pipeline is finished and verify release with the name `TAG` has been created and has all the needed binaries and checksums attached.
 
 ## FAQ
-
-### Why VictoriaMetrics datasource is unsigned?
-
-Based on our previous experience of [developing Grafana plugins](https://grafana.com/grafana/plugins/vertamedia-clickhouse-datasource/) the signing procedure was a formal act. But when we tried [to sign the plugin](https://grafana.com/docs/grafana/latest/developers/plugins/publish-a-plugin/sign-a-plugin/)
-we were told by GrafanaLabs representative the plugin falls into a Commercial signature level. 
-It matters not if plugin or VictoriaMetrics itself are opensource. The announced cost of Commercial signature level was much higher than expected, so we interrupted the procedure.
 
 ### How to convert dashboard from Prometheus to VictoriaMetrics datasource?
 

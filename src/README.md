@@ -10,7 +10,6 @@ a high-performance metrics storage and processing system.
 
 1. Use [MetricsQL](https://docs.victoriametrics.com/metricsql/) to query metrics in Grafana.
 1. Use Explore mode with Grafana.
-1. Show live-streaming logs.
 1. Build dashboards and setup alerts.
 1. Use Ad Hoc filters.
 1. [Template](https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/README.md#how-to-use-with-templates) queries and expressions.
