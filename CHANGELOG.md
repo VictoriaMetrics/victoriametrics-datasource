@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.13.1
+
 * BUGFIX: cleanup README.md for the plugin. Clarify how to make release. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/269).
 
 ## v0.13.0
