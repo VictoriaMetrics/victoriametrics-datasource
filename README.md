@@ -227,6 +227,41 @@ spec:
 See [Grafana operator reference](https://grafana-operator.github.io/grafana-operator/docs/grafana/) to find more about  Grafana operator.
 This example uses init container to download and install plugin.
 
+It is also possible to request plugin at `GrafanaDatasource` or `GrafanaDashboard` CRDs.
+For example:
+```yaml
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: vm-datasource
+spec:
+  datasource:
+    access: proxy
+    type: victoriametrics-metrics-datasource
+    name: VM
+    url: http://vmsingle-vm-stack-victoria-metrics-k8s-stack.monitoring.svc.cluster.local:8429
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  plugins:
+    - name: victoriametrics-metrics-datasource
+      version: "0.13.1"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: vm-dashboard
+spec:
+  resyncPeriod: 30s
+  plugins:
+    - name: victoriametrics-metrics-datasource
+      version: "0.13.1"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: "https://raw.githubusercontent.com/VictoriaMetrics/VictoriaMetrics/refs/heads/master/dashboards/vm/victoriametrics.json"
+```
+
 ### Dev release installation
 
 1. To download plugin build and move contents into Grafana plugins directory:
