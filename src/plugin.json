@@ -65,8 +65,10 @@
       "url": "https://victoriametrics.com/"
     },
     "keywords": [
-      "VictoriaMetrics",
-      "datasource"
+      "victoriametrics",
+      "datasource",
+      "observability",
+      "monitoring"
     ],
     "logos": {
       "small": "img/vm_logo.svg",
@@ -86,6 +88,14 @@
       {
         "name": "Learn more",
         "url": "https://docs.victoriametrics.com/"
+      },
+      {
+        "name": "MetricsQL",
+        "url": "https://docs.victoriametrics.com/metricsql/"
+      },
+      {
+        "name": "GitHub Project",
+        "url": "https://github.com/VictoriaMetrics/victoriametrics-datasource"
       }
     ],
     "version": "%VERSION%",
