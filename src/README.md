@@ -76,10 +76,10 @@ WITH expressions are stored in the datasource object. If the dashboard gets expo
 ```
 commonFilters = {instance=~"$node:$port",job=~"$job"},
 
-# cpuCount is the number of CPUs on the node
+\# cpuCount is the number of CPUs on the node
 cpuCount = count(count(node_cpu_seconds_total{commonFilters}) by (cpu)),
 
-# cpuIdle is the sum of idle CPU cores
+\# cpuIdle is the sum of idle CPU cores
 cpuIdle = sum(rate(node_cpu_seconds_total{mode='idle',commonFilters}[5m]))
 ```
 
