@@ -9,86 +9,100 @@ import (
 
 func Test_calculateStep(t *testing.T) {
 	tests := []struct {
-		name         string
-		baseInterval time.Duration
-		timeRange    backend.TimeRange
-		resolution   int64
-		want         string
+		name        string
+		query       *Query
+		minInterval time.Duration
+		timeRange   backend.TimeRange
+		resolution  int64
+		want        string
 	}{
 		{
-			name:         "one month timerange and max point 43200 with 20 second base interval",
-			baseInterval: 20 * time.Second,
-			timeRange: backend.TimeRange{
-				From: time.Now().Add(-time.Hour * 24 * 30),
-				To:   time.Now(),
+			name:        "one month timerange and max point 43200 with 20 second base interval",
+			minInterval: 20 * time.Second,
+			query: &Query{
+				MaxDataPoints: 43200,
+				TimeRange:     TimeRange{From: time.Now().Add(-time.Hour * 24 * 30), To: time.Now()},
+				Instant:       false,
 			},
-			resolution: 43200,
-			want:       "1m0s",
+			want: "1m0s",
 		},
 		{
-			name:         "one month timerange interval max points 43200 with 1 second base interval",
-			baseInterval: 1 * time.Second,
-			timeRange: backend.TimeRange{
-				From: time.Now().Add(-time.Hour * 24 * 30),
-				To:   time.Now(),
+			name:        "one month timerange interval max points 43200 with 1 second base interval",
+			minInterval: 1 * time.Second,
+			query: &Query{
+				MaxDataPoints: 43200,
+				TimeRange:     TimeRange{From: time.Now().Add(-time.Hour * 24 * 30), To: time.Now()},
 			},
-			resolution: 43200,
-			want:       "1m0s",
+			want: "1m0s",
 		},
 		{
-			name:         "one month timerange interval max points 10000 with 5 second base interval",
-			baseInterval: 5 * time.Second,
-			timeRange: backend.TimeRange{
-				From: time.Now().Add(-time.Hour * 24 * 30),
-				To:   time.Now(),
+			name:        "one month timerange interval max points 10000 with 5 second base interval",
+			minInterval: 5 * time.Second,
+			query: &Query{
+				MaxDataPoints: 10000,
+				TimeRange:     TimeRange{From: time.Now().Add(-time.Hour * 24 * 30), To: time.Now()},
 			},
-			resolution: 10000,
-			want:       "5m0s",
+			want: "5m0s",
 		},
 		{
-			name:         "one month timerange interval max points 10000 with 5 second base interval",
-			baseInterval: 5 * time.Second,
-			timeRange: backend.TimeRange{
-				From: time.Now().Add(-time.Hour * 1),
-				To:   time.Now(),
+			name:        "one month timerange interval max points 10000 with 5 second base interval",
+			minInterval: 5 * time.Second,
+			query: &Query{
+				MaxDataPoints: 10000,
+				TimeRange:     TimeRange{From: time.Now().Add(-time.Hour * 1), To: time.Now()},
 			},
-			resolution: 10000,
-			want:       "5s",
+			want: "5s",
 		},
 		{
-			name:         "one month timerange interval max points 10000 with 5 second base interval",
-			baseInterval: 2 * time.Minute,
-			timeRange: backend.TimeRange{
-				From: time.Now().Add(-time.Hour * 1),
-				To:   time.Now(),
+			name:        "one month timerange interval max points 10000 with 5 second base interval",
+			minInterval: 2 * time.Minute,
+			query: &Query{
+				MaxDataPoints: 10000,
+				TimeRange:     TimeRange{From: time.Now().Add(-time.Hour * 1), To: time.Now()},
 			},
-			resolution: 10000,
-			want:       "2m0s",
+			want: "2m0s",
 		},
 		{
-			name:         "two days time range with minimal resolution",
-			baseInterval: 60 * time.Second,
-			timeRange: backend.TimeRange{
-				From: time.Now().Add(-time.Hour * 2 * 24),
-				To:   time.Now(),
+			name:        "two days time range with minimal resolution",
+			minInterval: 60 * time.Second,
+			query: &Query{
+				MaxDataPoints: 100,
+				TimeRange: TimeRange{
+					From: time.Now().Add(-time.Hour * 2 * 24),
+					To:   time.Now(),
+				},
 			},
-			resolution: 100,
-			want:       "30m0s",
+			want: "30m0s",
 		},
 		{
-			name:         "two days time range with minimal resolution",
-			baseInterval: 60 * time.Second,
-			timeRange: backend.TimeRange{
-				From: time.Now().Add(-time.Hour * 24 * 90),
-				To:   time.Now(),
+			name:        "two days time range with minimal resolution",
+			minInterval: 60 * time.Second,
+			query: &Query{
+				MaxDataPoints: 100000,
+				TimeRange: TimeRange{
+					From: time.Now().Add(-time.Hour * 24 * 90),
+					To:   time.Now(),
+				},
 			},
-			resolution: 100000,
-			want:       "1m0s",
+			want: "1m0s",
+		},
+		{
+			name: "instant query with the zero minInterval",
+			query: &Query{
+				Instant:       true,
+				MaxDataPoints: 100000,
+				TimeRange: TimeRange{
+					From: time.Now().Add(-time.Hour * 24 * 90),
+					To:   time.Now(),
+				},
+			},
+			minInterval: 0,
+			want:        "5m0s",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := calculateStep(tt.baseInterval, tt.timeRange.From, tt.timeRange.To, tt.resolution); got.String() != tt.want {
+			if got := tt.query.calculateStep(tt.minInterval); got.String() != tt.want {
 				t.Errorf("calculateStep() = %v, want %v", got, tt.want)
 			}
 		})

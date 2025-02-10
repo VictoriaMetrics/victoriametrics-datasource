@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: use a default step for the instant queries if an interval or intervalMs doesn't set (use default values). See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/276). 
+
 ## v0.13.1
 
 * BUGFIX: cleanup README.md for the plugin. Clarify how to make release. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/269).

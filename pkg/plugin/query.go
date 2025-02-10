@@ -14,10 +14,11 @@ import (
 )
 
 const (
-	instantQueryPath = "/api/v1/query"
-	rangeQueryPath   = "/api/v1/query_range"
-	legendFormatAuto = "__auto"
-	metricsName      = "__name__"
+	instantQueryPath        = "/api/v1/query"
+	rangeQueryPath          = "/api/v1/query_range"
+	legendFormatAuto        = "__auto"
+	metricsName             = "__name__"
+	instantQueryDefaultStep = 5 * time.Minute
 )
 
 // Query represents backend query object
@@ -61,7 +62,7 @@ func (q *Query) getQueryURL(minInterval time.Duration, rawURL string, queryParam
 	to := q.TimeRange.To
 	timerange := to.Sub(from)
 
-	step := calculateStep(minInterval, from, to, q.MaxDataPoints)
+	step := q.calculateStep(minInterval)
 	expr := replaceTemplateVariable(q.Expr, timerange, minInterval, q.Interval)
 
 	if expr == "" {

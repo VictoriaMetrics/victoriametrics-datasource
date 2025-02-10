@@ -74,13 +74,19 @@ func parseIntervalStringToTimeDuration(interval string) (time.Duration, error) {
 }
 
 // calculateStep calculates step by provided max datapoints and timerange
-func calculateStep(minInterval time.Duration, from, to time.Time, maxDataPoints int64) time.Duration {
-	resolution := maxDataPoints
+func (q *Query) calculateStep(minInterval time.Duration) time.Duration {
+	if q.Instant {
+		if minInterval == 0 {
+			return instantQueryDefaultStep
+		}
+	}
+
+	resolution := q.MaxDataPoints
 	if resolution == 0 {
 		resolution = defaultResolution
 	}
 
-	rangeValue := to.UnixNano() - from.UnixNano()
+	rangeValue := q.TimeRange.To.UnixNano() - q.TimeRange.From.UnixNano()
 
 	calculatedInterval := time.Duration(rangeValue / resolution)
 
