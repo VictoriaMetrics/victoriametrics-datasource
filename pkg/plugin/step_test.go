@@ -9,16 +9,127 @@ import (
 
 func Test_calculateStep(t *testing.T) {
 	tests := []struct {
-		name        string
-		query       *Query
-		minInterval time.Duration
-		timeRange   backend.TimeRange
-		resolution  int64
-		want        string
+		name       string
+		query      *Query
+		timeRange  backend.TimeRange
+		resolution int64
+		want       string
+		wantErr    bool
 	}{
 		{
-			name:        "one month timerange and max point 43200 with 20 second base interval",
-			minInterval: 20 * time.Second,
+			name: "empty intervals",
+			query: &Query{
+				Interval:      "",
+				TimeInterval:  "",
+				IntervalMs:    0,
+				MaxDataPoints: 0,
+			},
+			want: "15s",
+		},
+		{
+			name: "enabled dsInterval intervals",
+			query: &Query{
+				TimeInterval:  "20s",
+				Interval:      "",
+				IntervalMs:    0,
+				MaxDataPoints: 0,
+			},
+			want: "20s",
+		},
+		{
+			name: "enabled dsInterval and query intervals",
+			query: &Query{
+				TimeInterval:  "20s",
+				Interval:      "10s",
+				IntervalMs:    0,
+				MaxDataPoints: 0,
+			},
+			want: "10s",
+		},
+		{
+			name: "enabled queryIntervalMS intervals",
+			query: &Query{
+				TimeInterval:  "20s",
+				Interval:      "10s",
+				IntervalMs:    5000,
+				MaxDataPoints: 0,
+			},
+			want: "10s",
+		},
+		{
+			name: "enabled queryIntervalMS and empty queryInterval intervals",
+			query: &Query{
+				TimeInterval:  "20s",
+				Interval:      "",
+				IntervalMs:    5000,
+				MaxDataPoints: 0,
+			},
+			want: "5s",
+		},
+		{
+			name: "enabled queryIntervalMS and defaultInterval",
+			query: &Query{
+				TimeInterval:  "",
+				Interval:      "",
+				IntervalMs:    5000,
+				MaxDataPoints: 0,
+			},
+			want: "5s",
+		},
+		{
+			name: "enabled defaultInterval",
+			query: &Query{
+				TimeInterval:  "",
+				Interval:      "",
+				IntervalMs:    0,
+				MaxDataPoints: 0,
+			},
+			want: "15s",
+		},
+		{
+			name: "enabled dsInterval only a number",
+			query: &Query{
+				TimeInterval:  "123",
+				Interval:      "",
+				IntervalMs:    0,
+				MaxDataPoints: 0,
+			},
+			want: "2m0s",
+		},
+		{
+			name: "dsInterval 0s",
+			query: &Query{
+				TimeInterval:  "0s",
+				Interval:      "2s",
+				IntervalMs:    0,
+				MaxDataPoints: 0,
+			},
+			want: "2s",
+		},
+		{
+			name: "incorrect dsInterval",
+			query: &Query{
+				TimeInterval:  "a3",
+				Interval:      "",
+				IntervalMs:    0,
+				MaxDataPoints: 0,
+			},
+			want:    "1ms",
+			wantErr: true,
+		},
+		{
+			name: "incorrect queryInterval",
+			query: &Query{
+				TimeInterval:  "",
+				Interval:      "a3",
+				IntervalMs:    0,
+				MaxDataPoints: 0,
+			},
+			want:    "1ms",
+			wantErr: true,
+		},
+		{
+			name: "one month timerange and max point 43200 with 20 second base interval",
 			query: &Query{
 				MaxDataPoints: 43200,
 				TimeRange:     TimeRange{From: time.Now().Add(-time.Hour * 24 * 30), To: time.Now()},
@@ -27,8 +138,7 @@ func Test_calculateStep(t *testing.T) {
 			want: "1m0s",
 		},
 		{
-			name:        "one month timerange interval max points 43200 with 1 second base interval",
-			minInterval: 1 * time.Second,
+			name: "one month timerange interval max points 43200 with 1 second base interval",
 			query: &Query{
 				MaxDataPoints: 43200,
 				TimeRange:     TimeRange{From: time.Now().Add(-time.Hour * 24 * 30), To: time.Now()},
@@ -36,8 +146,7 @@ func Test_calculateStep(t *testing.T) {
 			want: "1m0s",
 		},
 		{
-			name:        "one month timerange interval max points 10000 with 5 second base interval",
-			minInterval: 5 * time.Second,
+			name: "one month timerange interval max points 10000 with 5 second base interval",
 			query: &Query{
 				MaxDataPoints: 10000,
 				TimeRange:     TimeRange{From: time.Now().Add(-time.Hour * 24 * 30), To: time.Now()},
@@ -45,26 +154,23 @@ func Test_calculateStep(t *testing.T) {
 			want: "5m0s",
 		},
 		{
-			name:        "one month timerange interval max points 10000 with 5 second base interval",
-			minInterval: 5 * time.Second,
+			name: "one month timerange interval max points 10000 with 5 second base interval",
 			query: &Query{
 				MaxDataPoints: 10000,
 				TimeRange:     TimeRange{From: time.Now().Add(-time.Hour * 1), To: time.Now()},
 			},
-			want: "5s",
+			want: "15s",
 		},
 		{
-			name:        "one month timerange interval max points 10000 with 5 second base interval",
-			minInterval: 2 * time.Minute,
+			name: "one month timerange interval max points 10000 with 5 second base interval",
 			query: &Query{
 				MaxDataPoints: 10000,
 				TimeRange:     TimeRange{From: time.Now().Add(-time.Hour * 1), To: time.Now()},
 			},
-			want: "2m0s",
+			want: "15s",
 		},
 		{
-			name:        "two days time range with minimal resolution",
-			minInterval: 60 * time.Second,
+			name: "two days time range with minimal resolution",
 			query: &Query{
 				MaxDataPoints: 100,
 				TimeRange: TimeRange{
@@ -75,8 +181,7 @@ func Test_calculateStep(t *testing.T) {
 			want: "30m0s",
 		},
 		{
-			name:        "two days time range with minimal resolution",
-			minInterval: 60 * time.Second,
+			name: "two days time range with minimal resolution",
 			query: &Query{
 				MaxDataPoints: 100000,
 				TimeRange: TimeRange{
@@ -96,8 +201,7 @@ func Test_calculateStep(t *testing.T) {
 					To:   time.Now(),
 				},
 			},
-			minInterval: 0,
-			want:        "5m0s",
+			want: "5m0s",
 		},
 		{
 			name: "instant query with empty interval value",
@@ -110,8 +214,7 @@ func Test_calculateStep(t *testing.T) {
 				},
 				Interval: "",
 			},
-			minInterval: 0,
-			want:        "5m0s",
+			want: "5m0s",
 		},
 		{
 			name: "instant query with set interval",
@@ -124,163 +227,18 @@ func Test_calculateStep(t *testing.T) {
 				},
 				Interval: "10s",
 			},
-			minInterval: 0,
-			want:        "1m0s",
+			want: "10s",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.query.calculateStep(tt.minInterval); got.String() != tt.want {
-				t.Errorf("calculateStep() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_getIntervalFrom(t *testing.T) {
-	type args struct {
-		dsInterval      string
-		queryInterval   string
-		queryIntervalMS int64
-		defaultInterval time.Duration
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    time.Duration
-		wantErr bool
-	}{
-		{
-			name: "empty intervals",
-			args: args{
-				dsInterval:      "",
-				queryInterval:   "",
-				queryIntervalMS: 0,
-				defaultInterval: 0,
-			},
-			want:    0,
-			wantErr: false,
-		},
-		{
-			name: "enabled dsInterval intervals",
-			args: args{
-				dsInterval:      "20s",
-				queryInterval:   "",
-				queryIntervalMS: 0,
-				defaultInterval: 0,
-			},
-			want:    time.Second * 20,
-			wantErr: false,
-		},
-		{
-			name: "enabled dsInterval and query intervals",
-			args: args{
-				dsInterval:      "20s",
-				queryInterval:   "10s",
-				queryIntervalMS: 0,
-				defaultInterval: 0,
-			},
-			want:    time.Second * 10,
-			wantErr: false,
-		},
-		{
-			name: "enabled queryIntervalMS intervals",
-			args: args{
-				dsInterval:      "20s",
-				queryInterval:   "10s",
-				queryIntervalMS: 5000,
-				defaultInterval: 0,
-			},
-			want:    time.Second * 10,
-			wantErr: false,
-		},
-		{
-			name: "enabled queryIntervalMS and empty queryInterval intervals",
-			args: args{
-				dsInterval:      "20s",
-				queryInterval:   "",
-				queryIntervalMS: 5000,
-				defaultInterval: 0,
-			},
-			want:    time.Second * 5,
-			wantErr: false,
-		},
-		{
-			name: "enabled queryIntervalMS and defaultInterval",
-			args: args{
-				dsInterval:      "",
-				queryInterval:   "",
-				queryIntervalMS: 5000,
-				defaultInterval: 10000,
-			},
-			want:    time.Second * 5,
-			wantErr: false,
-		},
-		{
-			name: "enabled defaultInterval",
-			args: args{
-				dsInterval:      "",
-				queryInterval:   "",
-				queryIntervalMS: 0,
-				defaultInterval: time.Second * 5,
-			},
-			want:    time.Second * 5,
-			wantErr: false,
-		},
-		{
-			name: "enabled dsInterval only a number",
-			args: args{
-				dsInterval:      "123",
-				queryInterval:   "",
-				queryIntervalMS: 0,
-				defaultInterval: time.Second * 5,
-			},
-			want:    time.Minute*2 + time.Second*3,
-			wantErr: false,
-		},
-		{
-			name: "dsInterval 0s",
-			args: args{
-				dsInterval:      "0s",
-				queryInterval:   "2s",
-				queryIntervalMS: 0,
-				defaultInterval: 0,
-			},
-			want:    time.Second * 2,
-			wantErr: false,
-		},
-		{
-			name: "incorrect dsInterval",
-			args: args{
-				dsInterval:      "a3",
-				queryInterval:   "",
-				queryIntervalMS: 0,
-				defaultInterval: 0,
-			},
-			want:    0,
-			wantErr: true,
-		},
-		{
-			name: "incorrect queryInterval",
-			args: args{
-				dsInterval:      "",
-				queryInterval:   "a3",
-				queryIntervalMS: 0,
-				defaultInterval: 0,
-			},
-			want:    0,
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := getIntervalFrom(tt.args.dsInterval, tt.args.queryInterval, tt.args.queryIntervalMS, tt.args.defaultInterval)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("getIntervalFrom() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("getIntervalFrom() got = %v, want %v", got, tt.want)
+			minInterval, err := tt.query.calculateMinInterval()
+			if err == nil {
+				if got := tt.query.calculateStep(minInterval); got.String() != tt.want {
+					t.Errorf("calculateStep() = %v, want %v", got, tt.want)
+				}
+			} else if !tt.wantErr {
+				t.Errorf("calculateStep() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

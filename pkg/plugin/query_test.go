@@ -144,13 +144,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 				url:           tt.fields.url,
 			}
 
-			minInterval, err := q.calculateMinInterval()
-			if err != nil {
-				t.Errorf("failed to calculate minimal interval: %s", err)
-				return
-			}
-
-			got, err := q.getQueryURL(minInterval, tt.rawURL, tt.params)
+			got, err := q.getQueryURL(tt.rawURL, tt.params)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getQueryURL() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -96,11 +96,6 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery, forAler
 
 	q.TimeRange = TimeRange(query.TimeRange)
 	q.MaxDataPoints = query.MaxDataPoints
-	minInterval, err := q.calculateMinInterval()
-	if err != nil {
-		err = fmt.Errorf("failed to calculate minimal interval: %w", err)
-		return newResponseError(err, backend.StatusBadRequest)
-	}
 
 	var settings struct {
 		HTTPMethod  string `json:"httpMethod"`
@@ -114,7 +109,7 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery, forAler
 		settings.HTTPMethod = http.MethodPost
 	}
 
-	reqURL, err := q.getQueryURL(minInterval, d.settings.URL, settings.QueryParams)
+	reqURL, err := q.getQueryURL(d.settings.URL, settings.QueryParams)
 	if err != nil {
 		err = fmt.Errorf("failed to create request URL: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)

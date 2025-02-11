@@ -44,7 +44,7 @@ type TimeRange struct {
 
 // GetQueryURL calculates step and clear expression from template variables,
 // and after builds query url depends on query type
-func (q *Query) getQueryURL(minInterval time.Duration, rawURL string, queryParams string) (string, error) {
+func (q *Query) getQueryURL(rawURL string, queryParams string) (string, error) {
 	if rawURL == "" {
 		return "", fmt.Errorf("url can't be blank")
 	}
@@ -61,6 +61,11 @@ func (q *Query) getQueryURL(minInterval time.Duration, rawURL string, queryParam
 	from := q.TimeRange.From
 	to := q.TimeRange.To
 	timerange := to.Sub(from)
+
+	minInterval, err := q.calculateMinInterval()
+	if err != nil {
+		return "", fmt.Errorf("failed to calculate minimal interval: %w", err)
+	}
 
 	step := q.calculateStep(minInterval)
 	expr := replaceTemplateVariable(q.Expr, timerange, minInterval, q.Interval)
@@ -86,7 +91,7 @@ func (q *Query) calculateMinInterval() (time.Duration, error) {
 	if q.withIntervalVariable() {
 		q.Interval = ""
 	}
-	return getIntervalFrom(q.TimeInterval, q.Interval, q.IntervalMs, defaultScrapeInterval)
+	return q.getIntervalFrom(defaultScrapeInterval)
 }
 
 // queryInstantURL prepare query url for instant query
