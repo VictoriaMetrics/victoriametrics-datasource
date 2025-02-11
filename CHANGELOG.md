@@ -2,7 +2,7 @@
 
 ## tip
 
-* BUGFIX: use a default step for the instant queries if an interval or intervalMs doesn't set (use default values). See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/276). 
+* BUGFIX: use `5m` step for the alerting queries if interval wasn't explicitly set by user. This change reduces alerts flapping for Grafana managed alerts. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/276). 
 
 ## v0.13.1
 
