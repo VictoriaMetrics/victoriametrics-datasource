@@ -99,6 +99,34 @@ func Test_calculateStep(t *testing.T) {
 			minInterval: 0,
 			want:        "5m0s",
 		},
+		{
+			name: "instant query with empty interval value",
+			query: &Query{
+				Instant:       true,
+				MaxDataPoints: 100000,
+				TimeRange: TimeRange{
+					From: time.Now().Add(-time.Hour * 24 * 90),
+					To:   time.Now(),
+				},
+				Interval: "",
+			},
+			minInterval: 0,
+			want:        "5m0s",
+		},
+		{
+			name: "instant query with set interval",
+			query: &Query{
+				Instant:       true,
+				MaxDataPoints: 100000,
+				TimeRange: TimeRange{
+					From: time.Now().Add(-time.Hour * 24 * 90),
+					To:   time.Now(),
+				},
+				Interval: "10s",
+			},
+			minInterval: 0,
+			want:        "1m0s",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

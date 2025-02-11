@@ -75,10 +75,8 @@ func parseIntervalStringToTimeDuration(interval string) (time.Duration, error) {
 
 // calculateStep calculates step by provided max datapoints and timerange
 func (q *Query) calculateStep(minInterval time.Duration) time.Duration {
-	if q.Instant {
-		if minInterval == 0 {
-			return instantQueryDefaultStep
-		}
+	if q.Instant && q.Interval == "" {
+		return instantQueryDefaultStep
 	}
 
 	resolution := q.MaxDataPoints
