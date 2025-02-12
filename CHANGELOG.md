@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.13.2
+
 * BUGFIX: use `5m` step for the alerting queries if interval wasn't explicitly set by user. This change reduces alerts flapping for Grafana managed alerts. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/276). 
 
 ## v0.13.1
