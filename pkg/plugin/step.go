@@ -12,12 +12,13 @@ import (
 )
 
 const (
-	varInterval     = "$__interval"
-	varIntervalMs   = "$__interval_ms"
-	varRange        = "$__range"
-	varRangeS       = "$__range_s"
-	varRangeMs      = "$__range_ms"
-	varRateInterval = "$__rate_interval"
+	varInterval            = "$__interval"
+	varIntervalMs          = "$__interval_ms"
+	varRange               = "$__range"
+	varRangeS              = "$__range_s"
+	varRangeMs             = "$__range_ms"
+	varRateInterval        = "$__rate_interval"
+	defaultIntervalMsValue = 1000
 )
 
 var (
@@ -37,6 +38,9 @@ func (q *Query) getIntervalFrom(defaultInterval time.Duration) (time.Duration, e
 		interval = ""
 	}
 	if interval == "" {
+		if q.IntervalMs == defaultIntervalMsValue && q.Instant {
+			return instantQueryDefaultStep, nil
+		}
 		if q.IntervalMs != 0 {
 			return time.Duration(q.IntervalMs) * time.Millisecond, nil
 		}

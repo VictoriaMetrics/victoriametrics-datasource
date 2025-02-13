@@ -229,6 +229,20 @@ func Test_calculateStep(t *testing.T) {
 			},
 			want: "10s",
 		},
+		{
+			name: "instant query with default values",
+			query: &Query{
+				Instant:       true,
+				MaxDataPoints: 43200,
+				TimeRange: TimeRange{
+					From: time.Now().Add(-time.Hour * 24 * 90),
+					To:   time.Now(),
+				},
+				IntervalMs: 1000,
+				Interval:   "",
+			},
+			want: "5m0s",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
