@@ -15,10 +15,10 @@ const config = (env) => {
   return merge(defaultConfig, {
     output: {
       clean: false,
-      path: path.resolve(__dirname, 'plugins/victoriametrics-datasource'),
+      path: path.resolve(__dirname, 'plugins/victoriametrics-metrics-datasource'),
       filename: '[name].js',
       // Keep publicPath relative for host.com/grafana/ deployments
-      publicPath: '/public/plugins/plugins/victoriametrics-datasource/',
+      publicPath: '/public/plugins/victoriametrics-metrics-datasource/',
     },
     resolve: {
       alias: {
@@ -44,7 +44,7 @@ const config = (env) => {
     plugins: [
       new CleanWebpackPlugin({
         cleanOnceBeforeBuildPatterns: [
-          path.join(__dirname, 'plugins/victoriametrics-datasource', '**/*.{js,css}'),
+          path.join(__dirname, 'plugins/victoriametrics-metrics-datasource', '**/*.{js,css}'),
         ],
         cleanAfterEveryBuildPatterns: [
           '!**/*.bin', // don't clear backend build

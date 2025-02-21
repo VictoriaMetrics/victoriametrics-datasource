@@ -21,6 +21,7 @@ import { forkJoin, lastValueFrom, merge, Observable, of, OperatorFunction, pipe,
 import { catchError, filter, map, tap } from 'rxjs/operators';
 
 import {
+  AdHocVariableFilter,
   AbstractQuery,
   AnnotationEvent,
   AnnotationQuery,
@@ -545,7 +546,12 @@ export class PrometheusDatasource
     expr = this.templateSrv.replace(expr, scopedVars, this.interpolateQueryExpr);
 
     // Apply adhoc filters
-    query.expr = this.enhanceExprWithAdHocFilters(expr);
+    // @ts-ignore
+    expr = this.enhanceExprWithAdHocFilters(options.filters, expr);
+
+    // Only replace vars in expression after having (possibly) updated interval vars
+    query.expr = this.templateSrv.replace(expr, scopedVars, this.interpolateQueryExpr);
+
     // Align query interval with step to allow query caching and to ensure
     // that about-same-time query results look the same.
     const adjusted = alignRange(start, end, query.step, this.timeSrv.timeRange().to.utcOffset() * 60);
@@ -985,11 +991,15 @@ export class PrometheusDatasource
     return getOriginalMetricName(labelData);
   }
 
-  enhanceExprWithAdHocFilters(expr: string) {
+  enhanceExprWithAdHocFilters(adHocVariableFilters: AdHocVariableFilter[] | undefined, expr: string) {
     // @ts-ignore
     const adhocFilters = this.templateSrv.getAdhocFilters(this.name);
+    const filters = adHocVariableFilters || adhocFilters;
+    if (!filters || filters.length === 0) {
+      return expr;
+    }
 
-    return adhocFilters.reduce((acc: string, filter: { key?: any; operator?: any; value?: any }) => {
+    return filters.reduce((acc: string, filter: { key?: any; operator?: any; value?: any }) => {
       const { key, operator } = filter;
       let { value } = filter;
       if (operator === '=~' || operator === '!~') {
@@ -1005,20 +1015,33 @@ export class PrometheusDatasource
   }
 
   // Used when running queries trough backend
-  applyTemplateVariables(target: PromQuery, scopedVars: ScopedVars): Record<string, any> {
-    const variables = cloneDeep(scopedVars);
+  applyTemplateVariables(target: PromQuery, scopedVars: ScopedVars, filters?: AdHocVariableFilter[]) {
+    const variables = { ...scopedVars };
 
-    // We want to interpolate these variables on backend
-    delete variables.__interval;
-    delete variables.__interval_ms;
+    // We want to interpolate these variables on backend.
+    // The pre-calculated values are replaced withe the variable strings.
+    variables.__interval = {
+      value: '$__interval',
+    };
+    variables.__interval_ms = {
+      value: '$__interval_ms',
+    };
 
     //Add ad hoc filters
     const expr = this.templateSrv.replace(target.expr, variables, this.interpolateQueryExpr);
 
+    // Apply ad-hoc filters
+    // When ad-hoc filters are applied, we replace again the variables in case the ad-hoc filters also reference a variable
+    const exprWithAdHocFilters = this.templateSrv.replace(
+      this.enhanceExprWithAdHocFilters(filters, expr),
+      variables,
+      this.interpolateQueryExpr
+    );
+
     return {
       ...target,
       legendFormat: this.templateSrv.replace(target.legendFormat, variables),
-      expr: this.enhanceExprWithAdHocFilters(expr),
+      expr: exprWithAdHocFilters,
       interval: this.templateSrv.replace(target.interval, variables),
     };
   }

@@ -21,14 +21,10 @@ func TestQuery_getQueryURL(t *testing.T) {
 		getTimeRange  func() TimeRange
 		url           *url.URL
 	}
-	type args struct {
-		minInterval time.Duration
-		rawURL      string
-	}
 	tests := []struct {
 		name    string
 		fields  fields
-		args    args
+		rawURL  string
 		params  string
 		want    string
 		wantErr bool
@@ -45,10 +41,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 				Expr:         "",
 				getTimeRange: getTimeRage,
 			},
-			args: args{
-				minInterval: 0,
-				rawURL:      "",
-			},
+			rawURL:  "",
 			wantErr: true,
 			want:    "",
 		},
@@ -63,10 +56,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 				Expr:         "",
 				getTimeRange: getTimeRage,
 			},
-			args: args{
-				minInterval: 0,
-				rawURL:      "http://127.0.0.1:8428",
-			},
+			rawURL:  "http://127.0.0.1:8428",
 			wantErr: true,
 			want:    "",
 		},
@@ -82,12 +72,9 @@ func TestQuery_getQueryURL(t *testing.T) {
 				Expr:         "rate(ingress_nginx_request_qps{}[$__interval])",
 				getTimeRange: getTimeRage,
 			},
-			args: args{
-				minInterval: 0,
-				rawURL:      "http://127.0.0.1:8428",
-			},
+			rawURL:  "http://127.0.0.1:8428",
 			wantErr: false,
-			want:    "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B1ms%5D%29&step=50ms&time=1670226793",
+			want:    "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B10s%5D%29&step=10s&time=1670226793",
 		},
 		{
 			name: "instant query with time interval",
@@ -103,12 +90,9 @@ func TestQuery_getQueryURL(t *testing.T) {
 				getTimeRange:  getTimeRage,
 				url:           nil,
 			},
-			args: args{
-				minInterval: 0,
-				rawURL:      "http://127.0.0.1:8428",
-			},
+			rawURL:  "http://127.0.0.1:8428",
 			wantErr: false,
-			want:    "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B0s%5D%29&step=1ms&time=1670226793",
+			want:    "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B20s%5D%29&step=20s&time=1670226793",
 		},
 		{
 			name: "range query with interval",
@@ -123,12 +107,9 @@ func TestQuery_getQueryURL(t *testing.T) {
 				MaxDataPoints: 3000,
 				getTimeRange:  getTimeRage,
 			},
-			args: args{
-				minInterval: time.Second * 10,
-				rawURL:      "http://127.0.0.1:8428",
-			},
+			rawURL:  "http://127.0.0.1:8428",
 			wantErr: false,
-			want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28ingress_nginx_request_qps%7B%7D%5B10s%5D%29&start=1670226733&step=10s",
+			want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28ingress_nginx_request_qps%7B%7D%5B5s%5D%29&start=1670226733&step=5s",
 		},
 		{
 			name: "custom query params",
@@ -142,13 +123,10 @@ func TestQuery_getQueryURL(t *testing.T) {
 				Expr:         "rate(ingress_nginx_request_qps{}[$__interval])",
 				getTimeRange: getTimeRage,
 			},
-			args: args{
-				minInterval: 0,
-				rawURL:      "http://127.0.0.1:8428",
-			},
+			rawURL:  "http://127.0.0.1:8428",
 			params:  "extra_filters[]={job=\"vmalert\"}",
 			wantErr: false,
-			want:    "http://127.0.0.1:8428/api/v1/query?extra_filters%5B%5D=%7Bjob%3D%22vmalert%22%7D&query=rate%28ingress_nginx_request_qps%7B%7D%5B1ms%5D%29&step=50ms&time=1670226793",
+			want:    "http://127.0.0.1:8428/api/v1/query?extra_filters%5B%5D=%7Bjob%3D%22vmalert%22%7D&query=rate%28ingress_nginx_request_qps%7B%7D%5B10s%5D%29&step=10s&time=1670226793",
 		},
 	}
 	for _, tt := range tests {
@@ -165,7 +143,8 @@ func TestQuery_getQueryURL(t *testing.T) {
 				TimeRange:     tt.fields.getTimeRange(),
 				url:           tt.fields.url,
 			}
-			got, err := q.getQueryURL(tt.args.minInterval, tt.args.rawURL, tt.params)
+
+			got, err := q.getQueryURL(tt.rawURL, tt.params)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getQueryURL() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -16,6 +16,8 @@ enum ResponseStatus {
   Error = 'error'
 }
 
+const TMP_ID = 'tmp_victoriametrics_prettify_query';
+
 const GRAFANA_VARIABLES = [
   "$__interval",
   "$__interval_ms",
@@ -25,10 +27,12 @@ const GRAFANA_VARIABLES = [
   "$__rate_interval",
 ];
 
-interface GrafanaVariableReplacer {
-  variable: string;
-  defaultWindow: string;
-}
+const GRAFANA_VARIABLES_TPM = new Map(
+  GRAFANA_VARIABLES.map((variable) => {
+    const value = variable.replace(/\$/g, TMP_ID);
+    return [variable, value];
+  })
+);
 
 const PrettifyQuery: FC<Props> = ({
   datasource,
@@ -37,48 +41,55 @@ const PrettifyQuery: FC<Props> = ({
 }) => {
   const [loading, setLoading] = useState(false);
 
-
   const handleClickPrettify = async () => {
-    setLoading(true)
+    if (loading) {return;}
+
+    let expr = query.expr || '';
+    if (!expr.trim()) {
+      console.warn('Query expression is empty');
+      return;
+    }
+
+    setLoading(true);
     try {
-      let { expr } = query;
-      let grafanaVariables = [] as GrafanaVariableReplacer[];
-      GRAFANA_VARIABLES.forEach((variable, idx) => {
-        const regex = new RegExp(`\\[(\\${variable})\\]\\)`, 'g');
-        if (regex.test(expr)) {
-          expr = expr.replace(regex, `[${idx+1}i])`);
-          grafanaVariables.push({
-            variable,
-            defaultWindow: `${idx+1}i`,
-          })
+      // Replace grafana variables with temporary values
+      GRAFANA_VARIABLES.forEach((variable) => {
+        const tmpValue = GRAFANA_VARIABLES_TPM.get(variable);
+        if (tmpValue) {
+          expr = expr.split(variable).join(tmpValue);
         }
       });
-      const refId = query.refId;
+
       const response = await datasource.prettifyRequest(expr);
-      const { data, status } = response
-      if (data?.status === ResponseStatus.Success) {
-        let { query } = data;
-        if (grafanaVariables.length > 0) {
-            grafanaVariables.forEach(grafanaVariable => {
-              const regex = new RegExp(`\\[(${grafanaVariable.defaultWindow})\\]\\)`, 'g');
-              query = query.replace(regex, `[${grafanaVariable.variable}])`);
-            });
-        }
-        onChange({ ...query, expr: query, refId: refId });
+      const { data } = response;
+
+      if (data?.status === ResponseStatus.Success && data.query) {
+        let prettifiedQuery = data.query;
+
+        // Replace temporary values with grafana variables
+        GRAFANA_VARIABLES.forEach((variable) => {
+          const replaceValue = GRAFANA_VARIABLES_TPM.get(variable);
+          if (replaceValue) {
+            prettifiedQuery = prettifiedQuery.split(replaceValue).join(variable);
+          }
+        });
+
+        onChange({ ...query, expr: prettifiedQuery });
       } else {
-        console.error(`Error requesting /prettify-query, status: ${status}`)
+        console.error(`Error prettifying query: ${data?.status || 'Unknown error'}`);
       }
     } catch (e) {
-      console.error(e)
+      console.error('Error prettifying query:', e);
     }
-    setLoading(false)
-  }
+
+    setLoading(false);
+  };
 
   return (
     <IconButton
-      key="run"
+      key="prettify"
       name={loading ? 'fa fa-spinner' : 'brackets-curly'}
-      tooltip={'Prettify query'}
+      tooltip="Prettify query"
       disabled={loading}
       onClick={handleClickPrettify}
     />

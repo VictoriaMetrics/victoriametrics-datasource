@@ -12,12 +12,13 @@ import (
 )
 
 const (
-	varInterval     = "$__interval"
-	varIntervalMs   = "$__interval_ms"
-	varRange        = "$__range"
-	varRangeS       = "$__range_s"
-	varRangeMs      = "$__range_ms"
-	varRateInterval = "$__rate_interval"
+	varInterval            = "$__interval"
+	varIntervalMs          = "$__interval_ms"
+	varRange               = "$__range"
+	varRangeS              = "$__range_s"
+	varRangeMs             = "$__range_ms"
+	varRateInterval        = "$__rate_interval"
+	defaultIntervalMsValue = 1000
 )
 
 var (
@@ -27,33 +28,41 @@ var (
 )
 
 // getIntervalFrom returns the minimum interval.
-// dsInterval is the string representation of data source min interval, if configured.
-// queryInterval is the string representation of query interval (min interval), e.g. "10ms" or "10s".
-// queryIntervalMS is a pre-calculated numeric representation of the query interval in milliseconds.
-func getIntervalFrom(dsInterval, queryInterval string, queryIntervalMS int64, defaultInterval time.Duration) (time.Duration, error) {
+// TimeInterval is the string representation of data source min interval, if configured.
+// Interval is the string representation of query interval (min interval), e.g. "10ms" or "10s".
+// IntervalMs is a pre-calculated numeric representation of the query interval in milliseconds.
+func (q *Query) getIntervalFrom(defaultInterval time.Duration) (time.Duration, error) {
 	// Apparently we are setting default value of queryInterval to 0s now
-	interval := queryInterval
+	interval := q.Interval
 	if interval == "0s" {
 		interval = ""
 	}
 	if interval == "" {
-		if queryIntervalMS != 0 {
-			return time.Duration(queryIntervalMS) * time.Millisecond, nil
+		if q.IntervalMs == defaultIntervalMsValue && q.Instant {
+			return instantQueryDefaultStep, nil
+		}
+		if q.IntervalMs != 0 {
+			return time.Duration(q.IntervalMs) * time.Millisecond, nil
 		}
 	}
-	if interval == "" && dsInterval != "" {
-		interval = dsInterval
-	}
-	if interval == "" {
-		return defaultInterval, nil
+	if interval == "" && q.TimeInterval != "" {
+		interval = q.TimeInterval
 	}
 
-	parsedInterval, err := parseIntervalStringToTimeDuration(interval)
-	if err != nil {
-		return time.Duration(0), err
+	if interval != "" {
+		parsedInterval, err := parseIntervalStringToTimeDuration(interval)
+		if err != nil {
+			return time.Duration(0), err
+		}
+
+		return parsedInterval, nil
 	}
 
-	return parsedInterval, nil
+	if q.Instant {
+		return instantQueryDefaultStep, nil
+	}
+
+	return defaultInterval, nil
 }
 
 // parseIntervalStringToTimeDuration tries to parse interval string to duration representation
@@ -74,16 +83,21 @@ func parseIntervalStringToTimeDuration(interval string) (time.Duration, error) {
 }
 
 // calculateStep calculates step by provided max datapoints and timerange
-func calculateStep(minInterval time.Duration, from, to time.Time, maxDataPoints int64) time.Duration {
-	resolution := maxDataPoints
+func (q *Query) calculateStep(minInterval time.Duration) time.Duration {
+	if q.Instant {
+		if minInterval != 0 {
+			return minInterval
+		}
+		return instantQueryDefaultStep
+	}
+
+	resolution := q.MaxDataPoints
 	if resolution == 0 {
 		resolution = defaultResolution
 	}
 
-	rangeValue := to.UnixNano() - from.UnixNano()
-
+	rangeValue := q.TimeRange.To.UnixNano() - q.TimeRange.From.UnixNano()
 	calculatedInterval := time.Duration(rangeValue / resolution)
-
 	if calculatedInterval < minInterval {
 		return roundInterval(minInterval)
 	}

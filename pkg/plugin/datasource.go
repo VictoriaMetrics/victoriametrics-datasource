@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -20,6 +21,9 @@ import (
 const (
 	defaultScrapeInterval = 15 * time.Second
 	health                = "/-/healthy"
+	// it is weird logic to pass an identifier for an alert request in the headers
+	// but Grafana decided to do so, so we need to follow this
+	requestFromAlert = "FromAlert"
 )
 
 // NewDatasource creates a new datasource instance.
@@ -62,14 +66,20 @@ func (d *Datasource) Dispose() {
 // contains Frames ([]*Frame).
 func (d *Datasource) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
 	response := backend.NewQueryDataResponse()
+	headers := req.Headers
+
+	forAlerting, err := d.checkAlertingRequest(headers)
+	if err != nil {
+		return nil, err
+	}
 
 	var wg sync.WaitGroup
 	for _, q := range req.Queries {
 		wg.Add(1)
-		go func(q backend.DataQuery) {
+		go func(q backend.DataQuery, forAlerting bool) {
 			defer wg.Done()
-			response.Responses[q.RefID] = d.query(ctx, q)
-		}(q)
+			response.Responses[q.RefID] = d.query(ctx, q, forAlerting)
+		}(q, forAlerting)
 	}
 	wg.Wait()
 
@@ -77,7 +87,7 @@ func (d *Datasource) QueryData(ctx context.Context, req *backend.QueryDataReques
 }
 
 // query process backend.Query and return response
-func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
+func (d *Datasource) query(ctx context.Context, query backend.DataQuery, forAlerting bool) backend.DataResponse {
 	var q Query
 	if err := json.Unmarshal(query.JSON, &q); err != nil {
 		err = fmt.Errorf("failed to parse query json: %s", err)
@@ -86,11 +96,6 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 
 	q.TimeRange = TimeRange(query.TimeRange)
 	q.MaxDataPoints = query.MaxDataPoints
-	minInterval, err := q.calculateMinInterval()
-	if err != nil {
-		err = fmt.Errorf("failed to calculate minimal interval: %w", err)
-		return newResponseError(err, backend.StatusBadRequest)
-	}
 
 	var settings struct {
 		HTTPMethod  string `json:"httpMethod"`
@@ -104,7 +109,7 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 		settings.HTTPMethod = http.MethodPost
 	}
 
-	reqURL, err := q.getQueryURL(minInterval, d.settings.URL, settings.QueryParams)
+	reqURL, err := q.getQueryURL(d.settings.URL, settings.QueryParams)
 	if err != nil {
 		err = fmt.Errorf("failed to create request URL: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
@@ -142,7 +147,7 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		err = fmt.Errorf("got unexpected response status code: %d", resp.StatusCode)
+		err = fmt.Errorf("got unexpected response status code: %d with request url: %q", resp.StatusCode, reqURL)
 		return newResponseError(err, backend.Status(resp.StatusCode))
 	}
 
@@ -151,6 +156,8 @@ func (d *Datasource) query(ctx context.Context, query backend.DataQuery) backend
 		err = fmt.Errorf("failed to decode body response: %w", err)
 		return newResponseError(err, backend.StatusInternal)
 	}
+
+	r.ForAlerting = forAlerting
 
 	frames, err := r.getDataFrames()
 	if err != nil {
@@ -194,6 +201,23 @@ func (d *Datasource) CheckHealth(ctx context.Context, _ *backend.CheckHealthRequ
 		Status:  backend.HealthStatusOk,
 		Message: "Data source is working",
 	}, nil
+}
+
+func (d *Datasource) checkAlertingRequest(headers map[string]string) (bool, error) {
+	var forAlerting bool
+	if val, ok := headers[requestFromAlert]; ok {
+		if val == "" {
+			return false, nil
+		}
+
+		boolValue, err := strconv.ParseBool(val)
+		if err != nil {
+			return false, fmt.Errorf("failed to parse %s header value: %s", requestFromAlert, val)
+		}
+
+		forAlerting = boolValue
+	}
+	return forAlerting, nil
 }
 
 // newHealthCheckErrorf returns a new *backend.CheckHealthResult with its status set to backend.HealthStatusError

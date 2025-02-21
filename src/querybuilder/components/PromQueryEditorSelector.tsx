@@ -36,7 +36,7 @@ import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';
 import { QueryEditorModeToggle } from '../shared/QueryEditorModeToggle';
 import { QueryHeaderSwitch } from '../shared/QueryHeaderSwitch';
-import { promQueryEditorExplainKey, useFlag } from '../shared/hooks/useFlag';
+import { queryEditorExplainKey, useFlag } from '../shared/hooks/useFlag';
 import { QueryEditorMode } from '../shared/types';
 import { changeEditorMode, getQueryWithDefaults } from '../state';
 
@@ -55,7 +55,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   const [parseModalOpen, setParseModalOpen] = useState(false);
   const [trace, setTrace] = useState(false);
   const [rawQuery, setRawQuery] = useState(false)
-  const { flag: explain, setFlag: setExplain } = useFlag(promQueryEditorExplainKey);
+  const { flag: explain, setFlag: setExplain } = useFlag(queryEditorExplainKey);
 
   const dashboardUID: string = (data?.request as ExtendedDataQueryRequest<PromQuery>)?.dashboardUID || ""
   const [templateByDashboard, setTemplateByDashboard] = useState<WithTemplate>()

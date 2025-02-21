@@ -2,6 +2,62 @@
 
 ## tip
 
+## v0.13.3
+
+* BUGFIX: correctly calculate step for the instant query, use `5m` step for the alerting queries if interval wasn't explicitly set by user. This change reduces alerts flapping for Grafana managed alerts. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/276).
+
+## v0.13.2
+
+* BUGFIX: use `5m` step for the alerting queries if interval wasn't explicitly set by user. This change reduces alerts flapping for Grafana managed alerts. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/276). 
+
+## v0.13.1
+
+* BUGFIX: cleanup README.md for the plugin. Clarify how to make release. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/269).
+
+## v0.13.0
+
+* FEATURE: enable plugin sign procedure for new releases. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/264) and [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/265).
+
+## v0.12.2
+
+* FEATURE: change `localStorage` key names to avoid collisions with other systems. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/259).
+
+* BUGFIX: clean up the plugin codebase after the plugin verification procedure. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/260) and [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/261).
+
+## v0.12.1
+
+* BUGFIX: fix issue with including the lezer-metricsql package to the build and fix public folder. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/256).
+* BUGFIX: fix plugin loading for query formatting in the editor. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/234).
+* BUGFIX: fix issue with "Prettify query" functionality corrupting dashboard JSON model. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/242).
+
+## v0.12.0
+
+⚠️ **Breaking Change: Plugin ID Updated**  
+**Update Note 1:**  
+In the new version of the plugin, the plugin ID has been updated. The new plugin ID is `victoriametrics-metrics-datasource`. **This is a breaking change**: Grafana will treat this as a new plugin.
+- You must update the `allow_loading_unsigned_plugins` field in the `grafana.ini` or `defaults.ini` configuration file.  
+  **Example:**
+    ```ini  
+    allow_loading_unsigned_plugins = victoriametrics-metrics-datasource  
+    ```
+- If you are using provisioning, update the `type` field to `victoriametrics-metrics-datasource` in your provisioning configuration.
+- After making these changes, you must restart the Grafana server for the updates to take effect.
+
+* FEATURE: update plugin id name to `victoriametrics-metrics-datasource` after the review while sign procedure. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/233).
+
+## v0.11.1
+
+* BUGFIX: fix checksum calculation for release files.
+
+## v0.11.0
+
+* FEATURE: include request url in the `got unexpected response status code` error message for troubleshooting.
+  Thanks to @chenlujjj for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/243).
+
+* BUGFIX: fix issue with variables not working in adhoc filters. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/235).
+* BUGFIX: fix query type switching when creating alerts in Grafana. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/237)
+
+
 ## [v0.10.3](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.3)
 
 * BUGFIX: fix query loading when using multiple visible queries in a panel. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/223).
@@ -20,7 +76,7 @@
 
 * BUGFIX: fixed healthcheck
 
-## [v0.10.0](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.0) 
+## [v0.10.0](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.10.0)
 
 * FEATURE: set the default query type to `instant` when creating alerting rules. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/205).
 
@@ -38,7 +94,7 @@
 ## [v0.8.5](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.5)
 
 * BUGFIX: restore support for Grafana versions below `10.0.0`. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/159).
-* BUGFIX: fix issue with forwarding headers from datasource to the backend or proxy. 
+* BUGFIX: fix issue with forwarding headers from datasource to the backend or proxy.
   It might be helpful if a user wants to use some kind of authentication. See [this issue](https://github.com/VictoriaMetrics/victorialogs-datasource/issues/54).
 
 ## [v0.8.4](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.4)
