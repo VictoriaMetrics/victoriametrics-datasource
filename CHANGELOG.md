@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix error when response detected as not a wide series. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/286).
+
 ## v0.13.3
 
 * BUGFIX: correctly calculate step for the instant query, use `5m` step for the alerting queries if interval wasn't explicitly set by user. This change reduces alerts flapping for Grafana managed alerts. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/276).
