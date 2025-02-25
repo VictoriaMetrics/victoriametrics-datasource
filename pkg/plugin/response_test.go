@@ -1,7 +1,7 @@
 package plugin
 
 import (
-	"reflect"
+	"bytes"
 	"testing"
 	"time"
 
@@ -136,10 +136,10 @@ func TestResponse_getDataFrames(t *testing.T) {
 				return []*data.Frame{
 					data.NewFrame("",
 						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_rows"}, []float64{13763}),
-					),
+					).SetMeta(&data.FrameMeta{Type: data.FrameTypeNumericMulti, TypeVersion: data.FrameTypeVersion{0, 1}}),
 					data.NewFrame("",
 						data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_requests"}, []float64{2000}),
-					),
+					).SetMeta(&data.FrameMeta{Type: data.FrameTypeNumericMulti, TypeVersion: data.FrameTypeVersion{0, 1}}),
 				}
 			},
 			wantErr: false,
@@ -166,8 +166,19 @@ func TestResponse_getDataFrames(t *testing.T) {
 				tt.query.addMetadataToMultiFrame(got[i])
 			}
 
-			if !reflect.DeepEqual(got, w) {
-				t.Errorf("getDataFrames() got = %v, want %v", got, w)
+			gotResponse, err := got.MarshalJSON()
+			if err != nil {
+				t.Errorf("getDataFrames() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			wResponse, err := w.MarshalJSON()
+			if err != nil {
+				t.Errorf("getDataFrames() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if !bytes.EqualFold(gotResponse, wResponse) {
+				t.Errorf("getDataFrames() = %s, want %s", gotResponse, wResponse)
 			}
 		})
 	}

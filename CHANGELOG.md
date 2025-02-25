@@ -2,7 +2,7 @@
 
 ## tip
 
-## v0.13.4
+* BUGFIX: fix error when response detected as not a wide series. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/286).
 * BUGFIX: fix the inspector query while press on refresh button.
   Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/239).
 
@@ -12,7 +12,7 @@
 
 ## v0.13.2
 
-* BUGFIX: use `5m` step for the alerting queries if interval wasn't explicitly set by user. This change reduces alerts flapping for Grafana managed alerts. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/276).
+* BUGFIX: use `5m` step for the alerting queries if interval wasn't explicitly set by user. This change reduces alerts flapping for Grafana managed alerts. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/276). 
 
 ## v0.13.1
 
@@ -36,13 +36,13 @@
 
 ## v0.12.0
 
-⚠️ **Breaking Change: Plugin ID Updated**
-**Update Note 1:**
+⚠️ **Breaking Change: Plugin ID Updated**  
+**Update Note 1:**  
 In the new version of the plugin, the plugin ID has been updated. The new plugin ID is `victoriametrics-metrics-datasource`. **This is a breaking change**: Grafana will treat this as a new plugin.
-- You must update the `allow_loading_unsigned_plugins` field in the `grafana.ini` or `defaults.ini` configuration file.
+- You must update the `allow_loading_unsigned_plugins` field in the `grafana.ini` or `defaults.ini` configuration file.  
   **Example:**
-    ```ini
-    allow_loading_unsigned_plugins = victoriametrics-metrics-datasource
+    ```ini  
+    allow_loading_unsigned_plugins = victoriametrics-metrics-datasource  
     ```
 - If you are using provisioning, update the `type` field to `victoriametrics-metrics-datasource` in your provisioning configuration.
 - After making these changes, you must restart the Grafana server for the updates to take effect.

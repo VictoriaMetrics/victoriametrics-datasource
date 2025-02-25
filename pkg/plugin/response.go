@@ -72,6 +72,10 @@ func (pi *promInstant) alertingDataFrames() (data.Frames, error) {
 
 		frames[i] = data.NewFrame("",
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), []float64{f}))
+
+		// to show instant alert response with the table we need to define the type of the frame
+		// and it should be [0, 1] like it set in the Grafana
+		frames[i].Meta = &data.FrameMeta{Type: data.FrameTypeNumericMulti, TypeVersion: data.FrameTypeVersion{0, 1}}
 	}
 
 	return frames, nil
