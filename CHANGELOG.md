@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.13.4
+
 * BUGFIX: fix error when response detected as not a wide series. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/286).
 * BUGFIX: fix the inspector query while press on refresh button.
   Thanks to @yincongcyincong for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/239).
