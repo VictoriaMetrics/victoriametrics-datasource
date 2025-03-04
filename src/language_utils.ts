@@ -284,8 +284,7 @@ export function escapeLabelValueInRegexSelector(labelValue: string): string {
 }
 
 export function escapeMetricNameSpecialCharacters(metricName: string) {
-  const specialChars = /[-+*\/%^=]/g;
-  return metricName.replace(specialChars, (match) => '\\' + match);
+  return escapeIdentifier(metricName)
 }
 
 export function unescapeMetricNameSpecialCharacters(escapedMetricName: string) {
@@ -395,4 +394,49 @@ export function truncateResult<T>(array: T[], limit?: number): T[] {
   }
   array.length = Math.min(array.length, limit);
   return array;
+}
+
+/**
+ * The function escapeIdentifier takes a string and returns it with
+ * all characters that are not allowed in a bare identifier in MetricsQL escaped.
+ *
+ * For the first character, allowed characters are:
+ *   - Latin letters (A-Z, a-z)
+ *   - '_' and ':'
+ *
+ * For subsequent characters, allowed characters are:
+ *   - Latin letters (A-Z, a-z)
+ *   - Digits (0-9)
+ *   - '_' , ':' and '.'
+ *
+ * Any character that does not belong to these sets is prefixed with a backslash.
+ *
+ * Example:
+ *   "3foo(b)ar" -> "\3foo\(b\)ar"
+ */
+export function escapeIdentifier(input: string): string {
+  let result = "";
+  for (let i = 0; i < input.length; ) {
+    const codePoint = input.codePointAt(i)!;
+    const char = String.fromCodePoint(codePoint);
+    // If the character is represented by a surrogate pair, increase the index accordingly.
+    const charLength = codePoint > 0xFFFF ? 2 : 1;
+    if (i === 0) {
+      // For the first character, allowed: Latin letters, '_' and ':'.
+      if (/[A-Za-z_:]/.test(char)) {
+        result += char;
+      } else {
+        result += '\\' + char;
+      }
+    } else {
+      // For subsequent characters, allowed: Latin letters, digits, '_' , ':' and '.'.
+      if (/[A-Za-z0-9_:\.]/.test(char)) {
+        result += char;
+      } else {
+        result += '\\' + char;
+      }
+    }
+    i += charLength;
+  }
+  return result;
 }

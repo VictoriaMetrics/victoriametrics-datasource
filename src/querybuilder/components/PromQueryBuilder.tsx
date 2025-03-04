@@ -105,7 +105,7 @@ export const PromQueryBuilder = React.memo<Props>((props) => {
     const expr = promQueryModeller.renderLabels(labelsToConsider);
     const result = await datasource.languageProvider.fetchSeriesLabels(expr);
     const forLabelInterpolated = datasource.interpolateString(forLabel.label);
-    return result[forLabelInterpolated].map((v) => ({ value: v })) ?? [];
+    return result[forLabelInterpolated]?.map((v) => ({ value: v })) ?? [];
   };
 
   const onGetMetrics = useCallback(() => {
