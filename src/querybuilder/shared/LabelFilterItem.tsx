@@ -24,6 +24,7 @@ import { selectors } from '@grafana/e2e-selectors';
 import { Select } from '@grafana/ui';
 
 import { AccessoryButton, InputGroup } from '../../components/QueryEditor';
+import { escapeIdentifier } from "../../language_utils";
 
 import { QueryBuilderLabelFilter } from './types';
 
@@ -88,7 +89,7 @@ export function LabelFilterItem({ item, defaultOp, onChange, onDelete, onGetLabe
               onChange({
                 ...item,
                 op: item.op ?? defaultOp,
-                label: change.label,
+                label: escapeIdentifier(change.label),
               } as any as QueryBuilderLabelFilter);
             }
           }}

@@ -2,6 +2,8 @@
 
 ## tip
 
+* FEATURE: automatically escape metric and label names in the query builder. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/266).
+
 ## v0.13.4
 
 * BUGFIX: fix error when response detected as not a wide series. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/286).

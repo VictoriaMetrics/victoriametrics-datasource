@@ -364,8 +364,8 @@ AtModifierPreprocessors {
   Start | End
 }
 
-NumberLiteral  {
- ("-"|"+")?~signed (number | inf | nan)
+NumberLiteral {
+  ("-"|"+")?~signed (number | inf | nan)
 }
 
 @skip { whitespace | LineComment }
@@ -395,12 +395,17 @@ NumberLiteral  {
     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" ) ( std.digit+ "ms" )? ) |
     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" ) )
   }
-  EscapedChar {("\\" AnyEscapesChar) ("\\" AnyEscapesChar)*}
-  AnyEscapesChar { "-" | "+" | "*" | "/" | "%" | "^" | "=" }
-  Identifier {(std.asciiLetter | "_" | ":" | "." | EscapedChar) (std.asciiLetter | std.digit | "_" | ":" | "." | "-" | EscapedChar)*}
-  LabelName {(std.asciiLetter | "_" | ":" | "." | EscapedChar) (std.asciiLetter | std.digit | "_" | ":" | "." | "-" | EscapedChar)*}
 
-  // Operator
+  // Modified EscapedChar: match a '\' followed by any single character using the wildcard.
+  EscapedChar { "\\" _ }
+
+  // Identifier: first character allowed: std.asciiLetter, "_" or ":" or an EscapedChar.
+  // Subsequent characters allowed: std.asciiLetter, std.digit, "_" , ":" or "." or "-" or an EscapedChar.
+  Identifier { (std.asciiLetter | "_" | ":" | EscapedChar) (std.asciiLetter | std.digit | "_" | ":" | "." | "-" | EscapedChar)* }
+
+  // LabelName: same as Identifier.
+  LabelName { (std.asciiLetter | "_" | ":" | EscapedChar) (std.asciiLetter | std.digit | "_" | ":" | "." | "-" | EscapedChar)* }
+
   Sub { "-" }
   Add { "+" }
   Mul { "*" }
@@ -468,17 +473,17 @@ NumberLiteral  {
   Acos { condFn<"acos"> }
   Acosh { condFn<"acosh"> }
   Asin { condFn<"asin"> }
-  Asinh { condFn<"asinh">}
+  Asinh { condFn<"asinh"> }
   Atan { condFn<"atan"> }
-  Atanh { condFn<"atanh">}
+  Atanh { condFn<"atanh"> }
   AvgOverTime { condFn<"avg_over_time"> }
   Ceil { condFn<"ceil"> }
   Changes { condFn<"changes"> }
   Clamp { condFn<"clamp"> }
   ClampMax { condFn<"clamp_max"> }
   ClampMin { condFn<"clamp_min"> }
-  Cos { condFn<"cos">}
-  Cosh { condFn<"cosh">}
+  Cos { condFn<"cos"> }
+  Cosh { condFn<"cosh"> }
   CountOverTime { condFn<"count_over_time"> }
   DaysInMonth { condFn<"days_in_month"> }
   DayOfMonth { condFn<"day_of_month"> }
@@ -497,7 +502,7 @@ NumberLiteral  {
   Irate { condFn<"irate"> }
   LabelReplace { condFn<"label_replace"> }
   LabelJoin { condFn<"label_join"> }
-  LastOverTime {condFn<"last_over_time">}
+  LastOverTime { condFn<"last_over_time"> }
   Ln { condFn<"ln"> }
   Log10 { condFn<"log10"> }
   Log2 { condFn<"log2"> }
@@ -505,7 +510,7 @@ NumberLiteral  {
   MinOverTime { condFn<"min_over_time"> }
   Minute { condFn<"minute"> }
   Month { condFn<"month"> }
-  Pi { condFn<"pi">}
+  Pi { condFn<"pi"> }
   PredictLinear { condFn<"predict_linear"> }
   PresentOverTime { condFn<"present_over_time"> }
   QuantileOverTime { condFn<"quantile_over_time"> }
@@ -515,7 +520,7 @@ NumberLiteral  {
   Round { condFn<"round"> }
   Scalar { condFn<"scalar"> }
   Sgn { condFn<"sgn"> }
-  Sin { condFn<"sin">}
+  Sin { condFn<"sin"> }
   Sinh { condFn<"sinh"> }
   Sort { condFn<"sort"> }
   SortDesc { condFn<"sort_desc"> }
@@ -524,7 +529,7 @@ NumberLiteral  {
   StdvarOverTime { condFn<"stdvar_over_time"> }
   SumOverTime { condFn<"sum_over_time"> }
   Tan { condFn<"tan"> }
-  Tanh { condFn<"tanh">}
+  Tanh { condFn<"tanh"> }
   Time { condFn<"time"> }
   Timestamp { condFn<"timestamp"> }
   Vector { condFn<"vector"> }
