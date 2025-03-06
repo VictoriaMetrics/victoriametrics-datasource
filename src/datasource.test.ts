@@ -124,7 +124,7 @@ describe('PrometheusDatasource', () => {
         promDs.query(makeQuery(target));
         expect(fetchMock.mock.calls.length).toBe(1);
         expect(fetchMock.mock.calls[0][0].url).toBe(
-          'proxied/api/v1/query_range?query=test%7Bjob%3D%22testjob%22%7D&start=60&end=180&step=60&customQuery=123'
+          'proxied/api/v1/query_range?query=test%7Bjob%3D%22testjob%22%7D&start=63&end=183&step=60&customQuery=123'
         );
       });
 
@@ -150,8 +150,8 @@ describe('PrometheusDatasource', () => {
           customQuery: '123',
           query: 'test{job="testjob"}',
           step: 60,
-          end: 180,
-          start: 60,
+          end: 183,
+          start: 63,
         });
       });
 
@@ -583,8 +583,8 @@ describe('PrometheusDatasource for POST', () => {
     const urlExpected = 'proxied/api/v1/query_range';
     const dataExpected = {
       query: 'test{job="testjob"}',
-      start: 60,
-      end: 2 * 60,
+      start: 63,
+      end: 123,
       step: 60,
     };
     const query = {
