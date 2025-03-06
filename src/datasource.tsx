@@ -554,9 +554,10 @@ export class PrometheusDatasource
 
     // Align query interval with step to allow query caching and to ensure
     // that about-same-time query results look the same.
-    const adjusted = alignRange(start, end, query.step, this.timeSrv.timeRange().to.utcOffset() * 60);
-    query.start = adjusted.start;
-    query.end = adjusted.end;
+    // Removed alignRange to avoid calendar boundary issues.
+    // const adjusted = alignRange(start, end, query.step, this.timeSrv.timeRange().to.utcOffset() * 60);
+    query.start = start;
+    query.end = end;
     this._addTracingHeaders(query, options);
 
     query.trace = target.trace
