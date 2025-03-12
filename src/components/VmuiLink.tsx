@@ -16,7 +16,7 @@
 import { map } from 'lodash';
 import React, { FC, useEffect, useState, memo } from 'react';
 
-import { PanelData, ScopedVars, textUtil, rangeUtil } from '@grafana/data';
+import { PanelData, ScopedVars, textUtil, rangeUtil, getDefaultTimeRange } from '@grafana/data';
 import { getBackendSrv } from "@grafana/runtime";
 import { IconButton } from "@grafana/ui";
 
@@ -66,27 +66,24 @@ const VmuiLink: FC<Props> = ({
 
   useEffect(() => {
     const getExternalLink = async () => {
-      if (!panelData?.request) {
-        return
-      }
-
       const dataSourceSrv = getBackendSrv();
       const dsSettings = await dataSourceSrv.get(`/api/datasources/${datasource.id}`);
       let relativeTimeId = 'none'
 
-      const {
-        request: { range, interval, scopedVars, rangeRaw },
-      } = panelData;
+      const timeRange = panelData?.timeRange || getDefaultTimeRange();
+      const rangeRaw = timeRange.raw
+      const interval = panelData?.request?.interval || datasource.interval
+      const scopedVars = panelData?.request?.scopedVars || {}
 
       if (typeof rangeRaw?.from === 'string') {
         const duration = rangeRaw.from.replace('now-', '')
         relativeTimeId = relativeTimeOptionsVMUI.find(ops => ops.duration === duration)?.id || 'none'
       }
 
-      const start = datasource.getPrometheusTime(range.from, false);
-      const end = datasource.getPrometheusTime(range.to, true);
+      const start = datasource.getPrometheusTime(timeRange.from, false);
+      const end = datasource.getPrometheusTime(timeRange.to, true);
       const rangeDiff = Math.ceil(end - start);
-      const endTime = range.to.utc().format('YYYY-MM-DD HH:mm');
+      const endTime = timeRange.to.utc().format('YYYY-MM-DD HH:mm');
 
       const enrichedScopedVars: ScopedVars = {
         ...scopedVars,

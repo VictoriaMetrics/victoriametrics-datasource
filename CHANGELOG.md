@@ -4,6 +4,7 @@
 
 * FEATURE: automatically escape metric and label names in the query builder. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/266).
 
+* BUGFIX: fix an issue where the `vmui` link had an incorrect address of the type `about:blank`. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/288).
 * BUGFIX: fix change of the selected time range when aligning query intervals. See [#275](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/275).
 
 ## v0.13.4
