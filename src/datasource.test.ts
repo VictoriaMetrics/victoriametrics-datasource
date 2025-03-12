@@ -16,7 +16,6 @@ import {
 import { TemplateSrv } from '@grafana/runtime';
 
 import {
-  alignRange,
   extractRuleMappingFromGroups,
   PrometheusDatasource,
   prometheusRegularEscape,
@@ -124,7 +123,7 @@ describe('PrometheusDatasource', () => {
         promDs.query(makeQuery(target));
         expect(fetchMock.mock.calls.length).toBe(1);
         expect(fetchMock.mock.calls[0][0].url).toBe(
-          'proxied/api/v1/query_range?query=test%7Bjob%3D%22testjob%22%7D&start=60&end=180&step=60&customQuery=123'
+          'proxied/api/v1/query_range?query=test%7Bjob%3D%22testjob%22%7D&start=63&end=183&step=60&customQuery=123'
         );
       });
 
@@ -150,8 +149,8 @@ describe('PrometheusDatasource', () => {
           customQuery: '123',
           query: 'test{job="testjob"}',
           step: 60,
-          end: 180,
-          start: 60,
+          end: 183,
+          start: 63,
         });
       });
 
@@ -227,46 +226,6 @@ describe('PrometheusDatasource', () => {
       const caseTarget: PromQuery = { expr: 'topk_max($topk, vmalert_iteration_duration_seconds_sum)', refId: 'A' };
       const result = ds.createQuery(caseTarget, { interval: '15s', scopedVars: { 'topk': { text: 'topk', value: '5' } } as ScopedVars } as DataQueryRequest<PromQuery>, 0, 0);
       expect(result).toMatchObject({ expr: 'topk_max(5, vmalert_iteration_duration_seconds_sum{k1="v1"})' });
-    });
-  });
-
-  describe('alignRange', () => {
-    it('does not modify already aligned intervals with perfect step', () => {
-      const range = alignRange(0, 3, 3, 0);
-      expect(range.start).toEqual(0);
-      expect(range.end).toEqual(3);
-    });
-
-    it('does modify end-aligned intervals to reflect number of steps possible', () => {
-      const range = alignRange(1, 6, 3, 0);
-      expect(range.start).toEqual(0);
-      expect(range.end).toEqual(6);
-    });
-
-    it('does align intervals that are a multiple of steps', () => {
-      const range = alignRange(1, 4, 3, 0);
-      expect(range.start).toEqual(0);
-      expect(range.end).toEqual(3);
-    });
-
-    it('does align intervals that are not a multiple of steps', () => {
-      const range = alignRange(1, 5, 3, 0);
-      expect(range.start).toEqual(0);
-      expect(range.end).toEqual(3);
-    });
-
-    it('does align intervals with local midnight -UTC offset', () => {
-      //week range, location 4+ hours UTC offset, 24h step time
-      const range = alignRange(4 * 60 * 60, (7 * 24 + 4) * 60 * 60, 24 * 60 * 60, -4 * 60 * 60); //04:00 UTC, 7 day range
-      expect(range.start).toEqual(4 * 60 * 60);
-      expect(range.end).toEqual((7 * 24 + 4) * 60 * 60);
-    });
-
-    it('does align intervals with local midnight +UTC offset', () => {
-      //week range, location 4- hours UTC offset, 24h step time
-      const range = alignRange(20 * 60 * 60, (8 * 24 - 4) * 60 * 60, 24 * 60 * 60, 4 * 60 * 60); //20:00 UTC on day1, 7 days later is 20:00 on day8
-      expect(range.start).toEqual(20 * 60 * 60);
-      expect(range.end).toEqual((8 * 24 - 4) * 60 * 60);
     });
   });
 
@@ -583,8 +542,8 @@ describe('PrometheusDatasource for POST', () => {
     const urlExpected = 'proxied/api/v1/query_range';
     const dataExpected = {
       query: 'test{job="testjob"}',
-      start: 60,
-      end: 2 * 60,
+      start: 63,
+      end: 123,
       step: 60,
     };
     const query = {

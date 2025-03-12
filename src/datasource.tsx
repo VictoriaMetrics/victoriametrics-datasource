@@ -552,11 +552,8 @@ export class PrometheusDatasource
     // Only replace vars in expression after having (possibly) updated interval vars
     query.expr = this.templateSrv.replace(expr, scopedVars, this.interpolateQueryExpr);
 
-    // Align query interval with step to allow query caching and to ensure
-    // that about-same-time query results look the same.
-    const adjusted = alignRange(start, end, query.step, this.timeSrv.timeRange().to.utcOffset() * 60);
-    query.start = adjusted.start;
-    query.end = adjusted.end;
+    query.start = start;
+    query.end = end;
     this._addTracingHeaders(query, options);
 
     query.trace = target.trace
@@ -1064,29 +1061,6 @@ export class PrometheusDatasource
       end: getVictoriaMetricsTime(timeRange.to, true).toString(),
     };
   }
-}
-
-/**
- * Align query range to step.
- * Rounds start and end down to a multiple of step.
- * @param start Timestamp marking the beginning of the range.
- * @param end Timestamp marking the end of the range.
- * @param step Interval to align start and end with.
- * @param utcOffsetSec Number of seconds current timezone is offset from UTC
- */
-
-export function alignRange(
-  start: number,
-  end: number,
-  step: number,
-  utcOffsetSec: number
-): { end: number; start: number } {
-  const alignedEnd = Math.floor((end + utcOffsetSec) / step) * step - utcOffsetSec;
-  const alignedStart = Math.floor((start + utcOffsetSec) / step) * step - utcOffsetSec;
-  return {
-    end: alignedEnd,
-    start: alignedStart,
-  };
 }
 
 export function extractRuleMappingFromGroups(groups: any[]) {
