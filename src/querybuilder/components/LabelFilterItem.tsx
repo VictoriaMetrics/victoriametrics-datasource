@@ -20,7 +20,7 @@ import React, { useState } from 'react';
 
 import { SelectableValue, toOption } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
-import { AccessoryButton, InputGroup } from '@grafana/experimental';
+import { AccessoryButton, InputGroup } from '@grafana/plugin-ui';
 import { AsyncSelect, Select } from '@grafana/ui';
 
 import { truncateResult } from '../../language_utils';
