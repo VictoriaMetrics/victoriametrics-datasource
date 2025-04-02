@@ -2,6 +2,10 @@
 
 ## tip
 
+**Update Note 1:** This is an alpha release. We do not recommend using it in production.
+
+* Added PDC support. See [this issue](https://github.com/VictoriaMetrics/VictoriaMetrics/issues/5624).
+
 ## v0.14.0
 
 * FEATURE: automatically escape metric and label names in the query builder. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/266).
