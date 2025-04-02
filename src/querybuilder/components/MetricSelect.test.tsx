@@ -64,7 +64,7 @@ describe('MetricSelect', () => {
     await waitFor(() => expect(screen.getByText('random_metric')).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('unique_metric')).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('more_unique_metric')).toBeInTheDocument());
-    await waitFor(() => expect(screen.getAllByLabelText('Select option')).toHaveLength(3));
+    await waitFor(() => expect(screen.getAllByTestId('data-testid Select option')).toHaveLength(3));
   });
 
   it('shows option to set custom value when typing', async () => {
@@ -80,7 +80,7 @@ describe('MetricSelect', () => {
     await openMetricSelect();
     const input = screen.getByRole('combobox');
     await userEvent.type(input, 'unique');
-    await waitFor(() => expect(screen.getAllByLabelText('Select option')).toHaveLength(3));
+    await waitFor(() => expect(screen.getAllByTestId('data-testid Select option')).toHaveLength(3));
   });
 
   it('searches on split words', async () => {
@@ -88,7 +88,7 @@ describe('MetricSelect', () => {
     await openMetricSelect();
     const input = screen.getByRole('combobox');
     await userEvent.type(input, 'more unique');
-    await waitFor(() => expect(screen.getAllByLabelText('Select option')).toHaveLength(2));
+    await waitFor(() => expect(screen.getAllByTestId('data-testid Select option')).toHaveLength(2));
   });
 
   it('searches on multiple split words', async () => {
@@ -96,7 +96,7 @@ describe('MetricSelect', () => {
     await openMetricSelect();
     const input = screen.getByRole('combobox');
     await userEvent.type(input, 'more unique metric');
-    await waitFor(() => expect(screen.getAllByLabelText('Select option')).toHaveLength(2));
+    await waitFor(() => expect(screen.getAllByTestId('data-testid Select option')).toHaveLength(2));
   });
 
   it('highlights matching string', async () => {

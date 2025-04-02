@@ -23,13 +23,13 @@ frontend-build: frontend-package-base-image
 	mkdir -p .npm .cache && \
 	chown -R $(shell id -u):$(shell id -g) .npm .cache && \
 	docker run --rm \
-		-v "$(shell pwd):/victoriametrics-datasource" \
+		-v "$(shell pwd):/$(PLUGIN_ID)" \
 		-v "$(shell pwd)/.yarn:/.yarn" \
 		-v "$(shell pwd)/.npm:/.npm" \
 		-v "$(shell pwd)/.cache:/.cache" \
-		-w /victoriametrics-datasource \
+		-w /$(PLUGIN_ID) \
 		--user $(shell id -u):$(shell id -g) \
-		--env YARN_CACHE_FOLDER="/victoriametrics-datasource/.cache" \
+		--env YARN_CACHE_FOLDER="/$(PLUGIN_ID)/.cache" \
 		--env GRAFANA_ACCESS_POLICY_TOKEN=$$GRAFANA_ACCESS_POLICY_TOKEN \
 		--entrypoint=/bin/bash \
 		frontent-builder-image -c "yarn preinstall && yarn install --omit=dev && yarn build && yarn sign --distDir plugins/$(PLUGIN_ID)"
@@ -59,7 +59,7 @@ vm-plugin-pack: vm-plugin-build
 	sha1sum dist/$(PACKAGE_NAME).tar.gz > dist/$(PACKAGE_NAME)_checksums_tar.gz.txt
 
 vm-plugin-cleanup:
-	rm -rf ./victoriametrics-datasource plugins
+	rm -rf ./$(PLUGIN_ID) plugins
 
 vm-plugin-release: \
 	vm-plugin-pack \

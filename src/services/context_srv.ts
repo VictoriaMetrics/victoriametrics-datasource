@@ -27,6 +27,7 @@ import { CurrentUserInternal } from '../types/config';
 export class User implements Omit<CurrentUserInternal, 'lightTheme'> {
   isSignedIn: boolean;
   id: number;
+  uid: string;
   login: string;
   email: string;
   name: string;
@@ -51,6 +52,7 @@ export class User implements Omit<CurrentUserInternal, 'lightTheme'> {
 
   constructor() {
     this.id = 0;
+    this.uid = '';
     this.isGrafanaAdmin = false;
     this.isSignedIn = false;
     this.orgRole = '';

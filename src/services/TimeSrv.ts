@@ -209,7 +209,7 @@ export class TimeSrv {
 
   private initTimeFromUrl() {
     // If we are in a public dashboard ignore the time range in the url
-    if (config.isPublicDashboardView) {
+    if (config.publicDashboardAccessToken !== "") {
       return;
     }
 
@@ -341,7 +341,7 @@ export class TimeSrv {
 
   setTime(time: RawTimeRange, updateUrl = true) {
     // If we are in a public dashboard ignore time range changes
-    if (config.isPublicDashboardView) {
+    if (config.publicDashboardAccessToken !== "") {
       return;
     }
 

@@ -19,7 +19,6 @@
 import { flatten, forOwn, groupBy, partition } from 'lodash';
 
 import {
-  ArrayVector,
   CoreApp,
   DataFrame,
   DataFrameType,
@@ -202,7 +201,7 @@ export function transformDFToTable(dfs: DataFrame[]): DataFrame[] {
               name: label,
               config: { filterable: true },
               type: numberField ? FieldType.number : FieldType.string,
-              values: new ArrayVector(),
+              values: [] as (string | number)[],
             });
           }
         });
@@ -434,7 +433,7 @@ function transformMetricDataToTable(md: MatrixOrVectorResult[], options: Transfo
         name: label,
         config: { filterable: true },
         type: numberField ? FieldType.number : FieldType.string,
-        values: new ArrayVector(),
+        values: [] as (string | number)[],
       };
     });
   const valueField = getValueField({ data: [], valueName: valueText });
@@ -476,7 +475,7 @@ function getTimeField(data: PromValue[], isMs = false): MutableField {
     name: TIME_SERIES_TIME_FIELD_NAME,
     type: FieldType.time,
     config: {},
-    values: new ArrayVector<number>(data.map((val) => (isMs ? val[0] : val[0] * 1000))),
+    values: data.map<string | number>((val) => (isMs ? val[0] : val[0] * 1000)),
   };
 }
 
@@ -503,7 +502,7 @@ function getValueField({
       displayNameFromDS,
     },
     labels,
-    values: new ArrayVector<number | null>(data.map((val) => (parseValue ? parseSampleValue(val[1]) : val[1]))),
+    values: data.map<string | number>((val) => (parseValue ? parseSampleValue(val[1]) : val[1])),
   };
 }
 
