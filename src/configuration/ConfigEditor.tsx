@@ -17,7 +17,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useRef } from 'react';
-import { gte } from 'semver';
 
 import { SIGV4ConnectionConfig } from '@grafana/aws-sdk';
 import { DataSourcePluginOptionsEditorProps, DataSourceSettings } from '@grafana/data';
@@ -73,8 +72,8 @@ export const ConfigEditor = (props: Props) => {
 
       <LimitsSettings {...props}/>
 
-      {config.secureSocksDSProxyEnabled && gte(config.buildInfo.version, '10.0.0') && (
-        <SecureSocksProxySettings options={props.options} onOptionsChange={onOptionsChange} />
+      {config.secureSocksDSProxyEnabled && (
+        <SecureSocksProxySettings options={options} onOptionsChange={onOptionsChange} />
       )}
     </>
   );

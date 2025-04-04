@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: removed version constraint for secure proxy configuration
+
 ## v0.15.0-alpha1
 
 **Update Note 1:** This is an alpha release. We do not recommend using it in production.
