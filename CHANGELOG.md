@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.15.0-alpha2
+
 * BUGFIX: removed version constraint for secure proxy configuration
 
 ## v0.15.0-alpha1
