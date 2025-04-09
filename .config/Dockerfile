@@ -7,7 +7,6 @@ ARG anonymous_auth_enabled=true
 ARG development=false
 ARG TARGETARCH
 
-
 ENV DEV "${development}"
 
 # Make it as simple as possible to access the grafana instance for development purposes
