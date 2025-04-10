@@ -53,6 +53,7 @@ export interface PromOptions extends DataSourceJsonData {
   exemplarTraceIdDestinations?: ExemplarTraceIdDestination[];
   withTemplates?: WithTemplate[];
   limitMetrics?: LimitMetrics;
+  enableSecureSocksProxy?: boolean;
 }
 
 export enum PromQueryType {
