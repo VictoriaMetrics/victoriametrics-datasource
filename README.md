@@ -41,9 +41,9 @@ For detailed instructions on how to install the plugin on Grafana Cloud or local
 
 ### Install via Docker
 
-[VictoriaMetrics repo](https://github.com/victoriaMetrics/victoriaMetrics) provides a complete [docker-compose](https://github.com/VictoriaMetrics/VictoriaMetrics/tree/master/deployment/docker#grafana) environment to spin-up all required components via Docker.
-
-To begin, clone [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) repository and follow steps described in the [README](https://github.com/VictoriaMetrics/VictoriaMetrics/tree/master/deployment/docker#docker-compose-environment-for-victoriametrics).
+To install plugin via Grafana docker container [specify](https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/#build-a-grafana-docker-image-with-pre-installed-plugins)
+`GF_INSTALL_PLUGINS=victoriametrics-metrics-datasource` environment variable. It will pre-install the plugin on container start.
+See more details at [Configure a Grafana Docker image](https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/). 
 
 ### Grafana Provisioning
 
@@ -115,7 +115,7 @@ Please find the example of provisioning Grafana instance with VictoriaMetrics da
 docker-compose -f docker-compose.yaml up
 ```
 
-When Grafana starts successfully datasources should be present on the datasources tab
+When Grafana starts successfully datasources should be present on the datasources tab:
 
 ![Configuration](docs/assets/provision_datasources.webp)
 
@@ -177,8 +177,6 @@ sidecar:
 ```
 
 See more about chart settings [here](https://github.com/grafana/helm-charts/blob/541d97051de87a309362e02d08741ffc868cfcd6/charts/grafana/values.yaml)
-
-Option 4 would be to build custom Grafana image with plugin based on same installation instructions.
 
 #### Grafana operator
 
@@ -245,7 +243,7 @@ spec:
       dashboards: grafana
   plugins:
     - name: victoriametrics-metrics-datasource
-      version: "0.13.1"
+      version: "0.14.0"
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
@@ -255,7 +253,7 @@ spec:
   resyncPeriod: 30s
   plugins:
     - name: victoriametrics-metrics-datasource
-      version: "0.13.1"
+      version: "0.14.0"
   instanceSelector:
     matchLabels:
       dashboards: "grafana"
