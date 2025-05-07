@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.15.1
+
 * Added PDC support. See [this issue](https://github.com/VictoriaMetrics/VictoriaMetrics/issues/5624).
 
 ## v0.15.0
