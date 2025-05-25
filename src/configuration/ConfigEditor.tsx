@@ -20,9 +20,9 @@ import React, { useRef } from 'react';
 import { gte } from 'semver';
 
 import { SIGV4ConnectionConfig } from '@grafana/aws-sdk';
-import { DataSourcePluginOptionsEditorProps, DataSourceSettings } from '@grafana/data';
+import { DataSourcePluginOptionsEditorProps, DataSourceSettings, FeatureToggles } from '@grafana/data';
 import { config } from '@grafana/runtime';
-import { InlineField, InlineSwitch, AlertingSettings, DataSourceHttpSettings, SecureSocksProxySettings } from '@grafana/ui';
+import { InlineField, InlineSwitch, AlertingSettings, DataSourceHttpSettings } from '@grafana/ui';
 
 import { PromOptions } from '../types';
 
