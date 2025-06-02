@@ -20,6 +20,9 @@ import { SyntaxNode, TreeCursor } from '@lezer/common';
 
 import { QueryBuilderOperation } from './types';
 
+// Although 0 isn't explicitly provided in the lezer-promql library as the error node ID, it does appear to be the ID of error nodes within lezer.
+export const ErrorId = 0;
+
 // This is used for error type for some reason
 export const ErrorName = '⚠';
 
