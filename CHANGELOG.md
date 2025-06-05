@@ -2,6 +2,8 @@
 
 ## tip
 
+* FEATURE: add support dots in label name. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/205).
+
 ## v0.15.1
 
 * Added PDC support. See [this issue](https://github.com/VictoriaMetrics/VictoriaMetrics/issues/5624).
