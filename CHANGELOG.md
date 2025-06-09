@@ -5,6 +5,7 @@
 * FEATURE: add support dots in label name. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/205).
 
 * BUGFIX: fix label filter value loading for metric names with special characters. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/131).
+* BUGFIX: fix an issue in Grafana 10.1.5 where creating a variable using label_values is not possible .See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/319).
 
 ## v0.15.1
 
