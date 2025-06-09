@@ -557,7 +557,8 @@ export default class PromQlLanguageProvider extends LanguageProvider {
    * @param withName
    */
   fetchSeriesLabels = async (name: string, withName?: boolean): Promise<Record<string, string[]>> => {
-    const interpolatedName = this.datasource.interpolateString(name);
+    const unescapedName = name.replace(/\\(.)/g, '$1')
+    const interpolatedName = this.datasource.interpolateString(unescapedName);
     const range = this.datasource.getTimeRangeParams();
     const limit = this.datasource.getLimitMetrics('maxSeries');
     const urlParams = {

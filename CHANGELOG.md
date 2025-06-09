@@ -2,6 +2,10 @@
 
 ## tip
 
+* FEATURE: add support dots in label name. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/205).
+
+* BUGFIX: fix label filter value loading for metric names with special characters. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/131).
+
 ## v0.15.1
 
 * Added PDC support. See [this issue](https://github.com/VictoriaMetrics/VictoriaMetrics/issues/5624).
