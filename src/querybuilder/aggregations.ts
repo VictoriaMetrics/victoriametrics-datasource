@@ -6,7 +6,7 @@ import {
   getRangeVectorParamDef,
 } from './shared/operationUtils';
 import { QueryBuilderOperation, QueryBuilderOperationDef } from './shared/types';
-import { PromVisualQueryOperationCategory, PromOperationId } from './types';
+import { PromOperationId, PromVisualQueryOperationCategory } from './types';
 
 export function getAggregationOperations(): QueryBuilderOperationDef[] {
   return [
@@ -42,7 +42,10 @@ export function getAggregationOperations(): QueryBuilderOperationDef[] {
   ];
 }
 
-export function createAggregationOverTime(name: string): QueryBuilderOperationDef {
+export function createAggregationOverTime(
+  name: string,
+  override: Partial<QueryBuilderOperationDef> = {},
+): QueryBuilderOperationDef {
   return {
     id: name,
     name: getPromAndLokiOperationDisplayName(name),
@@ -52,6 +55,7 @@ export function createAggregationOverTime(name: string): QueryBuilderOperationDe
     category: PromVisualQueryOperationCategory.RangeFunctions,
     renderer: operationWithRangeVectorRenderer,
     addOperationHandler: addOperationWithRangeVector,
+    ...override
   };
 }
 
