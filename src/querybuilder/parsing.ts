@@ -28,6 +28,7 @@ import {
 } from 'lezer-metricsql';
 
 import { binaryScalarOperatorToOperatorName } from './binaryScalarOperations';
+import { overTimeFunctionNames }  from "./metricsql-functions/aggregations/overTime";
 import {
   ErrorId,
   ErrorName,
@@ -195,7 +196,7 @@ function getLabel(
   };
 }
 
-const rangeFunctions = ['changes', 'rate', 'irate', 'increase', 'delta'];
+const rangeFunctions = ['changes', 'rate', 'irate', 'increase', 'delta', ...overTimeFunctionNames];
 
 /**
  * Handle function call which is usually and identifier and its body > arguments.
