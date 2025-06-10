@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.16.0
+
 * FEATURE: add support dots in label name. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/205).
 * FEATURE: update Visual Query Builder code from Grafana upstream.
   Thanks to @SammyVimes for [the pull request](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/318).
