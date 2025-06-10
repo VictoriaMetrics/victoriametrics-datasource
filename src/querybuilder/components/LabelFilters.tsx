@@ -20,9 +20,10 @@ import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 
 import { SelectableValue } from '@grafana/data';
-import { EditorFieldGroup, EditorField, EditorList } from '@grafana/plugin-ui';
+import { EditorFieldGroup, EditorField } from '@grafana/plugin-ui';
 import { InlineFieldRow, InlineLabel } from '@grafana/ui';
 
+import { EditorList } from "../../components/QueryEditor";
 import { QueryBuilderLabelFilter } from '../shared/types';
 
 import { LabelFilterItem } from './LabelFilterItem';
