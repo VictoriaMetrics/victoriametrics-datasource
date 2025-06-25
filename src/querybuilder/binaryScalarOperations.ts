@@ -69,6 +69,11 @@ export const binaryScalarDefs = [
     sign: '<=',
     comparison: true,
   },
+  {
+    id: PromOperationId.Default,
+    name: 'Use default when absent',
+    sign: 'default',
+  }
 ];
 
 export const binaryScalarOperatorToOperatorName = binaryScalarDefs.reduce((acc, def) => {

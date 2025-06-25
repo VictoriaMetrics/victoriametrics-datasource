@@ -453,6 +453,42 @@ describe('buildVisualQueryFromString', () => {
         );
     });
 
+    it('handles default scalar operation', () => {
+        expect(buildVisualQueryFromString('cluster_cpu_usage default 0')).toEqual(
+            noErrors({
+                metric: 'cluster_cpu_usage',
+                labels: [],
+                operations: [
+                    {
+                        id: PromOperationId.Default,
+                        params: [0],
+                    },
+                ],
+            })
+        );
+    });
+
+    it('handles default binary operation between vectors', () => {
+        expect(buildVisualQueryFromString('metric_a default metric_b')).toEqual({
+            errors: [],
+            query: {
+                metric: 'metric_a',
+                labels: [],
+                operations: [],
+                binaryQueries: [
+                    {
+                        operator: 'default',
+                        query: {
+                            metric: 'metric_b',
+                            labels: [],
+                            operations: [],
+                        },
+                    },
+                ],
+            },
+        });
+    });
+
     it('parses aggregation binary expression', () => {
         expect(
             buildVisualQueryFromString(
