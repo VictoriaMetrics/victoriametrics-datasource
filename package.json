@@ -12,7 +12,8 @@
     "lint": "eslint --cache --ignore-path ./.gitignore --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "yarn lint --fix",
     "server": "docker compose up",
-    "preinstall": "cd packages/lezer-metricsql && yarn install && cd ../.. && yarn upgrade lezer-metricsql",
+    "preinstall": "cd packages/lezer-metricsql && yarn install && cd ../..",
+    "postinstall": "yarn upgrade lezer-metricsql",
     "sign": "[ -z $GRAFANA_ACCESS_POLICY_TOKEN ] && echo 'skip plugin signing' || npx --yes @grafana/sign-plugin@latest"
   },
   "author": "VictoriaMetrics",
@@ -72,7 +73,9 @@
     "webpack-virtual-modules": "^0.6.2"
   },
   "resolutions": {
-    "rxjs": "7.8.1"
+    "rxjs": "7.8.1",
+    "cliui": "^7.0.4",
+    "string-width": "^4.2.3"
   },
   "engines": {
     "node": ">=14"
