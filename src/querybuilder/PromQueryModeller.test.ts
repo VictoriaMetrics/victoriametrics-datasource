@@ -318,6 +318,36 @@ describe('PromQueryModeller', () => {
     ).toBe('metric_a / on(le, foo) metric_b');
   });
 
+  it('Can render query with default scalar operation', () => {
+    expect(
+      modeller.renderQuery({
+        metric: 'metric',
+        labels: [],
+        operations: [{ id: PromOperationId.Default, params: [0] }],
+      })
+    ).toBe('metric default 0');
+  });
+
+  it('Can render query with default binary query', () => {
+    expect(
+      modeller.renderQuery({
+        metric: 'metric_a',
+        labels: [],
+        operations: [],
+        binaryQueries: [
+          {
+            operator: 'default',
+            query: {
+              metric: 'metric_b',
+              labels: [],
+              operations: [],
+            },
+          },
+        ],
+      })
+    ).toBe('metric_a default metric_b');
+  });
+
   it('can render bool in binary ops', () => {
     expect(
       modeller.renderQuery({

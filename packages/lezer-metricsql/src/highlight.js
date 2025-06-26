@@ -18,7 +18,7 @@ const modifiers = [
   'By', 'Without', 'Bool', 'On', 'Ignoring', 'GroupLeft', 'GroupRight', 'Offset', 'Start', 'End'
 ];
 
-const logicOperators = ['And', 'Unless', 'Or'];
+const logicOperators = ['And', 'Unless', 'Or', 'Default'];
 
 const operators = [
   'Sub', 'Add', 'Mul', 'Mod', 'Div', 'Atan2', 'Eql', 'Neq', 'Lte', 'Lss', 'Gte', 'Gtr', 'EqlRegex', 'EqlSingle',

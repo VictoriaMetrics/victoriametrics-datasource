@@ -26,6 +26,7 @@ import {
     Sum,
     Topk,
     Unless,
+    Default,
     Without,
 } from './parser.terms.js';
 
@@ -63,6 +64,7 @@ const contextualKeywordTokens = {
     and: And,
     or: Or,
     unless: Unless,
+    default: Default,
     start: Start,
     end: End,
 };

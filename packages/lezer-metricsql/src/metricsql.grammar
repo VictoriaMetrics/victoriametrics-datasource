@@ -3,11 +3,12 @@
 
 @precedence {
   pow @right,
-  mul @left
+  mul @left,
   add @left,
   eql @left,
   and @left,
-  or @left
+  or @left,
+  default @left
 }
 
 Expr {
@@ -78,7 +79,8 @@ BinaryExpr {
   Expr !eql Neq    BinModifiers Expr |
   Expr !and And    BinModifiers Expr |
   Expr !and Unless BinModifiers Expr |
-  Expr !or  Or     BinModifiers Expr
+  Expr !or  Or     BinModifiers Expr |
+  Expr !default Default BinModifiers Expr
 }
 
 OnOrIgnoring {
@@ -460,6 +462,7 @@ NumberLiteral {
   And,
   Or,
   Unless,
+  Default,
   Start,
   End
 }

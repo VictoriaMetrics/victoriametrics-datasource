@@ -112,6 +112,7 @@ export enum PromOperationId {
   LessThan = '__less_than',
   GreaterOrEqual = '__greater_or_equal',
   LessOrEqual = '__less_or_equal',
+  Default = '__default',
 
   // MetricsQL
   AscentOverTime = 'ascent_over_time',
