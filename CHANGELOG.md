@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.17.0
+
 * FEATURE: add support for the `default` binary operator in the visual query builder. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/296).
 
 * BUGFIX: add a rollup field to rollup_rate function. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/316).
