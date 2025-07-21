@@ -146,13 +146,30 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
 
     let updateLabelFilters = updLabelFilters ? { labelFilters: updLabelFilters } : { labelFilters: labelFilters };
 
-    const updatedVar = { ...queryVar, ...updateVar, ...updateLabelFilters };
+    const variableQuery = variableMigration(query);
+
+    const merged: PromVariableQuery = {
+      ...queryVar,
+      ...updateVar,
+      ...updateLabelFilters,
+    };
+
+    const sameType = variableQuery.qryType === merged.qryType;
+
+    // Merge the existing variable query with the updated variable query
+    const updatedVar: PromVariableQuery = sameType
+      ? (Object.keys(variableQuery) as (keyof PromVariableQuery)[])
+        .reduce((acc, k) => {
+          const incoming = variableQuery[k];
+          return !acc[k] && incoming !== undefined ? { ...acc, [k]: incoming } : acc;
+        }, merged)
+      : merged;
 
     const queryString = migrateVariableEditorBackToVariableSupport(updatedVar);
 
     // setting query.query property allows for update of variable definition
     onChange({
-      query: queryString,
+      query: queryString || query.query,
       qryType: updatedVar.qryType,
       refId,
     });
@@ -230,7 +247,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
     setClassicQuery(e.currentTarget.value);
   };
 
-  const promVisualQuery = useCallback(() => {
+  const promVisualQuery = useCallback((): PromVisualQuery => {
     return { metric: metric, labels: labelFilters, operations: [] };
   }, [metric, labelFilters]);
 
@@ -240,9 +257,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
         <InlineField
           label="Query type"
           labelWidth={20}
-          tooltip={
-            <div>The Prometheus data source plugin provides the following query types for template variables.</div>
-          }
+          tooltip={<div>The data source plugin provides the following query types for template variables.</div>}
         >
           <Select
             placeholder="Select query type"
@@ -378,7 +393,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
             labelWidth={20}
             tooltip={
               <div>
-                Enter enter a metric with labels, only a metric or only labels, i.e.
+                Enter a metric with labels, only a metric or only labels, i.e.
                 go_goroutines&#123;instance=&quot;localhost:9090&quot;&#125;, go_goroutines, or
                 &#123;instance=&quot;localhost:9090&quot;&#125;. Returns a list of time series associated with the
                 entered data.
@@ -409,7 +424,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
             labelWidth={20}
             tooltip={
               <div>
-                The original implemetation of the Prometheus variable query editor. Enter a string with the correct
+                The original implementation of the Prometheus variable query editor. Enter a string with the correct
                 query type and parameters as described in these docs. For example, label_values(label, metric).
               </div>
             }
