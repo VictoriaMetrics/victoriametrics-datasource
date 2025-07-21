@@ -16,16 +16,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { cloneDeep, defaults } from 'lodash';
-import { lastValueFrom, merge, Observable, of, pipe } from 'rxjs';
-import { catchError, filter, map, tap } from 'rxjs/operators';
+import { lastValueFrom, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import {
   AdHocVariableFilter,
   AbstractQuery,
   AnnotationEvent,
   AnnotationQuery,
-  CoreApp,
   DataFrame,
   DataQueryError,
   DataQueryRequest,
@@ -47,20 +45,13 @@ import {
 import {
   BackendSrvRequest,
   DataSourceWithBackend,
-  FetchError,
-  FetchResponse,
   TemplateSrv,
   getTemplateSrv,
-  isFetchError,
-  BackendDataSourceResponse,
-  toDataQueryResponse,
 } from '@grafana/runtime';
 
 import { addLabelToQuery } from './add_label_to_query';
 import { AnnotationQueryEditor } from "./components/Annotations/AnnotationQueryEditor";
-import { getDefaultVmuiUrl } from "./components/VmuiLink";
 import { WithTemplate } from "./components/WithTemplateConfig/types";
-import { mergeTemplateWithQuery } from "./components/WithTemplateConfig/utils/getArrayFromTemplate";
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
 import PrometheusLanguageProvider from './language_provider';
 import {
@@ -70,20 +61,14 @@ import {
 import { renderLegendFormat } from './legend';
 import PrometheusMetricFindQuery from './metric_find_query';
 import { getInitHints, getQueryHints } from './query_hints';
-import { getOriginalMetricName, transform, transformV2 } from './result_transformer';
+import { getOriginalMetricName, transformV2 } from './result_transformer';
 import { getTimeSrv, TimeSrv } from './services/TimeSrv';
 import {
   ExemplarTraceIdDestination,
   LimitMetrics,
-  PromDataErrorResponse,
-  PromDataSuccessResponse,
-  PromMatrixData,
   PromOptions,
   PromQuery,
-  PromQueryRequest,
   PromQueryType,
-  PromScalarData,
-  PromVectorData,
 } from './types';
 import { utf8Support, wrapUtf8Filters } from './utf8_support';
 import { safeStringifyValue } from './utils/safeStringifyValue';
@@ -101,7 +86,6 @@ export class PrometheusDatasource
   url: string;
   id: number;
   directUrl: string;
-  vmuiUrl: string;
   access: 'direct' | 'proxy';
   basicAuth: any;
   withCredentials: any;
@@ -138,7 +122,6 @@ export class PrometheusDatasource
     this.queryTimeout = instanceSettings.jsonData.queryTimeout;
     this.httpMethod = instanceSettings.jsonData.httpMethod || 'GET';
     this.directUrl = instanceSettings.jsonData.directUrl ?? this.url;
-    this.vmuiUrl = instanceSettings.jsonData.vmuiUrl || getDefaultVmuiUrl(this.url);
     this.exemplarTraceIdDestinations = instanceSettings.jsonData.exemplarTraceIdDestinations;
     this.ruleMappings = {};
     this.languageProvider = languageProvider ?? new PrometheusLanguageProvider(this);
@@ -160,15 +143,6 @@ export class PrometheusDatasource
 
   getQueryDisplayText(query: PromQuery) {
     return query.expr;
-  }
-
-  _addTracingHeaders(httpOptions: PromQueryRequest, options: DataQueryRequest<PromQuery>) {
-    httpOptions.headers = {};
-    const proxyMode = !this.url.match(/^http/);
-    if (proxyMode) {
-      httpOptions.headers['X-Dashboard-UID'] = options.dashboardUID || "";
-      httpOptions.headers['X-Panel-Id'] = options.panelId;
-    }
   }
 
   async importFromAbstractQueries(abstractQueries: AbstractQuery[]): Promise<PromQuery[]> {
@@ -211,60 +185,6 @@ export class PrometheusDatasource
     return this.templateSrv.containsTemplate(target.expr);
   }
 
-  prepareTargets = (options: DataQueryRequest<PromQuery>, start: number, end: number) => {
-    const queries: PromQueryRequest[] = [];
-    const activeTargets: PromQuery[] = [];
-    const clonedTargets = cloneDeep(options.targets);
-
-    for (const target of clonedTargets) {
-      if (!target.expr || target.hide) {
-        continue;
-      }
-
-      target.requestId = options.requestId + options.panelId + target.refId;
-      // const metricName = this.languageProvider.histogramMetrics.find((m) => target.expr.includes(m));
-
-      // In Explore, we run both (instant and range) queries if both are true (selected) or both are undefined (legacy Explore queries)
-      if (options.app === CoreApp.Explore && target.range === target.instant) {
-        // Create instant target
-        const instantTarget: any = cloneDeep(target);
-        instantTarget.format = 'table';
-        instantTarget.instant = true;
-        instantTarget.range = false;
-        instantTarget.valueWithRefId = true;
-        delete instantTarget.maxDataPoints;
-        instantTarget.requestId += '_instant';
-
-        // Create range target
-        const rangeTarget: any = cloneDeep(target);
-        rangeTarget.format = 'time_series';
-        rangeTarget.instant = false;
-        instantTarget.range = true;
-
-        // Add both targets to activeTargets and queries arrays
-        activeTargets.push(instantTarget, rangeTarget);
-        queries.push(
-          this.createQuery(instantTarget, options, start, end),
-          this.createQuery(rangeTarget, options, start, end)
-        );
-        // If running only instant query in Explore, format as table
-      } else if (target.instant && options.app === CoreApp.Explore) {
-        const instantTarget: any = cloneDeep(target);
-        instantTarget.format = 'table';
-        queries.push(this.createQuery(instantTarget, options, start, end));
-        activeTargets.push(instantTarget);
-      } else {
-        queries.push(this.createQuery(target, options, start, end));
-        activeTargets.push(target);
-      }
-    }
-
-    return {
-      queries,
-      activeTargets,
-    };
-  };
-
   processTargetV2(target: PromQuery, request: DataQueryRequest<PromQuery>) {
     return {
       ...target,
@@ -285,86 +205,6 @@ export class PrometheusDatasource
         transformV2(response, request, {})
       )
     );
-  }
-
-  createQuery(target: PromQuery, options: DataQueryRequest<PromQuery>, start: number, end: number) {
-    const query: PromQueryRequest = {
-      hinting: target.hinting,
-      instant: target.instant,
-      exemplar: target.exemplar,
-      step: 0,
-      expr: '',
-      requestId: target.requestId,
-      refId: target.refId,
-      start: 0,
-      end: 0,
-    };
-    const range = Math.ceil(end - start);
-
-    // options.interval is the dynamically calculated interval
-    let interval: number = rangeUtil.intervalToSeconds(options.interval);
-    // Minimum interval ("Min step"), if specified for the query, or same as interval otherwise.
-    const minInterval = rangeUtil.intervalToSeconds(
-      this.templateSrv.replace(target.interval || options.interval, options.scopedVars)
-    );
-    // Scrape interval as specified for the query ("Min step") or otherwise taken from the datasource.
-    // Min step field can have template variables in it, make sure to replace it.
-    const scrapeInterval = target.interval
-      ? rangeUtil.intervalToSeconds(this.templateSrv.replace(target.interval, options.scopedVars))
-      : rangeUtil.intervalToSeconds(this.interval);
-
-    const intervalFactor = target.intervalFactor || 1;
-    // Adjust the interval to take into account any specified minimum and interval factor plus Prometheus limits
-    const adjustedInterval = this.adjustInterval(interval, minInterval, range, intervalFactor);
-    let scopedVars = {
-      ...options.scopedVars,
-      ...this.getRangeScopedVars(options.range),
-      ...this.getRateIntervalScopedVariable(adjustedInterval, scrapeInterval),
-    };
-    // If the interval was adjusted, make a shallow copy of scopedVars with updated interval vars
-    if (interval !== adjustedInterval) {
-      interval = adjustedInterval;
-      scopedVars = Object.assign({}, options.scopedVars, {
-        __interval: { text: interval + 's', value: interval + 's' },
-        __interval_ms: { text: interval * 1000, value: interval * 1000 },
-        ...this.getRateIntervalScopedVariable(interval, scrapeInterval),
-        ...this.getRangeScopedVars(options.range),
-      });
-    }
-    query.step = interval;
-
-    let expr = target.expr;
-
-    // Apply WITH templates
-    const dashboardUID = options.dashboardUID || options.app || ""
-    expr = mergeTemplateWithQuery(expr, this.withTemplates.find(t => t.uid === dashboardUID))
-
-    // Only replace vars in expression after having (possibly) updated interval vars
-    expr = this.templateSrv.replace(expr, scopedVars, this.interpolateQueryExpr);
-
-    // Apply adhoc filters
-    // @ts-ignore
-    expr = this.enhanceExprWithAdHocFilters(options.filters, expr);
-
-    // Only replace vars in expression after having (possibly) updated interval vars
-    query.expr = this.templateSrv.replace(expr, scopedVars, this.interpolateQueryExpr);
-
-    query.start = start;
-    query.end = end;
-    this._addTracingHeaders(query, options);
-
-    query.trace = target.trace
-
-    return query;
-  }
-
-  getRateIntervalScopedVariable(interval: number, scrapeInterval: number) {
-    // Fall back to the default scrape interval of 15s if scrapeInterval is 0 for some reason.
-    if (scrapeInterval === 0) {
-      scrapeInterval = 15;
-    }
-    const rateInterval = Math.max(interval + scrapeInterval, 4 * scrapeInterval);
-    return { __rate_interval: { text: rateInterval + 's', value: rateInterval + 's' } };
   }
 
   adjustInterval(interval: number, minInterval: number, range: number, intervalFactor: number) {

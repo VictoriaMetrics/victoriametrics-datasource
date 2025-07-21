@@ -16,7 +16,7 @@ interface Props extends WithTemplateConfigProps {
 const WithTemplateBody: FC<Props> = ({ datasource, dashboardUID, template, setTemplate, handleClose }) => {
   const styles = useStyles2(getStyles);
 
-  const { validateResult, isValidExpr } = useValidateExpr(datasource.id)
+  const { validateResult, isValidExpr } = useValidateExpr(datasource.uid)
   const { updateDatasource } = useUpdateDatasource({
     datasourceUID: datasource.uid,
     dashboardUID

@@ -260,8 +260,8 @@ export function transform(
 
     },
   };
-  const prometheusResult = response.data.data;
-  const traceResult = response.data?.trace
+  const prometheusResult = response.data;
+  const traceResult = response?.trace
 
   if (response.data.isPartial) {
     const partialWarning = {

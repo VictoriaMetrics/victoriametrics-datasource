@@ -38,7 +38,15 @@ type Data struct {
 type Response struct {
 	Status      string `json:"status"`
 	Data        Data   `json:"data"`
+	Trace       *Trace `json:"trace,omitempty"`
 	ForAlerting bool   `json:"-"`
+}
+
+// Trace represents data for query tracing
+type Trace struct {
+	Duration float64 `json:"duration_msec"`
+	Message  string  `json:"message"`
+	Children []Trace `json:"children,omitempty"`
 }
 
 type promInstant struct {
@@ -133,30 +141,47 @@ func (ps promScalar) dataframes() (data.Frames, error) {
 	return frames, nil
 }
 
-func (r *Response) getDataFrames() (data.Frames, error) {
+type dataframe interface {
+	dataframes() (data.Frames, error)
+}
+
+func (r *Response) getDataFrames() (fss data.Frames, err error) {
+	if r.Trace != nil {
+		fss = append(fss, &data.Frame{
+			Meta: &data.FrameMeta{
+				Custom: r.Trace,
+			},
+		})
+	}
+	var df dataframe
 	switch r.Data.ResultType {
 	case vector:
 		var pi promInstant
-		if err := json.Unmarshal(r.Data.Result, &pi.Result); err != nil {
-			return nil, fmt.Errorf("unmarshal err %s; \n %#v", err, string(r.Data.Result))
+		if err = json.Unmarshal(r.Data.Result, &pi.Result); err != nil {
+			return nil, fmt.Errorf("unmarshal err %w; \n %#v", err, string(r.Data.Result))
 		}
 		if r.ForAlerting {
 			return pi.alertingDataFrames()
 		}
-		return pi.dataframes()
+		df = pi
 	case matrix:
 		var pr promRange
-		if err := json.Unmarshal(r.Data.Result, &pr.Result); err != nil {
-			return nil, fmt.Errorf("unmarshal err %s; \n %#v", err, string(r.Data.Result))
+		if err = json.Unmarshal(r.Data.Result, &pr.Result); err != nil {
+			return nil, fmt.Errorf("unmarshal err %w; \n %#v", err, string(r.Data.Result))
 		}
-		return pr.dataframes()
+		df = pr
 	case scalar:
 		var ps promScalar
-		if err := json.Unmarshal(r.Data.Result, &ps); err != nil {
-			return nil, fmt.Errorf("unmarshal err %s; \n %#v", err, string(r.Data.Result))
+		if err = json.Unmarshal(r.Data.Result, &ps); err != nil {
+			return nil, fmt.Errorf("unmarshal err %w; \n %#v", err, string(r.Data.Result))
 		}
-		return ps.dataframes()
+		df = ps
 	default:
 		return nil, fmt.Errorf("unknown result type %q", r.Data.ResultType)
+	}
+	if frames, err := df.dataframes(); err != nil {
+		return nil, err
+	} else {
+		return append(fss, frames...), nil
 	}
 }

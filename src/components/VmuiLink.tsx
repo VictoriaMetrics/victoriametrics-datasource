@@ -13,13 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { map } from 'lodash';
 import React, { FC, useEffect, useState, memo } from 'react';
 
-import { DataQueryRequest, PanelData, ScopedVars, textUtil, rangeUtil, getDefaultTimeRange } from '@grafana/data';
-import { getBackendSrv } from "@grafana/runtime";
+import { PanelData, textUtil, rangeUtil, getDefaultTimeRange } from '@grafana/data';
 import { IconButton } from "@grafana/ui";
 
+import { mergeTemplateWithQuery } from "../components/WithTemplateConfig/utils/getArrayFromTemplate";
 import { PrometheusDatasource } from '../datasource';
 import { PromQuery } from '../types';
 import { getDurationFromMilliseconds } from "../utils/time";
@@ -30,8 +29,6 @@ interface Props {
   panelData?: PanelData;
   dashboardUID: string;
 }
-
-export const getDefaultVmuiUrl = (serverUrl = "#") => `${serverUrl.replace(/\/$/, "")}/vmui/`
 
 export const relativeTimeOptionsVMUI = [
   { title: "Last 5 minutes", duration: "5m" },
@@ -55,6 +52,15 @@ export const relativeTimeOptionsVMUI = [
   ...o
 }))
 
+const getRateIntervalScopedVariable = (interval: number, scrapeInterval: number) => {
+  // Fall back to the default scrape interval of 15s if scrapeInterval is 0 for some reason.
+  if (scrapeInterval === 0) {
+    scrapeInterval = 15;
+  }
+  const rateInterval = Math.max(interval + scrapeInterval, 4 * scrapeInterval);
+  return { __rate_interval: { text: rateInterval + 's', value: rateInterval + 's' } };
+}
+
 const VmuiLink: FC<Props> = ({
   panelData,
   query,
@@ -65,65 +71,56 @@ const VmuiLink: FC<Props> = ({
 
   useEffect(() => {
     const getExternalLink = async () => {
-      const dataSourceSrv = getBackendSrv();
-      const dsSettings = await dataSourceSrv.get(`/api/datasources/${datasource.id}`);
-      let relativeTimeId = 'none'
-
       const timeRange = panelData?.timeRange || getDefaultTimeRange();
-      const rangeRaw = timeRange.raw
-      const interval = panelData?.request?.interval || datasource.interval
-      const scopedVars = panelData?.request?.scopedVars || {}
-
+      const rangeRaw = timeRange.raw;
+      const interval = panelData?.request?.interval || datasource.interval;
+      let scopedVars = panelData?.request?.scopedVars || {};
+      let relativeTimeId = 'none';
       if (typeof rangeRaw?.from === 'string') {
         const duration = rangeRaw.from.replace('now-', '')
         relativeTimeId = relativeTimeOptionsVMUI.find(ops => ops.duration === duration)?.id || 'none'
       }
-
       const start = datasource.getPrometheusTime(timeRange.from, false);
       const end = datasource.getPrometheusTime(timeRange.to, true);
       const rangeDiff = Math.ceil(end - start);
       const endTime = timeRange.to.utc().format('YYYY-MM-DD HH:mm');
-
-      const enrichedScopedVars: ScopedVars = {
-        ...scopedVars,
-        // As we support $__rate_interval variable in min step, we need add it to scopedVars
-        ...datasource.getRateIntervalScopedVariable(
-          rangeUtil.intervalToSeconds(interval),
-          rangeUtil.intervalToSeconds(datasource.interval)
-        ),
-      };
-
-      const options = {
-        interval,
-        dashboardUID,
-        scopedVars: enrichedScopedVars,
-      } as DataQueryRequest<PromQuery>;
-
-      const customQueryParameters: { [key: string]: string } = {};
-      if (datasource.customQueryParameters) {
-        for (const [k, v] of datasource.customQueryParameters) {
-          customQueryParameters[k] = v;
-        }
+      scopedVars = Object.assign({}, scopedVars, getRateIntervalScopedVariable(
+        rangeUtil.intervalToSeconds(interval),
+        rangeUtil.intervalToSeconds(datasource.interval)
+      ));
+      let step: number = rangeUtil.intervalToSeconds(interval);
+      const minStep = rangeUtil.intervalToSeconds(
+        datasource.templateSrv.replace(query.interval || interval, scopedVars)
+      );
+      const scrapeInterval = rangeUtil.intervalToSeconds(query.interval
+        ? datasource.templateSrv.replace(query.interval, scopedVars)
+        : datasource.interval);
+      const adjustedStep = datasource.adjustInterval(step, minStep, rangeDiff, 1);
+      scopedVars = Object.assign({}, scopedVars, getRateIntervalScopedVariable(
+        adjustedStep, scrapeInterval,
+      ));
+      if (step !== adjustedStep) {
+        step = adjustedStep;
+        scopedVars = Object.assign({}, scopedVars, {
+          __interval: { text: step + 's', value: step + 's' },
+          __interval_ms: { text: step * 1000, value: step * 1000 },
+          ...getRateIntervalScopedVariable(step, scrapeInterval),
+        });
       }
+      let expr = mergeTemplateWithQuery(query.expr, datasource.withTemplates.find(t => t.uid === dashboardUID))
+      expr = datasource.templateSrv.replace(expr, scopedVars, datasource.interpolateQueryExpr);
+      const resp = await datasource.postResource('vmui', {
+        vmui: {
+          expr: expr,
+          range_input: getDurationFromMilliseconds(rangeDiff * 1000),
+          end_input: endTime,
+          step_input: step ? getDurationFromMilliseconds(step * 1000) : '',
+          relative_time: relativeTimeId,
+          tab: '0',
+        },
+      });
 
-      const queryOptions = datasource.createQuery(query, options, start, end);
-
-      const expr = {
-        ...customQueryParameters,
-        'g0.expr': queryOptions.expr,
-        'g0.range_input': getDurationFromMilliseconds(rangeDiff * 1000),
-        'g0.end_input': endTime,
-        'g0.step_input': queryOptions.step ? getDurationFromMilliseconds(queryOptions.step * 1000) : '',
-        'g0.relative_time': relativeTimeId,
-        'g0.tab': 0,
-      };
-
-      const args = map(expr, (v: string, k: string) => {
-        return k + '=' + encodeURIComponent(v);
-      }).join('&');
-
-      const vmuiUrl = dsSettings.jsonData.vmuiUrl || getDefaultVmuiUrl(dsSettings.url)
-      setHref(`${vmuiUrl}?${args}`);
+      setHref(resp.vmuiURL);
     };
 
     getExternalLink()

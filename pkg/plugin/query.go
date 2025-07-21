@@ -30,6 +30,7 @@ type Query struct {
 	TimeInterval  string `json:"timeInterval"`
 	Expr          string `json:"expr"`
 	LegendFormat  string `json:"legendFormat"`
+	Trace         int    `json:"trace,omitempty"`
 	MaxDataPoints int64
 	TimeRange     TimeRange
 }
@@ -62,19 +63,7 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 	var u *url.URL
 	var values url.Values
 
-	if q.Instant {
-		u, err = newURL(rawURL, instantQueryPath, false)
-		if err != nil {
-			return "", fmt.Errorf("failed to build query url: %w", err)
-		}
-		values = u.Query()
-		for k, vl := range queryParams {
-			for _, v := range vl {
-				values.Add(k, v)
-			}
-		}
-		values.Set("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
-	} else {
+	if q.Range || !q.Instant {
 		u, err = newURL(rawURL, rangeQueryPath, false)
 		if err != nil {
 			return "", fmt.Errorf("failed to build query url: %w", err)
@@ -87,6 +76,21 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 		}
 		values.Add("start", strconv.FormatInt(q.TimeRange.From.Unix(), 10))
 		values.Add("end", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
+	} else {
+		u, err = newURL(rawURL, instantQueryPath, false)
+		if err != nil {
+			return "", fmt.Errorf("failed to build query url: %w", err)
+		}
+		values = u.Query()
+		for k, vl := range queryParams {
+			for _, v := range vl {
+				values.Add(k, v)
+			}
+		}
+		values.Set("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
+	}
+	if q.Trace > 0 {
+		values.Set("trace", strconv.Itoa(q.Trace))
 	}
 	values.Set("query", expr)
 	values.Set("step", step.String())

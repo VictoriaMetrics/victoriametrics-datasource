@@ -76,7 +76,8 @@ func newDatasourceInstance(ctx context.Context, settings backend.DataSourceInsta
 	}
 
 	var dsOpts struct {
-		QueryParams string `json:"customQueryParameters"`
+		QueryParams string `json:"customQueryParameters,omitempty"`
+		VMUIURL     string `json:"vmuiUrl,omitempty"`
 	}
 	if err := json.Unmarshal(settings.JSONData, &dsOpts); err != nil {
 		return nil, fmt.Errorf("failed to parse datasource settings: %w", err)
@@ -85,11 +86,19 @@ func newDatasourceInstance(ctx context.Context, settings backend.DataSourceInsta
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse query params: %w", err)
 	}
+	if len(dsOpts.VMUIURL) == 0 {
+		vmuiUrl, err := newURL(settings.URL, "/vmui/", false)
+		if err != nil {
+			return nil, fmt.Errorf("failed to build VMUI url: %w", err)
+		}
+		dsOpts.VMUIURL = vmuiUrl.String()
+	}
 	return &DatasourceInstance{
 		url:         settings.URL,
 		httpClient:  cl,
 		logger:      logger,
 		queryParams: queryParams,
+		vmuiURL:     dsOpts.VMUIURL,
 	}, nil
 }
 
@@ -100,6 +109,7 @@ type DatasourceInstance struct {
 	httpClient  *http.Client
 	logger      log.Logger
 	queryParams url.Values
+	vmuiURL     string
 }
 
 // Dispose here tells plugin SDK that plugin wants to clean up resources when a new instance
@@ -158,7 +168,7 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, reqURL, nil)
 	if err != nil {
 		err = fmt.Errorf("failed to create new request with context: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
@@ -278,6 +288,43 @@ func newURL(urlStr, p string, root bool) (*url.URL, error) {
 	}
 	u.Path = path.Join(u.Path, p)
 	return u, nil
+}
+
+// VMUIQuery generates VMUI link to a native dashboard
+func (d *Datasource) VMUIQuery(rw http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	pluginCxt := backend.PluginConfigFromContext(ctx)
+	di, err := d.getInstance(ctx, pluginCxt)
+	if err != nil {
+		d.logger.Error("Error loading datasource", "error", err)
+		writeError(rw, http.StatusInternalServerError, err)
+		return
+	}
+	var vmuiReq struct {
+		VMUI map[string]string `json:"vmui"`
+	}
+	err = json.NewDecoder(req.Body).Decode(&vmuiReq)
+	if err != nil {
+		d.logger.Error("Error decoding request body", "error", err)
+		writeError(rw, http.StatusInternalServerError, err)
+		return
+	}
+	params := url.Values{}
+	for k, vl := range di.queryParams {
+		for _, v := range vl {
+			params.Add(k, v)
+		}
+	}
+	for k, v := range vmuiReq.VMUI {
+		params.Add("g0."+k, v)
+	}
+	rw.Header().Add("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusOK)
+	vmuiURL := di.vmuiURL + "?#/?" + params.Encode()
+	_, err = fmt.Fprintf(rw, `{"vmuiURL": %q}`, vmuiURL)
+	if err != nil {
+		log.DefaultLogger.Warn("Error writing response")
+	}
 }
 
 // VMAPIQuery performs request to VM API endpoints that doesn't return frames

@@ -67,13 +67,16 @@ export const TraceView = React.memo<Props>(({ query, data, datasource }) => {
         return
       }
 
+      const targets = data?.request?.targets || [];
+      if (!targets.find(target => target.trace)) {
+        setTrace(null)
+        return
+      }
+
       const observable = datasource.query(data.request as DataQueryRequest<PromQuery>)
       observable.subscribe((val: DataQueryResponse) => {
-        const index = val?.data?.findIndex((item) => item.refId === query.refId)
-        // @ts-ignore
-        const traceArray = val?.trace || []
-        const traceData = traceArray[index] as TracingData
-        if (traceData && index !== -1) {
+        const traceData = val?.data?.find((item) => item.refId === query.refId && item.meta.custom)?.meta?.custom as TracingData;
+        if (traceData) {
           setTrace(new Trace(traceData, query.expr))
         } else {
           setTrace(null)

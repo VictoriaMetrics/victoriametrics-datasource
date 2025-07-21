@@ -44,6 +44,7 @@ func Init(mux *http.ServeMux) *plugin.Datasource {
 	mux.HandleFunc("/prettify-query", ds.VMAPIQuery)
 	mux.HandleFunc("/expand-with-exprs", ds.VMAPIQuery)
 	mux.HandleFunc("/api/v1/label/{key}/values", ds.VMAPIQuery)
+	mux.HandleFunc("/vmui", ds.VMUIQuery)
 
 	return ds
 }

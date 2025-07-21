@@ -29,8 +29,8 @@ describe('applyValueEncodingEscaping', () => {
       'U___82b1__706b_',
       'U__label_20_with_20__1f631_',
     ];
-    const excapedLabels = labels.map(escapeForUtf8Support);
-    expect(excapedLabels).toEqual(expected);
+    const escapedLabels = labels.map(escapeForUtf8Support);
+    expect(escapedLabels).toEqual(expected);
   });
 });
 

@@ -4,6 +4,8 @@ services:
     restart: always
   victoriametrics:
     image: victoriametrics/victoria-metrics:v1.122.0
+    ports:
+     - 8428:8428
   grafana:
     build:
       context: .config

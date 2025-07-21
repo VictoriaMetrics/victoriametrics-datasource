@@ -55,6 +55,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^28.11.0",
     "eslint-plugin-lodash": "^7.4.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
     "eslint-webpack-plugin": "4.0.1",
     "fork-ts-checker-webpack-plugin": "8.0.0",
     "glob": "^10.2.7",
