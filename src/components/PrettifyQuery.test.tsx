@@ -67,10 +67,10 @@ const datasource = {
     metrics: [],
   },
   getInitHints: () => [],
-  prettifyRequest: async (expr: string) => {
+  getRequest: async (path: string, params = {}, options?: Partial<BackendSrvRequest>) => {
     return {
       data: {
-        query: expr,
+        query: params.query,
         status: 'success'
       }
     }

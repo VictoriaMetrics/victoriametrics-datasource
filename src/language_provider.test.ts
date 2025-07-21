@@ -10,7 +10,7 @@ import { PromQuery } from './types';
 
 describe('Language completion provider', () => {
   const datasource: PrometheusDatasource = {
-    metadataRequest: () => ({ data: { data: [] } }),
+    getRequest: () => ({ data: [] }),
     getTimeRangeParams: () => ({ start: '0', end: '1' }),
     interpolateString: (string: string) => string,
     hasLabelsMatchAPISupport: () => false,
@@ -260,7 +260,7 @@ describe('Language completion provider', () => {
 
     it('returns label suggestions on label context and metric', async () => {
       const datasources: PrometheusDatasource = {
-        metadataRequest: () => ({ data: { data: [{ __name__: 'metric', bar: 'bazinga' }] } }),
+        getRequest: () => ({ data: [{ __name__: 'metric', bar: 'bazinga' }] }),
         getTimeRangeParams: () => ({ start: '0', end: '1' }),
         interpolateString: (string: string) => string,
         getLimitMetrics: () => 0,
@@ -284,18 +284,16 @@ describe('Language completion provider', () => {
 
     it('returns label suggestions on label context but leaves out labels that already exist', async () => {
       const datasource: PrometheusDatasource = {
-        metadataRequest: () => ({
-          data: {
-            data: [
-              {
-                __name__: 'metric',
-                bar: 'asdasd',
-                job1: 'dsadsads',
-                job2: 'fsfsdfds',
-                job3: 'dsadsad',
-              },
-            ],
-          },
+        getRequest: () => ({
+          data: [
+            {
+              __name__: 'metric',
+              bar: 'asdasd',
+              job1: 'dsadsads',
+              job2: 'fsfsdfds',
+              job3: 'dsadsad',
+            },
+          ],
         }),
         getTimeRangeParams: () => ({ start: '0', end: '1' }),
         interpolateString: (string: string) => string,
@@ -321,8 +319,8 @@ describe('Language completion provider', () => {
     it('returns label value suggestions inside a label value context after a negated matching operator', async () => {
       const instance = new LanguageProvider({
         ...datasource,
-        metadataRequest: () => {
-          return { data: { data: ['value1', 'value2'] } };
+        getRequest: () => {
+          return { data: ['value1', 'value2'] };
         },
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('{job!=}');
@@ -367,7 +365,7 @@ describe('Language completion provider', () => {
     it('returns label values on label context when given a metric and a label key', async () => {
       const instance = new LanguageProvider({
         ...datasource,
-        metadataRequest: () => simpleMetricLabelsResponse,
+        getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('metric{bar=ba}');
       const editorProperties = { value } as EditorProperties<Editor>;
@@ -389,7 +387,7 @@ describe('Language completion provider', () => {
     it('returns label suggestions on aggregation context and metric w/ selector', async () => {
       const instance = new LanguageProvider({
         ...datasource,
-        metadataRequest: () => simpleMetricLabelsResponse,
+        getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum(metric{foo="xx"}) by ()');
       const editorProperties = { value } as EditorProperties<Editor>;
@@ -410,7 +408,7 @@ describe('Language completion provider', () => {
     it('returns label suggestions on aggregation context and metric w/o selector', async () => {
       const instance = new LanguageProvider({
         ...datasource,
-        metadataRequest: () => simpleMetricLabelsResponse,
+        getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum(metric) by ()');
       const editorProperties = { value } as EditorProperties<Editor>;
@@ -431,7 +429,7 @@ describe('Language completion provider', () => {
     it('returns label suggestions inside a multi-line aggregation context', async () => {
       const instance = new LanguageProvider({
         ...datasource,
-        metadataRequest: () => simpleMetricLabelsResponse,
+        getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum(\nmetric\n)\nby ()');
       const aggregationTextBlock = value.document.getBlocks().get(3) as Block;
@@ -458,7 +456,7 @@ describe('Language completion provider', () => {
     it('returns label suggestions inside an aggregation context with a range vector', async () => {
       const instance = new LanguageProvider({
         ...datasource,
-        metadataRequest: () => simpleMetricLabelsResponse,
+        getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum(rate(metric[1h])) by ()');
       const editorProperties = { value } as EditorProperties<Editor>;
@@ -483,7 +481,7 @@ describe('Language completion provider', () => {
     it('returns label suggestions inside an aggregation context with a range vector and label', async () => {
       const instance = new LanguageProvider({
         ...datasource,
-        metadataRequest: () => simpleMetricLabelsResponse,
+        getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum(rate(metric{label1="value"}[1h])) by ()');
       const editorProperties = { value } as EditorProperties<Editor>;
@@ -524,7 +522,7 @@ describe('Language completion provider', () => {
     it('returns label suggestions inside an aggregation context using alternate syntax', async () => {
       const instance = new LanguageProvider({
         ...datasource,
-        metadataRequest: () => simpleMetricLabelsResponse,
+        getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum by () (metric)');
       const editorProperties = { value } as EditorProperties<Editor>;
@@ -548,13 +546,13 @@ describe('Language completion provider', () => {
 
     it('does not re-fetch default labels', async () => {
       const datasource: PrometheusDatasource = {
-        metadataRequest: jest.fn(() => ({ data: { data: [] } })),
+        getRequest: jest.fn(() => ({ data: [] })),
         getTimeRangeParams: jest.fn(() => ({ start: '0', end: '1' })),
         interpolateString: (string: string) => string,
         getLimitMetrics: () => 0,
       } as unknown as PrometheusDatasource;
 
-      const mockedMetadataRequest = jest.mocked(datasource.metadataRequest);
+      const mockedGetRequest = jest.mocked(datasource.getRequest);
 
       const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('{}');
@@ -569,23 +567,23 @@ describe('Language completion provider', () => {
       };
       const promise1 = instance.provideCompletionItems(args);
       // one call for 2 default labels job, instance
-      expect(mockedMetadataRequest.mock.calls.length).toBe(2);
+      expect(mockedGetRequest.mock.calls.length).toBe(2);
       const promise2 = instance.provideCompletionItems(args);
-      expect(mockedMetadataRequest.mock.calls.length).toBe(2);
+      expect(mockedGetRequest.mock.calls.length).toBe(2);
       await Promise.all([promise1, promise2]);
-      expect(mockedMetadataRequest.mock.calls.length).toBe(2);
+      expect(mockedGetRequest.mock.calls.length).toBe(2);
     });
   });
   describe('disabled metrics lookup', () => {
     it('does not issue any metadata requests when lookup is disabled', async () => {
       jest.spyOn(console, 'warn').mockImplementation(() => {});
       const datasource: PrometheusDatasource = {
-        metadataRequest: jest.fn(() => ({ data: { data: ['foo', 'bar'] as string[] } })),
+        getRequest: jest.fn(() => ({ data: ['foo', 'bar'] as string[] })),
         getTimeRangeParams: jest.fn(() => ({ start: '0', end: '1' })),
         lookupsDisabled: true,
         getLimitMetrics: () => 0,
       } as unknown as PrometheusDatasource;
-      const mockedMetadataRequest = jest.mocked(datasource.metadataRequest);
+      const mockedGetRequest = jest.mocked(datasource.getRequest);
       const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('{}');
       const editorProperties = { value } as EditorProperties<Editor>;
@@ -598,27 +596,27 @@ describe('Language completion provider', () => {
         value: valueWithSelection,
       };
 
-      expect(mockedMetadataRequest.mock.calls.length).toBe(0);
+      expect(mockedGetRequest.mock.calls.length).toBe(0);
       await instance.start();
-      expect(mockedMetadataRequest.mock.calls.length).toBe(0);
+      expect(mockedGetRequest.mock.calls.length).toBe(0);
       await instance.provideCompletionItems(args);
-      expect(mockedMetadataRequest.mock.calls.length).toBe(0);
+      expect(mockedGetRequest.mock.calls.length).toBe(0);
       expect(console.warn).toHaveBeenCalledWith('Server did not return any values for selector = {}');
     });
     it('issues metadata requests when lookup is not disabled', async () => {
       const datasource: PrometheusDatasource = {
-        metadataRequest: jest.fn(() => ({ data: { data: ['foo', 'bar'] as string[] } })),
+        getRequest: jest.fn(() => ({ data: ['foo', 'bar'] as string[] })),
         getTimeRangeParams: jest.fn(() => ({ start: '0', end: '1' })),
         lookupsDisabled: false,
         interpolateString: (string: string) => string,
         getLimitMetrics: () => 0,
       } as unknown as PrometheusDatasource;
-      const mockedMetadataRequest = jest.mocked(datasource.metadataRequest);
+      const mockedGetRequest = jest.mocked(datasource.getRequest);
       const instance = new LanguageProvider(datasource);
 
-      expect(mockedMetadataRequest.mock.calls.length).toBe(0);
+      expect(mockedGetRequest.mock.calls.length).toBe(0);
       await instance.start();
-      expect(mockedMetadataRequest.mock.calls.length).toBeGreaterThan(0);
+      expect(mockedGetRequest.mock.calls.length).toBeGreaterThan(0);
     });
   });
 
@@ -654,12 +652,10 @@ describe('Language completion provider', () => {
 });
 
 const simpleMetricLabelsResponse = {
-  data: {
-    data: [
-      {
-        __name__: 'metric',
-        bar: 'baz',
-      },
-    ],
-  },
+  data: [
+    {
+      __name__: 'metric',
+      bar: 'baz',
+    },
+  ],
 };

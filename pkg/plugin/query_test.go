@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"net/url"
 	"testing"
 	"time"
 
@@ -36,7 +37,12 @@ func TestQuery_getQueryURL(t *testing.T) {
 			MaxDataPoints: opts.MaxDataPoints,
 			TimeRange:     opts.getTimeRange(),
 		}
-		got, err := q.getQueryURL(opts.rawURL, opts.params)
+		params, err := url.ParseQuery(opts.params)
+		if err != nil {
+			t.Errorf("failed to parse query params: %v", err)
+			return
+		}
+		got, err := q.getQueryURL(opts.rawURL, params)
 		if (err != nil) != opts.wantErr {
 			t.Errorf("getQueryURL() error = %v, wantErr %v", err, opts.wantErr)
 			return

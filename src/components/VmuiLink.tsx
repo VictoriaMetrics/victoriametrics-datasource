@@ -16,13 +16,12 @@
 import { map } from 'lodash';
 import React, { FC, useEffect, useState, memo } from 'react';
 
-import { PanelData, ScopedVars, textUtil, rangeUtil, getDefaultTimeRange } from '@grafana/data';
+import { DataQueryRequest, PanelData, ScopedVars, textUtil, rangeUtil, getDefaultTimeRange } from '@grafana/data';
 import { getBackendSrv } from "@grafana/runtime";
 import { IconButton } from "@grafana/ui";
 
 import { PrometheusDatasource } from '../datasource';
 import { PromQuery } from '../types';
-import { ExtendedDataQueryRequest } from "../types/datasource";
 import { getDurationFromMilliseconds } from "../utils/time";
 
 interface Props {
@@ -98,7 +97,7 @@ const VmuiLink: FC<Props> = ({
         interval,
         dashboardUID,
         scopedVars: enrichedScopedVars,
-      } as ExtendedDataQueryRequest<PromQuery>;
+      } as DataQueryRequest<PromQuery>;
 
       const customQueryParameters: { [key: string]: string } = {};
       if (datasource.customQueryParameters) {

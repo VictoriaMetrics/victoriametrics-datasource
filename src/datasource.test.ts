@@ -13,7 +13,7 @@ import {
   getFieldDisplayName,
   toDataFrame,
 } from '@grafana/data';
-import { TemplateSrv } from '@grafana/runtime';
+import { TemplateSrv, getBackendSrv, setBackendSrv } from '@grafana/runtime';
 
 import {
   extractRuleMappingFromGroups,
@@ -28,12 +28,11 @@ import { PromOptions, PromQuery, PromQueryRequest } from './types';
 const fetchMock = jest.fn().mockReturnValue(of(createDefaultPromResponse()));
 
 jest.mock('./metric_find_query');
-jest.mock('@grafana/runtime', () => ({
-  ...jest.requireActual('@grafana/runtime'),
-  getBackendSrv: () => ({
-    fetch: fetchMock,
-  }),
-}));
+
+setBackendSrv({
+  ...getBackendSrv(),
+  fetch: fetchMock,
+});
 
 const getAdhocFiltersMock = jest.fn().mockImplementation(() => []);
 const replaceMock = jest.fn().mockImplementation((a: string) => a);
@@ -65,9 +64,7 @@ describe('PrometheusDatasource', () => {
     directUrl: 'direct',
     user: 'test',
     password: 'mupp',
-    jsonData: {
-      customQueryParameters: '',
-    },
+    jsonData: {},
   } as unknown as DataSourceInstanceSettings<PromOptions>;
 
   beforeEach(() => {
@@ -76,28 +73,27 @@ describe('PrometheusDatasource', () => {
 
   describe('Datasource metadata requests', () => {
     it('should perform a GET request with the default config', () => {
-      ds.metadataRequest('/foo', { bar: 'baz baz', foo: 'foo' });
+      ds.getRequest('foo', { bar: 'baz baz', foo: 'foo' });
       expect(fetchMock.mock.calls.length).toBe(1);
       expect(fetchMock.mock.calls[0][0].method).toBe('GET');
-      expect(fetchMock.mock.calls[0][0].url).toContain('bar=baz%20baz&foo=foo');
+      expect(fetchMock.mock.calls[0][0].params).toEqual({ bar: 'baz baz', foo: 'foo' });
     });
     it('should still perform a GET request with the DS HTTP method set to POST and not POST-friendly endpoint', () => {
       const postSettings = cloneDeep(instanceSettings);
       postSettings.jsonData.httpMethod = 'POST';
       const promDs = new PrometheusDatasource(postSettings, templateSrvStub, timeSrvStub);
-      promDs.metadataRequest('/foo');
+      promDs.getRequest('foo');
       expect(fetchMock.mock.calls.length).toBe(1);
       expect(fetchMock.mock.calls[0][0].method).toBe('GET');
     });
-    it('should try to perform a POST request with the DS HTTP method set to POST and POST-friendly endpoint', () => {
+    it('should try to perform a GET request with the DS HTTP method set to GET and GET-friendly endpoint', () => {
       const postSettings = cloneDeep(instanceSettings);
-      postSettings.jsonData.httpMethod = 'POST';
       const promDs = new PrometheusDatasource(postSettings, templateSrvStub, timeSrvStub);
-      promDs.metadataRequest('api/v1/series', { bar: 'baz baz', foo: 'foo' });
+      promDs.getRequest('api/v1/series', { bar: 'baz baz', foo: 'foo' });
       expect(fetchMock.mock.calls.length).toBe(1);
-      expect(fetchMock.mock.calls[0][0].method).toBe('POST');
+      expect(fetchMock.mock.calls[0][0].method).toBe('GET');
       expect(fetchMock.mock.calls[0][0].url).not.toContain('bar=baz%20baz&foo=foo');
-      expect(fetchMock.mock.calls[0][0].data).toEqual({ bar: 'baz baz', foo: 'foo' });
+      expect(fetchMock.mock.calls[0][0].params).toEqual({ bar: 'baz baz', foo: 'foo' });
     });
   });
 
@@ -114,7 +110,7 @@ describe('PrometheusDatasource', () => {
 
     describe('with GET http method', () => {
       const promDs = new PrometheusDatasource(
-        { ...instanceSettings, jsonData: { customQueryParameters: 'customQuery=123', httpMethod: 'GET' } },
+        { ...instanceSettings, jsonData: {} },
         templateSrvStub,
         timeSrvStub
       );
@@ -123,20 +119,45 @@ describe('PrometheusDatasource', () => {
         promDs.query(makeQuery(target));
         expect(fetchMock.mock.calls.length).toBe(1);
         expect(fetchMock.mock.calls[0][0].url).toBe(
-          'proxied/api/v1/query_range?query=test%7Bjob%3D%22testjob%22%7D&start=63&end=183&step=60&customQuery=123'
+          '/api/ds/query?ds_type=victoriametrics-metrics-datasource'
         );
       });
 
       it('adds params to instant query', () => {
         promDs.query(makeQuery({ ...target, instant: true }));
         expect(fetchMock.mock.calls.length).toBe(1);
-        expect(fetchMock.mock.calls[0][0].url).toContain('&customQuery=123');
+        expect(fetchMock.mock.calls[0][0].url).toEqual('/api/ds/query?ds_type=victoriametrics-metrics-datasource');
+        expect(fetchMock.mock.calls[0][0].data).toEqual({
+          from: '63000',
+          queries: [
+            {
+              datasource: {
+                type: 'victoriametrics-metrics-datasource',
+                uid: 'ABCDEF',
+              },
+              datasourceId: 1,
+              expr: 'test{job="testjob"}',
+              format: 'time_series',
+              instant: true,
+              interval: undefined,
+              intervalMs: undefined,
+              legendFormat: undefined,
+              maxDataPoints: undefined,
+              queryCachingTTL: undefined,
+              queryType: 'timeSeriesQuery',
+              refId: '',
+              requestId: 'undefined',
+              utcOffsetSec: -0,
+            },
+          ],
+          to: '183000',
+        });
       });
     });
 
     describe('with POST http method', () => {
       const promDs = new PrometheusDatasource(
-        { ...instanceSettings, jsonData: { customQueryParameters: 'customQuery=123', httpMethod: 'POST' } },
+        { ...instanceSettings, jsonData: {} },
         templateSrvStub,
         timeSrvStub
       );
@@ -144,20 +165,35 @@ describe('PrometheusDatasource', () => {
       it('adds params to timeseries query', () => {
         promDs.query(makeQuery(target));
         expect(fetchMock.mock.calls.length).toBe(1);
-        expect(fetchMock.mock.calls[0][0].url).toBe('proxied/api/v1/query_range');
         expect(fetchMock.mock.calls[0][0].data).toEqual({
-          customQuery: '123',
-          query: 'test{job="testjob"}',
-          step: 60,
-          end: 183,
-          start: 63,
+          queries: [
+            {
+              datasource: {
+                type: 'victoriametrics-metrics-datasource',
+                uid: 'ABCDEF',
+              },
+              datasourceId: 1,
+              expr: 'test{job="testjob"}',
+              format: 'time_series',
+              interval: undefined,
+              intervalMs: undefined,
+              legendFormat: undefined,
+              maxDataPoints: undefined,
+              queryCachingTTL: undefined,
+              queryType: 'timeSeriesQuery',
+              refId: '',
+              requestId: 'undefined',
+              utcOffsetSec: -0,
+            },
+          ],
+          to: '183000',
+          from: '63000',
         });
       });
 
       it('adds params to instant query', () => {
         promDs.query(makeQuery({ ...target, instant: true }));
         expect(fetchMock.mock.calls.length).toBe(1);
-        expect(fetchMock.mock.calls[0][0].data.customQuery).toBe('123');
       });
     });
   });
@@ -539,31 +575,52 @@ describe('PrometheusDatasource for POST', () => {
 
   describe('When querying prometheus with one target using query editor target spec', () => {
     let results: DataQueryResponse;
-    const urlExpected = 'proxied/api/v1/query_range';
+    const urlExpected = '/api/ds/query?ds_type=victoriametrics-metrics-datasource';
     const dataExpected = {
-      query: 'test{job="testjob"}',
-      start: 63,
-      end: 123,
-      step: 60,
+      from: '63000',
+      to: '123000',
+      queries: [
+        {
+          datasource: {
+            type: 'victoriametrics-metrics-datasource',
+            uid: undefined,
+          },
+          datasourceId: undefined,
+          expr: 'test{job="testjob"}',
+          format: 'time_series',
+          interval: undefined,
+          intervalMs: undefined,
+          legendFormat: undefined,
+          maxDataPoints: undefined,
+          queryCachingTTL: undefined,
+          queryType: 'timeSeriesQuery',
+          requestId: 'undefinedA',
+          utcOffsetSec: -0,
+          refId: 'A'
+        },
+      ],
     };
     const query = {
       range: { from: time({ minutes: 1, seconds: 3 }), to: time({ minutes: 2, seconds: 3 }) },
-      targets: [{ expr: 'test{job="testjob"}', format: 'time_series' }],
+      targets: [{ expr: 'test{job="testjob"}', format: 'time_series', refId: 'A' }],
       interval: '60s',
     } as DataQueryRequest<PromQuery>;
 
     beforeEach(async () => {
       const response = {
-        status: 'success',
+        status: 200,
         data: {
-          data: {
-            resultType: 'matrix',
-            result: [
-              {
-                metric: { __name__: 'test', job: 'testjob' },
-                values: [[2 * 60, '3846']],
-              },
-            ],
+          resultType: 'matrix',
+          results: {
+            A: {
+              series: [
+                {
+                  refId:  'A',
+                  tags: { __name__: 'test', job: 'testjob' },
+                  points: [[2 * 60, '3846']],
+                },
+              ],
+            },
           },
         },
       };
@@ -583,7 +640,7 @@ describe('PrometheusDatasource for POST', () => {
     it('should return series list', () => {
       const frame = toDataFrame(results.data[0]);
       expect(results.data.length).toBe(1);
-      expect(getFieldDisplayName(frame.fields[1], frame)).toBe('test{job="testjob"}');
+      expect(getFieldDisplayName(frame.fields[1], frame)).toBe('{__name__="test", job="testjob"}');
     });
   });
 });
