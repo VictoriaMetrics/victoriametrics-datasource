@@ -38,7 +38,7 @@ const validateStatus: {[key: string]: ValidateResult} = {
   }
 }
 
-export default (datasourceId: number) => {
+export default (datasourceUID: number) => {
   const [validateResult, setValidateResult] = useState<ValidateResult>(validateStatus.noValidate)
 
   const isValidExpr = useCallback(async (expr: string) => {
@@ -54,7 +54,7 @@ export default (datasourceId: number) => {
       const val = expr.replace(/\$__interval|\$__range|\$__rate_interval/gm, '1s')
       const withTemplate = encodeURIComponent(`WITH(${val})()`)
       const response = await lastValueFrom(getBackendSrv().fetch({
-        url: `api/datasources/proxy/${datasourceId}/expand-with-exprs?query=${withTemplate}&format=json`,
+        url: `api/datasources/uid/${datasourceUID}/resources/expand-with-exprs?query=${withTemplate}&format=json`,
         method: 'GET',
       }));
       const { status, error = "" } = response?.data as { status: "success" | "error", error?: string }
@@ -73,7 +73,7 @@ export default (datasourceId: number) => {
       }
       return false
     }
-  }, [datasourceId])
+  }, [datasourceUID])
 
   return {
     validateResult,

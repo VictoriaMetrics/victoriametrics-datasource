@@ -60,7 +60,7 @@ const PrettifyQuery: FC<Props> = ({
         }
       });
 
-      const response = await datasource.prettifyRequest(expr);
+      const response = await datasource.getRequest('prettify-query', { query: expr }, {});
       const { data } = response;
 
       if (data?.status === ResponseStatus.Success && data.query) {

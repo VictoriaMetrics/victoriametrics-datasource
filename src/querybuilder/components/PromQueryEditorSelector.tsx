@@ -18,7 +18,7 @@
 
 import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 
-import { CoreApp, LoadingState } from '@grafana/data';
+import { CoreApp, DataQueryRequest, LoadingState } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
 import { ConfirmModal, IconButton } from '@grafana/ui';
 
@@ -31,7 +31,6 @@ import { getArrayFromTemplate } from "../../components/WithTemplateConfig/utils/
 import { PromQueryEditorProps } from '../../components/types';
 import PrometheusLanguageProvider from "../../language_provider";
 import { PromQuery } from '../../types';
-import { ExtendedDataQueryRequest } from "../../types/datasource";
 import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';
 import { QueryEditorModeToggle } from '../shared/QueryEditorModeToggle';
@@ -57,7 +56,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   const [rawQuery, setRawQuery] = useState(false)
   const { flag: explain, setFlag: setExplain } = useFlag(queryEditorExplainKey);
 
-  const dashboardUID: string = (data?.request as ExtendedDataQueryRequest<PromQuery>)?.dashboardUID || ""
+  const dashboardUID: string = (data?.request as DataQueryRequest<PromQuery>)?.dashboardUID || ""
   const [templateByDashboard, setTemplateByDashboard] = useState<WithTemplate>()
 
   const query = getQueryWithDefaults(props.query, app);

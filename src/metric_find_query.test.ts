@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs';
 
 import { DataSourceInstanceSettings, TimeRange, toUtc } from '@grafana/data';
-import { BackendDataSourceResponse, BackendSrvRequest, FetchResponse, TemplateSrv } from '@grafana/runtime';
+import { BackendDataSourceResponse, BackendSrvRequest, FetchResponse, TemplateSrv, getBackendSrv, setBackendSrv } from '@grafana/runtime';
 
 import { PrometheusDatasource } from './datasource';
 import PrometheusMetricFindQuery from "./metric_find_query";
@@ -11,14 +11,10 @@ const fetchMock = jest.fn((_options: BackendSrvRequest): Observable<FetchRespons
   return of({} as unknown as FetchResponse);
 });
 
-jest.mock('@grafana/runtime', () => ({
-  ...jest.requireActual('@grafana/runtime'),
-  getBackendSrv: () => {
-    return {
-      fetch: fetchMock,
-    };
-  },
-}));
+setBackendSrv({
+  ...getBackendSrv(),
+  fetch: fetchMock,
+});
 
 const instanceSettings = {
   url: 'proxied',
@@ -90,10 +86,16 @@ describe('PrometheusMetricFindQuery', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith({
         method: 'GET',
-        url: `/api/datasources/proxy/1/api/v1/labels?limit=0`,
+        url: '/api/datasources/uid/ABCDEF/resources/api/v1/labels',
+        params: {
+          limit: 0,
+        },
         hideFromInspector: true,
         showErrorAlert: false,
-        headers: {},
+        headers: {
+          'X-Datasource-Uid': 'ABCDEF',
+          'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+        },
       });
     });
 
@@ -110,9 +112,17 @@ describe('PrometheusMetricFindQuery', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith({
         method: 'GET',
-        url: `/api/datasources/proxy/1/api/v1/label/resource/values?start=${raw.from.unix()}&end=${raw.to.unix()}`,
+        url: '/api/datasources/uid/ABCDEF/resources/api/v1/label/resource/values',
+        params: {
+          start: `${raw.from.unix()}`,
+          end: `${raw.to.unix()}`,
+        },
+        showErrorAlert: false,
         hideFromInspector: true,
-        headers: {},
+        headers: {
+          'X-Datasource-Uid': 'ABCDEF',
+          'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+        },
       });
     });
 
@@ -133,9 +143,17 @@ describe('PrometheusMetricFindQuery', () => {
         expect(fetchMock).toHaveBeenCalledTimes(1);
         expect(fetchMock).toHaveBeenCalledWith({
           method: 'GET',
-          url: `/api/datasources/proxy/1/api/v1/label/resource/values?start=${raw.from.unix()}&end=${raw.to.unix()}`,
+          url: '/api/datasources/uid/ABCDEF/resources/api/v1/label/resource/values',
+          params: {
+            start: `${raw.from.unix()}`,
+            end: `${raw.to.unix()}`,
+          },
+          showErrorAlert: false,
           hideFromInspector: true,
-          headers: {},
+          headers: {
+            'X-Datasource-Uid': 'ABCDEF',
+            'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+          },
         });
       });
     });
@@ -158,11 +176,18 @@ describe('PrometheusMetricFindQuery', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith({
         method: 'GET',
-        url: `/api/datasources/proxy/1/api/v1/label/resource/values?match${encodeURIComponent(
-          '[]'
-        )}=metric&start=${raw.from.unix()}&end=${raw.to.unix()}`,
+        url: '/api/datasources/uid/ABCDEF/resources/api/v1/label/resource/values',
+        params: {
+          'match[]': 'metric',
+          'start': `${raw.from.unix()}`,
+          'end': `${raw.to.unix()}`
+        },
+        showErrorAlert: false,
         hideFromInspector: true,
-        headers: {},
+        headers: {
+          'X-Datasource-Uid': 'ABCDEF',
+          'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+        },
       });
     });
 
@@ -183,9 +208,18 @@ describe('PrometheusMetricFindQuery', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith({
         method: 'GET',
-        url: '/api/datasources/proxy/1/api/v1/label/resource/values?match%5B%5D=metric%7Blabel1%3D%22foo%22%2C%20label2%3D%22bar%22%2C%20label3%3D%22baz%22%7D&start=1524650400&end=1524654000',
+        url: '/api/datasources/uid/ABCDEF/resources/api/v1/label/resource/values',
+        params: {
+          'match[]': 'metric{label1="foo", label2="bar", label3="baz"}',
+          'start': '1524650400',
+          'end': '1524654000'
+        },
+        showErrorAlert: false,
         hideFromInspector: true,
-        headers: {},
+        headers: {
+          'X-Datasource-Uid': 'ABCDEF',
+          'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+        },
       });
     });
 
@@ -202,9 +236,17 @@ describe('PrometheusMetricFindQuery', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith({
         method: 'GET',
-        url: `/api/datasources/proxy/1/api/v1/label/__name__/values?start=${raw.from.unix()}&end=${raw.to.unix()}`,
+        url: '/api/datasources/uid/ABCDEF/resources/api/v1/label/__name__/values',
+        params: {
+          start: `${raw.from.unix()}`,
+          end: `${raw.to.unix()}`
+        },
+        showErrorAlert: false,
         hideFromInspector: true,
-        headers: {},
+        headers: {
+          'X-Datasource-Uid': 'ABCDEF',
+          'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+        },
       });
     });
 
@@ -230,8 +272,15 @@ describe('PrometheusMetricFindQuery', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith({
         method: 'GET',
-        url: `/api/datasources/proxy/1/api/v1/query?query=metric&time=${raw.to.unix()}`,
-        headers: {},
+        url: '/api/datasources/uid/ABCDEF/resources/api/v1/query',
+        params: {
+          query: 'metric',
+          time: `${raw.to.unix()}`
+        },
+        headers: {
+          'X-Datasource-Uid': 'ABCDEF',
+          'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+        },
         hideFromInspector: true,
         showErrorAlert: false,
       });
@@ -261,8 +310,15 @@ describe('PrometheusMetricFindQuery', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith({
         method: 'GET',
-        url: `/api/datasources/proxy/1/api/v1/query?query=metric&time=${expectedTime}`,
-        headers: {},
+        url: '/api/datasources/uid/ABCDEF/resources/api/v1/query',
+        params: {
+          query: 'metric',
+          time: `${expectedTime}`
+        },
+        headers: {
+          'X-Datasource-Uid': 'ABCDEF',
+          'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+        },
         hideFromInspector: true,
         showErrorAlert: false,
       });
@@ -284,8 +340,15 @@ describe('PrometheusMetricFindQuery', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith({
         method: 'GET',
-        url: `/api/datasources/proxy/1/api/v1/query?query=1%2B1&time=${raw.to.unix()}`,
-        headers: {},
+        url: '/api/datasources/uid/ABCDEF/resources/api/v1/query',
+        params: {
+          query: '1+1',
+          time: `${raw.to.unix()}`
+        },
+        headers: {
+          'X-Datasource-Uid': 'ABCDEF',
+          'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+        },
         hideFromInspector: true,
         showErrorAlert: false,
       });
@@ -311,12 +374,18 @@ describe('PrometheusMetricFindQuery', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith({
         method: 'GET',
-        url: `/api/datasources/proxy/1/api/v1/series?match${encodeURIComponent('[]')}=${encodeURIComponent(
-          'up{job="job1"}'
-        )}&start=${raw.from.unix()}&end=${raw.to.unix()}`,
+        url: '/api/datasources/uid/ABCDEF/resources/api/v1/series',
+        params: {
+          'match[]': 'up{job="job1"}',
+          'start': `${raw.from.unix()}`,
+          'end': `${raw.to.unix()}`
+        },
         hideFromInspector: true,
         showErrorAlert: false,
-        headers: {},
+        headers: {
+          'X-Datasource-Uid': 'ABCDEF',
+          'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+        },
       });
     });
 
@@ -342,11 +411,18 @@ describe('PrometheusMetricFindQuery', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith({
         method: 'GET',
-        url: `/api/datasources/proxy/1/api/v1/label/${resourceName}/values?match${encodeURIComponent(
-          '[]'
-        )}=${metricName}&start=${raw.from.unix()}&end=${raw.to.unix()}`,
+        url: `/api/datasources/uid/ABCDEF/resources/api/v1/label/${resourceName}/values`,
+        params: {
+          'match[]': metricName,
+          'start': `${raw.from.unix()}`,
+          'end': `${raw.to.unix()}`
+        },
+        showErrorAlert: false,
         hideFromInspector: true,
-        headers: {},
+        headers: {
+          'X-Datasource-Uid': 'ABCDEF',
+          'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+        },
       });
     });
 
@@ -370,9 +446,18 @@ describe('PrometheusMetricFindQuery', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith({
         method: 'GET',
-        url: `/api/datasources/proxy/1/api/v1/label/${resourceName}/values?match%5B%5D=${metricName}%7B${label1Name}%3D%22${label1Value}%22%7D&start=1524650400&end=1524654000`,
+        url: `/api/datasources/uid/ABCDEF/resources/api/v1/label/${resourceName}/values`,
+        params: {
+          'match[]': `${metricName}{${label1Name}="${label1Value}"}`,
+          'start': '1524650400',
+          'end': '1524654000'
+        },
+        showErrorAlert: false,
         hideFromInspector: true,
-        headers: {},
+        headers: {
+          'X-Datasource-Uid': 'ABCDEF',
+          'X-Plugin-Id': 'victoriametrics-metrics-datasource'
+        },
       });
     });
 

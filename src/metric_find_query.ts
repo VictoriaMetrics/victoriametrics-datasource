@@ -100,10 +100,10 @@ export default class PrometheusMetricFindQuery {
     const end = getVictoriaMetricsTime(this.range.to, true);
     const params = { ...(metric && { 'match[]': metric }), start: start.toString(), end: end.toString() };
 
-    const url = `/api/v1/label/${label}/values`;
+    const url = `api/v1/label/${label}/values`;
 
-    return this.datasource.metadataRequest(url, params).then((result: any) => {
-      return _map(result.data.data, (value) => ({ text: value }));
+    return this.datasource.getRequest(url, params).then((result: any) => {
+      return _map(result.data, (value) => ({ text: value }));
     });
   }
 
@@ -114,10 +114,10 @@ export default class PrometheusMetricFindQuery {
       start: start.toString(),
       end: end.toString(),
     };
-    const url = `/api/v1/label/__name__/values`;
+    const url = 'api/v1/label/__name__/values';
 
-    return this.datasource.metadataRequest(url, params).then((result: any) => {
-      return chain(result.data.data)
+    return this.datasource.getRequest(url, params).then((result: any) => {
+      return chain(result.data)
         .filter((metricName) => {
           const r = new RegExp(metricFilterPattern);
           return r.test(metricName);
@@ -133,23 +133,23 @@ export default class PrometheusMetricFindQuery {
   }
 
   queryResultQuery(query: string) {
-    const url = '/api/v1/query';
+    const url = 'api/v1/query';
     const params = {
       query,
       time: getVictoriaMetricsTime(this.range.to, true).toString(),
     };
-    return this.datasource.metadataRequest(url, params).then((result: any) => {
-      switch (result.data.data.resultType) {
+    return this.datasource.getRequest(url, params).then((result: any) => {
+      switch (result.data.resultType) {
         case 'scalar': // [ <unix_time>, "<scalar_value>" ]
         case 'string': // [ <unix_time>, "<string_value>" ]
           return [
             {
-              text: result.data.data.result[1] || '',
+              text: result.data.result[1] || '',
               expandable: false,
             },
           ];
         case 'vector':
-          return _map(result.data.data.result, (metricData) => {
+          return _map(result.data.result, (metricData) => {
             let text = metricData.metric.__name__ || '';
             delete metricData.metric.__name__;
             text +=
@@ -166,7 +166,7 @@ export default class PrometheusMetricFindQuery {
             };
           });
         default:
-          throw Error(`Unknown/Unhandled result type: [${result.data.data.resultType}]`);
+          throw Error(`Unknown/Unhandled result type: [${result.data.resultType}]`);
       }
     });
   }
@@ -180,11 +180,11 @@ export default class PrometheusMetricFindQuery {
       end: end.toString(),
     };
 
-    const url = `/api/v1/series`;
+    const url = 'api/v1/series';
     const self = this;
 
-    return this.datasource.metadataRequest(url, params).then((result: any) => {
-      return _map(result.data.data, (metric: { [key: string]: string }) => {
+    return this.datasource.getRequest(url, params).then((result: any) => {
+      return _map(result.data, (metric: { [key: string]: string }) => {
         return {
           text: self.datasource.getOriginalMetricName(metric),
           expandable: true,

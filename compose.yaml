@@ -3,12 +3,14 @@ services:
     image: serjs/go-socks5-proxy
     restart: always
   victoriametrics:
-    image: victoriametrics/victoria-metrics:v1.115.0
+    image: victoriametrics/victoria-metrics:v1.122.0
+    ports:
+     - 8428:8428
   grafana:
     build:
       context: .config
       args:
-        grafana_version: 11.5.2
+        grafana_version: main
         grafana_image: grafana
         development: true
     ports:

@@ -3,7 +3,6 @@ package plugin
 import (
 	"fmt"
 	"net/url"
-	"path"
 	"regexp"
 	"sort"
 	"strconv"
@@ -31,9 +30,9 @@ type Query struct {
 	TimeInterval  string `json:"timeInterval"`
 	Expr          string `json:"expr"`
 	LegendFormat  string `json:"legendFormat"`
+	Trace         int    `json:"trace,omitempty"`
 	MaxDataPoints int64
 	TimeRange     TimeRange
-	url           *url.URL
 }
 
 // TimeRange represents time range backend object
@@ -42,22 +41,9 @@ type TimeRange struct {
 	To   time.Time
 }
 
-// GetQueryURL calculates step and clear expression from template variables,
+// getQueryURL calculates step and clear expression from template variables,
 // and after builds query url depends on query type
-func (q *Query) getQueryURL(rawURL string, queryParams string) (string, error) {
-	if rawURL == "" {
-		return "", fmt.Errorf("url can't be blank")
-	}
-	u, err := url.Parse(rawURL)
-	if err != nil {
-		return "", fmt.Errorf("failed to parse datasource url: %s", err)
-	}
-	params, err := url.ParseQuery(queryParams)
-	if err != nil {
-		return "", fmt.Errorf("failed to parse query params: %s", err.Error())
-	}
-
-	q.url = u
+func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, error) {
 	from := q.TimeRange.From
 	to := q.TimeRange.To
 	timerange := to.Sub(from)
@@ -74,10 +60,43 @@ func (q *Query) getQueryURL(rawURL string, queryParams string) (string, error) {
 		return "", fmt.Errorf("expression can't be blank")
 	}
 
-	if q.Instant {
-		return q.queryInstantURL(expr, step, params), nil
+	var u *url.URL
+	var values url.Values
+
+	if q.Range || !q.Instant {
+		u, err = newURL(rawURL, rangeQueryPath, false)
+		if err != nil {
+			return "", fmt.Errorf("failed to build query url: %w", err)
+		}
+		values = u.Query()
+		for k, vl := range queryParams {
+			for _, v := range vl {
+				values.Add(k, v)
+			}
+		}
+		values.Add("start", strconv.FormatInt(q.TimeRange.From.Unix(), 10))
+		values.Add("end", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
+	} else {
+		u, err = newURL(rawURL, instantQueryPath, false)
+		if err != nil {
+			return "", fmt.Errorf("failed to build query url: %w", err)
+		}
+		values = u.Query()
+		for k, vl := range queryParams {
+			for _, v := range vl {
+				values.Add(k, v)
+			}
+		}
+		values.Set("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
 	}
-	return q.queryRangeURL(expr, step, params), nil
+	if q.Trace > 0 {
+		values.Set("trace", strconv.Itoa(q.Trace))
+	}
+	values.Set("query", expr)
+	values.Set("step", step.String())
+
+	u.RawQuery = values.Encode()
+	return u.String(), nil
 }
 
 // withIntervalVariable checks does query has interval variable
@@ -92,43 +111,6 @@ func (q *Query) calculateMinInterval() (time.Duration, error) {
 		q.Interval = ""
 	}
 	return q.getIntervalFrom(defaultScrapeInterval)
-}
-
-// queryInstantURL prepare query url for instant query
-func (q *Query) queryInstantURL(expr string, step time.Duration, queryParams url.Values) string {
-	q.url.Path = path.Join(q.url.Path, instantQueryPath)
-	values := q.url.Query()
-
-	for k, vl := range queryParams {
-		for _, v := range vl {
-			values.Add(k, v)
-		}
-	}
-	values.Set("query", expr)
-	values.Set("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
-	values.Set("step", step.String())
-
-	q.url.RawQuery = values.Encode()
-	return q.url.String()
-}
-
-// queryRangeURL prepare query url for range query
-func (q *Query) queryRangeURL(expr string, step time.Duration, queryParams url.Values) string {
-	q.url.Path = path.Join(q.url.Path, rangeQueryPath)
-	values := q.url.Query()
-
-	for k, vl := range queryParams {
-		for _, v := range vl {
-			values.Add(k, v)
-		}
-	}
-	values.Add("query", expr)
-	values.Add("start", strconv.FormatInt(q.TimeRange.From.Unix(), 10))
-	values.Add("end", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
-	values.Add("step", step.String())
-
-	q.url.RawQuery = values.Encode()
-	return q.url.String()
 }
 
 var legendReplacer = regexp.MustCompile(`\{\{\s*(.+?)\s*\}\}`)

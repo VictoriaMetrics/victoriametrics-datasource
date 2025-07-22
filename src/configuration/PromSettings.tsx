@@ -33,7 +33,6 @@ import {
   regexValidation,
 } from '@grafana/ui';
 
-import { getDefaultVmuiUrl } from "../components/VmuiLink";
 import { PromOptions } from '../types';
 
 const { Input, FormField } = LegacyForms;
@@ -42,6 +41,8 @@ const httpOptions = [
   { value: 'POST', label: 'POST' },
   { value: 'GET', label: 'GET' },
 ];
+
+export const getDefaultVmuiUrl = (serverUrl = "#") => `${serverUrl.replace(/\/$/, "")}/vmui/`
 
 type Props = Pick<DataSourcePluginOptionsEditorProps<PromOptions>, 'options' | 'onOptionsChange'>;
 

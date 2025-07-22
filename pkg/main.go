@@ -1,20 +1,50 @@
 package main
 
 import (
-	"os"
+	"net/http"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
-	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/resource/httpadapter"
 
 	"github.com/VictoriaMetrics/victoriametrics-datasource/pkg/plugin"
 )
 
-func main() {
-	backend.Logger.Debug("Starting VictoriaMetrics datasource backend ...")
+// VM_PLUGIN_ID describes plugin name that matches Grafana plugin naming convention
+const VM_PLUGIN_ID = "victoriametrics-metrics-datasource"
 
-	if err := datasource.Manage("victoriametrics-metrics-datasource", plugin.NewDatasource, datasource.ManageOpts{}); err != nil {
-		log.DefaultLogger.Error("Failed to process VictoriaMetrics datasource backend :%s", err.Error())
-		os.Exit(1)
+func main() {
+	backend.SetupPluginEnvironment(VM_PLUGIN_ID)
+
+	pluginLogger := log.New()
+	mux := http.NewServeMux()
+	ds := Init(mux)
+	httpResourceHandler := httpadapter.New(mux)
+
+	pluginLogger.Debug("Starting VM datasource")
+
+	err := backend.Manage(VM_PLUGIN_ID, backend.ServeOpts{
+		CallResourceHandler: httpResourceHandler,
+		QueryDataHandler:    ds,
+		CheckHealthHandler:  ds,
+	})
+	if err != nil {
+		pluginLogger.Error("Error starting VM datasource", "error", err.Error())
 	}
+}
+
+// Init initializes VM datasource plugin service
+func Init(mux *http.ServeMux) *plugin.Datasource {
+	ds := plugin.NewDatasource()
+
+	mux.HandleFunc("/", ds.RootHandler)
+	mux.HandleFunc("/api/v1/labels", ds.VMAPIQuery)
+	mux.HandleFunc("/api/v1/query", ds.VMAPIQuery)
+	mux.HandleFunc("/api/v1/series", ds.VMAPIQuery)
+	mux.HandleFunc("/prettify-query", ds.VMAPIQuery)
+	mux.HandleFunc("/expand-with-exprs", ds.VMAPIQuery)
+	mux.HandleFunc("/api/v1/label/{key}/values", ds.VMAPIQuery)
+	mux.HandleFunc("/vmui", ds.VMUIQuery)
+
+	return ds
 }

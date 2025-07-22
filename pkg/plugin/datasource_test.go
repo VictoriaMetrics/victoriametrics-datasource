@@ -63,17 +63,12 @@ func TestDatasourceQueryRequest(t *testing.T) {
 	defer srv.Close()
 
 	ctx := context.Background()
-	settings := backend.DataSourceInstanceSettings{
-		URL:      srv.URL,
-		JSONData: []byte(`{"httpMethod":"POST","customQueryParameters":""}`),
-	}
-	instance, err := NewDatasource(ctx, settings)
-	if err != nil {
-		t.Fatalf("unexpected error: %s", err)
-	}
-	ds := instance.(*Datasource)
+	ds := NewDatasource()
 	pluginCtx := backend.PluginContext{
-		DataSourceInstanceSettings: &settings,
+		DataSourceInstanceSettings: &backend.DataSourceInstanceSettings{
+			URL:      srv.URL,
+			JSONData: []byte(`{"httpMethod":"POST","customQueryParameters":""}`),
+		},
 	}
 
 	expErr := func(ctx context.Context, err string) {
@@ -280,18 +275,13 @@ func TestDatasourceQueryRequestWithRetry(t *testing.T) {
 	defer srv.Close()
 
 	ctx := context.Background()
-	settings := backend.DataSourceInstanceSettings{
-		URL:      srv.URL,
-		JSONData: []byte(`{"httpMethod":"POST","customQueryParameters":""}`),
-	}
-	instance, err := NewDatasource(ctx, settings)
-	if err != nil {
-		t.Fatalf("unexpected error: %s", err)
-	}
+	ds := NewDatasource()
 	pluginCtx := backend.PluginContext{
-		DataSourceInstanceSettings: &settings,
+		DataSourceInstanceSettings: &backend.DataSourceInstanceSettings{
+			URL:      srv.URL,
+			JSONData: []byte(`{"httpMethod":"POST","customQueryParameters":""}`),
+		},
 	}
-	ds := instance.(*Datasource)
 
 	expErr := func(err string) {
 		rsp, gotErr := ds.QueryData(ctx, &backend.QueryDataRequest{
