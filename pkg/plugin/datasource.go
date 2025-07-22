@@ -68,7 +68,7 @@ func (d *Datasource) QueryData(ctx context.Context, req *backend.QueryDataReques
 	response := backend.NewQueryDataResponse()
 	headers := req.Headers
 
-	forAlerting, err := d.checkAlertingRequest(headers)
+	forAlerting, err := checkAlertingRequest(headers)
 	if err != nil {
 		return nil, err
 	}
@@ -203,7 +203,7 @@ func (d *Datasource) CheckHealth(ctx context.Context, _ *backend.CheckHealthRequ
 	}, nil
 }
 
-func (d *Datasource) checkAlertingRequest(headers map[string]string) (bool, error) {
+func checkAlertingRequest(headers map[string]string) (bool, error) {
 	var forAlerting bool
 	if val, ok := headers[requestFromAlert]; ok {
 		if val == "" {

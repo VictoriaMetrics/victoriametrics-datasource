@@ -4,10 +4,11 @@
 
 * BREAKING: increase minimum required Grafana version to `>=10.4.0` to ensure compatibility with [`@grafana/plugin-ui`](https://github.com/grafana/plugin-ui). This drops support for older Grafana versions.
 
-* FEATURE: add support for the `default` binary operator in the visual query builder. See [#296](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/296).
-* FEATURE: preserve variable expression when switching between compatible variable types. See [#332](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/332).
+## v0.17.0
 
-* BUGFIX: add a rollup field to rollup_rate function. See [#316](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/316).
+* FEATURE: add support for the `default` binary operator in the visual query builder. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/296).
+
+* BUGFIX: add a rollup field to rollup_rate function. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/316).
 
 ## v0.16.0
 

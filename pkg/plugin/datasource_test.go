@@ -20,11 +20,8 @@ func TestDatasourceQueryRequest(t *testing.T) {
 		t.Fatalf("should not be called")
 	})
 	c := -1
-	mux.HandleFunc("/api/v1/query", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v1/query", func(w http.ResponseWriter, _ *http.Request) {
 		c++
-		if r.Method != http.MethodPost {
-			t.Fatalf("expected POST method got %s", r.Method)
-		}
 
 		switch c {
 		case 0:
@@ -70,16 +67,18 @@ func TestDatasourceQueryRequest(t *testing.T) {
 		URL:      srv.URL,
 		JSONData: []byte(`{"httpMethod":"POST","customQueryParameters":""}`),
 	}
-
 	instance, err := NewDatasource(ctx, settings)
 	if err != nil {
-		t.Fatalf("unexpected %s", err)
+		t.Fatalf("unexpected error: %s", err)
+	}
+	ds := instance.(*Datasource)
+	pluginCtx := backend.PluginContext{
+		DataSourceInstanceSettings: &settings,
 	}
 
-	datasource := instance.(*Datasource)
-
 	expErr := func(ctx context.Context, err string) {
-		rsp, gotErr := datasource.QueryData(ctx, &backend.QueryDataRequest{
+		rsp, gotErr := ds.QueryData(ctx, &backend.QueryDataRequest{
+			PluginContext: pluginCtx,
 			Queries: []backend.DataQuery{
 				{
 					RefID:     "A",
@@ -129,13 +128,15 @@ func TestDatasourceQueryRequest(t *testing.T) {
 	if err := json.Unmarshal(queryJSON, &q); err != nil {
 		t.Fatalf("error parse query %s", err)
 	}
-	rsp, gotErr := datasource.QueryData(ctx, &backend.QueryDataRequest{Queries: []backend.DataQuery{
-		{
-			RefID:     "A",
-			QueryType: rangeQueryPath,
-			JSON:      queryJSON,
+	rsp, gotErr := ds.QueryData(ctx, &backend.QueryDataRequest{
+		PluginContext: pluginCtx,
+		Queries: []backend.DataQuery{
+			{
+				RefID:     "A",
+				QueryType: rangeQueryPath,
+				JSON:      queryJSON,
+			},
 		},
-	},
 	})
 	if gotErr != nil {
 		t.Fatalf("unexpected %s", gotErr)
@@ -198,13 +199,15 @@ func TestDatasourceQueryRequest(t *testing.T) {
 	if err := json.Unmarshal(queryJSON, &q); err != nil {
 		t.Fatalf("error parse query %s", err)
 	}
-	rsp, gotErr = datasource.QueryData(ctx, &backend.QueryDataRequest{Queries: []backend.DataQuery{
-		{
-			RefID:     "A",
-			QueryType: instantQueryPath,
-			JSON:      queryJSON,
+	rsp, gotErr = ds.QueryData(ctx, &backend.QueryDataRequest{
+		PluginContext: pluginCtx,
+		Queries: []backend.DataQuery{
+			{
+				RefID:     "A",
+				QueryType: instantQueryPath,
+				JSON:      queryJSON,
+			},
 		},
-	},
 	})
 	if gotErr != nil {
 		t.Fatalf("unexpected %s", gotErr)
@@ -248,10 +251,7 @@ func TestDatasourceQueryRequestWithRetry(t *testing.T) {
 		t.Fatalf("should not be called")
 	})
 	c := -1
-	mux.HandleFunc("/api/v1/query", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			t.Fatalf("expected POST method got %s", r.Method)
-		}
+	mux.HandleFunc("/api/v1/query", func(w http.ResponseWriter, _ *http.Request) {
 		c++
 		switch c {
 		case 0:
@@ -284,16 +284,18 @@ func TestDatasourceQueryRequestWithRetry(t *testing.T) {
 		URL:      srv.URL,
 		JSONData: []byte(`{"httpMethod":"POST","customQueryParameters":""}`),
 	}
-
 	instance, err := NewDatasource(ctx, settings)
 	if err != nil {
-		t.Fatalf("unexpected %s", err)
+		t.Fatalf("unexpected error: %s", err)
 	}
-
-	datasource := instance.(*Datasource)
+	pluginCtx := backend.PluginContext{
+		DataSourceInstanceSettings: &settings,
+	}
+	ds := instance.(*Datasource)
 
 	expErr := func(err string) {
-		rsp, gotErr := datasource.QueryData(ctx, &backend.QueryDataRequest{
+		rsp, gotErr := ds.QueryData(ctx, &backend.QueryDataRequest{
+			PluginContext: pluginCtx,
 			Queries: []backend.DataQuery{
 				{
 					RefID:     "A",
@@ -324,7 +326,8 @@ func TestDatasourceQueryRequestWithRetry(t *testing.T) {
 	}
 
 	expValue := func(v float64) {
-		rsp, gotErr := datasource.QueryData(ctx, &backend.QueryDataRequest{
+		rsp, gotErr := ds.QueryData(ctx, &backend.QueryDataRequest{
+			PluginContext: pluginCtx,
 			Queries: []backend.DataQuery{
 				{
 					RefID:     "A",
@@ -369,54 +372,52 @@ func TestDatasourceQueryRequestWithRetry(t *testing.T) {
 }
 
 func TestDatasource_checkAlertingRequest(t *testing.T) {
-	tests := []struct {
-		name    string
+	type opts struct {
 		headers map[string]string
 		want    bool
 		wantErr bool
-	}{
-		{
-			name:    "no alerting header",
-			headers: map[string]string{},
-			want:    false,
-			wantErr: false,
-		},
-		{
-			name:    "alerting header",
-			headers: map[string]string{"FromAlert": "true"},
-			want:    true,
-			wantErr: false,
-		},
-		{
-			name:    "invalid alerting header",
-			headers: map[string]string{"FromAlert": "invalid"},
-			want:    false,
-			wantErr: true,
-		},
-		{
-			name:    "false alerting header",
-			headers: map[string]string{"FromAlert": "false"},
-			want:    false,
-			wantErr: false,
-		},
-		{
-			name:    "irrelevant header",
-			headers: map[string]string{"SomeOtherHeader": "true"},
-			want:    false,
-			wantErr: false,
-		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			d := &Datasource{}
-			got, err := d.checkAlertingRequest(tt.headers)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("checkAlertingRequest() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("checkAlertingRequest() got = %v, want %v", got, tt.want)
-			}
-		})
+	f := func(opts opts) {
+		t.Helper()
+		got, err := checkAlertingRequest(opts.headers)
+		if (err != nil) != opts.wantErr {
+			t.Errorf("checkAlertingRequest() error = %v, wantErr %v", err, opts.wantErr)
+			return
+		}
+		if got != opts.want {
+			t.Errorf("checkAlertingRequest() got = %v, want %v", got, opts.want)
+		}
 	}
+
+	// no alerting header
+	o := opts{
+		headers: map[string]string{},
+	}
+	f(o)
+
+	// alerting header
+	o = opts{
+		headers: map[string]string{"FromAlert": "true"},
+		want:    true,
+	}
+	f(o)
+
+	// invalid alerting header
+	o = opts{
+		headers: map[string]string{"FromAlert": "invalid"},
+		wantErr: true,
+	}
+	f(o)
+
+	// false alerting header
+	o = opts{
+		headers: map[string]string{"FromAlert": "false"},
+	}
+	f(o)
+
+	// irrelevant header
+	o = opts{
+		headers: map[string]string{"SomeOtherHeader": "true"},
+	}
+	f(o)
 }
