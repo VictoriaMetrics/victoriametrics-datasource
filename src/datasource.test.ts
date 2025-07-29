@@ -362,7 +362,7 @@ describe('PrometheusDatasource', () => {
       replaceMock.mockReturnValue(interval);
 
       const queries = ds.interpolateVariablesInQueries([query], { Interval: { text: interval, value: interval } });
-      expect(templateSrvStub.replace).toBeCalledTimes(2);
+      expect(templateSrvStub.replace).toHaveBeenCalledTimes(2);
       expect(queries[0].interval).toBe(interval);
     });
   });
