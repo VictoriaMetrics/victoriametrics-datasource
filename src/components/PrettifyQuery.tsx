@@ -46,7 +46,6 @@ const PrettifyQuery: FC<Props> = ({
 
     let expr = query.expr || '';
     if (!expr.trim()) {
-      console.warn('Query expression is empty');
       return;
     }
 
