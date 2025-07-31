@@ -60,10 +60,10 @@ const PrettifyQuery: FC<Props> = ({
       });
 
       const response = await datasource.getRequest('prettify-query', { query: expr }, {});
-      const { data } = response;
+      const { status, query } = response;
 
-      if (data?.status === ResponseStatus.Success && data.query) {
-        let prettifiedQuery = data.query;
+      if (status === ResponseStatus.Success && query) {
+        let prettifiedQuery = query;
 
         // Replace temporary values with grafana variables
         GRAFANA_VARIABLES.forEach((variable) => {
@@ -75,7 +75,7 @@ const PrettifyQuery: FC<Props> = ({
 
         onChange({ ...query, expr: prettifiedQuery });
       } else {
-        console.error(`Error prettifying query: ${data?.status || 'Unknown error'}`);
+        console.error(`Error prettifying query: ${status || 'Unknown error'}`);
       }
     } catch (e) {
       console.error('Error prettifying query:', e);

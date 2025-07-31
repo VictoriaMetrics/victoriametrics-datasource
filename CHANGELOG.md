@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix regression of the plugin that cause the plugin to not work with `values`, `with template` and `names` queries. Fix comments after the plugin verification procedure.
+
 ## v0.18.1
 
 * BUGFIX: upgrade `jest` library version to fix vulnerability warning.

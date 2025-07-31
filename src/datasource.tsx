@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { lastValueFrom, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
-  AdHocVariableFilter,
   AbstractQuery,
+  AdHocVariableFilter,
   AnnotationEvent,
   AnnotationQuery,
+  CustomVariableModel,
   DataFrame,
-  DataQueryError,
   DataQueryRequest,
   DataQueryResponse,
   DataSourceInstanceSettings,
@@ -33,45 +33,29 @@ import {
   DataSourceWithQueryImportSupport,
   dateMath,
   DateTime,
-  dateTime,
   getDefaultTimeRange,
   LegacyMetricFindQueryOptions,
-  LoadingState,
   QueryFixAction,
+  QueryVariableModel,
   rangeUtil,
   ScopedVars,
   TimeRange,
 } from '@grafana/data';
-import {
-  BackendSrvRequest,
-  DataSourceWithBackend,
-  TemplateSrv,
-  getTemplateSrv,
-} from '@grafana/runtime';
+import { BackendSrvRequest, DataSourceWithBackend, getTemplateSrv, TemplateSrv } from '@grafana/runtime';
 
 import { addLabelToQuery } from './add_label_to_query';
 import { AnnotationQueryEditor } from "./components/Annotations/AnnotationQueryEditor";
 import { WithTemplate } from "./components/WithTemplateConfig/types";
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
 import PrometheusLanguageProvider from './language_provider';
-import {
-  expandRecordingRules,
-  getVictoriaMetricsTime,
-} from './language_utils';
+import { expandRecordingRules, getVictoriaMetricsTime } from './language_utils';
 import { renderLegendFormat } from './legend';
 import PrometheusMetricFindQuery from './metric_find_query';
 import { getInitHints, getQueryHints } from './query_hints';
 import { getOriginalMetricName, transformV2 } from './result_transformer';
 import { getTimeSrv, TimeSrv } from './services/TimeSrv';
-import {
-  ExemplarTraceIdDestination,
-  LimitMetrics,
-  PromOptions,
-  PromQuery,
-  PromQueryType,
-} from './types';
+import { ExemplarTraceIdDestination, LimitMetrics, PromOptions, PromQuery, PromQueryType } from './types';
 import { utf8Support, wrapUtf8Filters } from './utf8_support';
-import { safeStringifyValue } from './utils/safeStringifyValue';
 import { PrometheusVariableSupport } from './variables';
 
 enum PromApplication {
@@ -207,6 +191,15 @@ export class PrometheusDatasource
     );
   }
 
+  directAccessError() {
+    return of({
+      data: [],
+      error: {
+        message: 'Direct access is not supported for this datasource. Please use proxy access.',
+      },
+    });
+  }
+
   adjustInterval(interval: number, minInterval: number, range: number, intervalFactor: number) {
     // Prometheus will drop queries that might return more than 11000 data points.
     // Calculate a safe interval as an additional minimum to take into account.
@@ -218,30 +211,6 @@ export class PrometheusDatasource
     }
     return Math.max(interval * intervalFactor, minInterval, safeInterval);
   }
-
-  handleErrors = (err: any, target: PromQuery) => {
-    const error: DataQueryError = {
-      message: (err && err.statusText) || 'Unknown error during query transaction. Please check JS console logs.',
-      refId: target.refId,
-    };
-
-    if (err.data) {
-      if (typeof err.data === 'string') {
-        error.message = err.data;
-      } else if (err.data.error) {
-        error.message = safeStringifyValue(err.data.error);
-      }
-    } else if (err.message) {
-      error.message = err.message;
-    } else if (typeof err === 'string') {
-      error.message = err;
-    }
-
-    error.status = err.status;
-    error.statusText = err.statusText;
-
-    return error;
-  };
 
   metricFindQuery(query: string, options?: LegacyMetricFindQueryOptions) {
     if (!query) {
@@ -399,44 +368,6 @@ export class PrometheusDatasource
     return result?.data?.map((value: any) => ({ text: value })) ?? [];
   }
 
-  async testDatasource() {
-    const now = new Date().getTime();
-    const request: DataQueryRequest<PromQuery> = {
-      targets: [{ refId: 'test', expr: '1+1', instant: true }],
-      requestId: `${this.id}-health`,
-      scopedVars: {},
-      dashboardId: 0,
-      panelId: 0,
-      interval: '1m',
-      intervalMs: 60000,
-      maxDataPoints: 1,
-      timezone: '',
-      app: DATASOURCE_TYPE,
-      startTime: 0,
-      range: {
-        from: dateTime(now - 1000),
-        to: dateTime(now),
-        raw: { from: 'now-1s', to: 'now' },
-      },
-    } as DataQueryRequest<PromQuery>;
-
-    return lastValueFrom(this.query(request))
-      .then((res: DataQueryResponse) => {
-        if (!res || !res.data || res.state !== LoadingState.Done) {
-          return { status: 'error', message: `Error reading Prometheus: ${res?.error?.message}` };
-        } else {
-          return {
-            status: 'success',
-            message: 'Data source is working',
-          };
-        }
-      })
-      .catch((err: any) => {
-        console.error('VictoriaMetrics Error', err);
-        return { status: 'error', message: err.message };
-      });
-  }
-
   interpolateVariablesInQueries(queries: PromQuery[], scopedVars: ScopedVars): PromQuery[] {
     let expandedQueries = queries;
     if (queries && queries.length) {
@@ -547,7 +478,7 @@ export class PrometheusDatasource
       return expr;
     }
 
-    const finalQuery = resultFilters.reduce((acc, filter) => {
+    return resultFilters.reduce((acc: string, filter: { key: string, operator: string, value: string }) => {
       const { key, operator } = filter;
       let { value } = filter;
       if (operator === '=~' || operator === '!~') {
@@ -555,7 +486,6 @@ export class PrometheusDatasource
       }
       return addLabelToQuery(acc, key, value, operator);
     }, expr);
-    return finalQuery;
   }
 
   // Used when running queries trough backend
