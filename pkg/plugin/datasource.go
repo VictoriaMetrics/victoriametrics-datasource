@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"compress/gzip"
 	"context"
 	"encoding/json"
 	"errors"
@@ -19,6 +20,7 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/resource/httpadapter"
 )
 
 var (
@@ -39,15 +41,27 @@ const (
 type Datasource struct {
 	im     instancemgmt.InstanceManager
 	logger log.Logger
+	backend.CallResourceHandler
 }
 
 // NewDatasource creates a new datasource instance.
 func NewDatasource() *Datasource {
-	im := datasource.NewInstanceManager(newDatasourceInstance)
-	return &Datasource{
-		im:     im,
-		logger: log.New(),
-	}
+	var ds Datasource
+	ds.im = datasource.NewInstanceManager(newDatasourceInstance)
+	ds.logger = log.New()
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", ds.RootHandler)
+	mux.HandleFunc("/api/v1/labels", ds.VMAPIQuery)
+	mux.HandleFunc("/api/v1/query", ds.VMAPIQuery)
+	mux.HandleFunc("/api/v1/series", ds.VMAPIQuery)
+	mux.HandleFunc("/prettify-query", ds.VMAPIQuery)
+	mux.HandleFunc("/expand-with-exprs", ds.VMAPIQuery)
+	mux.HandleFunc("/api/v1/label/{key}/values", ds.VMAPIQuery)
+	mux.HandleFunc("/vmui", ds.VMUIQuery)
+	ds.CallResourceHandler = httpadapter.New(mux)
+
+	return &ds
 }
 
 // newDatasourceInstance returns an initialized VM datasource instance
@@ -337,12 +351,12 @@ func (d *Datasource) VMAPIQuery(rw http.ResponseWriter, req *http.Request) {
 		writeError(rw, http.StatusInternalServerError, err)
 		return
 	}
-
 	u, err := newURL(di.url, req.URL.Path, false)
 	if err != nil {
 		writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to parse datasource url: %w", err))
 		return
 	}
+	u.RawQuery = req.URL.Query().Encode()
 	newReq, err := http.NewRequestWithContext(ctx, req.Method, u.String(), nil)
 	if err != nil {
 		writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to create new request with context: %w", err))
@@ -371,12 +385,21 @@ func (d *Datasource) VMAPIQuery(rw http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
-	defer resp.Body.Close()
-	bodyBytes, err := io.ReadAll(resp.Body)
+	reader := io.Reader(resp.Body)
+	if resp.Header.Get("Content-Encoding") == "gzip" {
+		reader, err = gzip.NewReader(reader)
+		if err != nil {
+			writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to create gzip reader: %w", err))
+			return
+		}
+	}
+
+	bodyBytes, err := io.ReadAll(reader)
 	if err != nil {
 		writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to read http response body: %w", err))
 		return
 	}
+	defer resp.Body.Close()
 
 	rw.Header().Add("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusOK)

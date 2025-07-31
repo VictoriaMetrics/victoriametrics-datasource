@@ -1,9 +1,12 @@
 import { render, screen, act } from '@testing-library/react';
 import React from 'react';
 
+import { BackendSrvRequest } from "@grafana/runtime";
+
 import { PrometheusDatasource } from "../datasource";
 
 import PrettifyQuery from './PrettifyQuery';
+
 
 
 const testQueries = [
@@ -67,7 +70,7 @@ const datasource = {
     metrics: [],
   },
   getInitHints: () => [],
-  getRequest: async (path: string, params = {}, options?: Partial<BackendSrvRequest>) => {
+  getRequest: async (path: string, params = { query: '' }, options?: Partial<BackendSrvRequest>) => {
     return {
       data: {
         query: params.query,

@@ -70,7 +70,7 @@ func (pi promInstant) dataframes() (data.Frames, error) {
 	return frames, nil
 }
 
-func (pi *promInstant) alertingDataFrames() (data.Frames, error) {
+func (pi promInstant) alertingDataFrames() (data.Frames, error) {
 	frames := make(data.Frames, len(pi.Result))
 	for i, res := range pi.Result {
 		f, err := strconv.ParseFloat(res.Value[1].(string), 64)

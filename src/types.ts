@@ -16,7 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { DataQuery, DataSourceJsonData, QueryResultMeta, ScopedVars } from '@grafana/data';
+import { DataSourceJsonData, QueryResultMeta, ScopedVars } from '@grafana/data';
+import { DataQuery } from '@grafana/schema';
 
 import { WithTemplate } from "./components/WithTemplateConfig/types";
 import { QueryEditorMode } from './querybuilder/shared/types';
@@ -40,6 +41,7 @@ export interface PromQuery extends DataQuery {
   /** Code, Builder or Explain */
   editorMode?: QueryEditorMode;
   trace?: number;
+  fromExploreMetrics?: boolean;
 }
 
 export interface PromOptions extends DataSourceJsonData {
