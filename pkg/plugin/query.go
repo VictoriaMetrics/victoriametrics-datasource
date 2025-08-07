@@ -22,17 +22,18 @@ const (
 
 // Query represents backend query object
 type Query struct {
-	RefID         string `json:"refId"`
-	Instant       bool   `json:"instant"`
-	Range         bool   `json:"range"`
-	Interval      string `json:"interval"`
-	IntervalMs    int64  `json:"intervalMs"`
-	TimeInterval  string `json:"timeInterval"`
-	Expr          string `json:"expr"`
-	LegendFormat  string `json:"legendFormat"`
-	Trace         int    `json:"trace,omitempty"`
-	MaxDataPoints int64
-	TimeRange     TimeRange
+	RefID                string `json:"refId"`
+	Instant              bool   `json:"instant"`
+	Range                bool   `json:"range"`
+	Interval             string `json:"interval"`
+	IntervalMs           int64  `json:"intervalMs"`
+	TimeInterval         string `json:"timeInterval"`
+	Expr                 string `json:"expr"`
+	LegendFormat         string `json:"legendFormat"`
+	Trace                int    `json:"trace,omitempty"`
+	MaxDataPoints        int64
+	TimeRange            TimeRange
+	BackendQueryInterval time.Duration
 }
 
 // TimeRange represents time range backend object
@@ -47,14 +48,14 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 	from := q.TimeRange.From
 	to := q.TimeRange.To
 	timerange := to.Sub(from)
-
+	originalQueryInterval := q.Interval
 	minInterval, err := q.calculateMinInterval()
 	if err != nil {
 		return "", fmt.Errorf("failed to calculate minimal interval: %w", err)
 	}
 
 	step := q.calculateStep(minInterval)
-	expr := replaceTemplateVariable(q.Expr, timerange, minInterval, q.Interval)
+	expr := replaceTemplateVariable(q.Expr, q.BackendQueryInterval, step, originalQueryInterval, q.TimeInterval, timerange)
 
 	if expr == "" {
 		return "", fmt.Errorf("expression can't be blank")

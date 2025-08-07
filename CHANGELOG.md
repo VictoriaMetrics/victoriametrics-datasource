@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix parsing of the datasource settings, enable usage of the scrape interval when the lookbehind window is calculated for the query url. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/349).
+
 ## v0.18.2
 
 * BUGFIX: fix regression of the plugin that cause the plugin to not work with `values`, `with template` and `names` queries. Fix comments after the plugin verification procedure.
