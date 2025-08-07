@@ -48,13 +48,14 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 	to := q.TimeRange.To
 	timerange := to.Sub(from)
 
+	originalQueryInterval := q.Interval
 	minInterval, err := q.calculateMinInterval()
 	if err != nil {
 		return "", fmt.Errorf("failed to calculate minimal interval: %w", err)
 	}
 
 	step := q.calculateStep(minInterval)
-	expr := replaceTemplateVariable(q.Expr, timerange, minInterval, q.Interval)
+	expr := replaceTemplateVariable(q.Expr, timerange, minInterval, originalQueryInterval)
 
 	if expr == "" {
 		return "", fmt.Errorf("expression can't be blank")

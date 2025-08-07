@@ -95,7 +95,7 @@ func Test_calculateStep(t *testing.T) {
 		query: &Query{
 			TimeInterval: "123",
 		},
-		want: "2m0s",
+		want: "2m3s",
 	}
 	f(o)
 
@@ -370,7 +370,7 @@ func Test_replaceTemplateVariable(t *testing.T) {
 	o = opts{
 		expr:      "rate(ingress_nginx_request_qps{}[$__rate_interval])",
 		timerange: time.Second * 3,
-		want:      "rate(ingress_nginx_request_qps{}[0s])",
+		want:      "rate(ingress_nginx_request_qps{}[4ms])",
 	}
 	f(o)
 
@@ -378,7 +378,7 @@ func Test_replaceTemplateVariable(t *testing.T) {
 	o = opts{
 		expr:     "rate(ingress_nginx_request_qps{}[$__rate_interval])",
 		interval: time.Minute * 4,
-		want:     "rate(ingress_nginx_request_qps{}[4m0s])",
+		want:     "rate(ingress_nginx_request_qps{}[16m0s])",
 	}
 	f(o)
 
@@ -447,7 +447,7 @@ func Test_replaceTemplateVariable(t *testing.T) {
 		timerange:    time.Second * 3,
 		interval:     time.Second * 5,
 		timeInterval: "10s",
-		want:         "rate(ingress_nginx_request_qps{}[5s])",
+		want:         "rate(ingress_nginx_request_qps{}[40s])",
 	}
 	f(o)
 }

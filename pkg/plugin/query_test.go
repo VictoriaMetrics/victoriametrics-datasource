@@ -112,24 +112,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		getTimeRange:  getTimeRage,
 		rawURL:        "http://127.0.0.1:8428",
 		wantErr:       false,
-		want:          "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B20s%5D%29&step=20s&time=1670226793",
-	}
-	f(o)
-
-	// range query with interval
-	o = opts{
-		RefID:         "1",
-		Instant:       false,
-		Range:         true,
-		Interval:      "5s",
-		IntervalMs:    20000,
-		TimeInterval:  "30s",
-		Expr:          "rate(ingress_nginx_request_qps{}[$__rate_interval])",
-		MaxDataPoints: 3000,
-		getTimeRange:  getTimeRage,
-		rawURL:        "http://127.0.0.1:8428",
-		wantErr:       false,
-		want:          "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28ingress_nginx_request_qps%7B%7D%5B5s%5D%29&start=1670226733&step=5s",
+		want:          "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B1m20s%5D%29&step=20s&time=1670226793",
 	}
 	f(o)
 
@@ -147,6 +130,125 @@ func TestQuery_getQueryURL(t *testing.T) {
 		params:       "extra_filters[]={job=\"vmalert\"}",
 		wantErr:      false,
 		want:         "http://127.0.0.1:8428/api/v1/query?extra_filters%5B%5D=%7Bjob%3D%22vmalert%22%7D&query=rate%28ingress_nginx_request_qps%7B%7D%5B10s%5D%29&step=10s&time=1670226793",
+	}
+	f(o)
+
+	// $__rate_interval query with interval
+	o = opts{
+		RefID:         "1",
+		Instant:       false,
+		Range:         true,
+		Interval:      "5s",
+		IntervalMs:    20000,
+		TimeInterval:  "30s",
+		Expr:          "rate(ingress_nginx_request_qps{}[$__rate_interval])",
+		MaxDataPoints: 3000,
+		getTimeRange:  getTimeRage,
+		rawURL:        "http://127.0.0.1:8428",
+		wantErr:       false,
+		want:          "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28ingress_nginx_request_qps%7B%7D%5B20s%5D%29&start=1670226733&step=5s",
+	}
+	f(o)
+
+	// $__rate_interval intervalMs 100s, minStep override 150s and scrape interval 30s
+	o = opts{
+		RefID:        "1",
+		Instant:      false,
+		Range:        true,
+		Expr:         "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:     "150s",
+		IntervalMs:   100000,
+		getTimeRange: getTimeRage,
+		rawURL:       "http://127.0.0.1:8428",
+		wantErr:      false,
+		want:         "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28rpc_durations_seconds_count%5B10m0s%5D%29&start=1670226733&step=2m30s",
+	}
+	f(o)
+
+	// $__rate_interval intervalMs 120s, minStep override 150s
+	o = opts{
+		RefID:        "1",
+		Instant:      false,
+		Range:        true,
+		Expr:         "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:     "150s",
+		IntervalMs:   120000,
+		getTimeRange: getTimeRage,
+		rawURL:       "http://127.0.0.1:8428",
+		wantErr:      false,
+		want:         "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28rpc_durations_seconds_count%5B10m0s%5D%29&start=1670226733&step=2m30s",
+	}
+	f(o)
+
+	// $__rate_interval intervalMs 120s, minStep auto (interval not overridden)
+	o = opts{
+		RefID:        "1",
+		Instant:      false,
+		Range:        true,
+		Expr:         "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:     "120s",
+		IntervalMs:   120000,
+		getTimeRange: getTimeRage,
+		rawURL:       "http://127.0.0.1:8428",
+		wantErr:      false,
+		want:         "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28rpc_durations_seconds_count%5B8m0s%5D%29&start=1670226733&step=2m0s",
+	}
+	f(o)
+
+	// interval and minStep are automatically calculated and time range 1 hour
+	o = opts{
+		RefID:      "1",
+		Instant:    false,
+		Range:      true,
+		Expr:       "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:   "30s",
+		IntervalMs: 30000,
+		getTimeRange: func() TimeRange {
+			from := time.Unix(1670226733, 0)
+			to := from.Add(time.Hour * 1)
+			return TimeRange{From: from, To: to}
+		},
+		rawURL:  "http://127.0.0.1:8428",
+		wantErr: false,
+		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670230333&query=rate%28rpc_durations_seconds_count%5B2m0s%5D%29&start=1670226733&step=30s",
+	}
+	f(o)
+
+	// minStep is $__rate_interval and time range 1 hour
+	o = opts{
+		RefID:      "1",
+		Instant:    false,
+		Range:      true,
+		Expr:       "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:   "$__rate_interval",
+		IntervalMs: 30000,
+		getTimeRange: func() TimeRange {
+			from := time.Unix(1670226733, 0)
+			to := from.Add(time.Hour * 1)
+			return TimeRange{From: from, To: to}
+		},
+		rawURL:  "http://127.0.0.1:8428",
+		wantErr: false,
+		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670230333&query=rate%28rpc_durations_seconds_count%5B30s%5D%29&start=1670226733&step=30s",
+	}
+	f(o)
+
+	// minStep is $__rate_interval and time range 2 days
+	o = opts{
+		RefID:      "1",
+		Instant:    false,
+		Range:      true,
+		Expr:       "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:   "$__rate_interval",
+		IntervalMs: 120000,
+		getTimeRange: func() TimeRange {
+			from := time.Unix(1670226733, 0)
+			to := from.Add(time.Hour * 24 * 2)
+			return TimeRange{From: from, To: to}
+		},
+		rawURL:  "http://127.0.0.1:8428",
+		wantErr: false,
+		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670399533&query=rate%28rpc_durations_seconds_count%5B2m0s%5D%29&start=1670226733&step=2m0s",
 	}
 	f(o)
 }
