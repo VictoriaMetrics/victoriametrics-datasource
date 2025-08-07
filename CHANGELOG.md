@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix the calculation of the `step` parameter and lookbehind window for the `range` queries if the `$__rate_interval` variable is used. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/347).
+
 ## v0.18.2
 
 * BUGFIX: fix regression of the plugin that cause the plugin to not work with `values`, `with template` and `names` queries. Fix comments after the plugin verification procedure.

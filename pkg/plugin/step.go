@@ -99,9 +99,8 @@ func (q *Query) calculateStep(minInterval time.Duration) time.Duration {
 	rangeValue := q.TimeRange.To.UnixNano() - q.TimeRange.From.UnixNano()
 	calculatedInterval := time.Duration(rangeValue / resolution)
 	if calculatedInterval < minInterval {
-		return roundInterval(minInterval)
+		return minInterval
 	}
-
 	return roundInterval(calculatedInterval)
 }
 
@@ -130,9 +129,15 @@ func replaceTemplateVariable(expr string, timerange, interval time.Duration, tim
 
 	var rateInterval time.Duration
 	if timeInterval == varRateInterval {
-		rateInterval = calculateRateInterval(interval, timeInterval)
-	} else {
 		rateInterval = interval
+	} else {
+		if timeInterval == varInterval {
+			timeInterval = interval.String()
+		}
+		if timeInterval == "" {
+			timeInterval = formatDuration(interval)
+		}
+		rateInterval = calculateRateInterval(interval, timeInterval)
 	}
 
 	expr = strings.ReplaceAll(expr, varIntervalMs, strconv.FormatInt(int64(interval/time.Millisecond), 10))
