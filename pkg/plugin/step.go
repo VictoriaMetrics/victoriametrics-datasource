@@ -123,25 +123,32 @@ func calculateRateInterval(interval time.Duration, scrapeInterval string) time.D
 
 // replaceTemplateVariable get query and use it expression to remove grafana template variables with
 // step timestamps
-func replaceTemplateVariable(expr string, timerange, interval time.Duration, timeInterval string) string {
-	rangeMs := timerange.Milliseconds()
+func replaceTemplateVariable(
+	expr string,
+	queryInterval time.Duration,
+	calculatedStep time.Duration,
+	requestedMinStep string,
+	dsScrapeInterval string,
+	timeRange time.Duration,
+) string {
+	rangeMs := timeRange.Milliseconds()
 	rangeSRounded := int64(math.Round(float64(rangeMs) / 1000.0))
 
 	var rateInterval time.Duration
-	if timeInterval == varRateInterval {
-		rateInterval = interval
+	if requestedMinStep == varRateInterval {
+		rateInterval = calculatedStep
 	} else {
-		if timeInterval == varInterval {
-			timeInterval = interval.String()
+		if requestedMinStep == varInterval {
+			requestedMinStep = calculatedStep.String()
 		}
-		if timeInterval == "" {
-			timeInterval = formatDuration(interval)
+		if requestedMinStep == "" {
+			requestedMinStep = dsScrapeInterval
 		}
-		rateInterval = calculateRateInterval(interval, timeInterval)
+		rateInterval = calculateRateInterval(queryInterval, requestedMinStep)
 	}
 
-	expr = strings.ReplaceAll(expr, varIntervalMs, strconv.FormatInt(int64(interval/time.Millisecond), 10))
-	expr = strings.ReplaceAll(expr, varInterval, formatDuration(interval))
+	expr = strings.ReplaceAll(expr, varIntervalMs, strconv.FormatInt(int64(calculatedStep/time.Millisecond), 10))
+	expr = strings.ReplaceAll(expr, varInterval, formatDuration(calculatedStep))
 
 	expr = strings.ReplaceAll(expr, varRangeMs, strconv.FormatInt(rangeMs, 10))
 	expr = strings.ReplaceAll(expr, varRangeS, strconv.FormatInt(rangeSRounded, 10))

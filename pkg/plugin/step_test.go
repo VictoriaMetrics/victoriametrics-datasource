@@ -324,130 +324,214 @@ func Test_calculateRateInterval(t *testing.T) {
 
 func Test_replaceTemplateVariable(t *testing.T) {
 	type opts struct {
-		expr         string
-		timerange    time.Duration
-		interval     time.Duration
-		timeInterval string
-		want         string
+		RefID                string
+		Instant              bool
+		Range                bool
+		Interval             string
+		IntervalMs           int64
+		TimeInterval         string
+		Expr                 string
+		MaxDataPoints        int64
+		BackendQueryInterval time.Duration
+		getTimeRange         func() TimeRange
+		calculatedStep       time.Duration
+		want                 string
 	}
 	f := func(opts opts) {
 		t.Helper()
-		if got := replaceTemplateVariable(opts.expr, opts.timerange, opts.interval, opts.timeInterval); got != opts.want {
+		tr := opts.getTimeRange()
+		from := tr.From
+		to := tr.To
+		timeRange := to.Sub(from)
+		if got := replaceTemplateVariable(opts.Expr, opts.BackendQueryInterval, opts.calculatedStep, opts.Interval, opts.TimeInterval, timeRange); got != opts.want {
 			t.Errorf("replaceTemplateVariable() = %v, want %v", got, opts.want)
 		}
 	}
 
-	// empty expression
-	o := opts{}
-	f(o)
-
-	// empty time range and interval
-	o = opts{
-		expr:         "rate(ingress_nginx_request_qps{}[$__interval])",
-		timeInterval: "10s",
-		want:         "rate(ingress_nginx_request_qps{}[1ms])",
+	// empty values
+	o := opts{
+		RefID:          "1",
+		Instant:        false,
+		Range:          false,
+		Interval:       "",
+		IntervalMs:     0,
+		TimeInterval:   "",
+		Expr:           "",
+		getTimeRange:   getTimeRage,
+		calculatedStep: 0,
+		want:           "",
 	}
 	f(o)
 
-	// empty time range and interval
+	// empty instant expression
 	o = opts{
-		expr:         "rate(ingress_nginx_request_qps{}[$__interval])",
-		interval:     time.Second * 2,
-		timeInterval: "10s",
-		want:         "rate(ingress_nginx_request_qps{}[2s])",
+		RefID:          "1",
+		Instant:        true,
+		Range:          false,
+		Interval:       "10s",
+		TimeInterval:   "",
+		Expr:           "",
+		getTimeRange:   getTimeRage,
+		calculatedStep: 0,
+		want:           "",
 	}
 	f(o)
 
-	// defined time range
+	// empty instant query with interval
 	o = opts{
-		expr:      "rate(ingress_nginx_request_qps{}[$__interval])",
-		timerange: time.Second * 3,
-		want:      "rate(ingress_nginx_request_qps{}[1ms])",
+		RefID:          "1",
+		Instant:        true,
+		Range:          false,
+		Interval:       "10s",
+		IntervalMs:     5_000_000,
+		TimeInterval:   "",
+		Expr:           "rate(ingress_nginx_request_qps{}[$__interval])",
+		getTimeRange:   getTimeRage,
+		calculatedStep: time.Second * 10,
+		want:           "rate(ingress_nginx_request_qps{}[10s])",
 	}
 	f(o)
 
-	// defined rate interval and time range
+	// instant query with time interval
 	o = opts{
-		expr:      "rate(ingress_nginx_request_qps{}[$__rate_interval])",
-		timerange: time.Second * 3,
-		want:      "rate(ingress_nginx_request_qps{}[4ms])",
+		RefID:          "1",
+		Instant:        true,
+		Range:          false,
+		Interval:       "20s",
+		IntervalMs:     0,
+		TimeInterval:   "5s",
+		Expr:           "rate(ingress_nginx_request_qps{}[$__rate_interval])",
+		MaxDataPoints:  20000,
+		getTimeRange:   getTimeRage,
+		calculatedStep: time.Second * 20,
+		want:           "rate(ingress_nginx_request_qps{}[1m20s])",
 	}
 	f(o)
 
-	// defined rate interval and time range
+	// custom query params
 	o = opts{
-		expr:     "rate(ingress_nginx_request_qps{}[$__rate_interval])",
-		interval: time.Minute * 4,
-		want:     "rate(ingress_nginx_request_qps{}[16m0s])",
+		RefID:          "1",
+		Instant:        true,
+		Range:          false,
+		Interval:       "10s",
+		IntervalMs:     5_000_000,
+		TimeInterval:   "",
+		Expr:           "rate(ingress_nginx_request_qps{}[$__interval])",
+		getTimeRange:   getTimeRage,
+		calculatedStep: time.Second * 10,
+		want:           "rate(ingress_nginx_request_qps{}[10s])",
 	}
 	f(o)
 
-	// defined interval ms with zero value
+	// $__rate_interval query with interval
 	o = opts{
-		expr:         "rate(ingress_nginx_request_qps{}[$__interval_ms])",
-		timerange:    time.Second * 1,
-		timeInterval: "10s",
-		want:         "rate(ingress_nginx_request_qps{}[0])",
+		RefID:          "1",
+		Instant:        false,
+		Range:          true,
+		Interval:       "5s",
+		IntervalMs:     20000,
+		TimeInterval:   "30s",
+		Expr:           "rate(ingress_nginx_request_qps{}[$__rate_interval])",
+		MaxDataPoints:  3000,
+		getTimeRange:   getTimeRage,
+		calculatedStep: time.Second * 5,
+		want:           "rate(ingress_nginx_request_qps{}[20s])",
 	}
 	f(o)
 
-	// defined interval ms
+	// $__rate_interval intervalMs 100s, minStep override 150s and scrape interval 30s
 	o = opts{
-		expr:         "rate(ingress_nginx_request_qps{}[$__interval_ms])",
-		timerange:    time.Second * 1,
-		interval:     time.Second * 4,
-		timeInterval: "10s",
-		want:         "rate(ingress_nginx_request_qps{}[4000])",
+		RefID:          "1",
+		Instant:        false,
+		Range:          true,
+		Expr:           "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:       "150s",
+		IntervalMs:     100000,
+		getTimeRange:   getTimeRage,
+		calculatedStep: time.Minute*2 + time.Second*30,
+		want:           "rate(rpc_durations_seconds_count[10m0s])",
 	}
 	f(o)
 
-	// defined range ms
+	// $__rate_interval intervalMs 120s, minStep override 150s
 	o = opts{
-		expr:         "rate(ingress_nginx_request_qps{}[$__range_ms])",
-		timerange:    time.Second * 1,
-		interval:     time.Second * 4,
-		timeInterval: "10s",
-		want:         "rate(ingress_nginx_request_qps{}[1000])",
+		RefID:          "1",
+		Instant:        false,
+		Range:          true,
+		Expr:           "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:       "150s",
+		IntervalMs:     120000,
+		getTimeRange:   getTimeRage,
+		calculatedStep: time.Minute*2 + time.Second*30,
+		want:           "rate(rpc_durations_seconds_count[10m0s])",
 	}
 	f(o)
 
-	// defined range ms
+	// $__rate_interval intervalMs 120s, minStep auto (interval not overridden)
 	o = opts{
-		expr:         "rate(ingress_nginx_request_qps{}[$__range_s])",
-		timerange:    time.Second * 1,
-		interval:     time.Second * 4,
-		timeInterval: "10s",
-		want:         "rate(ingress_nginx_request_qps{}[1])",
+		RefID:          "1",
+		Instant:        false,
+		Range:          true,
+		Expr:           "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:       "120s",
+		IntervalMs:     120000,
+		getTimeRange:   getTimeRage,
+		calculatedStep: time.Minute * 2,
+		want:           "rate(rpc_durations_seconds_count[8m0s])",
 	}
 	f(o)
 
-	// defined range ms but time range in milliseconds
+	// interval and minStep are automatically calculated and time range 1 hour
 	o = opts{
-		expr:         "rate(ingress_nginx_request_qps{}[$__range])",
-		timerange:    time.Millisecond * 500,
-		interval:     time.Second * 4,
-		timeInterval: "500ms",
-		want:         "rate(ingress_nginx_request_qps{}[1s])",
+		RefID:      "1",
+		Instant:    false,
+		Range:      true,
+		Expr:       "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:   "30s",
+		IntervalMs: 30000,
+		getTimeRange: func() TimeRange {
+			from := time.Unix(1670226733, 0)
+			to := from.Add(time.Hour * 1)
+			return TimeRange{From: from, To: to}
+		},
+		calculatedStep: time.Second * 30,
+		want:           "rate(rpc_durations_seconds_count[2m0s])",
 	}
 	f(o)
 
-	// defined range ms but time range
+	// minStep is $__rate_interval and time range 1 hour
 	o = opts{
-		expr:         "rate(ingress_nginx_request_qps{}[$__range])",
-		timerange:    time.Second * 3,
-		interval:     time.Second * 4,
-		timeInterval: "10s",
-		want:         "rate(ingress_nginx_request_qps{}[3s])",
+		RefID:      "1",
+		Instant:    false,
+		Range:      true,
+		Expr:       "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:   "$__rate_interval",
+		IntervalMs: 30000,
+		getTimeRange: func() TimeRange {
+			from := time.Unix(1670226733, 0)
+			to := from.Add(time.Hour * 1)
+			return TimeRange{From: from, To: to}
+		},
+		calculatedStep: time.Second * 30,
+		want:           "rate(rpc_durations_seconds_count[30s])",
 	}
 	f(o)
-
-	// defined range ms but time range
+	//
+	// minStep is $__rate_interval and time range 2 days
 	o = opts{
-		expr:         "rate(ingress_nginx_request_qps{}[$__rate_interval])",
-		timerange:    time.Second * 3,
-		interval:     time.Second * 5,
-		timeInterval: "10s",
-		want:         "rate(ingress_nginx_request_qps{}[40s])",
+		RefID:      "1",
+		Instant:    false,
+		Range:      true,
+		Expr:       "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:   "$__rate_interval",
+		IntervalMs: 120000,
+		getTimeRange: func() TimeRange {
+			from := time.Unix(1670226733, 0)
+			to := from.Add(time.Hour * 24 * 2)
+			return TimeRange{From: from, To: to}
+		},
+		calculatedStep: time.Minute * 2,
+		want:           "rate(rpc_durations_seconds_count[2m0s])",
 	}
 	f(o)
 }

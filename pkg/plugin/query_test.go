@@ -116,23 +116,6 @@ func TestQuery_getQueryURL(t *testing.T) {
 	}
 	f(o)
 
-	// custom query params
-	o = opts{
-		RefID:        "1",
-		Instant:      true,
-		Range:        false,
-		Interval:     "10s",
-		IntervalMs:   5_000_000,
-		TimeInterval: "",
-		Expr:         "rate(ingress_nginx_request_qps{}[$__interval])",
-		getTimeRange: getTimeRage,
-		rawURL:       "http://127.0.0.1:8428",
-		params:       "extra_filters[]={job=\"vmalert\"}",
-		wantErr:      false,
-		want:         "http://127.0.0.1:8428/api/v1/query?extra_filters%5B%5D=%7Bjob%3D%22vmalert%22%7D&query=rate%28ingress_nginx_request_qps%7B%7D%5B10s%5D%29&step=10s&time=1670226793",
-	}
-	f(o)
-
 	// $__rate_interval query with interval
 	o = opts{
 		RefID:         "1",
@@ -320,7 +303,7 @@ func Test_labelsToString(t *testing.T) {
 	f(o)
 }
 
-func TestQuery_parseLegend1(t *testing.T) {
+func TestQuery_parseLegend(t *testing.T) {
 	type opts struct {
 		legendFormat string
 		expr         string
