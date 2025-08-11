@@ -112,7 +112,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		getTimeRange:  getTimeRage,
 		rawURL:        "http://127.0.0.1:8428",
 		wantErr:       false,
-		want:          "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B20s%5D%29&step=20s&time=1670226793",
+		want:          "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B1m20s%5D%29&step=20s&time=1670226793",
 	}
 	f(o)
 
@@ -129,7 +129,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		getTimeRange:  getTimeRage,
 		rawURL:        "http://127.0.0.1:8428",
 		wantErr:       false,
-		want:          "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28ingress_nginx_request_qps%7B%7D%5B5s%5D%29&start=1670226733&step=5s",
+		want:          "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28ingress_nginx_request_qps%7B%7D%5B20s%5D%29&start=1670226733&step=5s",
 	}
 	f(o)
 
@@ -218,7 +218,7 @@ func Test_labelsToString(t *testing.T) {
 	f(o)
 }
 
-func TestQuery_parseLegend1(t *testing.T) {
+func TestQuery_parseLegend(t *testing.T) {
 	type opts struct {
 		legendFormat string
 		expr         string

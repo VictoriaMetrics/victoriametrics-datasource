@@ -89,30 +89,35 @@ func newDatasourceInstance(ctx context.Context, settings backend.DataSourceInsta
 		return nil, fmt.Errorf("failed to parse datasource url: %w", err)
 	}
 
-	var dsOpts struct {
-		QueryParams string `json:"customQueryParameters,omitempty"`
-		VMUIURL     string `json:"vmuiUrl,omitempty"`
-	}
-	if err := json.Unmarshal(settings.JSONData, &dsOpts); err != nil {
+	var dstSettings DataSourceInstanceSettings
+	if err := json.Unmarshal(settings.JSONData, &dstSettings); err != nil {
 		return nil, fmt.Errorf("failed to parse datasource settings: %w", err)
 	}
-	queryParams, err := url.ParseQuery(dsOpts.QueryParams)
+	queryParams, err := url.ParseQuery(dstSettings.QueryParams)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse query params: %w", err)
 	}
-	if len(dsOpts.VMUIURL) == 0 {
+	if len(dstSettings.VMUIURL) == 0 {
 		vmuiUrl, err := newURL(settings.URL, "/vmui/", false)
 		if err != nil {
 			return nil, fmt.Errorf("failed to build VMUI url: %w", err)
 		}
-		dsOpts.VMUIURL = vmuiUrl.String()
+		dstSettings.VMUIURL = vmuiUrl.String()
+	}
+
+	if dstSettings.QueryTimeout != "" {
+		timeout, err := time.ParseDuration(dstSettings.QueryTimeout)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse query timeout: %w", err)
+		}
+		cl.Timeout = timeout
 	}
 	return &DatasourceInstance{
 		url:         settings.URL,
 		httpClient:  cl,
 		logger:      logger,
 		queryParams: queryParams,
-		vmuiURL:     dsOpts.VMUIURL,
+		settings:    dstSettings,
 	}, nil
 }
 
@@ -123,7 +128,16 @@ type DatasourceInstance struct {
 	httpClient  *http.Client
 	logger      log.Logger
 	queryParams url.Values
-	vmuiURL     string
+	settings    DataSourceInstanceSettings
+}
+
+// DataSourceInstanceSettings contains settings for the datasource instance.
+type DataSourceInstanceSettings struct {
+	QueryParams  string `json:"customQueryParameters,omitempty"`
+	VMUIURL      string `json:"vmuiUrl,omitempty"`
+	TimeInterval string `json:"timeInterval,omitempty"`
+	QueryTimeout string `json:"queryTimeout,omitempty"`
+	HTTPMethod   string `json:"httpMethod,omitempty"`
 }
 
 // Dispose here tells plugin SDK that plugin wants to clean up resources when a new instance
@@ -175,6 +189,8 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 
 	q.TimeRange = TimeRange(query.TimeRange)
 	q.MaxDataPoints = query.MaxDataPoints
+	q.TimeInterval = di.settings.TimeInterval
+	q.BackendQueryInterval = query.Interval
 
 	reqURL, err := q.getQueryURL(di.url, di.queryParams)
 	if err != nil {
@@ -182,7 +198,7 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, reqURL, nil)
+	req, err := http.NewRequestWithContext(ctx, di.settings.HTTPMethod, reqURL, nil)
 	if err != nil {
 		err = fmt.Errorf("failed to create new request with context: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
@@ -196,7 +212,7 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 
 		// Something in the middle between client and datasource might be closing
 		// the connection. So we do a one more attempt in hope request will succeed.
-		req, err = http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
+		req, err = http.NewRequestWithContext(ctx, di.settings.HTTPMethod, reqURL, nil)
 		if err != nil {
 			err = fmt.Errorf("failed to create new request with context: %w", err)
 			return newResponseError(err, backend.StatusBadRequest)
@@ -334,7 +350,7 @@ func (d *Datasource) VMUIQuery(rw http.ResponseWriter, req *http.Request) {
 	}
 	rw.Header().Add("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusOK)
-	vmuiURL := di.vmuiURL + "?#/?" + params.Encode()
+	vmuiURL := di.settings.VMUIURL + "?#/?" + params.Encode()
 	_, err = fmt.Fprintf(rw, `{"vmuiURL": %q}`, vmuiURL)
 	if err != nil {
 		log.DefaultLogger.Warn("Error writing response")
