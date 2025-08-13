@@ -117,32 +117,27 @@ func (q *Query) calculateMinInterval() (time.Duration, error) {
 var legendReplacer = regexp.MustCompile(`\{\{\s*(.+?)\s*\}\}`)
 
 func (q *Query) parseLegend(labels data.Labels) string {
-
-	switch {
-	case q.LegendFormat == legendFormatAuto:
-		return q.Expr
-	case q.LegendFormat != "":
-		result := legendReplacer.ReplaceAllStringFunc(q.LegendFormat, func(in string) string {
-			labelName := strings.Replace(in, "{{", "", 1)
-			labelName = strings.Replace(labelName, "}}", "", 1)
-			labelName = strings.TrimSpace(labelName)
-			if val, ok := labels[labelName]; ok {
-				return val
-			}
-			return ""
-		})
-		if result == "" {
-			return q.Expr
-		}
-		return result
-	default:
-		// If legend is empty brackets, use query expression
+	if q.LegendFormat == legendFormatAuto || q.LegendFormat == "" {
 		legend := labelsToString(labels)
 		if legend == "{}" {
 			return q.Expr
 		}
 		return legend
 	}
+
+	result := legendReplacer.ReplaceAllStringFunc(q.LegendFormat, func(in string) string {
+		labelName := strings.Replace(in, "{{", "", 1)
+		labelName = strings.Replace(labelName, "}}", "", 1)
+		labelName = strings.TrimSpace(labelName)
+		if val, ok := labels[labelName]; ok {
+			return val
+		}
+		return ""
+	})
+	if result == "" {
+		return q.Expr
+	}
+	return result
 }
 
 func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
@@ -159,7 +154,7 @@ func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
 }
 
 func labelsToString(labels data.Labels) string {
-	if labels == nil {
+	if labels == nil || len(labels) < 1 {
 		return "{}"
 	}
 

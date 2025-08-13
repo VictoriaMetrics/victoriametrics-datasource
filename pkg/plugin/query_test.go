@@ -254,9 +254,16 @@ func Test_labelsToString(t *testing.T) {
 		}
 	}
 
-	// empty labels
+	// labels is nil
 	o := opts{
 		labels: nil,
+		want:   "{}",
+	}
+	f(o)
+
+	// empty labels
+	o = opts{
+		labels: data.Labels{},
 		want:   "{}",
 	}
 	f(o)
@@ -363,7 +370,7 @@ func TestQuery_parseLegend(t *testing.T) {
 			"job": "vmstorage-maas",
 		},
 		expr: "sum(vm_http_request_total)",
-		want: "sum(vm_http_request_total)",
+		want: "{job=\"vmstorage-maas\"}",
 	}
 	f(o)
 
@@ -408,7 +415,15 @@ func TestQuery_parseLegend(t *testing.T) {
 			"__name__": "vm_http_request_total",
 		},
 		expr: "sum(vm_http_request_total)",
-		want: "sum(vm_http_request_total)",
+		want: "vm_http_request_total",
+	}
+
+	f(o) // auto label and empty labels
+	o = opts{
+		legendFormat: "__auto",
+		labels:       data.Labels{},
+		expr:         "sum(vm_http_request_total)",
+		want:         "sum(vm_http_request_total)",
 	}
 	f(o)
 
