@@ -363,7 +363,7 @@ func TestQuery_parseLegend(t *testing.T) {
 			"job": "vmstorage-maas",
 		},
 		expr: "sum(vm_http_request_total)",
-		want: "sum(vm_http_request_total)",
+		want: "{job=\"vmstorage-maas\"}",
 	}
 	f(o)
 
@@ -408,7 +408,7 @@ func TestQuery_parseLegend(t *testing.T) {
 			"__name__": "vm_http_request_total",
 		},
 		expr: "sum(vm_http_request_total)",
-		want: "sum(vm_http_request_total)",
+		want: "vm_http_request_total",
 	}
 	f(o)
 

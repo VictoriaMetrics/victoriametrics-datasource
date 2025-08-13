@@ -4,6 +4,7 @@
 
 * BUGFIX: fix the calculation of the `step` parameter and lookbehind window for the `range` queries if the `$__rate_interval` variable is used. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/347).
 * BUGFIX: fix parsing of the datasource settings, enable usage of the scrape interval when the lookbehind window is calculated for the query url. See [this PR](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/349).
+* BUGFIX: fix handling of the 'auto' legend mode so series labels are generated correctly. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/350).
 
 ## v0.18.2
 
