@@ -154,7 +154,7 @@ func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
 }
 
 func labelsToString(labels data.Labels) string {
-	if labels == nil {
+	if labels == nil || len(labels) < 1 {
 		return "{}"
 	}
 
