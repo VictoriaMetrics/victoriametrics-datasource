@@ -58,7 +58,7 @@ import {
 // handles case-insensitive Inf, +Inf, -Inf (with optional "inity" suffix)
 const INFINITY_SAMPLE_REGEX = /^[+-]?inf(?:inity)?$/i;
 
-const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
+const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>, includeTimeSeriesDF = false): boolean => {
   // We want to process vector and scalar results in Explore as table
   if (
     options.app === CoreApp.Explore &&
@@ -69,7 +69,7 @@ const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery
 
   // We want to process all dataFrames with target.format === 'table' as table
   const target = options.targets.find((target) => target.refId === dataFrame.refId);
-  return target?.format === 'table';
+  return target?.format === 'table' || (includeTimeSeriesDF && target?.format === 'time_series');
 };
 
 const isHeatmapResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
@@ -83,7 +83,9 @@ export function transformV2(
   request: DataQueryRequest<PromQuery>,
   options: { exemplarTraceIdDestinations?: ExemplarTraceIdDestination[] }
 ) {
-  const [tableFrames, framesWithoutTable] = partition<DataFrame>(response.data, (df) => isTableResult(df, request));
+  // for time series results we want to process them as table in Explore
+  const [tableFrames] = partition<DataFrame>(response.data, (df) => isTableResult(df, request, true));
+  const [framesWithoutTable] = partition<DataFrame>(response.data, (df) => !isTableResult(df, request));
   const processedTableFrames = transformDFToTable(tableFrames);
 
   const [exemplarFrames, framesWithoutTableAndExemplars] = partition<DataFrame>(
