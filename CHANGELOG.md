@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix incorrect field unmarshalling when rendering query results as a table. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/354)
+
 ## v0.18.3
 
 * BUGFIX: fix the calculation of the `step` parameter and lookbehind window for the `range` queries if the `$__rate_interval` variable is used. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/347).
