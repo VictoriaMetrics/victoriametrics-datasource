@@ -9,8 +9,7 @@ import {
   DataQueryResponse,
   DataSourceInstanceSettings,
   dateTime,
-  getFieldDisplayName,
-  toDataFrame,
+  toDataFrame, getFieldDisplayName,
 } from '@grafana/data';
 import { TemplateSrv, getBackendSrv, setBackendSrv } from '@grafana/runtime';
 
@@ -504,7 +503,7 @@ describe('PrometheusDatasource for POST', () => {
     ds = new PrometheusDatasource(instanceSettings, templateSrvStub, timeSrvStub);
   });
 
-  describe('When querying prometheus with one target using query editor target spec', () => {
+  describe('When querying prometheus with one target using query editor target spec - time_series format', () => {
     let results: DataQueryResponse;
     const urlExpected = '/api/ds/query?ds_type=victoriametrics-metrics-datasource';
     const dataExpected = {
@@ -569,9 +568,90 @@ describe('PrometheusDatasource for POST', () => {
     });
 
     it('should return series list', () => {
+      expect(results.data.length).toBe(2);
+
+      const graphFrame = toDataFrame(results.data[0]);
+      expect(graphFrame.meta?.preferredVisualisationType).toBe('graph');
+      expect(getFieldDisplayName(graphFrame.fields[1], graphFrame)).toEqual("{__name__=\"test\", job=\"testjob\"}");
+
+      const tableFrame = toDataFrame(results.data[1]);
+      expect(tableFrame.meta?.preferredVisualisationType).toBe('table');
+      ['Time', '__name__', 'job', 'Value'].forEach((name, index) => {
+        expect(tableFrame.fields[index].name).toBe(name);
+      });
+    });
+  });
+
+  describe('When querying prometheus with one target using query editor target spec - table format', () => {
+    let results: DataQueryResponse;
+    const urlExpected = '/api/ds/query?ds_type=victoriametrics-metrics-datasource';
+    const dataExpected = {
+      from: '63000',
+      to: '123000',
+      queries: [
+        {
+          datasource: {
+            type: 'victoriametrics-metrics-datasource',
+            uid: undefined,
+          },
+          datasourceId: undefined,
+          expr: 'test{job="testjob"}',
+          format: 'table',
+          interval: undefined,
+          intervalMs: undefined,
+          legendFormat: undefined,
+          maxDataPoints: undefined,
+          queryCachingTTL: undefined,
+          queryType: 'timeSeriesQuery',
+          requestId: 'undefinedA',
+          utcOffsetSec: -0,
+          refId: 'A'
+        },
+      ],
+    };
+    const query = {
+      range: { from: time({ minutes: 1, seconds: 3 }), to: time({ minutes: 2, seconds: 3 }) },
+      targets: [{ expr: 'test{job="testjob"}', format: 'table', refId: 'A' }],
+      interval: '60s',
+    } as DataQueryRequest<PromQuery>;
+
+    beforeEach(async () => {
+      const response = {
+        status: 200,
+        data: {
+          resultType: 'matrix',
+          results: {
+            A: {
+              series: [
+                {
+                  refId:  'A',
+                  tags: { __name__: 'test', job: 'testjob' },
+                  points: [[2 * 60, '3846']],
+                },
+              ],
+            },
+          },
+        },
+      };
+      fetchMock.mockImplementation(() => of(response));
+      ds.query(query).subscribe((data) => {
+        results = data;
+      });
+    });
+
+    it('should generate the correct query', () => {
+      const res = fetchMock.mock.calls[0][0];
+      expect(res.method).toBe('POST');
+      expect(res.url).toBe(urlExpected);
+      expect(res.data).toEqual(dataExpected);
+    });
+
+    it('should return series list', () => {
       const frame = toDataFrame(results.data[0]);
       expect(results.data.length).toBe(1);
-      expect(getFieldDisplayName(frame.fields[1], frame)).toBe('{__name__="test", job="testjob"}');
+      ['Time', '__name__', 'job', 'Value'].forEach((name, index) => {
+        expect(frame.fields[index].name).toBe(name);
+      });
     });
   });
 });
