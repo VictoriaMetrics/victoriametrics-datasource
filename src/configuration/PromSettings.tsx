@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { SyntheticEvent } from 'react';
+import React, { SyntheticEvent, useMemo } from 'react';
 
 import {
   DataSourcePluginOptionsEditorProps,
@@ -50,10 +50,7 @@ export const PromSettings = (props: Props) => {
   const { options, onOptionsChange } = props;
 
   // We are explicitly adding httpMethod so it is correctly displayed in dropdown. This way, it is more predictable for users.
-
-  if (!options.jsonData.httpMethod) {
-    options.jsonData.httpMethod = 'POST';
-  }
+  const defaultOptions = useMemo(() => getDefaultOptions(options), [options]);
 
   return (
     <>
@@ -66,10 +63,10 @@ export const PromSettings = (props: Props) => {
               inputEl={
                 <Input
                   className="width-7"
-                  value={options.jsonData.timeInterval}
+                  value={defaultOptions.jsonData.timeInterval}
                   spellCheck={false}
                   placeholder="15s"
-                  onChange={onChangeHandler('timeInterval', options, onOptionsChange)}
+                  onChange={onChangeHandler('timeInterval', defaultOptions, onOptionsChange)}
                   validationEvents={promSettingsValidationEvents}
                 />
               }
@@ -85,8 +82,8 @@ export const PromSettings = (props: Props) => {
               inputEl={
                 <Input
                   className="width-7"
-                  value={options.jsonData.queryTimeout}
-                  onChange={onChangeHandler('queryTimeout', options, onOptionsChange)}
+                  value={defaultOptions.jsonData.queryTimeout}
+                  onChange={onChangeHandler('queryTimeout', defaultOptions, onOptionsChange)}
                   spellCheck={false}
                   placeholder="60s"
                   validationEvents={promSettingsValidationEvents}
@@ -106,8 +103,8 @@ export const PromSettings = (props: Props) => {
           <Select
             aria-label="Select HTTP method"
             options={httpOptions}
-            value={httpOptions.find((o) => o.value === options.jsonData.httpMethod)}
-            onChange={onChangeHandler('httpMethod', options, onOptionsChange)}
+            value={httpOptions.find((o) => o.value === defaultOptions.jsonData.httpMethod)}
+            onChange={onChangeHandler('httpMethod', defaultOptions, onOptionsChange)}
             width={14}
           />
         </div>
@@ -121,7 +118,7 @@ export const PromSettings = (props: Props) => {
             tooltip="Checking this option will disable the metrics chooser and metric/label support in the query field's autocomplete. This helps if you have performance issues with bigger Prometheus instances."
           >
             <InlineSwitch
-              value={options.jsonData.disableMetricsLookup ?? false}
+              value={defaultOptions.jsonData.disableMetricsLookup ?? false}
               onChange={onUpdateDatasourceJsonDataOptionChecked(props, 'disableMetricsLookup')}
             />
           </InlineField>
@@ -135,8 +132,8 @@ export const PromSettings = (props: Props) => {
               inputEl={
                 <Input
                   className="width-25"
-                  value={options.jsonData.customQueryParameters}
-                  onChange={onChangeHandler('customQueryParameters', options, onOptionsChange)}
+                  value={defaultOptions.jsonData.customQueryParameters}
+                  onChange={onChangeHandler('customQueryParameters', defaultOptions, onOptionsChange)}
                   spellCheck={false}
                   placeholder="Example: max_source_resolution=5m&timeout=10"
                 />
@@ -153,10 +150,10 @@ export const PromSettings = (props: Props) => {
               inputEl={
                 <Input
                   className="width-25"
-                  value={options.jsonData.vmuiUrl}
-                  onChange={onChangeHandler('vmuiUrl', options, onOptionsChange)}
+                  value={defaultOptions.jsonData.vmuiUrl}
+                  onChange={onChangeHandler('vmuiUrl', defaultOptions, onOptionsChange)}
                   spellCheck={false}
-                  placeholder={getDefaultVmuiUrl(options.url)}
+                  placeholder={getDefaultVmuiUrl(defaultOptions.url)}
                 />
               }
             />
@@ -199,3 +196,13 @@ const onChangeHandler =
       },
     });
   };
+
+const getDefaultOptions = (options: Props['options']): Props['options'] => {
+  return options.jsonData.httpMethod ? options : {
+    ...options,
+    jsonData: {
+      ...options.jsonData,
+      httpMethod: 'POST',
+    },
+  };
+}
