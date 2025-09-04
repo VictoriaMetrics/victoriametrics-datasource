@@ -167,11 +167,15 @@ func (d *Datasource) QueryData(ctx context.Context, req *backend.QueryDataReques
 	}
 
 	var wg sync.WaitGroup
+	var mu sync.Mutex
 	for _, q := range req.Queries {
 		wg.Add(1)
 		go func(q backend.DataQuery, forAlerting bool) {
 			defer wg.Done()
-			response.Responses[q.RefID] = di.query(ctx, q, forAlerting)
+			resp := di.query(ctx, q, forAlerting)
+			mu.Lock()
+			response.Responses[q.RefID] = resp
+			mu.Unlock()
 		}(q, forAlerting)
 	}
 	wg.Wait()
