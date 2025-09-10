@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.19.0
+
 * FEATURE: upgrade Go builder from Go1.24.2 to Go1.25. See [Go1.25 release notes](https://tip.golang.org/doc/go1.25).
 
 * BUGFIX: fix incorrect field unmarshalling when rendering query results as a table. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/354)
