@@ -1,19 +1,19 @@
 # VictoriaMetrics datasource for Grafana
 
 The VictoriaMetrics Grafana plugin allows Grafana to query, visualize,
-and interact with [VictoriaMetrics](https://docs.victoriametrics.com/),
+and interact with [VictoriaMetrics](https://docs.victoriametrics.com/victoriametrics/),
 a high-performance metrics storage and processing system.
 
 <img alt="Grafana Dashboard Screenshot" src="https://raw.githubusercontent.com/VictoriaMetrics/victoriametrics-datasource/b8bf7398a9a14ba917094385d8fee08cb7e303a1/src/img/dashboard.png">
 
 ## Capabilities
 
-1. Use [MetricsQL](https://docs.victoriametrics.com/metricsql/) to query metrics in Grafana.
+1. Use [MetricsQL](https://docs.victoriametrics.com/victoriametrics/metricsql/) to query metrics in Grafana.
 1. Use Explore mode with Grafana.
 1. Build dashboards and setup alerts.
 1. Use Ad Hoc filters.
 1. [Template](https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/README.md#how-to-use-with-templates) queries and expressions.
-1. Get insights about query execution bottlenecks via [tracing](https://docs.victoriametrics.com/#query-tracing).
+1. Get insights about query execution bottlenecks via [tracing](https://docs.victoriametrics.com/victoriametrics/#query-tracing).
 1. Automatically format queries via `Prettify` button.
 
 Try it at [VictoriaMetrics playground](https://play-grafana.victoriametrics.com/d/oS7Bi_0Wz_vm)!
@@ -49,7 +49,7 @@ datasources:
 
 ## Building queries
 
-VictoriaMetrics query language is [MetricsQL](https://docs.victoriametrics.com/metricsql/) - query language inspired by PromQL. 
+VictoriaMetrics query language is [MetricsQL](https://docs.victoriametrics.com/victoriametrics/metricsql/) - query language inspired by PromQL. 
 MetricsQL is backwards-compatible with PromQL, so Grafana dashboards backed by Prometheus datasource should work the same
 after switching from Prometheus to VictoriaMetrics. However, there are some [intentional differences](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e)
 between these two languages.

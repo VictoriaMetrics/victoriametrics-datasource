@@ -195,7 +195,7 @@ In the new version of the plugin, the plugin ID has been updated. The new plugin
 
 ## [v0.8.0](https://github.com/VictoriaMetrics/victoriametrics-datasource/releases/tag/v0.8.0)
 
-* FEATURE: add variable type selector to optimize API usage, favoring [/api/v1/labels](https://docs.victoriametrics.com/url-examples/#apiv1labels) and [/api/v1/label/.../values](https://docs.victoriametrics.com/url-examples/#apiv1labelvalues) over [/api/v1/series](https://docs.victoriametrics.com/url-examples/#apiv1series). See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/144)
+* FEATURE: add variable type selector to optimize API usage, favoring [/api/v1/labels](https://docs.victoriametrics.com/victoriametrics/url-examples/#apiv1labels) and [/api/v1/label/.../values](https://docs.victoriametrics.com/victoriametrics/url-examples/#apiv1labelvalues) over [/api/v1/series](https://docs.victoriametrics.com/victoriametrics/url-examples/#apiv1series). See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/144)
 
 * BUGFIX: correct parsing the Annotations queries when template variables are used. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/146)
 
@@ -255,7 +255,7 @@ In the new version of the plugin, the plugin ID has been updated. The new plugin
 
 * FEATURE: add the ability to define expressions for each panel so that users can define WITH templates once and then reuse them. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/35).
 * FEATURE: add support MetricsQL to query builder. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/66).
-* FEATURE: add the ability to change the link for [Run in VMUI](https://docs.victoriametrics.com/#vmui) button. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/61).
+* FEATURE: add the ability to change the link for [Run in VMUI](https://docs.victoriametrics.com/victoriametrics/#vmui) button. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/61).
 
 * BUGFIX: fix the tracing display for Grafana version 9.4.
 * BUGFIX: support label with dots in names for template function `label_values()`. See [this issue](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/74).
