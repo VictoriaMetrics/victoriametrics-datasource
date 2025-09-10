@@ -40,11 +40,11 @@
     "links": [
       {
         "name": "Learn more",
-        "url": "https://docs.victoriametrics.com/"
+        "url": "https://docs.victoriametrics.com/victoriametrics/"
       },
       {
         "name": "MetricsQL",
-        "url": "https://docs.victoriametrics.com/metricsql/"
+        "url": "https://docs.victoriametrics.com/victoriametrics/metricsql/"
       },
       {
         "name": "GitHub Project",

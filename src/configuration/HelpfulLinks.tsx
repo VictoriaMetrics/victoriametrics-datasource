@@ -7,15 +7,15 @@ const tips = [
   },
   {
     title: "Cluster VM",
-    url: "https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#url-format",
+    url: "https://docs.victoriametrics.com/victoriametrics/cluster-victoriametrics/#url-format",
   },
   {
     title: "Grafana setup",
-    url: "https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#grafana-setup",
+    url: "https://docs.victoriametrics.com/victoriametrics/integrations/grafana/",
   },
   {
     title: "MetricsQL",
-    url: "https://docs.victoriametrics.com/MetricsQL.html",
+    url: "https://docs.victoriametrics.com/victoriametrics/metricsql/",
   },
   {
     title: "VictoriaMetrics",

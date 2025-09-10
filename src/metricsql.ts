@@ -30,133 +30,133 @@ const ROLLUP_FUNCTIONS: CompletionItem[] = [
     label: 'aggr_over_time',
     insertText: 'aggr_over_time',
     detail: 'aggr_over_time(("rollup_func1", "rollup_func2", ...), series_selector[d])',
-    documentation: 'calculates all the listed `rollup_func*` for raw samples on the given lookbehind window `d`. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). `rollup_func*` can contain any rollup function. For instance, `aggr_over_time(("min_over_time", "max_over_time", "rate"), m[d])` would calculate `min_over_time` for `m[d]`.'
+    documentation: 'calculates all the listed `rollup_func*` for raw samples on the given lookbehind window `d`. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). `rollup_func*` can contain any rollup function. For instance, `aggr_over_time(("min_over_time", "max_over_time", "rate"), m[d])` would calculate `min_over_time` for `m[d]`.'
   },
   {
     label: 'ascent_over_time',
     insertText: 'ascent_over_time',
     detail: 'ascent_over_time(series_selector[d])',
-    documentation: 'calculates ascent of raw sample values on the given lookbehind window `d`. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Useful for tracking height gains in GPS tracking. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates ascent of raw sample values on the given lookbehind window `d`. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Useful for tracking height gains in GPS tracking. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'avg_over_time',
     insertText: 'avg_over_time',
     detail: 'avg_over_time(series_selector[d])',
-    documentation: 'calculates the average value over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). See also `median_over_time`.'
+    documentation: 'calculates the average value over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). See also `median_over_time`.'
   },
   {
     label: 'changes',
     insertText: 'changes',
     detail: 'changes(series_selector[d])',
-    documentation: 'calculates the number of times the raw samples changed on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Unlike `changes()` in Prometheus it takes into account the change from the last sample before the given lookbehind window `d`. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the number of times the raw samples changed on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Unlike `changes()` in Prometheus it takes into account the change from the last sample before the given lookbehind window `d`. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'changes_prometheus',
     insertText: 'changes_prometheus',
     detail: 'changes_prometheus(series_selector[d])',
-    documentation: 'calculates the number of times the raw samples changed on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). It doesn\'t take into account the change from the last sample before the given lookbehind window `d` in the same way as Prometheus does. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the number of times the raw samples changed on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). It doesn\'t take into account the change from the last sample before the given lookbehind window `d` in the same way as Prometheus does. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'count_eq_over_time',
     insertText: 'count_eq_over_time',
     detail: 'count_eq_over_time(series_selector[d], eq)',
-    documentation: 'calculates the number of raw samples on the given lookbehind window `d`, which are equal to `eq`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the number of raw samples on the given lookbehind window `d`, which are equal to `eq`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'count_gt_over_time',
     insertText: 'count_gt_over_time',
     detail: 'count_gt_over_time(series_selector[d], gt)',
-    documentation: 'calculates the number of raw samples on the given lookbehind window `d`, which are bigger than `gt`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the number of raw samples on the given lookbehind window `d`, which are bigger than `gt`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'count_le_over_time',
     insertText: 'count_le_over_time',
     detail: 'count_le_over_time(series_selector[d], le)',
-    documentation: 'calculates the number of raw samples on the given lookbehind window `d`, which don\'t exceed `le`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the number of raw samples on the given lookbehind window `d`, which don\'t exceed `le`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'count_ne_over_time',
     insertText: 'count_ne_over_time',
     detail: 'count_ne_over_time(series_selector[d], ne)',
-    documentation: 'calculates the number of raw samples on the given lookbehind window `d`, which aren\'t equal to `ne`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the number of raw samples on the given lookbehind window `d`, which aren\'t equal to `ne`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'count_over_time',
     insertText: 'count_over_time',
     detail: 'count_over_time(series_selector[d])',
-    documentation: 'calculates the number of raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the number of raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'decreases_over_time',
     insertText: 'decreases_over_time',
     detail: 'decreases_over_time(series_selector[d])',
-    documentation: 'calculates the number of raw sample value decreases over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the number of raw sample value decreases over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'default_rollup',
     insertText: 'default_rollup',
     detail: 'default_rollup(series_selector[d])',
-    documentation: 'returns the last raw sample value on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering).'
+    documentation: 'returns the last raw sample value on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering).'
   },
   {
     label: 'delta',
     insertText: 'delta',
     detail: 'delta(series_selector[d])',
-    documentation: 'calculates the difference between the last sample before the given lookbehind window `d` and the last sample at the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). The behaviour of `delta()` function in MetricsQL is slightly different to the behaviour of `delta()` function in Prometheus. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the difference between the last sample before the given lookbehind window `d` and the last sample at the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). The behaviour of `delta()` function in MetricsQL is slightly different to the behaviour of `delta()` function in Prometheus. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'delta_prometheus',
     insertText: 'delta_prometheus',
     detail: 'delta_prometheus(series_selector[d])',
-    documentation: 'calculates the difference between the first and the last samples at the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). The behaviour of `delta_prometheus()` is close to the behaviour of `delta()` function in Prometheus. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the difference between the first and the last samples at the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). The behaviour of `delta_prometheus()` is close to the behaviour of `delta()` function in Prometheus. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'deriv',
     insertText: 'deriv',
     detail: 'deriv(series_selector[d])',
-    documentation: 'calculates per-second derivative over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). The derivative is calculated using linear regression. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates per-second derivative over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). The derivative is calculated using linear regression. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'deriv_fast',
     insertText: 'deriv_fast',
     detail: 'deriv_fast(series_selector[d])',
-    documentation: 'calculates per-second derivative using the first and the last raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates per-second derivative using the first and the last raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'descent_over_time',
     insertText: 'descent_over_time',
     detail: 'descent_over_time(series_selector[d])',
-    documentation: 'calculates descent of raw sample values on the given lookbehind window `d`. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Useful for tracking height loss in GPS tracking. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates descent of raw sample values on the given lookbehind window `d`. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Useful for tracking height loss in GPS tracking. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'distinct_over_time',
     insertText: 'distinct_over_time',
     detail: 'distinct_over_time(series_selector[d])',
-    documentation: 'returns the number of distinct raw sample values on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'returns the number of distinct raw sample values on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'duration_over_time',
     insertText: 'duration_over_time',
     detail: 'duration_over_time(series_selector[d], max_interval)',
-    documentation: 'returns the duration in seconds when time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering) were present over the given lookbehind window `d`. It is expected that intervals between adjacent samples per each series don\'t exceed the `max_interval`. Otherwise such intervals are considered as gaps and aren\'t counted. See also `lifetime`.'
+    documentation: 'returns the duration in seconds when time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering) were present over the given lookbehind window `d`. It is expected that intervals between adjacent samples per each series don\'t exceed the `max_interval`. Otherwise such intervals are considered as gaps and aren\'t counted. See also `lifetime`.'
   },
   {
     label: 'first_over_time',
     insertText: 'first_over_time',
     detail: 'first_over_time(series_selector[d])',
-    documentation: 'returns the first raw sample value on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). See also `last_over_time`.'
+    documentation: 'returns the first raw sample value on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). See also `last_over_time`.'
   },
   {
     label: 'geomean_over_time',
     insertText: 'geomean_over_time',
     detail: 'geomean_over_time(series_selector[d])',
-    documentation: 'calculates [geometric mean](https://en.wikipedia.org/wiki/Geometric_mean) over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates [geometric mean](https://en.wikipedia.org/wiki/Geometric_mean) over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'histogram_over_time',
     insertText: 'histogram_over_time',
     detail: 'histogram_over_time(series_selector[d])',
-    documentation: 'calculates [VictoriaMetrics histogram](https://godoc.org/github.com/VictoriaMetrics/metrics#Histogram) over raw samples on the given lookbehind window `d`. It is calculated individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). The resulting histograms are useful to pass to `histogram_quantile``.'
+    documentation: 'calculates [VictoriaMetrics histogram](https://godoc.org/github.com/VictoriaMetrics/metrics#Histogram) over raw samples on the given lookbehind window `d`. It is calculated individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). The resulting histograms are useful to pass to `histogram_quantile``.'
   },
   {
     label: 'hoeffding_bound_lower',
@@ -174,31 +174,31 @@ const ROLLUP_FUNCTIONS: CompletionItem[] = [
     label: 'holt_winters',
     insertText: 'holt_winters',
     detail: 'holt_winters(series_selector[d], sf, tf)',
-    documentation: 'calculates Holt-Winters value (aka [double exponential smoothing](https://en.wikipedia.org/wiki/Exponential_smoothing#Double_exponential_smoothing)) for raw samples over the given lookbehind window `d` using the given smoothing factor `sf` and the given trend factor `tf`. Both `sf` and `tf` must be in the range `[0...1]`. It is expected that the [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering) returns time series of [gauge type](https://docs.victoriametrics.com/keyConcepts.html#gauge).'
+    documentation: 'calculates Holt-Winters value (aka [double exponential smoothing](https://en.wikipedia.org/wiki/Exponential_smoothing#Double_exponential_smoothing)) for raw samples over the given lookbehind window `d` using the given smoothing factor `sf` and the given trend factor `tf`. Both `sf` and `tf` must be in the range `[0...1]`. It is expected that the [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering) returns time series of [gauge type](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#gauge).'
   },
   {
     label: 'idelta',
     insertText: 'idelta',
     detail: 'idelta(series_selector[d])',
-    documentation: 'calculates the difference between the last two raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates the difference between the last two raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'ideriv',
     insertText: 'ideriv',
     detail: 'ideriv(series_selector[d])',
-    documentation: 'calculates the per-second derivative based on the last two raw samples over the given lookbehind window `d`. The derivative is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the per-second derivative based on the last two raw samples over the given lookbehind window `d`. The derivative is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'increase',
     insertText: 'increase',
     detail: 'increase(series_selector[d])',
-    documentation: 'calculates the increase over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/keyConcepts.html#counter). Unlike Prometheus it takes into account the last sample before the given lookbehind window `d` when calculating the result. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the increase over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#counter). Unlike Prometheus it takes into account the last sample before the given lookbehind window `d` when calculating the result. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'increase_prometheus',
     insertText: 'increase_prometheus',
     detail: 'increase_prometheus(series_selector[d])',
-    documentation: 'calculates the increase over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/keyConcepts.html#counter). It doesn\'t take into account the last sample before the given lookbehind window `d` when calculating the result in the same way as Prometheus does. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the increase over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#counter). It doesn\'t take into account the last sample before the given lookbehind window `d` when calculating the result in the same way as Prometheus does. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'increase_pure',
@@ -210,67 +210,67 @@ const ROLLUP_FUNCTIONS: CompletionItem[] = [
     label: 'increases_over_time',
     insertText: 'increases_over_time',
     detail: 'increases_over_time(series_selector[d])',
-    documentation: 'calculates the number of raw sample value increases over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the number of raw sample value increases over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'integrate',
     insertText: 'integrate',
     detail: 'integrate(series_selector[d])',
-    documentation: 'calculates the integral over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates the integral over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'irate',
     insertText: 'irate',
     detail: 'irate(series_selector[d])',
-    documentation: 'calculates the "instant" per-second increase rate over the last two raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/keyConcepts.html#counter). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the "instant" per-second increase rate over the last two raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#counter). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'lag',
     insertText: 'lag',
     detail: 'lag(series_selector[d])',
-    documentation: 'returns the duration in seconds between the last sample on the given lookbehind window `d` and the timestamp of the current point. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'returns the duration in seconds between the last sample on the given lookbehind window `d` and the timestamp of the current point. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'last_over_time',
     insertText: 'last_over_time',
     detail: 'last_over_time(series_selector[d])',
-    documentation: 'returns the last raw sample value on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). See also `first_over_time`.'
+    documentation: 'returns the last raw sample value on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). See also `first_over_time`.'
   },
   {
     label: 'lifetime',
     insertText: 'lifetime',
     detail: 'lifetime(series_selector[d])',
-    documentation: 'returns the duration in seconds between the last and the first sample on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'returns the duration in seconds between the last and the first sample on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'max_over_time',
     insertText: 'max_over_time',
     detail: 'max_over_time(series_selector[d])',
-    documentation: 'calculates the maximum value over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). See also `tmax_over_time`.'
+    documentation: 'calculates the maximum value over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). See also `tmax_over_time`.'
   },
   {
     label: 'median_over_time',
     insertText: 'median_over_time',
     detail: 'median_over_time(series_selector[d])',
-    documentation: 'calculates median value over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). See also `avg_over_time`.'
+    documentation: 'calculates median value over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). See also `avg_over_time`.'
   },
   {
     label: 'min_over_time',
     insertText: 'min_over_time',
     detail: 'min_over_time(series_selector[d])',
-    documentation: 'calculates the minimum value over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). See also `tmin_over_time`.'
+    documentation: 'calculates the minimum value over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). See also `tmin_over_time`.'
   },
   {
     label: 'mode_over_time',
     insertText: 'mode_over_time',
     detail: 'mode_over_time(series_selector[d])',
-    documentation: 'calculates [mode](https://en.wikipedia.org/wiki/Mode_(statistics)) for raw samples on the given lookbehind window `d`. It is calculated individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). It is expected that raw sample values are discrete.'
+    documentation: 'calculates [mode](https://en.wikipedia.org/wiki/Mode_(statistics)) for raw samples on the given lookbehind window `d`. It is calculated individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). It is expected that raw sample values are discrete.'
   },
   {
     label: 'predict_linear',
     insertText: 'predict_linear',
     detail: 'predict_linear(series_selector[d], t)',
-    documentation: 'calculates the value `t` seconds in the future using linear interpolation over raw samples on the given lookbehind window `d`. The predicted value is calculated individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering).'
+    documentation: 'calculates the value `t` seconds in the future using linear interpolation over raw samples on the given lookbehind window `d`. The predicted value is calculated individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering).'
   },
   {
     label: 'present_over_time',
@@ -282,151 +282,151 @@ const ROLLUP_FUNCTIONS: CompletionItem[] = [
     label: 'quantile_over_time',
     insertText: 'quantile_over_time',
     detail: 'quantile_over_time(phi, series_selector[d])',
-    documentation: 'calculates `phi`-quantile over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). The `phi` value must be in the range `[0...1]`. See also `quantiles_over_time`.'
+    documentation: 'calculates `phi`-quantile over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). The `phi` value must be in the range `[0...1]`. See also `quantiles_over_time`.'
   },
   {
     label: 'quantiles_over_time',
     insertText: 'quantiles_over_time',
     detail: 'quantiles_over_time("phiLabel", phi1, ..., phiN, series_selector[d])',
-    documentation: 'calculates `phi*`-quantiles over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). The function returns individual series per each `phi*` with `{phiLabel="phi*"}` label. `phi*` values must be in the range `[0...1]`. See also `quantile_over_time`.'
+    documentation: 'calculates `phi*`-quantiles over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). The function returns individual series per each `phi*` with `{phiLabel="phi*"}` label. `phi*` values must be in the range `[0...1]`. See also `quantile_over_time`.'
   },
   {
     label: 'range_over_time',
     insertText: 'range_over_time',
     detail: 'range_over_time(series_selector[d])',
-    documentation: 'calculates value range over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). E.g. it calculates `max_over_time(series_selector[d]) - min_over_time(series_selector[d])`. Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates value range over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). E.g. it calculates `max_over_time(series_selector[d]) - min_over_time(series_selector[d])`. Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'rate',
     insertText: 'rate',
     detail: 'rate(series_selector[d])',
-    documentation: 'calculates the average per-second increase rate over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/keyConcepts.html#counter). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates the average per-second increase rate over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#counter). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'rate_over_sum',
     insertText: 'rate_over_sum',
     detail: 'rate_over_sum(series_selector[d])',
-    documentation: 'calculates per-second rate over the sum of raw samples on the given lookbehind window `d`. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates per-second rate over the sum of raw samples on the given lookbehind window `d`. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'resets',
     insertText: 'resets',
     detail: 'resets(series_selector[d])',
-    documentation: 'returns the number of [counter](https://docs.victoriametrics.com/keyConcepts.html#counter) resets over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/keyConcepts.html#counter). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'returns the number of [counter](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#counter) resets over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#counter). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'rollup',
     insertText: 'rollup',
     detail: 'rollup(series_selector[d])',
-    documentation: 'calculates `min`, `max` and `avg` values for raw samples on the given lookbehind window `d`. These values are calculated individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering).'
+    documentation: 'calculates `min`, `max` and `avg` values for raw samples on the given lookbehind window `d`. These values are calculated individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering).'
   },
   {
     label: 'rollup_candlestick',
     insertText: 'rollup_candlestick',
     detail: 'rollup_candlestick(series_selector[d])',
-    documentation: 'calculates `open`, `high`, `low` and `close` values (aka OHLC) over raw samples on the given lookbehind window `d`. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). This function is useful for financial applications.'
+    documentation: 'calculates `open`, `high`, `low` and `close` values (aka OHLC) over raw samples on the given lookbehind window `d`. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). This function is useful for financial applications.'
   },
   {
     label: 'rollup_delta',
     insertText: 'rollup_delta',
     detail: 'rollup_delta(series_selector[d])',
-    documentation: 'calculates differences between adjacent raw samples on the given lookbehind window `d` and returns `min`, `max` and `avg` values for the calculated differences. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates differences between adjacent raw samples on the given lookbehind window `d` and returns `min`, `max` and `avg` values for the calculated differences. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'rollup_deriv',
     insertText: 'rollup_deriv',
     detail: 'rollup_deriv(series_selector[d])',
-    documentation: 'calculates per-second derivatives for adjacent raw samples on the given lookbehind window `d` and returns `min`, `max` and `avg` values for the calculated per-second derivatives. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates per-second derivatives for adjacent raw samples on the given lookbehind window `d` and returns `min`, `max` and `avg` values for the calculated per-second derivatives. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'rollup_increase',
     insertText: 'rollup_increase',
     detail: 'rollup_increase(series_selector[d])',
-    documentation: 'calculates increases for adjacent raw samples on the given lookbehind window `d` and returns `min`, `max` and `avg` values for the calculated increases. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates increases for adjacent raw samples on the given lookbehind window `d` and returns `min`, `max` and `avg` values for the calculated increases. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'rollup_rate',
     insertText: 'rollup_rate',
     detail: 'rollup_rate(series_selector[d])',
-    documentation: 'calculates per-second change rates for adjacent raw samples on the given lookbehind window `d` and returns `min`, `max` and `avg` values for the calculated per-second change rates. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates per-second change rates for adjacent raw samples on the given lookbehind window `d` and returns `min`, `max` and `avg` values for the calculated per-second change rates. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'rollup_scrape_interval',
     insertText: 'rollup_scrape_interval',
     detail: 'rollup_scrape_interval(series_selector[d])',
-    documentation: 'calculates the interval in seconds between adjacent raw samples on the given lookbehind window `d` and returns `min`, `max` and `avg` values for the calculated interval. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the interval in seconds between adjacent raw samples on the given lookbehind window `d` and returns `min`, `max` and `avg` values for the calculated interval. The calculations are performed individually per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'scrape_interval',
     insertText: 'scrape_interval',
     detail: 'scrape_interval(series_selector[d])',
-    documentation: 'calculates the average interval in seconds between raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates the average interval in seconds between raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'share_gt_over_time',
     insertText: 'share_gt_over_time',
     detail: 'share_gt_over_time(series_selector[d], gt)',
-    documentation: 'returns share (in the range `[0...1]`) of raw samples on the given lookbehind window `d`, which are bigger than `gt`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'returns share (in the range `[0...1]`) of raw samples on the given lookbehind window `d`, which are bigger than `gt`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'share_le_over_time',
     insertText: 'share_le_over_time',
     detail: 'share_le_over_time(series_selector[d], le)',
-    documentation: 'returns share (in the range `[0...1]`) of raw samples on the given lookbehind window `d`, which are smaller or equal to `le`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'returns share (in the range `[0...1]`) of raw samples on the given lookbehind window `d`, which are smaller or equal to `le`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'stale_samples_over_time',
     insertText: 'stale_samples_over_time',
     detail: 'stale_samples_over_time(series_selector[d])',
-    documentation: 'calculates the number of [staleness markers](https://docs.victoriametrics.com/vmagent.html#prometheus-staleness-markers) on the given lookbehind window `d` per each time series matching the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates the number of [staleness markers](https://docs.victoriametrics.com/victoriametrics/vmagent/#prometheus-staleness-markers) on the given lookbehind window `d` per each time series matching the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'stddev_over_time',
     insertText: 'stddev_over_time',
     detail: 'stddev_over_time(series_selector[d])',
-    documentation: 'calculates standard deviation over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates standard deviation over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'stdvar_over_time',
     insertText: 'stdvar_over_time',
     detail: 'stdvar_over_time(series_selector[d])',
-    documentation: 'calculates standard variance over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'calculates standard variance over raw samples on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'sum_over_time',
     insertText: 'sum_over_time',
     detail: 'sum_over_time(series_selector[d])',
-    documentation: 'calculates the sum of raw sample values on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates the sum of raw sample values on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'sum2_over_time',
     insertText: 'sum2_over_time',
     detail: 'sum2_over_time(series_selector[d])',
-    documentation: 'calculates the sum of squares for raw sample values on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates the sum of squares for raw sample values on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   },
   {
     label: 'timestamp',
     insertText: 'timestamp',
     detail: 'timestamp(series_selector[d])',
-    documentation: 'returns the timestamp in seconds for the last raw sample on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'returns the timestamp in seconds for the last raw sample on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'timestamp_with_name',
     insertText: 'timestamp_with_name',
     detail: 'timestamp_with_name(series_selector[d])',
-    documentation: 'returns the timestamp in seconds for the last raw sample on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are preserved in the resulting rollups. See also `timestamp`.'
+    documentation: 'returns the timestamp in seconds for the last raw sample on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are preserved in the resulting rollups. See also `timestamp`.'
   },
   {
     label: 'tfirst_over_time',
     insertText: 'tfirst_over_time',
     detail: 'tfirst_over_time(series_selector[d])',
-    documentation: 'returns the timestamp in seconds for the first raw sample on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'returns the timestamp in seconds for the first raw sample on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'tlast_change_over_time',
     insertText: 'tlast_change_over_time',
     detail: 'tlast_change_over_time(series_selector[d])',
-    documentation: 'returns the timestamp in seconds for the last change per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering) on the given lookbehind window `d`. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'returns the timestamp in seconds for the last change per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering) on the given lookbehind window `d`. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'tlast_over_time',
@@ -438,19 +438,19 @@ const ROLLUP_FUNCTIONS: CompletionItem[] = [
     label: 'tmax_over_time',
     insertText: 'tmax_over_time',
     detail: 'tmax_over_time(series_selector[d])',
-    documentation: 'returns the timestamp in seconds for the raw sample with the maximum value on the given lookbehind window `d`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'returns the timestamp in seconds for the raw sample with the maximum value on the given lookbehind window `d`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'tmin_over_time',
     insertText: 'tmin_over_time',
     detail: 'tmin_over_time(series_selector[d])',
-    documentation: 'returns the timestamp in seconds for the raw sample with the minimum value on the given lookbehind window `d`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: 'returns the timestamp in seconds for the raw sample with the minimum value on the given lookbehind window `d`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
   },
   {
     label: 'zscore_over_time',
     insertText: 'zscore_over_time',
     detail: 'zscore_over_time(series_selector[d])',
-    documentation: 'calculates returns [z-score](https://en.wikipedia.org/wiki/Standard_score) for raw samples on the given lookbehind window `d`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/keyConcepts.html#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
+    documentation: 'calculates returns [z-score](https://en.wikipedia.org/wiki/Standard_score) for raw samples on the given lookbehind window `d`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names` modifier in order to keep metric names.'
   }
 ]
 
@@ -927,7 +927,7 @@ const TRANSFORM_FUNCTIONS: CompletionItem[] = [
     label: 'step',
     insertText: 'step',
     detail: 'step()',
-    documentation: 'returns the step in seconds (aka interval) between the returned points. It is known as `step` query arg passed to [/api/v1/query_range](https://docs.victoriametrics.com/keyConcepts.html#range-query).'
+    documentation: 'returns the step in seconds (aka interval) between the returned points. It is known as `step` query arg passed to [/api/v1/query_range](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#range-query).'
   },
   {
     label: 'time',
