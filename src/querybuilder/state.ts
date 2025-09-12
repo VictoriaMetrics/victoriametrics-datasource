@@ -46,6 +46,11 @@ export function getQueryWithDefaults(query: PromQuery, app: CoreApp | undefined)
     result = { ...result, expr: '', legendFormat: LegendFormatMode.Auto };
   }
 
+  // Ensure a default output format is set on startup/refresh
+  if (!query.format) {
+    result = { ...result, format: 'time_series' };
+  }
+
   if (query.range == null && query.instant == null) {
     // Default to range query
     result = { ...result, range: true };
