@@ -112,6 +112,12 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
     }
   }, [onRunQuery, datasource, templateByDashboard, app])
 
+  useEffect(() => {
+    const query = getQueryWithDefaults(props.query, app);
+    onChange(query);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencies not needed, should only run once
+  },[]);
+
   return (
     <>
       <ConfirmModal
