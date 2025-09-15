@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.19.1
+
 * BUGFIX: fix duplication of statistics panels. See [#372](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/372)
 
 ## v0.19.0
