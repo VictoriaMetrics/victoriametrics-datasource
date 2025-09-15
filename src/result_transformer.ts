@@ -69,7 +69,21 @@ const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery
 
   // We want to process all dataFrames with target.format === 'table' as table
   const target = options.targets.find((target) => target.refId === dataFrame.refId);
-  return target?.format === 'table' || (includeTimeSeriesDF && target?.format === 'time_series');
+  return Boolean(target?.format === 'table' || (includeTimeSeriesDF && target?.format === 'time_series' && target?.instant));
+};
+
+const isSeriesResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>, includeTimeSeriesDF = false): boolean => {
+  // We want to process vector and scalar results in Explore as table, so return false here
+  if (
+    options.app === CoreApp.Explore &&
+    (dataFrame.meta?.custom?.resultType === 'vector' || dataFrame.meta?.custom?.resultType === 'scalar')
+  ) {
+    return false;
+  }
+
+  // We want to process all dataFrames with target.format === 'time_series' and range = true as time series
+  const target = options.targets.find((target) => target.refId === dataFrame.refId);
+  return Boolean(target?.format === 'time_series' && (target?.range ?? !target?.instant));
 };
 
 const isHeatmapResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
@@ -85,7 +99,7 @@ export function transformV2(
 ) {
   // for time series results we want to process them as table in Explore
   const [tableFrames] = partition<DataFrame>(response.data, (df) => isTableResult(df, request, true));
-  const [framesWithoutTable] = partition<DataFrame>(response.data, (df) => !isTableResult(df, request));
+  const [framesWithoutTable] = partition<DataFrame>(response.data, (df) => isSeriesResult(df, request));
   const processedTableFrames = transformDFToTable(tableFrames);
 
   const [exemplarFrames, framesWithoutTableAndExemplars] = partition<DataFrame>(

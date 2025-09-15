@@ -1,17 +1,17 @@
-
 import { cloneDeep } from 'lodash';
 import { of } from 'rxjs';
 
 import {
-  ScopedVar,
-  ScopedVars,
   DataQueryRequest,
   DataQueryResponse,
   DataSourceInstanceSettings,
   dateTime,
-  toDataFrame, getFieldDisplayName,
+  getFieldDisplayName,
+  ScopedVar,
+  ScopedVars,
+  toDataFrame,
 } from '@grafana/data';
-import { TemplateSrv, getBackendSrv, setBackendSrv } from '@grafana/runtime';
+import { getBackendSrv, setBackendSrv, TemplateSrv } from '@grafana/runtime';
 
 import {
   extractRuleMappingFromGroups,
@@ -545,7 +545,7 @@ describe('PrometheusDatasource for POST', () => {
             A: {
               series: [
                 {
-                  refId:  'A',
+                  refId: 'A',
                   tags: { __name__: 'test', job: 'testjob' },
                   points: [[2 * 60, '3846']],
                 },
@@ -568,17 +568,124 @@ describe('PrometheusDatasource for POST', () => {
     });
 
     it('should return series list', () => {
-      expect(results.data.length).toBe(2);
+      expect(results.data.length).toBe(1);
 
       const graphFrame = toDataFrame(results.data[0]);
       expect(graphFrame.meta?.preferredVisualisationType).toBe('graph');
       expect(getFieldDisplayName(graphFrame.fields[1], graphFrame)).toEqual("{__name__=\"test\", job=\"testjob\"}");
+    });
 
-      const tableFrame = toDataFrame(results.data[1]);
-      expect(tableFrame.meta?.preferredVisualisationType).toBe('table');
-      ['Time', '__name__', 'job', 'Value'].forEach((name, index) => {
-        expect(tableFrame.fields[index].name).toBe(name);
+  });
+  describe('When querying prometheus with one target using query editor target spec - time_series format and instant/range option', () => {
+    let results: DataQueryResponse;
+    it('with instant: true and range: true should return 2 visualizations - graph and table', async() => {
+      const query = {
+        range: { from: time({ minutes: 1, seconds: 3 }), to: time({ minutes: 2, seconds: 3 }) },
+        targets: [{ expr: 'test{job="testjob"}', format: 'time_series', refId: 'A', instant: true, range: true }],
+        interval: '60s',
+      } as DataQueryRequest<PromQuery>;
+
+      const response = {
+        status: 200,
+        data: {
+          resultType: 'matrix',
+          results: {
+            A: {
+              series: [
+                {
+                  refId: 'A',
+                  tags: { __name__: 'test', job: 'testjob' },
+                  points: [[2 * 60, '3846']],
+                },
+              ],
+            },
+          },
+        },
+      };
+      fetchMock.mockImplementation(() => of(response));
+      await new Promise((resolve) => {
+        ds.query(query).subscribe((data) => {
+          results = data;
+          resolve('');
+        });
       });
+
+
+      expect(results.data.length).toBe(2);
+      expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
+      expect(results.data[1].meta.preferredVisualisationType).toStrictEqual('table');
+    });
+
+    it('with instant: true and range:false should return 1 visualizations - table', async () => {
+      const query = {
+        range: { from: time({ minutes: 1, seconds: 3 }), to: time({ minutes: 2, seconds: 3 }) },
+        targets: [{ expr: 'test{job="testjob"}', format: 'time_series', refId: 'A', instant: true, range: false }],
+        interval: '60s',
+      } as DataQueryRequest<PromQuery>;
+
+      const response = {
+        status: 200,
+        data: {
+          resultType: 'matrix',
+          results: {
+            A: {
+              series: [
+                {
+                  refId: 'A',
+                  tags: { __name__: 'test', job: 'testjob' },
+                  points: [[2 * 60, '3846']],
+                },
+              ],
+            },
+          },
+        },
+      };
+      fetchMock.mockImplementation(() => of(response));
+      await new Promise((resolve) => {
+        ds.query(query).subscribe((data) => {
+          results = data;
+          resolve('');
+        });
+      });
+
+      expect(results.data.length).toBe(1);
+      expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('table');
+    });
+
+    it('with instant: false and range:true should return 1 visualizations - graph', async () => {
+      const query = {
+        range: { from: time({ minutes: 1, seconds: 3 }), to: time({ minutes: 2, seconds: 3 }) },
+        targets: [{ expr: 'test{job="testjob"}', format: 'time_series', refId: 'A', instant: false, range: true }],
+        interval: '60s',
+      } as DataQueryRequest<PromQuery>;
+
+      const response = {
+        status: 200,
+        data: {
+          resultType: 'matrix',
+          results: {
+            A: {
+              series: [
+                {
+                  refId: 'A',
+                  tags: { __name__: 'test', job: 'testjob' },
+                  points: [[2 * 60, '3846']],
+                },
+              ],
+            },
+          },
+        },
+      };
+      fetchMock.mockImplementation(() => of(response));
+      await new Promise((resolve) => {
+        ds.query(query).subscribe((data) => {
+          results = data;
+          resolve('');
+        });
+      });
+
+      expect(results.data.length).toBe(1);
+      expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
     });
   });
 
@@ -624,7 +731,7 @@ describe('PrometheusDatasource for POST', () => {
             A: {
               series: [
                 {
-                  refId:  'A',
+                  refId: 'A',
                   tags: { __name__: 'test', job: 'testjob' },
                   points: [[2 * 60, '3846']],
                 },
