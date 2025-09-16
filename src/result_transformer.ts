@@ -58,32 +58,36 @@ import {
 // handles case-insensitive Inf, +Inf, -Inf (with optional "inity" suffix)
 const INFINITY_SAMPLE_REGEX = /^[+-]?inf(?:inity)?$/i;
 
-const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>, includeTimeSeriesDF = false): boolean => {
-  // We want to process vector and scalar results in Explore as table
-  if (
-    options.app === CoreApp.Explore &&
-    (dataFrame.meta?.custom?.resultType === 'vector' || dataFrame.meta?.custom?.resultType === 'scalar')
-  ) {
+const isExploreVectorOrScalar = (dataFrame: DataFrame, app: CoreApp | string): boolean => {
+  return app === CoreApp.Explore && (dataFrame.meta?.custom?.resultType === 'vector' || dataFrame.meta?.custom?.resultType === 'scalar');
+}
+
+const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
+  // We want to process vector and scalar results in Explore as a table
+  if (isExploreVectorOrScalar(dataFrame, options.app)) {
     return true;
   }
 
-  // We want to process all dataFrames with target.format === 'table' as table
   const target = options.targets.find((target) => target.refId === dataFrame.refId);
-  return Boolean(target?.format === 'table' || (includeTimeSeriesDF && target?.format === 'time_series' && target?.instant));
+  const isExplicitTableFormat = target?.format === 'table';
+  // `time series` format with the `instant` is a table data
+  const isInstantTimeSeries = target?.format === 'time_series' && target?.instant;
+
+  return Boolean(isExplicitTableFormat || isInstantTimeSeries);
 };
 
-const isSeriesResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>, includeTimeSeriesDF = false): boolean => {
+const isSeriesResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
   // We want to process vector and scalar results in Explore as table, so return false here
-  if (
-    options.app === CoreApp.Explore &&
-    (dataFrame.meta?.custom?.resultType === 'vector' || dataFrame.meta?.custom?.resultType === 'scalar')
-  ) {
+  if (isExploreVectorOrScalar(dataFrame, options.app)) {
     return false;
   }
 
-  // We want to process all dataFrames with target.format === 'time_series' and range = true as time series
   const target = options.targets.find((target) => target.refId === dataFrame.refId);
-  return Boolean(target?.format === 'time_series' && (target?.range ?? !target?.instant));
+  // if a format is undefined, it is the same as time_series
+  const isTimeSeriesFormat = target?.format === 'time_series' || target?.format === undefined;
+  // instant query is not time series data
+  const isRangeData = target?.range ?? !target?.instant;
+  return Boolean(isTimeSeriesFormat && isRangeData);
 };
 
 const isHeatmapResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
@@ -98,7 +102,7 @@ export function transformV2(
   options: { exemplarTraceIdDestinations?: ExemplarTraceIdDestination[] }
 ) {
   // for time series results we want to process them as table in Explore
-  const [tableFrames] = partition<DataFrame>(response.data, (df) => isTableResult(df, request, true));
+  const [tableFrames] = partition<DataFrame>(response.data, (df) => isTableResult(df, request));
   const [framesWithoutTable] = partition<DataFrame>(response.data, (df) => isSeriesResult(df, request));
   const processedTableFrames = transformDFToTable(tableFrames);
 

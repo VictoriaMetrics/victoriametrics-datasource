@@ -687,6 +687,43 @@ describe('PrometheusDatasource for POST', () => {
       expect(results.data.length).toBe(1);
       expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
     });
+
+
+    it('with instant: false and range:true without format should return 1 visualizations - graph', async () => {
+      const query = {
+        range: { from: time({ minutes: 1, seconds: 3 }), to: time({ minutes: 2, seconds: 3 }) },
+        targets: [{ expr: 'test{job="testjob"}', format: undefined, refId: 'A', instant: false, range: true }],
+        interval: '60s',
+      } as DataQueryRequest<PromQuery>;
+
+      const response = {
+        status: 200,
+        data: {
+          resultType: 'matrix',
+          results: {
+            A: {
+              series: [
+                {
+                  refId: 'A',
+                  tags: { __name__: 'test', job: 'testjob' },
+                  points: [[2 * 60, '3846']],
+                },
+              ],
+            },
+          },
+        },
+      };
+      fetchMock.mockImplementation(() => of(response));
+      await new Promise((resolve) => {
+        ds.query(query).subscribe((data) => {
+          results = data;
+          resolve('');
+        });
+      });
+
+      expect(results.data.length).toBe(1);
+      expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
+    });
   });
 
   describe('When querying prometheus with one target using query editor target spec - table format', () => {
