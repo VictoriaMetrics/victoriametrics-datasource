@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix the issue with dashboards showing no data when the `format` field was undefined. Now the `format` defaults to `time_series` when not explicitly set, ensuring proper data visualization for existing queries and dashboards. See [#377](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/377)
+
 ## v0.19.1
 
 * BUGFIX: fix duplication of statistics panels. See [#372](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/372)
