@@ -1,6 +1,8 @@
 package plugin
 
 import (
+	"fmt"
+	"math"
 	"testing"
 	"time"
 )
@@ -534,4 +536,58 @@ func Test_replaceTemplateVariable(t *testing.T) {
 		want:           "rate(rpc_durations_seconds_count[2m0s])",
 	}
 	f(o)
+}
+
+func Test_roundInterval(t *testing.T) {
+	type test struct {
+		input    time.Duration
+		expected time.Duration
+	}
+
+	tests := []test{
+		// Very small intervals
+		{input: time.Millisecond, expected: time.Millisecond},
+		{input: time.Millisecond * 9, expected: time.Millisecond},
+		{input: time.Millisecond * 10, expected: time.Millisecond * 1},
+
+		// Edge values between conditions
+		{input: time.Millisecond * 14, expected: time.Millisecond * 10},
+		{input: time.Millisecond * 15, expected: time.Millisecond * 20},
+		{input: time.Millisecond * 34, expected: time.Millisecond * 20},
+		{input: time.Millisecond * 35, expected: time.Millisecond * 50},
+
+		// Medium intervals
+		{input: time.Millisecond * 149, expected: time.Millisecond * 100},
+		{input: time.Millisecond * 150, expected: time.Millisecond * 200},
+		{input: time.Millisecond * 749, expected: time.Millisecond * 500},
+		{input: time.Millisecond * 750, expected: time.Millisecond * 1000},
+
+		// Large intervals
+		{input: time.Millisecond * 3499, expected: time.Millisecond * 2000},
+		{input: time.Millisecond * 3500, expected: time.Millisecond * 5000},
+		{input: time.Millisecond * 12499, expected: time.Millisecond * 10000},
+		{input: time.Millisecond * 12500, expected: time.Millisecond * 15000},
+
+		// Time in minutes
+		{input: time.Minute, expected: time.Minute},
+		{input: time.Minute * 2, expected: time.Minute * 2},
+		{input: time.Minute * 15, expected: time.Minute * 15},
+
+		// Time in hours
+		{input: time.Hour, expected: time.Hour},
+		{input: time.Hour * 6, expected: time.Hour * 6},
+		{input: time.Hour * 12, expected: time.Hour * 12},
+
+		// Max boundary case
+		{input: math.MaxInt64, expected: time.Millisecond * 31536000000},
+	}
+
+	for _, tc := range tests {
+		t.Run(fmt.Sprintf("input=%v", tc.input), func(t *testing.T) {
+			got := roundInterval(tc.input)
+			if got != tc.expected {
+				t.Errorf("roundInterval(%v) = %v, want %v", tc.input, got, tc.expected)
+			}
+		})
+	}
 }

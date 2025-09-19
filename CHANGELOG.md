@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: auto-calculate `step` param for a range queries consistently with other datasources. Before, `step` between datapoints on the graph could have use unexpected values depending on the time range. See [#383](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/383)
+
 ## v0.19.2
 
 * BUGFIX: fix the issue with dashboards showing no data when the `format` field was undefined. Now the `format` defaults to `time_series` when not explicitly set, ensuring proper data visualization for existing queries and dashboards. See [#377](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/377)
