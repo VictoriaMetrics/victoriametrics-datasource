@@ -32,10 +32,10 @@ func TestResponse_getDataFrames(t *testing.T) {
 
 		w := opts.want()
 		for i := range w {
-			opts.query.addMetadataToMultiFrame(w[i])
+			opts.query.addMetadataToMultiFrame(w[i], "vector")
 		}
 		for i := range got {
-			opts.query.addMetadataToMultiFrame(got[i])
+			opts.query.addMetadataToMultiFrame(got[i], "vector")
 		}
 
 		gotResponse, err := got.MarshalJSON()

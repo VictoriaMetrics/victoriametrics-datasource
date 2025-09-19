@@ -170,13 +170,33 @@ export class PrometheusDatasource
   }
 
   processTargetV2(target: PromQuery, request: DataQueryRequest<PromQuery>) {
-    return {
+    const baseTarget = {
       ...target,
       queryType: PromQueryType.timeSeriesQuery,
       requestId: request.panelId + target.refId,
       // We need to pass utcOffsetSec to backend to calculate aligned range
       utcOffsetSec: this.timeSrv.timeRange().to.utcOffset() * 60,
-    };
+    }
+
+    if (target.range && target.instant) {
+      return [
+        {
+          ...baseTarget,
+          range: true,
+          instant: false,
+        }, {
+          ...baseTarget,
+          refId: baseTarget.refId + '_instant',
+          requestId: baseTarget.requestId,
+          // for 'Both' type of query send the second query as instant
+          range: false,
+          instant: true,
+          format: undefined,
+        }
+      ];
+    }
+
+    return baseTarget;
   }
 
   query(request: DataQueryRequest<PromQuery>): Observable<DataQueryResponse> {
@@ -184,9 +204,10 @@ export class PrometheusDatasource
       return this.directAccessError();
     }
     const targets = request.targets.map((target) => this.processTargetV2(target, request));
-    return super.query({ ...request, targets: targets.flat() }).pipe(
+    const newRequest = { ...request, targets: targets.flat() };
+    return super.query(newRequest).pipe(
       map((response) =>
-        transformV2(response, request, {})
+        transformV2(response, newRequest, {})
       )
     );
   }

@@ -63,31 +63,14 @@ const isExploreVectorOrScalar = (dataFrame: DataFrame, app: CoreApp | string): b
 }
 
 const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
-  // We want to process vector and scalar results in Explore as a table
+  // We want to process vector and scalar results in Explore as table
   if (isExploreVectorOrScalar(dataFrame, options.app)) {
     return true;
   }
 
+  // We want to process all dataFrames with target.format === 'table' as table
   const target = options.targets.find((target) => target.refId === dataFrame.refId);
-  const isExplicitTableFormat = target?.format === 'table';
-  // `time series` format with the `instant` is a table data
-  const isInstantTimeSeries = target?.format === 'time_series' && target?.instant;
-
-  return Boolean(isExplicitTableFormat || isInstantTimeSeries);
-};
-
-const isSeriesResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
-  // We want to process vector and scalar results in Explore as table, so return false here
-  if (isExploreVectorOrScalar(dataFrame, options.app)) {
-    return false;
-  }
-
-  const target = options.targets.find((target) => target.refId === dataFrame.refId);
-  // if a format is undefined, it is the same as time_series
-  const isTimeSeriesFormat = target?.format === 'time_series' || target?.format === undefined;
-  // instant query is not time series data
-  const isRangeData = target?.range ?? !target?.instant;
-  return Boolean(isTimeSeriesFormat && isRangeData);
+  return target?.format === 'table';
 };
 
 const isHeatmapResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
@@ -101,9 +84,7 @@ export function transformV2(
   request: DataQueryRequest<PromQuery>,
   options: { exemplarTraceIdDestinations?: ExemplarTraceIdDestination[] }
 ) {
-  // for time series results we want to process them as table in Explore
-  const [tableFrames] = partition<DataFrame>(response.data, (df) => isTableResult(df, request));
-  const [framesWithoutTable] = partition<DataFrame>(response.data, (df) => isSeriesResult(df, request));
+  const [tableFrames, framesWithoutTable] = partition<DataFrame>(response.data, (df) => isTableResult(df, request));
   const processedTableFrames = transformDFToTable(tableFrames);
 
   const [exemplarFrames, framesWithoutTableAndExemplars] = partition<DataFrame>(

@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash';
 import { of } from 'rxjs';
 
 import {
+  CoreApp,
   DataQueryRequest,
   DataQueryResponse,
   DataSourceInstanceSettings,
@@ -599,6 +600,20 @@ describe('PrometheusDatasource for POST', () => {
                 },
               ],
             },
+            A_instant: {
+              series: [
+                {
+                  refId: 'A_instant',
+                  tags: { __name__: 'test', job: 'testjob' },
+                  points: [[2 * 60, '3846']],
+                  meta: {
+                    custom: {
+                      resultType: 'vector',
+                    }
+                  }
+                },
+              ],
+            },
           },
         },
       };
@@ -613,7 +628,7 @@ describe('PrometheusDatasource for POST', () => {
 
       expect(results.data.length).toBe(2);
       expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
-      expect(results.data[1].meta.preferredVisualisationType).toStrictEqual('table');
+      expect(results.data[1].meta.preferredVisualisationType).toStrictEqual('graph');
     });
 
     it('with instant: true and range:false should return 1 visualizations - table', async () => {
@@ -621,6 +636,7 @@ describe('PrometheusDatasource for POST', () => {
         range: { from: time({ minutes: 1, seconds: 3 }), to: time({ minutes: 2, seconds: 3 }) },
         targets: [{ expr: 'test{job="testjob"}', format: 'time_series', refId: 'A', instant: true, range: false }],
         interval: '60s',
+        app: CoreApp.Explore
       } as DataQueryRequest<PromQuery>;
 
       const response = {
@@ -634,6 +650,11 @@ describe('PrometheusDatasource for POST', () => {
                   refId: 'A',
                   tags: { __name__: 'test', job: 'testjob' },
                   points: [[2 * 60, '3846']],
+                  meta: {
+                    custom: {
+                      resultType: 'vector',
+                    }
+                  }
                 },
               ],
             },

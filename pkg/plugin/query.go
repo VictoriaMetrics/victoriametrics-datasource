@@ -42,6 +42,10 @@ type TimeRange struct {
 	To   time.Time
 }
 
+type CustomMeta struct {
+	ResultType string `json:"resultType"`
+}
+
 // getQueryURL calculates step and clear expression from template variables,
 // and after builds query url depends on query type
 func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, error) {
@@ -140,7 +144,7 @@ func (q *Query) parseLegend(labels data.Labels) string {
 	return result
 }
 
-func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
+func (q *Query) addMetadataToMultiFrame(frame *data.Frame, resultType string) {
 	if len(frame.Fields) < 2 {
 		return
 	}
@@ -148,6 +152,14 @@ func (q *Query) addMetadataToMultiFrame(frame *data.Frame) {
 	customName := q.parseLegend(frame.Fields[1].Labels)
 	if customName != "" {
 		frame.Fields[1].Config = &data.FieldConfig{DisplayNameFromDS: customName}
+	}
+
+	if frame.Meta == nil {
+		frame.Meta = &data.FrameMeta{}
+	}
+
+	frame.Meta.Custom = &CustomMeta{
+		ResultType: resultType,
 	}
 
 	frame.Name = customName

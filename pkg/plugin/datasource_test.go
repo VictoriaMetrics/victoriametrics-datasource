@@ -164,11 +164,11 @@ func TestDatasourceQueryRequest(t *testing.T) {
 	}
 
 	for j := range expected {
-		q.addMetadataToMultiFrame(expected[j])
+		q.addMetadataToMultiFrame(expected[j], "vector")
 		q.addIntervalToFrame(expected[j])
 	}
 	for i := range response.Frames {
-		q.addMetadataToMultiFrame(response.Frames[i])
+		q.addMetadataToMultiFrame(response.Frames[i], "vector")
 	}
 
 	for i, frame := range response.Frames {
@@ -225,11 +225,11 @@ func TestDatasourceQueryRequest(t *testing.T) {
 	response = rsp.Responses["A"]
 
 	for j := range expected {
-		q.addMetadataToMultiFrame(expected[j])
+		q.addMetadataToMultiFrame(expected[j], "vector")
 		q.addIntervalToFrame(expected[j])
 	}
 	for i := range response.Frames {
-		q.addMetadataToMultiFrame(response.Frames[i])
+		q.addMetadataToMultiFrame(response.Frames[i], "vector")
 	}
 
 	for i, frame := range response.Frames {
@@ -297,10 +297,10 @@ func TestDatasourceQueryRequest(t *testing.T) {
 	}
 
 	for j := range expected {
-		q.addMetadataToMultiFrame(expected[j])
+		q.addMetadataToMultiFrame(expected[j], "vector")
 	}
 	for i := range response.Frames {
-		q.addMetadataToMultiFrame(response.Frames[i])
+		q.addMetadataToMultiFrame(response.Frames[i], "vector")
 	}
 
 	for i, frame := range response.Frames {
