@@ -745,6 +745,87 @@ describe('PrometheusDatasource for POST', () => {
       expect(results.data.length).toBe(1);
       expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
     });
+
+    it('with instant: true and range:true with traces', async () => {
+      const query = {
+        range: { from: time({ minutes: 1, seconds: 3 }), to: time({ minutes: 2, seconds: 3 }) },
+        targets: [{ expr: 'test{job="testjob"}', format: 'time_series', refId: 'A', instant: true, range: true, trace: 1 }],
+        interval: '60s',
+      } as DataQueryRequest<PromQuery>;
+
+      const response = {
+        status: 200,
+        data: {
+          resultType: 'matrix',
+          results: {
+            A: {
+              series: [
+                {
+                  refId: 'A',
+                  tags: { __name__: 'test', job: 'testjob' },
+                  points: [],
+                  meta: {
+                    custom: {
+                      resultType: 'trace',
+                    }
+                  }
+                },
+                {
+                  refId: 'A',
+                  tags: { __name__: 'test', job: 'testjob' },
+                  points: [[2 * 60, '3846']],
+                  meta: {
+                    custom: {
+                      resultType: 'matrix',
+                    }
+                  }
+                },
+                {
+                  refId: 'A_instant',
+                  tags: { __name__: 'test', job: 'testjob' },
+                  points: [],
+                  meta: {
+                    custom: {
+                      resultType: 'trace',
+                    }
+                  }
+                },
+                {
+                  refId: 'A_instant',
+                  tags: { __name__: 'test', job: 'testjob' },
+                  points: [2 * 60],
+                  meta: {
+                    custom: {
+                      resultType: 'vector',
+                    }
+                  }
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      fetchMock.mockImplementation(() => of(response));
+      await new Promise((resolve) => {
+        ds.query(query).subscribe((data) => {
+          results = data;
+          resolve('');
+        });
+      });
+
+      expect(results.data.length).toBe(4);
+      expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
+      expect(results.data[0].refId).toStrictEqual('A');
+      expect(results.data[1].meta.preferredVisualisationType).toStrictEqual('graph');
+      expect(results.data[1].refId).toStrictEqual('A_instant');
+      expect(results.data[2].meta.custom.resultType).toStrictEqual('trace');
+      expect(results.data[2].refId).toStrictEqual('A');
+      expect(results.data[3].meta.custom.resultType).toStrictEqual('trace');
+      expect(results.data[3].refId).toStrictEqual('A');
+    });
+
+
   });
 
   describe('When querying prometheus with one target using query editor target spec - table format', () => {

@@ -252,7 +252,7 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 		return newResponseError(err, backend.StatusInternal)
 	}
 	for i := range frames {
-		q.addMetadataToMultiFrame(frames[i], r.Data.ResultType)
+		q.addMetadataToMultiFrame(frames[i])
 		q.addIntervalToFrame(frames[i])
 	}
 

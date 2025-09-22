@@ -84,7 +84,10 @@ export function transformV2(
   request: DataQueryRequest<PromQuery>,
   options: { exemplarTraceIdDestinations?: ExemplarTraceIdDestination[] }
 ) {
-  const [tableFrames, framesWithoutTable] = partition<DataFrame>(response.data, (df) => isTableResult(df, request));
+  const [traceFrames, framesWithoutTraces] = partition<DataFrame>(response.data, ({ meta }) => meta?.custom?.resultType === 'trace');
+  const processedTraceFrames = transformTraceDataFrames(traceFrames, request.targets);
+
+  const [tableFrames, framesWithoutTable] = partition<DataFrame>(framesWithoutTraces, (df) => isTableResult(df, request));
   const processedTableFrames = transformDFToTable(tableFrames);
 
   const [exemplarFrames, framesWithoutTableAndExemplars] = partition<DataFrame>(
@@ -164,7 +167,7 @@ export function transformV2(
 
   return {
     ...response,
-    data: [...otherFrames, ...processedTableFrames, ...flattenedProcessedHeatmapFrames, ...processedExemplarFrames],
+    data: [...otherFrames, ...processedTableFrames, ...flattenedProcessedHeatmapFrames, ...processedExemplarFrames, ...processedTraceFrames],
   };
 }
 
@@ -613,4 +616,20 @@ export function parseSampleValue(value: string): number {
     return value[0] === '-' ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
   }
   return parseFloat(value);
+}
+
+
+function transformTraceDataFrames(dataFrames: DataFrame[], targets: PromQuery[]): DataFrame[] {
+  return dataFrames.map((dataFrame) => {
+    if (dataFrame.refId && dataFrame.refId.includes('instant')) {
+      // Find the original request from targets to get the original refId
+      const originalTarget = targets.find((target) => target.refId + '_instant' === dataFrame.refId);
+      return {
+        ...dataFrame,
+        // Restore original refId for trace frames that contain 'instant'
+        refId: originalTarget ? originalTarget.refId : dataFrame.refId,
+      };
+    }
+    return dataFrame;
+  });
 }
