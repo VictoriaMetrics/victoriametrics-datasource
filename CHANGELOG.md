@@ -3,6 +3,7 @@
 ## tip
 
 * BUGFIX: auto-calculate `step` param for a range queries consistently with other datasources. Before, `step` between datapoints on the graph could have use unexpected values depending on the time range. See [#383](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/383)
+* BUGFIX: fix issue with intervals less than 1 second not being handled correctly in time parsing. See [#376](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/376)
 
 ## v0.19.2
 

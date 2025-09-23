@@ -150,15 +150,15 @@ func TestDatasourceQueryRequest(t *testing.T) {
 
 	expected := []*data.Frame{
 		data.NewFrame("sum(ingress_nginx_request_qps)",
-			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "100"}, []float64{1}),
 		),
 		data.NewFrame("sum(ingress_nginx_request_qps)",
-			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "500"}, []float64{2}),
 		),
 		data.NewFrame("sum(ingress_nginx_request_qps)",
-			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "200"}, []float64{3}),
 		),
 	}
@@ -283,15 +283,15 @@ func TestDatasourceQueryRequest(t *testing.T) {
 
 	expected = []*data.Frame{
 		data.NewFrame("sum(ingress_nginx_request_qps)",
-			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}).SetConfig(&data.FieldConfig{Interval: 7777}),
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}).SetConfig(&data.FieldConfig{Interval: 7777}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "100"}, []float64{1}),
 		),
 		data.NewFrame("sum(ingress_nginx_request_qps)",
-			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}).SetConfig(&data.FieldConfig{Interval: 7777}),
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}).SetConfig(&data.FieldConfig{Interval: 7777}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "500"}, []float64{2}),
 		),
 		data.NewFrame("sum(ingress_nginx_request_qps)",
-			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}).SetConfig(&data.FieldConfig{Interval: 7777}),
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}).SetConfig(&data.FieldConfig{Interval: 7777}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "200"}, []float64{3}),
 		),
 	}

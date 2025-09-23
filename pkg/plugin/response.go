@@ -103,7 +103,12 @@ func (pr promRange) dataframes() (data.Frames, error) {
 			if !ok {
 				return nil, fmt.Errorf("error get time from dataframes")
 			}
-			timestamps[j] = time.Unix(int64(v), 0)
+
+			var err error
+			timestamps[j], err = parseFloatToTime(v)
+			if err != nil {
+				return nil, fmt.Errorf("error get time from dataframes: %s", err)
+			}
 
 			f, err := strconv.ParseFloat(value[1].(string), 64)
 			if err != nil {
