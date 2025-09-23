@@ -61,7 +61,16 @@ func (pi promInstant) dataframes() (data.Frames, error) {
 			return nil, fmt.Errorf("metric %v, unable to parse float64 from %s: %w", res, res.Value[1], err)
 		}
 
-		ts := time.Unix(int64(res.Value[0].(float64)), 0)
+		v, ok := res.Value[0].(float64)
+		if !ok {
+			return nil, fmt.Errorf("error get time from dataframes")
+		}
+
+		ts, err := parseFloatToTime(v)
+		if err != nil {
+			return nil, fmt.Errorf("error get time from dataframes: %s", err)
+		}
+
 		frames[i] = data.NewFrame("",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{ts}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), []float64{f}))
@@ -138,9 +147,19 @@ func (ps promScalar) dataframes() (data.Frames, error) {
 		return nil, fmt.Errorf("metric %v, unable to parse float64 from %s: %w", ps, ps[1], err)
 	}
 
+	v, ok := ps[0].(float64)
+	if !ok {
+		return nil, fmt.Errorf("error get time from dataframes")
+	}
+
+	ts, err := parseFloatToTime(v)
+	if err != nil {
+		return nil, fmt.Errorf("error get time from dataframes: %s", err)
+	}
+
 	frames = append(frames,
 		data.NewFrame("",
-			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(int64(ps[0].(float64)), 0)}),
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{ts}),
 			data.NewField(data.TimeSeriesValueFieldName, nil, []float64{f})))
 
 	return frames, nil
