@@ -4,6 +4,9 @@
 
 * BUGFIX: auto-calculate `step` param for a range queries consistently with other datasources. Before, `step` between datapoints on the graph could have use unexpected values depending on the time range. See [#383](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/383)
 * BUGFIX: fix issue with intervals less than 1 second not being handled correctly in time parsing. See [#376](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/376)
+* BUGFIX: fix issue with heatmap producing empty data or wrong visualization. See [#382](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/382).
+* BUGFIX: fix issue when an instant query on a Stat panel returns `No Value`. See [#385](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/385).
+* BUGFIX: fix graph visualization issue when query tracing is enabled. Before, enabled tracing could produce response errors.
 
 ## v0.19.2
 

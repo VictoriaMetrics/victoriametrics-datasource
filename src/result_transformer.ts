@@ -63,31 +63,14 @@ const isExploreVectorOrScalar = (dataFrame: DataFrame, app: CoreApp | string): b
 }
 
 const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
-  // We want to process vector and scalar results in Explore as a table
+  // We want to process vector and scalar results in Explore as table
   if (isExploreVectorOrScalar(dataFrame, options.app)) {
     return true;
   }
 
+  // We want to process all dataFrames with target.format === 'table' as table
   const target = options.targets.find((target) => target.refId === dataFrame.refId);
-  const isExplicitTableFormat = target?.format === 'table';
-  // `time series` format with the `instant` is a table data
-  const isInstantTimeSeries = target?.format === 'time_series' && target?.instant;
-
-  return Boolean(isExplicitTableFormat || isInstantTimeSeries);
-};
-
-const isSeriesResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
-  // We want to process vector and scalar results in Explore as table, so return false here
-  if (isExploreVectorOrScalar(dataFrame, options.app)) {
-    return false;
-  }
-
-  const target = options.targets.find((target) => target.refId === dataFrame.refId);
-  // if a format is undefined, it is the same as time_series
-  const isTimeSeriesFormat = target?.format === 'time_series' || target?.format === undefined;
-  // instant query is not time series data
-  const isRangeData = target?.range ?? !target?.instant;
-  return Boolean(isTimeSeriesFormat && isRangeData);
+  return target?.format === 'table';
 };
 
 const isHeatmapResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
@@ -101,9 +84,10 @@ export function transformV2(
   request: DataQueryRequest<PromQuery>,
   options: { exemplarTraceIdDestinations?: ExemplarTraceIdDestination[] }
 ) {
-  // for time series results we want to process them as table in Explore
-  const [tableFrames] = partition<DataFrame>(response.data, (df) => isTableResult(df, request));
-  const [framesWithoutTable] = partition<DataFrame>(response.data, (df) => isSeriesResult(df, request));
+  const [traceFrames, framesWithoutTraces] = partition<DataFrame>(response.data, ({ meta }) => meta?.custom?.resultType === 'trace');
+  const processedTraceFrames = transformTraceDataFrames(traceFrames, request.targets);
+
+  const [tableFrames, framesWithoutTable] = partition<DataFrame>(framesWithoutTraces, (df) => isTableResult(df, request));
   const processedTableFrames = transformDFToTable(tableFrames);
 
   const [exemplarFrames, framesWithoutTableAndExemplars] = partition<DataFrame>(
@@ -183,7 +167,7 @@ export function transformV2(
 
   return {
     ...response,
-    data: [...otherFrames, ...processedTableFrames, ...flattenedProcessedHeatmapFrames, ...processedExemplarFrames],
+    data: [...otherFrames, ...processedTableFrames, ...flattenedProcessedHeatmapFrames, ...processedExemplarFrames, ...processedTraceFrames],
   };
 }
 
@@ -632,4 +616,20 @@ export function parseSampleValue(value: string): number {
     return value[0] === '-' ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
   }
   return parseFloat(value);
+}
+
+
+function transformTraceDataFrames(dataFrames: DataFrame[], targets: PromQuery[]): DataFrame[] {
+  return dataFrames.map((dataFrame) => {
+    if (dataFrame.refId && dataFrame.refId.includes('instant')) {
+      // Find the original request from targets to get the original refId
+      const originalTarget = targets.find((target) => target.refId + '_instant' === dataFrame.refId);
+      return {
+        ...dataFrame,
+        // Restore original refId for trace frames that contain 'instant'
+        refId: originalTarget ? originalTarget.refId : dataFrame.refId,
+      };
+    }
+    return dataFrame;
+  });
 }

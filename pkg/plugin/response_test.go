@@ -16,6 +16,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 		query       Query
 		want        func() data.Frames
 		wantErr     bool
+		trace       *Trace
 	}
 	f := func(opts opts) {
 		t.Helper()
@@ -23,6 +24,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 			Status:      opts.status,
 			Data:        opts.data,
 			ForAlerting: opts.forAlerting,
+			Trace:       opts.trace,
 		}
 		got, err := r.getDataFrames()
 		if (err != nil) != opts.wantErr {
@@ -62,6 +64,35 @@ func TestResponse_getDataFrames(t *testing.T) {
 			return nil
 		},
 		wantErr: true,
+	}
+	f(o)
+
+	// scalar result type with trace
+	o = opts{
+		status: "success",
+		data: Data{
+			ResultType: "scalar",
+			Result:     []byte(`[1583786142, "1"]`),
+		},
+		trace: &Trace{Duration: 123.45, Message: "trace_test"},
+		query: Query{},
+		want: func() data.Frames {
+			return []*data.Frame{
+				{
+					Meta: &data.FrameMeta{
+						Custom: &CustomMeta{
+							Trace:      Trace{Duration: 123.45, Message: "trace_test"},
+							ResultType: "trace",
+						},
+					},
+				},
+				data.NewFrame("",
+					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 0)}),
+					data.NewField(data.TimeSeriesValueFieldName, nil, []float64{1}),
+				).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: scalar}}),
+			}
+		},
+		wantErr: false,
 	}
 	f(o)
 
@@ -107,7 +138,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 				data.NewFrame("",
 					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 50*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, nil, []float64{1}),
-				),
+				).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: scalar}}),
 			}
 		},
 	}
@@ -126,11 +157,11 @@ func TestResponse_getDataFrames(t *testing.T) {
 				data.NewFrame("legend ",
 					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 50*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_rows"}, []float64{13763}),
-				),
+				).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: vector}}),
 				data.NewFrame("legend ",
 					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786140, 50*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_requests"}, []float64{2000}),
-				),
+				).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: vector}}),
 			}
 		},
 	}
@@ -149,15 +180,15 @@ func TestResponse_getDataFrames(t *testing.T) {
 				data.NewFrame("legend ",
 					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "100"}, []float64{1}),
-				),
+				).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
 				data.NewFrame("legend ",
 					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "500"}, []float64{2}),
-				),
+				).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
 				data.NewFrame("legend ",
 					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "200"}, []float64{3}),
-				),
+				).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
 			}
 		},
 	}
@@ -176,10 +207,10 @@ func TestResponse_getDataFrames(t *testing.T) {
 			return []*data.Frame{
 				data.NewFrame("",
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_rows"}, []float64{13763}),
-				).SetMeta(&data.FrameMeta{Type: data.FrameTypeNumericMulti, TypeVersion: data.FrameTypeVersion{0, 1}}),
+				).SetMeta(&data.FrameMeta{Type: data.FrameTypeNumericMulti, TypeVersion: data.FrameTypeVersion{0, 1}, Custom: &CustomMeta{ResultType: vector}}),
 				data.NewFrame("",
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_requests"}, []float64{2000}),
-				).SetMeta(&data.FrameMeta{Type: data.FrameTypeNumericMulti, TypeVersion: data.FrameTypeVersion{0, 1}}),
+				).SetMeta(&data.FrameMeta{Type: data.FrameTypeNumericMulti, TypeVersion: data.FrameTypeVersion{0, 1}, Custom: &CustomMeta{ResultType: vector}}),
 			}
 		},
 	}

@@ -152,15 +152,15 @@ func TestDatasourceQueryRequest(t *testing.T) {
 		data.NewFrame("sum(ingress_nginx_request_qps)",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "100"}, []float64{1}),
-		),
+		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
 		data.NewFrame("sum(ingress_nginx_request_qps)",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "500"}, []float64{2}),
-		),
+		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
 		data.NewFrame("sum(ingress_nginx_request_qps)",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "200"}, []float64{3}),
-		),
+		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
 	}
 
 	for j := range expected {
@@ -219,7 +219,7 @@ func TestDatasourceQueryRequest(t *testing.T) {
 		data.NewFrame("",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 0)}),
 			data.NewField(data.TimeSeriesValueFieldName, nil, []float64{1}),
-		),
+		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: scalar}}),
 	}
 
 	response = rsp.Responses["A"]
@@ -285,15 +285,15 @@ func TestDatasourceQueryRequest(t *testing.T) {
 		data.NewFrame("sum(ingress_nginx_request_qps)",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}).SetConfig(&data.FieldConfig{Interval: 7777}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "100"}, []float64{1}),
-		),
+		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
 		data.NewFrame("sum(ingress_nginx_request_qps)",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}).SetConfig(&data.FieldConfig{Interval: 7777}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "500"}, []float64{2}),
-		),
+		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
 		data.NewFrame("sum(ingress_nginx_request_qps)",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}).SetConfig(&data.FieldConfig{Interval: 7777}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "200"}, []float64{3}),
-		),
+		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
 	}
 
 	for j := range expected {

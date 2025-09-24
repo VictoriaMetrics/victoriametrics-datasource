@@ -13,6 +13,12 @@ const (
 	vector, matrix, scalar = "vector", "matrix", "scalar"
 )
 
+type CustomMeta struct {
+	Trace Trace `json:"trace,omitempty"`
+	// ResultType represents the type of the query response: "vector" | "matrix" | "scalar" | "trace"
+	ResultType string `json:"resultType"`
+}
+
 // Result represents timeseries from query
 type Result struct {
 	Labels Labels  `json:"metric"`
@@ -73,7 +79,12 @@ func (pi promInstant) dataframes() (data.Frames, error) {
 
 		frames[i] = data.NewFrame("",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{ts}),
-			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), []float64{f}))
+			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), []float64{f}),
+		).SetMeta(&data.FrameMeta{
+			Custom: &CustomMeta{
+				ResultType: vector,
+			},
+		})
 	}
 
 	return frames, nil
@@ -92,7 +103,7 @@ func (pi promInstant) alertingDataFrames() (data.Frames, error) {
 
 		// to show instant alert response with the table we need to define the type of the frame
 		// and it should be [0, 1] like it set in the Grafana
-		frames[i].Meta = &data.FrameMeta{Type: data.FrameTypeNumericMulti, TypeVersion: data.FrameTypeVersion{0, 1}}
+		frames[i].Meta = &data.FrameMeta{Type: data.FrameTypeNumericMulti, TypeVersion: data.FrameTypeVersion{0, 1}, Custom: &CustomMeta{ResultType: vector}}
 	}
 
 	return frames, nil
@@ -132,7 +143,12 @@ func (pr promRange) dataframes() (data.Frames, error) {
 
 		frames[i] = data.NewFrame("",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, timestamps),
-			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), values))
+			data.NewField(data.TimeSeriesValueFieldName, data.Labels(res.Labels), values),
+		).SetMeta(&data.FrameMeta{
+			Custom: &CustomMeta{
+				ResultType: matrix,
+			},
+		})
 	}
 
 	return frames, nil
@@ -160,7 +176,13 @@ func (ps promScalar) dataframes() (data.Frames, error) {
 	frames = append(frames,
 		data.NewFrame("",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{ts}),
-			data.NewField(data.TimeSeriesValueFieldName, nil, []float64{f})))
+			data.NewField(data.TimeSeriesValueFieldName, nil, []float64{f}),
+		).SetMeta(&data.FrameMeta{
+			Custom: &CustomMeta{
+				ResultType: scalar,
+			},
+		}),
+	)
 
 	return frames, nil
 }
@@ -173,7 +195,10 @@ func (r *Response) getDataFrames() (fss data.Frames, err error) {
 	if r.Trace != nil {
 		fss = append(fss, &data.Frame{
 			Meta: &data.FrameMeta{
-				Custom: r.Trace,
+				Custom: &CustomMeta{
+					Trace:      *r.Trace,
+					ResultType: "trace",
+				},
 			},
 		})
 	}
