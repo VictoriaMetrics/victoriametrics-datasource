@@ -14,7 +14,7 @@ const (
 )
 
 type CustomMeta struct {
-	*Trace `json:",inline"`
+	Trace Trace `json:"trace,omitempty"`
 	// ResultType represents the type of the query response: "vector" | "matrix" | "scalar" | "trace"
 	ResultType string `json:"resultType"`
 }
@@ -196,7 +196,7 @@ func (r *Response) getDataFrames() (fss data.Frames, err error) {
 		fss = append(fss, &data.Frame{
 			Meta: &data.FrameMeta{
 				Custom: &CustomMeta{
-					Trace:      r.Trace,
+					Trace:      *r.Trace,
 					ResultType: "trace",
 				},
 			},

@@ -16,6 +16,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 		query       Query
 		want        func() data.Frames
 		wantErr     bool
+		trace       *Trace
 	}
 	f := func(opts opts) {
 		t.Helper()
@@ -23,6 +24,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 			Status:      opts.status,
 			Data:        opts.data,
 			ForAlerting: opts.forAlerting,
+			Trace:       opts.trace,
 		}
 		got, err := r.getDataFrames()
 		if (err != nil) != opts.wantErr {
@@ -62,6 +64,35 @@ func TestResponse_getDataFrames(t *testing.T) {
 			return nil
 		},
 		wantErr: true,
+	}
+	f(o)
+
+	// scalar result type with trace
+	o = opts{
+		status: "success",
+		data: Data{
+			ResultType: "scalar",
+			Result:     []byte(`[1583786142, "1"]`),
+		},
+		trace: &Trace{Duration: 123.45, Message: "trace_test"},
+		query: Query{},
+		want: func() data.Frames {
+			return []*data.Frame{
+				&data.Frame{
+					Meta: &data.FrameMeta{
+						Custom: &CustomMeta{
+							Trace:      Trace{Duration: 123.45, Message: "trace_test"},
+							ResultType: "trace",
+						},
+					},
+				},
+				data.NewFrame("",
+					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 0)}),
+					data.NewField(data.TimeSeriesValueFieldName, nil, []float64{1}),
+				).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: scalar}}),
+			}
+		},
+		wantErr: false,
 	}
 	f(o)
 
