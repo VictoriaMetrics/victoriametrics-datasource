@@ -99,13 +99,13 @@ func TestResponse_getDataFrames(t *testing.T) {
 		status: "success",
 		data: Data{
 			ResultType: "scalar",
-			Result:     []byte(`[1583786142, "1"]`),
+			Result:     []byte(`[1583786142.050, "1"]`),
 		},
 		query: Query{LegendFormat: "legend {{app}}"},
 		want: func() data.Frames {
 			return []*data.Frame{
 				data.NewFrame("",
-					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 0)}),
+					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 50*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, nil, []float64{1}),
 				),
 			}
@@ -118,17 +118,17 @@ func TestResponse_getDataFrames(t *testing.T) {
 		status: "success",
 		data: Data{
 			ResultType: "vector",
-			Result:     []byte(`[{"metric":{"__name__":"vm_rows"},"value":[1583786142,"13763"]},{"metric":{"__name__":"vm_requests"},"value":[1583786140,"2000"]}]`),
+			Result:     []byte(`[{"metric":{"__name__":"vm_rows"},"value":[1583786142.05,"13763"]},{"metric":{"__name__":"vm_requests"},"value":[1583786140.05,"2000"]}]`),
 		},
 		query: Query{LegendFormat: "legend {{app}}"},
 		want: func() data.Frames {
 			return []*data.Frame{
 				data.NewFrame("legend ",
-					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 0)}),
+					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 50*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_rows"}, []float64{13763}),
 				),
 				data.NewFrame("legend ",
-					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786140, 0)}),
+					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786140, 50*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "vm_requests"}, []float64{2000}),
 				),
 			}
@@ -147,15 +147,15 @@ func TestResponse_getDataFrames(t *testing.T) {
 		want: func() data.Frames {
 			return []*data.Frame{
 				data.NewFrame("legend ",
-					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
+					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "100"}, []float64{1}),
 				),
 				data.NewFrame("legend ",
-					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
+					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "500"}, []float64{2}),
 				),
 				data.NewFrame("legend ",
-					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 0)}),
+					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "200"}, []float64{3}),
 				),
 			}
