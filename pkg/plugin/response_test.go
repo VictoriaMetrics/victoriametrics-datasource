@@ -78,7 +78,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 		query: Query{},
 		want: func() data.Frames {
 			return []*data.Frame{
-				&data.Frame{
+				{
 					Meta: &data.FrameMeta{
 						Custom: &CustomMeta{
 							Trace:      Trace{Duration: 123.45, Message: "trace_test"},
