@@ -1,10 +1,10 @@
 # VictoriaMetrics datasource for Grafana
 
-The VictoriaMetrics Grafana plugin allows Grafana to query, visualize,
-and interact with [VictoriaMetrics](https://docs.victoriametrics.com/victoriametrics/),
+The [VictoriaMetrics Grafana plugin](https://grafana.com/grafana/plugins/victoriametrics-metrics-datasource/) allows 
+Grafana to query, visualize, and interact with [VictoriaMetrics](https://docs.victoriametrics.com/victoriametrics/),
 a high-performance metrics storage and processing system.
 
-<img alt="Grafana Dashboard Screenshot" src="https://raw.githubusercontent.com/VictoriaMetrics/victoriametrics-datasource/b8bf7398a9a14ba917094385d8fee08cb7e303a1/src/img/dashboard.png">
+<img alt="Grafana Dashboard Screenshot" width="100%" src="https://raw.githubusercontent.com/VictoriaMetrics/victoriametrics-datasource/b8bf7398a9a14ba917094385d8fee08cb7e303a1/src/img/dashboard.png">
 
 ## Capabilities
 
@@ -21,6 +21,7 @@ Try it at [VictoriaMetrics playground](https://play-grafana.victoriametrics.com/
 ## Installation
 
 For detailed instructions on how to install the plugin on Grafana Cloud or locally, please checkout the [Plugin installation docs](https://grafana.com/docs/grafana/latest/plugins/installation/).
+For installation options in Docker or Kubernetes refer to [these docs](https://github.com/VictoriaMetrics/victoriametrics-datasource?tab=readme-ov-file#installation).
 
 ### Manual configuration via UI
 
