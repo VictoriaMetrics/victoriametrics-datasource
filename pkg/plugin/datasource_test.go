@@ -592,6 +592,22 @@ func TestNewURL(t *testing.T) {
 			expected:  "http://example.com/base/somepath/api/v1/resource",
 			expectErr: false,
 		},
+		{
+			name:      "valid root slicing for single url",
+			urlStr:    "http://localhost:8428/",
+			path:      "/-/healthy",
+			root:      true,
+			expected:  "http://localhost:8428/-/healthy",
+			expectErr: false,
+		},
+		{
+			name:      "valid root slicing for cluster url with auth",
+			urlStr:    "http://localhost:8427/select/0/prometheus",
+			path:      "/-/healthy",
+			root:      true,
+			expected:  "http://localhost:8427/-/healthy",
+			expectErr: false,
+		},
 	}
 
 	for _, tt := range tests {
