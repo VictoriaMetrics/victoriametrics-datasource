@@ -518,3 +518,92 @@ func TestDatasourceQueryDataRace(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
+
+func TestNewURL(t *testing.T) {
+	tests := []struct {
+		name      string
+		urlStr    string
+		path      string
+		root      bool
+		expected  string
+		expectErr bool
+	}{
+		{
+			name:      "valid URL with path joining",
+			urlStr:    "http://example.com/base",
+			path:      "api/v1/resource",
+			root:      false,
+			expected:  "http://example.com/base/api/v1/resource",
+			expectErr: false,
+		},
+		{
+			name:      "empty URL string",
+			urlStr:    "",
+			path:      "api/v1/resource",
+			root:      false,
+			expected:  "",
+			expectErr: true,
+		},
+		{
+			name:      "invalid URL string",
+			urlStr:    ":invalid-url",
+			path:      "api/v1/resource",
+			root:      false,
+			expected:  "",
+			expectErr: true,
+		},
+		{
+			name:      "valid URL with root slicing",
+			urlStr:    "http://example.com/base/select/prometheus?param=value",
+			path:      "api/v1/resource",
+			root:      true,
+			expected:  "http://example.com/base/api/v1/resource?param=value",
+			expectErr: false,
+		},
+		{
+			name:      "valid URL without root slicing",
+			urlStr:    "http://example.com/base/select?param=value",
+			path:      "api/v1/resource",
+			root:      false,
+			expected:  "http://example.com/base/select/api/v1/resource?param=value",
+			expectErr: false,
+		},
+		{
+			name:      "valid URL with trailing slash in base",
+			urlStr:    "http://example.com/base/",
+			path:      "api/v1/resource",
+			root:      false,
+			expected:  "http://example.com/base/api/v1/resource",
+			expectErr: false,
+		},
+		{
+			name:      "valid URL with empty path",
+			urlStr:    "http://example.com/base",
+			path:      "",
+			root:      false,
+			expected:  "http://example.com/base",
+			expectErr: false,
+		},
+		{
+			name:      "valid root slicing without select path",
+			urlStr:    "http://example.com/base/somepath",
+			path:      "api/v1/resource",
+			root:      true,
+			expected:  "http://example.com/base/somepath/api/v1/resource",
+			expectErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := newURL(tt.urlStr, tt.path, tt.root)
+			if (err != nil) != tt.expectErr {
+				t.Errorf("newURL() error = %v, expectErr %v", err, tt.expectErr)
+				return
+			}
+			if err == nil && got.String() != tt.expected {
+				t.Errorf("newURL() got = %v, expected %v", got.String(), tt.expected)
+			}
+		})
+	}
+}
