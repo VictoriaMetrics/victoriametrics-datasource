@@ -317,7 +317,7 @@ func newURL(urlStr, p string, root bool) (*url.URL, error) {
 		return nil, fmt.Errorf("failed to parse datasource url: %s", err)
 	}
 	if root {
-		if idx := strings.Index(u.Path, "/select/"); idx > 0 {
+		if idx := strings.Index(u.Path, "/select/"); idx != -1 {
 			u.Path = u.Path[:idx]
 		}
 	}
