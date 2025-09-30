@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.19.4
+
 * BUGFIX: fix the problem with health check URL generation where the `/select/` prefix was incorrectly included in the health endpoint path. Health check is working properly now. See [#388](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/388).
 
 ## v0.19.3
