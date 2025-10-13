@@ -2,13 +2,15 @@
 
 ## tip
 
+* BUGFIX: fix applying `WITH` template to the query expression. See [#397](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/397).
+
 ## v0.19.4
 
 * BUGFIX: fix the problem with health check URL generation where the `/select/` prefix was incorrectly included in the health endpoint path. Health check is working properly now. See [#388](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/388).
 
 ## v0.19.3
 
-* BUGFIX: auto-calculate `step` param for a range queries consistently with other datasources. Before, `step` between datapoints on the graph could have use unexpected values depending on the time range. See [#383](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/383)
+* BUGFIX: auto-calculate `step` param for range queries consistently with other datasources. Before, `step` between datapoints on the graph could have use unexpected values depending on the time range. See [#383](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/383)
 * BUGFIX: fix issue with intervals less than 1 second not being handled correctly in time parsing. See [#376](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/376)
 * BUGFIX: fix issue with heatmap producing empty data or wrong visualization. See [#382](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/382).
 * BUGFIX: fix issue when an instant query on a Stat panel returns `No Value`. See [#385](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/385).

@@ -46,6 +46,7 @@ import { BackendSrvRequest, DataSourceWithBackend, getTemplateSrv, TemplateSrv }
 import { addLabelToQuery } from './add_label_to_query';
 import { AnnotationQueryEditor } from "./components/Annotations/AnnotationQueryEditor";
 import { WithTemplate } from "./components/WithTemplateConfig/types";
+import { mergeTemplateWithQuery } from "./components/WithTemplateConfig/utils/getArrayFromTemplate";
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
 import PrometheusLanguageProvider from './language_provider';
 import { expandRecordingRules, getVictoriaMetricsTime } from './language_utils';
@@ -170,8 +171,14 @@ export class PrometheusDatasource
   }
 
   processTargetV2(target: PromQuery, request: DataQueryRequest<PromQuery>) {
+    // Apply WITH templates
+    const dashboardUID = request.dashboardUID || request.app || "";
+    const template = this.withTemplates.find(t => t.uid === dashboardUID);
+    const expr = mergeTemplateWithQuery(target.expr, template)
+
     const baseTarget = {
       ...target,
+      expr: expr,
       queryType: PromQueryType.timeSeriesQuery,
       requestId: request.panelId + target.refId,
       // We need to pass utcOffsetSec to backend to calculate aligned range

@@ -579,7 +579,7 @@ describe('PrometheusDatasource for POST', () => {
   });
   describe('When querying prometheus with one target using query editor target spec - time_series format and instant/range option', () => {
     let results: DataQueryResponse;
-    it('with instant: true and range: true should return 2 visualizations - graph and table', async() => {
+    it('with instant: true and range: true should return 2 visualizations - graph and table', async () => {
       const query = {
         range: { from: time({ minutes: 1, seconds: 3 }), to: time({ minutes: 2, seconds: 3 }) },
         targets: [{ expr: 'test{job="testjob"}', format: 'time_series', refId: 'A', instant: true, range: true }],
@@ -749,7 +749,14 @@ describe('PrometheusDatasource for POST', () => {
     it('with instant: true and range:true with traces', async () => {
       const query = {
         range: { from: time({ minutes: 1, seconds: 3 }), to: time({ minutes: 2, seconds: 3 }) },
-        targets: [{ expr: 'test{job="testjob"}', format: 'time_series', refId: 'A', instant: true, range: true, trace: 1 }],
+        targets: [{
+          expr: 'test{job="testjob"}',
+          format: 'time_series',
+          refId: 'A',
+          instant: true,
+          range: true,
+          trace: 1
+        }],
         interval: '60s',
       } as DataQueryRequest<PromQuery>;
 
@@ -981,3 +988,131 @@ function createDefaultPromResponse() {
     },
   };
 }
+
+describe('processTargetV2', () => {
+  let datasource: PrometheusDatasource;
+
+  beforeEach(() => {
+    datasource = new PrometheusDatasource(
+      {
+        id: 1,
+        url: 'http://example.com',
+        access: 'proxy',
+        jsonData: {
+          timeInterval: '15s',
+        },
+      } as any,
+      undefined,
+      {
+        timeRange: jest.fn().mockReturnValue({
+          to: {
+            utcOffset: () => 0,
+          },
+        }),
+      } as any
+    );
+  });
+
+  it('should merge template with query and adjust target properties', () => {
+    const target = { expr: 'sr', refId: 'A', range: false, instant: false, } as any;
+    const request = {
+      dashboardUID: 'dashboard_1',
+      targets: [],
+      panelId: 2,
+      app: 'app_1',
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    datasource.withTemplates = [{ uid: 'dashboard_1', expr: 'sr = sum(rate(request_total[5m]))' } as any];
+
+    const result = datasource.processTargetV2(target, request);
+
+    expect(result).toEqual({
+      "expr": "WITH(\n  sr = sum(rate(request_total[5m]))\n)\nsr",
+      "instant": false,
+      "queryType": "timeSeriesQuery",
+      "range": false,
+      "refId": "A",
+      "requestId": "2A",
+      "utcOffsetSec": 0
+    });
+  });
+
+  it('should generate two queries for Both range and instant query type', () => {
+    const target = { expr: 'metric_name', refId: 'A', range: true, instant: true } as any;
+    const request = {
+      dashboardUID: 'dashboard_1',
+      targets: [],
+      panelId: 2,
+      app: 'app_1',
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    const result = datasource.processTargetV2(target, request);
+
+    expect(result).toHaveLength(2);
+    if (Array.isArray(result)) {
+      expect(result[0]).toEqual({
+        expr: 'metric_name',
+        queryType: 'timeSeriesQuery',
+        requestId: '2A',
+        utcOffsetSec: 0,
+        refId: 'A',
+        range: true,
+        instant: false,
+      });
+      expect(result[1]).toEqual({
+        expr: 'metric_name',
+        queryType: 'timeSeriesQuery',
+        requestId: '2A',
+        utcOffsetSec: 0,
+        refId: 'A_instant',
+        range: false,
+        instant: true,
+        format: undefined,
+      });
+    }
+  });
+
+  it('should handle case where no matching template is found', () => {
+    const target = { expr: 'metric_name', refId: 'A', range: false, instant: false } as any;
+    const request = {
+      dashboardUID: 'unknown_dashboard',
+      targets: [],
+      panelId: 2,
+      app: 'unknown_app',
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    const result = datasource.processTargetV2(target, request);
+
+    expect(result).toEqual({
+      expr: 'metric_name',
+      queryType: 'timeSeriesQuery',
+      requestId: '2A',
+      utcOffsetSec: 0,
+      refId: 'A',
+      range: false,
+      instant: false,
+    });
+  });
+
+  it('should handle a target with no range or instant properties and not apply WITH template', () => {
+    const target = { expr: 'metric_name', refId: 'A' } as any;
+    const request = {
+      dashboardUID: 'dashboard_1',
+      targets: [],
+      panelId: 2,
+      app: 'app_1',
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    datasource.withTemplates = [{ uid: 'dashboard_1', config: ['cf = {label="dashboard"}'] } as any];
+
+    const result = datasource.processTargetV2(target, request);
+
+    expect(result).toEqual({
+      expr: 'metric_name',
+      queryType: 'timeSeriesQuery',
+      requestId: '2A',
+      utcOffsetSec: 0,
+      refId: 'A',
+    });
+  });
+});
