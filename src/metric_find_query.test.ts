@@ -1,19 +1,19 @@
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 
 import { DataSourceInstanceSettings, TimeRange, toUtc } from '@grafana/data';
-import { BackendDataSourceResponse, BackendSrvRequest, FetchResponse, TemplateSrv, getBackendSrv, setBackendSrv } from '@grafana/runtime';
+import { BackendSrvRequest, FetchResponse, TemplateSrv, getBackendSrv, setBackendSrv } from '@grafana/runtime';
 
 import { PrometheusDatasource } from './datasource';
 import PrometheusMetricFindQuery from "./metric_find_query";
 import { PromOptions } from "./types";
 
-const fetchMock = jest.fn((_options: BackendSrvRequest): Observable<FetchResponse<BackendDataSourceResponse>> => {
+const fetchMock = jest.fn((_options: BackendSrvRequest) => {
   return of({} as unknown as FetchResponse);
 });
 
 setBackendSrv({
   ...getBackendSrv(),
-  fetch: fetchMock,
+  fetch: fetchMock ,
 });
 
 const instanceSettings = {

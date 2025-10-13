@@ -76,6 +76,7 @@ describe('PrometheusDatasource', () => {
       expect(fetchMock.mock.calls[0][0].method).toBe('GET');
       expect(fetchMock.mock.calls[0][0].params).toEqual({ bar: 'baz baz', foo: 'foo' });
     });
+
     it('should still perform a GET request with the DS HTTP method set to POST and not POST-friendly endpoint', () => {
       const postSettings = cloneDeep(instanceSettings);
       postSettings.jsonData.httpMethod = 'POST';
@@ -84,6 +85,7 @@ describe('PrometheusDatasource', () => {
       expect(fetchMock.mock.calls.length).toBe(1);
       expect(fetchMock.mock.calls[0][0].method).toBe('GET');
     });
+
     it('should try to perform a GET request with the DS HTTP method set to GET and GET-friendly endpoint', () => {
       const postSettings = cloneDeep(instanceSettings);
       const promDs = new PrometheusDatasource(postSettings, templateSrvStub, timeSrvStub);
@@ -92,6 +94,22 @@ describe('PrometheusDatasource', () => {
       expect(fetchMock.mock.calls[0][0].method).toBe('GET');
       expect(fetchMock.mock.calls[0][0].url).not.toContain('bar=baz%20baz&foo=foo');
       expect(fetchMock.mock.calls[0][0].params).toEqual({ bar: 'baz baz', foo: 'foo' });
+    });
+
+    it('should perform a GET request with the custom query params', () => {
+      const postSettings = cloneDeep(instanceSettings);
+      const promDs = new PrometheusDatasource({
+        ...postSettings,
+        jsonData: { customQueryParameters: "extra_filter[]={foo: \"bar\"}" }
+      }, templateSrvStub, timeSrvStub);
+      promDs.getRequest('api/v1/label/id/values', { bar: 'baz baz', foo: 'foo' });
+      expect(fetchMock.mock.calls.length).toBe(1);
+      expect(fetchMock.mock.calls[0][0].method).toBe('GET');
+      expect(fetchMock.mock.calls[0][0].params).toEqual({
+        bar: 'baz baz',
+        foo: 'foo',
+        "extra_filter[]": "{foo: \"bar\"}",
+      });
     });
   });
 
