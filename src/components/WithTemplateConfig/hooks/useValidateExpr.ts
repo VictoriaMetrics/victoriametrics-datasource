@@ -38,7 +38,7 @@ const validateStatus: {[key: string]: ValidateResult} = {
   }
 }
 
-export default (datasourceUID: number) => {
+export default (datasourceUID: string) => {
   const [validateResult, setValidateResult] = useState<ValidateResult>(validateStatus.noValidate)
 
   const isValidExpr = useCallback(async (expr: string) => {

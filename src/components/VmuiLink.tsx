@@ -13,9 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { FC, useEffect, useState, memo } from 'react';
+import React, { FC, memo, useEffect, useState } from 'react';
 
-import { PanelData, textUtil, rangeUtil, getDefaultTimeRange } from '@grafana/data';
+import { getDefaultTimeRange, PanelData, rangeUtil, textUtil } from '@grafana/data';
 import { IconButton } from "@grafana/ui";
 
 import { mergeTemplateWithQuery } from "../components/WithTemplateConfig/utils/getArrayFromTemplate";
@@ -89,11 +89,12 @@ const VmuiLink: FC<Props> = ({
         rangeUtil.intervalToSeconds(datasource.interval)
       ));
       let step: number = rangeUtil.intervalToSeconds(interval);
+      const templateSrv = datasource.getTemplateSrv();
       const minStep = rangeUtil.intervalToSeconds(
-        datasource.templateSrv.replace(query.interval || interval, scopedVars)
+        templateSrv.replace(query.interval || interval, scopedVars)
       );
       const scrapeInterval = rangeUtil.intervalToSeconds(query.interval
-        ? datasource.templateSrv.replace(query.interval, scopedVars)
+        ? templateSrv.replace(query.interval, scopedVars)
         : datasource.interval);
       const adjustedStep = datasource.adjustInterval(step, minStep, rangeDiff, 1);
       scopedVars = Object.assign({}, scopedVars, getRateIntervalScopedVariable(
@@ -108,8 +109,8 @@ const VmuiLink: FC<Props> = ({
         });
       }
       let expr = mergeTemplateWithQuery(query.expr, datasource.withTemplates.find(t => t.uid === dashboardUID))
-      expr = datasource.templateSrv.replace(expr, scopedVars, datasource.interpolateQueryExpr);
-      const resp = await datasource.postResource('vmui', {
+      expr = templateSrv.replace(expr, scopedVars, datasource.interpolateQueryExpr);
+      const resp = await datasource.postResource<{ vmuiURL: string }>('vmui', {
         vmui: {
           expr: expr,
           range_input: getDurationFromMilliseconds(rangeDiff * 1000),
@@ -127,8 +128,11 @@ const VmuiLink: FC<Props> = ({
   }, [dashboardUID, datasource, panelData, query]);
 
   return (
-    <a href={textUtil.sanitizeUrl(href)} target="_blank" rel="noopener noreferrer"
-      style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <a
+      href={textUtil.sanitizeUrl(href)}
+      target="_blank" rel="noopener noreferrer"
+      style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+    >
       <IconButton
         key="vmui"
         name="external-link-alt"

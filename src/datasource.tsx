@@ -81,6 +81,7 @@ export class PrometheusDatasource
   languageProvider: PrometheusLanguageProvider;
   exemplarTraceIdDestinations: ExemplarTraceIdDestination[] | undefined;
   lookupsDisabled: boolean;
+  customQueryParameters: any;
   exemplarsAvailable: boolean;
   subType: PromApplication;
   rulerEnabled: boolean;
@@ -111,6 +112,7 @@ export class PrometheusDatasource
     this.ruleMappings = {};
     this.languageProvider = languageProvider ?? new PrometheusLanguageProvider(this);
     this.lookupsDisabled = instanceSettings.jsonData.disableMetricsLookup ?? false;
+    this.customQueryParameters = new URLSearchParams(instanceSettings.jsonData.customQueryParameters);
     this.variables = new PrometheusVariableSupport(this, this.templateSrv);
     this.exemplarsAvailable = false;
     this.withTemplates = instanceSettings.jsonData.withTemplates ?? [];
@@ -139,7 +141,12 @@ export class PrometheusDatasource
   }
 
   // Use this for tab completion features, won't publish response to other components
-  async getRequest(url: string, params = {}, options?: Partial<BackendSrvRequest>) {
+  async getRequest(url: string, params: BackendSrvRequest["params"] = {}, options?: Partial<BackendSrvRequest>) {
+    for (const [key, value] of this.customQueryParameters) {
+      if (params[key] === undefined) {
+        params[key] = value;
+      }
+    }
     return await this.getResource(url, params, {
       hideFromInspector: true,
       showErrorAlert: false,
@@ -584,6 +591,10 @@ export class PrometheusDatasource
       start: getVictoriaMetricsTime(timeRange.from, false).toString(),
       end: getVictoriaMetricsTime(timeRange.to, true).toString(),
     };
+  }
+
+  getTemplateSrv() {
+    return this.templateSrv;
   }
 }
 
