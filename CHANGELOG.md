@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.19.5
+
 * BUGFIX: fix applying `WITH` template to the query expression. See [#397](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/397).
 * BUGFIX: fix applying `Custom query parameters` when querying from Grafana variables. See [#396](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/396).
 
