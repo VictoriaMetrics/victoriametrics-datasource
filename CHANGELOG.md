@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix an issue where the `Prettify query` action caused the refId to be deleted. See [#397](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/397).
+
 ## v0.19.5
 
 * BUGFIX: fix applying `WITH` template to the query expression. See [#397](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/397).
