@@ -26,33 +26,21 @@ import {
   DataQueryRequest,
   DataQueryResponse,
   DataTopic,
-  Field,
   FieldType,
-  formatLabels,
   getDisplayProcessor,
   Labels,
   MutableField,
   PreferredVisualisationType,
-  QueryResultMetaNotice,
-  ScopedVars,
   TIME_SERIES_TIME_FIELD_NAME,
   TIME_SERIES_VALUE_FIELD_NAME,
 } from '@grafana/data';
-import { FetchResponse, getDataSourceSrv, getTemplateSrv } from '@grafana/runtime';
+import { getDataSourceSrv } from '@grafana/runtime';
 
-import { renderLegendFormat } from './legend';
 import {
   ExemplarTraceIdDestination,
-  isExemplarData,
-  isMatrixData,
-  LegendFormatMode,
-  MatrixOrVectorResult,
-  PromDataSuccessResponse,
   PromMetric,
   PromQuery,
-  PromQueryRequest,
   PromValue,
-  TransformOptions,
 } from './types';
 
 // handles case-insensitive Inf, +Inf, -Inf (with optional "inity" suffix)
@@ -235,103 +223,6 @@ function getValueText(responseLength: number, refId = '') {
   return responseLength > 1 ? `Value #${refId}` : 'Value';
 }
 
-export function transform(
-  response: FetchResponse<PromDataSuccessResponse>,
-  transformOptions: {
-    query: PromQueryRequest;
-    exemplarTraceIdDestinations?: ExemplarTraceIdDestination[];
-    target: PromQuery;
-    responseListLength: number;
-    scopedVars?: ScopedVars;
-  }
-) {
-  // Create options object from transformOptions
-  const options: TransformOptions = {
-    format: transformOptions.target.format,
-    step: transformOptions.query.step,
-    legendFormat: transformOptions.target.legendFormat,
-    start: transformOptions.query.start,
-    end: transformOptions.query.end,
-    query: transformOptions.query.expr,
-    responseListLength: transformOptions.responseListLength,
-    scopedVars: transformOptions.scopedVars,
-    refId: transformOptions.target.refId,
-    valueWithRefId: transformOptions.target.valueWithRefId,
-    meta: {
-      // Fix for showing of Prometheus results in Explore table
-      preferredVisualisationType: transformOptions.query.instant ? 'table' : 'graph',
-      executedQueryString: `Expr: ${transformOptions.query.expr}\nStep: ${transformOptions.query.step}`
-
-    },
-  };
-  const prometheusResult = response.data;
-  const traceResult = response?.trace
-
-  if (response.data.isPartial) {
-    const partialWarning = {
-      severity: "warning",
-      text: `The shown results are marked as PARTIAL. The result is marked as partial if one or more vmstorage nodes failed to respond to the query.`
-    } as QueryResultMetaNotice
-
-    Array.isArray(options.meta.notices)
-      ? options.meta.notices.push(partialWarning)
-      : options.meta.notices = [partialWarning]
-  }
-
-  if (isExemplarData(prometheusResult)) {
-    return {
-      dataFrame: [],
-      traceResult
-    };
-  }
-
-  if (!prometheusResult?.result) {
-    return {
-      dataFrame: [],
-      traceResult
-    };
-  }
-
-  // Return early if result type is scalar
-  if (prometheusResult.resultType === 'scalar') {
-    return {
-      dataFrame: [
-        {
-          meta: options.meta,
-          refId: options.refId,
-          length: 1,
-          fields: [getTimeField([prometheusResult.result]), getValueField({ data: [prometheusResult.result] })],
-        },
-      ],
-      traceResult
-    }
-  }
-
-  // Return early again if the format is table, this needs special transformation.
-  if (options.format === 'table') {
-    const tableData = transformMetricDataToTable(prometheusResult.result, options);
-    return {
-      dataFrame: [tableData],
-      traceResult
-    };
-  }
-
-  // Process matrix and vector results to DataFrame
-  const dataFrame: DataFrame[] = [];
-  prometheusResult.result.forEach((data: MatrixOrVectorResult) => dataFrame.push(transformToDataFrame(data, options)));
-
-  // When format is heatmap use the already created data frames and transform it more
-  if (options.format === 'heatmap') {
-    return {
-      dataFrame: mergeHeatmapFrames(transformToHistogramOverTime(dataFrame.sort(sortSeriesByLabel))),
-      traceResult
-    };
-  }
-
-  // Return matrix or vector result as DataFrame[]
-  return { dataFrame, traceResult };
-}
-
 function getDataLinks(options: ExemplarTraceIdDestination): DataLink[] {
   const dataLinks: DataLink[] = [];
 
@@ -364,104 +255,6 @@ function getDataLinks(options: ExemplarTraceIdDestination): DataLink[] {
     });
   }
   return dataLinks;
-}
-
-/**
- * Transforms matrix and vector result from Prometheus result to DataFrame
- */
-function transformToDataFrame(data: MatrixOrVectorResult, options: TransformOptions): DataFrame {
-  const { name, labels } = createLabelInfo(data.metric, options);
-
-  const fields: Field[] = [];
-
-  if (isMatrixData(data)) {
-    const stepMs = options.step ? options.step * 1000 : NaN;
-    let baseTimestamp = options.start * 1000;
-    const dps: PromValue[] = [];
-
-    for (const value of data.values) {
-      let dpValue: number | null = parseSampleValue(value[1]);
-
-      if (isNaN(dpValue)) {
-        dpValue = null;
-      }
-
-      const timestamp = value[0] * 1000;
-      for (let t = baseTimestamp; t < timestamp; t += stepMs) {
-        dps.push([t, null]);
-      }
-      baseTimestamp = timestamp + stepMs;
-      dps.push([timestamp, dpValue]);
-    }
-
-    const endTimestamp = options.end * 1000;
-    for (let t = baseTimestamp; t <= endTimestamp; t += stepMs) {
-      dps.push([t, null]);
-    }
-    fields.push(getTimeField(dps, true));
-    fields.push(getValueField({ data: dps, parseValue: false, labels, displayNameFromDS: name }));
-  } else {
-    fields.push(getTimeField([data.value]));
-    fields.push(getValueField({ data: [data.value], labels, displayNameFromDS: name }));
-  }
-
-  return {
-    meta: options.meta,
-    refId: options.refId,
-    length: fields[0].values.length,
-    fields,
-    name,
-  };
-}
-
-function transformMetricDataToTable(md: MatrixOrVectorResult[], options: TransformOptions): DataFrame {
-  if (!md || md.length === 0) {
-    return {
-      meta: options.meta,
-      refId: options.refId,
-      length: 0,
-      fields: [],
-    };
-  }
-
-  const valueText = options.responseListLength > 1 || options.valueWithRefId ? `Value #${options.refId}` : 'Value';
-
-  const timeField = getTimeField([]);
-  const metricFields = Object.keys(md.reduce((acc, series) => ({ ...acc, ...series.metric }), {}))
-    .sort()
-    .map((label) => {
-      // Labels have string field type, otherwise table tries to figure out the type which can result in unexpected results
-      // Only "le" label has a number field type
-      const numberField = label === HISTOGRAM_QUANTILE_LABEL_NAME;
-      return {
-        name: label,
-        config: { filterable: true },
-        type: numberField ? FieldType.number : FieldType.string,
-        values: [] as (string | number)[],
-      };
-    });
-  const valueField = getValueField({ data: [], valueName: valueText });
-
-  md.forEach((d) => {
-    if (isMatrixData(d)) {
-      d.values.forEach((val) => {
-        timeField.values.add(val[0] * 1000);
-        metricFields.forEach((metricField) => metricField.values.add(getLabelValue(d.metric, metricField.name)));
-        valueField.values.add(parseSampleValue(val[1]));
-      });
-    } else {
-      timeField.values.add(d.value[0] * 1000);
-      metricFields.forEach((metricField) => metricField.values.add(getLabelValue(d.metric, metricField.name)));
-      valueField.values.add(parseSampleValue(d.value[1]));
-    }
-  });
-
-  return {
-    meta: options.meta,
-    refId: options.refId,
-    length: timeField.values.length,
-    fields: [timeField, ...metricFields, valueField],
-  };
 }
 
 function getLabelValue(metric: PromMetric, label: string): string | number {
@@ -508,24 +301,6 @@ function getValueField({
     labels,
     values: data.map<string | number>((val) => (parseValue ? parseSampleValue(val[1]) : val[1])),
   };
-}
-
-function createLabelInfo(labels: { [key: string]: string }, options: TransformOptions) {
-  const legendFormat = options?.legendFormat
-  if (legendFormat && legendFormat !== LegendFormatMode.Auto) {
-    const title = renderLegendFormat(getTemplateSrv().replace(legendFormat, options?.scopedVars), labels);
-    return { name: title, labels };
-  }
-
-  if (legendFormat === LegendFormatMode.Auto && Object.keys(labels).length === 1) {
-    return { name: Object.values(labels)[0], labels }
-  }
-
-  const { __name__, ...labelsWithoutName } = labels;
-  const labelPart = formatLabels(labelsWithoutName);
-  let title = `${__name__ ?? ''}${labelPart}`;
-
-  return { name: title || options.query, labels: labelsWithoutName };
 }
 
 export function getOriginalMetricName(labelData: { [key: string]: string }) {

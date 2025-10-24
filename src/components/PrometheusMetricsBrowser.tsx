@@ -18,7 +18,7 @@
 
 import { css, cx } from '@emotion/css';
 import React, { ChangeEvent } from 'react';
-import { FixedSizeList } from 'react-window';
+import { List } from 'react-window';
 
 import { GrafanaTheme } from '@grafana/data';
 import {
@@ -513,21 +513,20 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
                 />
               </div>
               <div role="list" className={styles.valueListWrapper}>
-                <FixedSizeList
-                  height={Math.min(450, metricCount * LIST_ITEM_SIZE)}
-                  itemCount={metricCount}
-                  itemSize={LIST_ITEM_SIZE}
-                  itemKey={(i) => (metrics!.values as FacettableValue[])[i].name}
-                  width={300}
+                <List
+                  defaultHeight={Math.min(450, metricCount * LIST_ITEM_SIZE)}
+                  rowCount={metricCount}
+                  rowHeight={LIST_ITEM_SIZE}
+                  style={{ width: '300px' }}
                   className={styles.valueList}
-                >
-                  {({ index, style }) => {
+                  rowProps={{}}
+                  rowComponent={({ index, style }) => {
                     const value = metrics?.values?.[index];
                     if (!value) {
                       return null;
                     }
                     return (
-                      <div style={style}>
+                      <div style={style} key={(metrics!.values as FacettableValue[])[index].name}>
                         <PromLabel
                           name={metrics!.name}
                           value={value?.name}
@@ -539,7 +538,8 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
                       </div>
                     );
                   }}
-                </FixedSizeList>
+                >
+                </List>
               </div>
             </div>
           </div>
@@ -602,21 +602,20 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
                         onClick={this.onClickLabel}
                       />
                     </div>
-                    <FixedSizeList
-                      height={Math.min(200, LIST_ITEM_SIZE * (label.values?.length || 0))}
-                      itemCount={label.values?.length || 0}
-                      itemSize={28}
-                      itemKey={(i) => (label.values as FacettableValue[])[i].name}
-                      width={200}
+                    <List
+                      defaultHeight={Math.min(200, LIST_ITEM_SIZE * (label.values?.length || 0))}
+                      rowCount={label.values?.length || 0}
+                      rowHeight={28}
+                      style={{ width: '200px' }}
                       className={styles.valueList}
-                    >
-                      {({ index, style }) => {
+                      rowProps={{}}
+                      rowComponent={({ index, style }) => {
                         const value = label.values?.[index];
                         if (!value) {
                           return null;
                         }
                         return (
-                          <div style={style}>
+                          <div style={style} key={(label.values as FacettableValue[])[index].name}>
                             <PromLabel
                               name={label.name}
                               value={value?.name}
@@ -627,7 +626,8 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
                           </div>
                         );
                       }}
-                    </FixedSizeList>
+                    >
+                    </List>
                   </div>
                 ))}
               </div>

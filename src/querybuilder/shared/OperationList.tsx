@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { DragDropContext, Droppable, DropResult, DroppableProvided } from '@atlaskit/pragmatic-drag-and-drop-react-beautiful-dnd-migration';
 import { css } from '@emotion/css';
 import React, { useState } from 'react';
-import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useMountedState, usePrevious } from 'react-use';
 
 import { DataSourceApi, GrafanaTheme2 } from '@grafana/data';
@@ -114,7 +114,7 @@ export function OperationList<T extends QueryWithOperations>({
               droppableId="sortable-field-mappings"
               direction="horizontal"
             >
-              {(provided) => (
+              {(provided: DroppableProvided) => (
                 <div
                   className={styles.operationList}
                   ref={provided.innerRef}
@@ -137,7 +137,8 @@ export function OperationList<T extends QueryWithOperations>({
                       />
                     );
                   })}
-                  {provided.placeholder}
+                  {/*typecast to ReactNode, because the different versions of @types/react used in package and datasource*/}
+                  {provided.placeholder as unknown as React.ReactNode}
                 </div>
               )}
             </Droppable>
