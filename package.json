@@ -5,6 +5,7 @@
   "scripts": {
     "build": "webpack -c ./webpack.config.ts --env production",
     "dev": "webpack -w -c ./webpack.config.ts --env development",
+    "typecheck": "webpack -c ./webpack.config.ts --env development --env typecheck-only",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --collectCoverage",
