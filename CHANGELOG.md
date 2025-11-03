@@ -3,6 +3,7 @@
 ## tip
 
 * BUGFIX: fix an issue where the `Prettify query` action caused the refId to be deleted. See [#397](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/397).
+* BUGFIX: fix 'auto' legend labels. Now only the label value is displayed if there is only one label. See [#407](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/407).
 
 ## v0.19.5
 

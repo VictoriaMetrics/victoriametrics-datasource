@@ -17,6 +17,7 @@ const (
 	rangeQueryPath          = "/api/v1/query_range"
 	legendFormatAuto        = "__auto"
 	metricsName             = "__name__"
+	legendName              = "name"
 	instantQueryDefaultStep = 5 * time.Minute
 )
 
@@ -171,6 +172,9 @@ func labelsToString(labels data.Labels) string {
 	for label, value := range labels {
 		if label == metricsName {
 			continue
+		}
+		if len(labels) == 1 {
+			return value
 		}
 		labelStrings = append(labelStrings, fmt.Sprintf("%s=%q", label, value))
 	}

@@ -268,6 +268,15 @@ func Test_labelsToString(t *testing.T) {
 	}
 	f(o)
 
+	// with single label
+	o = opts{
+		labels: data.Labels{
+			"job": "vmstorage-maas",
+		},
+		want: `vmstorage-maas`,
+	}
+	f(o)
+
 	// set of labels
 	o = opts{
 		labels: data.Labels{
