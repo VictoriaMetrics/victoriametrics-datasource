@@ -268,6 +268,15 @@ func Test_labelsToString(t *testing.T) {
 	}
 	f(o)
 
+	// with single label
+	o = opts{
+		labels: data.Labels{
+			"job": "vmstorage-maas",
+		},
+		want: `vmstorage-maas`,
+	}
+	f(o)
+
 	// set of labels
 	o = opts{
 		labels: data.Labels{
@@ -370,7 +379,7 @@ func TestQuery_parseLegend(t *testing.T) {
 			"job": "vmstorage-maas",
 		},
 		expr: "sum(vm_http_request_total)",
-		want: "{job=\"vmstorage-maas\"}",
+		want: "vmstorage-maas",
 	}
 	f(o)
 
