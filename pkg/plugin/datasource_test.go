@@ -62,6 +62,11 @@ func TestDatasourceQueryRequest(t *testing.T) {
 			if err != nil {
 				t.Fatalf("error write reposne: %s", err)
 			}
+		case 8:
+			_, err := w.Write([]byte(`{"status":"success","data":{"resultType":"matrix","result":[{"metric":{"__name__":"ingress_nginx_request_qps","status":"100"},"values":[[1670324477.542,"1"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"500"},"values":[[1670324477.542,"2"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"200"},"values":[[1670324477.542,"3"]]}]}}`))
+			if err != nil {
+				t.Fatalf("error write reposne: %s", err)
+			}
 		}
 	})
 
@@ -252,7 +257,6 @@ func TestDatasourceQueryRequest(t *testing.T) {
 							"refId": "A",
 							"instant": true,
 							"range": false,
-							"interval": "10s",
 							"intervalMs": 7777,
 							"timeInterval": "",
 							"expr": "sum(ingress_nginx_request_qps)",
@@ -292,6 +296,77 @@ func TestDatasourceQueryRequest(t *testing.T) {
 		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
 		data.NewFrame("sum(ingress_nginx_request_qps)",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}).SetConfig(&data.FieldConfig{Interval: 7777}),
+			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "200"}, []float64{3}),
+		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
+	}
+
+	for j := range expected {
+		q.addMetadataToMultiFrame(expected[j])
+	}
+	for i := range response.Frames {
+		q.addMetadataToMultiFrame(response.Frames[i])
+	}
+
+	for i, frame := range response.Frames {
+		d, err := frame.MarshalJSON()
+		if err != nil {
+			t.Fatalf("error marshal response frames %s", err)
+		}
+		exd, err := expected[i].MarshalJSON()
+		if err != nil {
+			t.Fatalf("error marshal expected frames %s", err)
+		}
+
+		if !bytes.Equal(d, exd) {
+			t.Fatalf("unexpected metric %s want %s", d, exd)
+		}
+	}
+
+	// 8 - test time field config with interval 10s
+	queryJSON = []byte(`{
+							"refId": "A",
+							"instant": true,
+							"range": false,
+							"interval": "10s",
+							"intervalMs": 7777,
+							"timeInterval": "",
+							"expr": "sum(ingress_nginx_request_qps)",
+							"legendFormat": "__auto"
+						 }`)
+
+	if err := json.Unmarshal(queryJSON, &q); err != nil {
+		t.Fatalf("error parse query %s", err)
+	}
+	rsp, gotErr = ds.QueryData(ctx, &backend.QueryDataRequest{
+		PluginContext: pluginCtx,
+		Queries: []backend.DataQuery{
+			{
+				RefID:     "A",
+				QueryType: rangeQueryPath,
+				JSON:      queryJSON,
+			},
+		},
+	})
+	if gotErr != nil {
+		t.Fatalf("unexpected %s", gotErr)
+	}
+
+	response = rsp.Responses["A"]
+	if len(response.Frames) != 3 {
+		t.Fatalf("expected 2 metrics got %d in %+v", len(response.Frames), response.Frames)
+	}
+
+	expected = []*data.Frame{
+		data.NewFrame("sum(ingress_nginx_request_qps)",
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}).SetConfig(&data.FieldConfig{Interval: 10 * 1000}),
+			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "100"}, []float64{1}),
+		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
+		data.NewFrame("sum(ingress_nginx_request_qps)",
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}).SetConfig(&data.FieldConfig{Interval: 10 * 1000}),
+			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "500"}, []float64{2}),
+		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
+		data.NewFrame("sum(ingress_nginx_request_qps)",
+			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1670324477, 542*1e6)}).SetConfig(&data.FieldConfig{Interval: 10 * 1000}),
 			data.NewField(data.TimeSeriesValueFieldName, data.Labels{"__name__": "ingress_nginx_request_qps", "status": "200"}, []float64{3}),
 		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: matrix}}),
 	}

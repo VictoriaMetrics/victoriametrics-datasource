@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix an issue where `Min step` > `Min interval` causes an empty graph. See [#377](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/377).
+
 ## v0.19.6
 
 * BUGFIX: fix an issue where the `Prettify query` action caused the refId to be deleted. See [#397](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/397).

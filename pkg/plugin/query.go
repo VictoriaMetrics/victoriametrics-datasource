@@ -56,6 +56,7 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 	}
 
 	step := q.calculateStep(minInterval)
+	q.IntervalMs = step.Milliseconds()
 	expr := replaceTemplateVariable(q.Expr, q.BackendQueryInterval, step, originalQueryInterval, q.TimeInterval, timerange)
 
 	if expr == "" {
