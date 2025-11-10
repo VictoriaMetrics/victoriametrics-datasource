@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.19.7
+
 * BUGFIX: fix an issue where `Min step` > `Min interval` causes an empty graph. See [#377](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/377).
 
 ## v0.19.6
