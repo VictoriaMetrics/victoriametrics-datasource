@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { Draggable } from '@atlaskit/pragmatic-drag-and-drop-react-beautiful-dnd-migration';
 import { cx } from '@emotion/css';
 import React from 'react';
-import { Draggable } from 'react-beautiful-dnd';
 
 import { DataSourceApi } from '@grafana/data';
 import { Button, Icon, Tooltip, useStyles2 } from '@grafana/ui';

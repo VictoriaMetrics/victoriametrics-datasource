@@ -18,7 +18,7 @@
 
 import { css } from '@emotion/css';
 import React, { useCallback, useState } from 'react';
-import Highlighter from 'react-highlight-words';
+import HighlighterComponent,{ HighlighterProps } from 'react-highlight-words';
 
 import { SelectableValue, toOption, GrafanaTheme2 } from '@grafana/data';
 import { Select, FormatOptionLabelMeta, useStyles2, InlineField, InlineFieldRow } from '@grafana/ui';
@@ -26,6 +26,9 @@ import { Select, FormatOptionLabelMeta, useStyles2, InlineField, InlineFieldRow 
 import { EditorField, EditorFieldGroup } from '../../components/QueryEditor';
 import { escapeMetricNameSpecialCharacters } from "../../language_utils";
 import { PromVisualQuery } from '../types';
+
+// typecast to fix compatibility issues with the React types
+const Highlighter = HighlighterComponent as React.ComponentType<HighlighterProps>;
 
 // We are matching words split with space
 const splitSeparator = ' ';
