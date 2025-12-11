@@ -55,6 +55,7 @@ export interface PromOptions extends DataSourceJsonData {
   exemplarTraceIdDestinations?: ExemplarTraceIdDestination[];
   withTemplates?: WithTemplate[];
   limitMetrics?: LimitMetrics;
+  autocompleteSettings?: AutocompleteSettings;
   enableSecureSocksProxy?: boolean;
 }
 
@@ -66,6 +67,10 @@ export type LimitMetrics = {
   maxTagKeys?: number;
   maxTagValues?: number;
   maxSeries?: number;
+};
+
+export type AutocompleteSettings = {
+  useOptimizedLabelsApi?: boolean;
 };
 
 export type ExemplarTraceIdDestination = {

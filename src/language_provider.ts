@@ -557,6 +557,65 @@ export default class PromQlLanguageProvider extends LanguageProvider {
    * @param withName
    */
   fetchSeriesLabels = async (name: string, withName?: boolean): Promise<Record<string, string[]>> => {
+    if (this.datasource.useOptimizedLabelsApi()) {
+      try {
+        return await this.fetchSeriesLabelsOptimized(name, withName);
+      } catch (error) {
+        // Fallback to legacy /api/v1/series if optimized API fails
+        return await this.fetchSeriesLabelsLegacy(name, withName);
+      }
+    }
+    return await this.fetchSeriesLabelsLegacy(name, withName);
+  };
+
+  /**
+   * Optimized version using /api/v1/labels and /api/v1/label/{key}/values endpoints
+   * This is more efficient for high-cardinality metrics
+   */
+  fetchSeriesLabelsOptimized = async (name: string, withName?: boolean): Promise<Record<string, string[]>> => {
+    const unescapedName = name.replace(/\\(.)/g, '$1');
+    const interpolatedName = this.datasource.interpolateString(unescapedName);
+    const range = this.datasource.getAdjustedInterval(this.timeRange);
+
+    // Cache key for optimized API
+    const cacheParams = new URLSearchParams({
+      'match[]': interpolatedName,
+      start: roundSecToMin(parseInt(range.start, 10)).toString(),
+      end: roundSecToMin(parseInt(range.end, 10)).toString(),
+      withName: withName ? 'true' : 'false',
+      optimized: 'true',
+    });
+    const cacheKey = `/api/v1/labels?${cacheParams.toString()}`;
+
+    let value = this.labelsCache.get(cacheKey);
+    if (value) {
+      return value;
+    }
+
+    // Step 1: Get label names using /api/v1/labels with match[]
+    const labelNames = await this.fetchSeriesLabelsMatch(interpolatedName);
+
+    // Step 2: Get values for each label using /api/v1/label/{key}/values with match[]
+    const result: Record<string, string[]> = {};
+    const labelsToFetch = withName ? labelNames : labelNames.filter((l) => l !== '__name__');
+
+    await Promise.all(
+      labelsToFetch.map(async (labelName) => {
+        const values = await this.fetchSeriesValuesWithMatch(labelName, interpolatedName, this.timeRange);
+        if (values.length > 0) {
+          result[labelName] = values;
+        }
+      })
+    );
+
+    this.labelsCache.set(cacheKey, result);
+    return result;
+  };
+
+  /**
+   * Legacy version using /api/v1/series endpoint
+   */
+  fetchSeriesLabelsLegacy = async (name: string, withName?: boolean): Promise<Record<string, string[]>> => {
     const unescapedName = name.replace(/\\(.)/g, '$1')
     const interpolatedName = this.datasource.interpolateString(unescapedName);
     const range = this.datasource.getTimeRangeParams();
