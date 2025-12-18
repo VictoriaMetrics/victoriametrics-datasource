@@ -26,6 +26,7 @@ import { InlineField, InlineSwitch, AlertingSettings, DataSourceHttpSettings } f
 
 import { PromOptions } from '../types';
 
+import { AutocompleteSettings } from "./AutocompleteSettings";
 import { AzureAuthSettings } from './AzureAuthSettings';
 import { hasCredentials, setDefaultCredentials, resetCredentials } from './AzureCredentialsConfig';
 import { HelpfulLinks } from "./HelpfulLinks";
@@ -72,6 +73,8 @@ export const ConfigEditor = (props: Props) => {
       <PromSettings {...props}/>
 
       <LimitsSettings {...props}/>
+
+      <AutocompleteSettings {...props}/>
 
       {config.featureToggles['secureSocksDSProxyEnabled' as keyof FeatureToggles] && gte(config.buildInfo.version, '10.0.0') && (
         <>

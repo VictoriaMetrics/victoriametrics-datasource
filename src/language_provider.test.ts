@@ -15,6 +15,7 @@ describe('Language completion provider', () => {
     interpolateString: (string: string) => string,
     hasLabelsMatchAPISupport: () => false,
     getLimitMetrics: () => 0,
+    useOptimizedLabelsApi: () => false,
   } as unknown as PrometheusDatasource;
 
   describe('fetchSeries', () => {
@@ -264,6 +265,7 @@ describe('Language completion provider', () => {
         getTimeRangeParams: () => ({ start: '0', end: '1' }),
         interpolateString: (string: string) => string,
         getLimitMetrics: () => 0,
+        useOptimizedLabelsApi: () => false,
       } as unknown as PrometheusDatasource;
       const instance = new LanguageProvider(datasources);
       const value = Plain.deserialize('metric{}');
@@ -298,6 +300,7 @@ describe('Language completion provider', () => {
         getTimeRangeParams: () => ({ start: '0', end: '1' }),
         interpolateString: (string: string) => string,
         getLimitMetrics: () => 0,
+        useOptimizedLabelsApi: () => false,
       } as unknown as PrometheusDatasource;
       const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('{job1="foo",job2!="foo",job3=~"foo",__name__="metric",}');

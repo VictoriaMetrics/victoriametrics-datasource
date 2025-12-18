@@ -55,7 +55,7 @@ import PrometheusMetricFindQuery from './metric_find_query';
 import { getInitHints, getQueryHints } from './query_hints';
 import { getOriginalMetricName, transformV2 } from './result_transformer';
 import { getTimeSrv, TimeSrv } from './services/TimeSrv';
-import { ExemplarTraceIdDestination, LimitMetrics, PromOptions, PromQuery, PromQueryType } from './types';
+import { AutocompleteSettings, ExemplarTraceIdDestination, LimitMetrics, PromOptions, PromQuery, PromQueryType } from './types';
 import { utf8Support, wrapUtf8Filters } from './utf8_support';
 import { PrometheusVariableSupport } from './variables';
 
@@ -87,6 +87,7 @@ export class PrometheusDatasource
   rulerEnabled: boolean;
   withTemplates: WithTemplate[];
   limitMetrics: LimitMetrics;
+  autocompleteSettings: AutocompleteSettings;
 
   constructor(
     instanceSettings: DataSourceInstanceSettings<PromOptions>,
@@ -117,6 +118,8 @@ export class PrometheusDatasource
     this.exemplarsAvailable = false;
     this.withTemplates = instanceSettings.jsonData.withTemplates ?? [];
     this.limitMetrics = instanceSettings.jsonData.limitMetrics ?? {};
+    this.autocompleteSettings = instanceSettings.jsonData.autocompleteSettings ?? {};
+
     this.annotations = {
       QueryEditor: AnnotationQueryEditor,
       processEvents: this.processEvents,
@@ -381,14 +384,26 @@ export class PrometheusDatasource
   async getTagKeys(options?: any) {
     if (options?.series) {
       // Get tags for the provided series only
-      const seriesLabels: Array<Record<string, string[]>> = await Promise.all(
-        options.series.map((series: string) => this.languageProvider.fetchSeriesLabels(series))
-      );
-      // Combines tags from all options.series provided
-      let tags: string[] = [];
-      seriesLabels.map((value) => (tags = tags.concat(Object.keys(value))));
-      const uniqueLabels = [...new Set(tags)];
-      return uniqueLabels.map((value: any) => ({ text: value }));
+      if (this.useOptimizedLabelsApi()) {
+        // Use optimized /api/v1/labels endpoint with match[] parameter
+        const labelNames = await Promise.all(
+          options.series.map((series: string) => this.languageProvider.fetchSeriesLabelsMatch(series))
+        );
+        // Combine unique labels from all series
+        const allLabels = labelNames.flat();
+        const uniqueLabels = [...new Set(allLabels)];
+        return uniqueLabels.map((value: string) => ({ text: value }));
+      } else {
+        // Legacy: use /api/v1/series endpoint
+        const seriesLabels: Array<Record<string, string[]>> = await Promise.all(
+          options.series.map((series: string) => this.languageProvider.fetchSeriesLabels(series))
+        );
+        // Combines tags from all options.series provided
+        let tags: string[] = [];
+        seriesLabels.map((value) => (tags = tags.concat(Object.keys(value))));
+        const uniqueLabels = [...new Set(tags)];
+        return uniqueLabels.map((value: any) => ({ text: value }));
+      }
     } else {
       // Get all tags
       const limit = this.getLimitMetrics('maxTagKeys');
@@ -498,6 +513,10 @@ export class PrometheusDatasource
 
   getLimitMetrics(key: keyof LimitMetrics): number {
     return this.limitMetrics[key] || 0;
+  }
+
+  useOptimizedLabelsApi(): boolean {
+    return this.autocompleteSettings?.useOptimizedLabelsApi ?? true;
   }
 
   getOriginalMetricName(labelData: { [key: string]: string }) {
