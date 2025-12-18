@@ -119,7 +119,7 @@ export class PrometheusDatasource
     this.withTemplates = instanceSettings.jsonData.withTemplates ?? [];
     this.limitMetrics = instanceSettings.jsonData.limitMetrics ?? {};
     this.autocompleteSettings = instanceSettings.jsonData.autocompleteSettings ?? {};
-    console.log('instanceSettings.jsonData.autocompleteSettings', instanceSettings.jsonData.autocompleteSettings);
+
     this.annotations = {
       QueryEditor: AnnotationQueryEditor,
       processEvents: this.processEvents,
