@@ -62,5 +62,7 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Build
+        env:
+          GRAFANA_ACCESS_POLICY_TOKEN: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
         run: |
           make vm-plugin-check
