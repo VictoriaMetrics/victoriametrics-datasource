@@ -33,7 +33,7 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@v4
         with:
-          node-version: v4.11.1
+          node-version: v24.11.1
 
       - name: Install all dependencies
         run: yarn install
