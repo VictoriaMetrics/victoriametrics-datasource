@@ -1,10 +1,12 @@
+import * as emotionPlugin from '@emotion/eslint-plugin';
+import { fixupPluginRules } from "@eslint/compat";
 import { defineConfig } from 'eslint/config';
-import grafanaConfig from '@grafana/eslint-config/flat.js';
-import emotion from '@emotion/eslint-plugin';
-import lodash from 'eslint-plugin-lodash';
-import jest from 'eslint-plugin-jest';
 import importPlugin from 'eslint-plugin-import';
+import jest from 'eslint-plugin-jest';
+import lodash from 'eslint-plugin-lodash';
 import unusedImports from 'eslint-plugin-unused-imports';
+
+import grafanaConfig from '@grafana/eslint-config/flat.js';
 
 export default defineConfig([
   {
@@ -64,7 +66,7 @@ export default defineConfig([
   ...grafanaConfig,
   {
     plugins: {
-      '@emotion': emotion,
+      '@emotion': fixupPluginRules(emotionPlugin),
       lodash: lodash,
       jest: jest,
       import: importPlugin,
