@@ -49,6 +49,7 @@ export class User implements Omit<CurrentUserInternal, 'lightTheme'> {
   analytics: AnalyticsSettings;
   fiscalYearStartMonth: number;
   authenticatedBy: string;
+  regionalFormat: string;
 
   constructor() {
     this.id = 0;
@@ -76,6 +77,7 @@ export class User implements Omit<CurrentUserInternal, 'lightTheme'> {
       identifier: '',
     };
     this.authenticatedBy = '';
+    this.regionalFormat = '';
 
     if (config1.bootData.user) {
       extend(this, config1.bootData.user);

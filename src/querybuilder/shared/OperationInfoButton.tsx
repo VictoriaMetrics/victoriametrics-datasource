@@ -53,6 +53,7 @@ export const OperationInfoButton = React.memo<Props>(({ def, operation }) => {
         size="sm"
         variant="secondary"
         fill="text"
+        aria-label="Show operation description"
       />
       {visible && (
         <Portal>
@@ -66,6 +67,7 @@ export const OperationInfoButton = React.memo<Props>(({ def, operation }) => {
                 fill="text"
                 variant="secondary"
                 title="Remove operation"
+                aria-label="Remove operation"
               />
             </div>
             <div
