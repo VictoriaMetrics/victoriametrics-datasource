@@ -1,6 +1,6 @@
+const http = require('http');
 const path = require('path');
 const WebSocket = require('ws');
-const http = require('http');
 
 class RspackLiveReloadPlugin {
   constructor(options = {}) {

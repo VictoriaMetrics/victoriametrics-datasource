@@ -1,106 +1,142 @@
-import * as emotionPlugin from '@emotion/eslint-plugin';
-import { fixupPluginRules } from "@eslint/compat";
+import stylistic from '@stylistic/eslint-plugin';
 import { defineConfig } from 'eslint/config';
-import importPlugin from 'eslint-plugin-import';
+import grafanaEslintConfig from '@grafana/eslint-config/flat.js';
+import react from 'eslint-plugin-react';
 import jest from 'eslint-plugin-jest';
 import lodash from 'eslint-plugin-lodash';
-import unusedImports from 'eslint-plugin-unused-imports';
-
-import grafanaConfig from '@grafana/eslint-config/flat.js';
+import deprecation from 'eslint-plugin-deprecation';
+import prettier from 'eslint-config-prettier';
+import unusedImports from "eslint-plugin-unused-imports";
+import * as emotionPlugin from '@emotion/eslint-plugin';
+import { fixupPluginRules } from "@eslint/compat";
+import importPlugin from 'eslint-plugin-import';
 
 export default defineConfig([
-  {
-    ignores: [
-      '**/.git',
-      '**/.github',
-      '**/.yarn',
-      '**/build',
-      '**/compiled',
-      '**/data',
-      '**/deployment_tools_config.json',
-      '**/devenv',
-      '**/dist',
-      'e2e/tmp',
-      '**/node_modules',
-      '**/pkg',
-      'public/lib/monaco',
-      'scripts/grafana-server/tmp',
-      '**/vendor',
-      '**/*.gen.ts',
-      'public/locales/_build/',
-      'public/locales/**/*.js',
-      'packages/grafana-ui/src/components/Icon/iconBundle.ts',
-      'src/components/monaco-query-field/monaco-completion-provider/situation.ts',
-      '**/logs',
-      '**/*.log',
-      '**/npm-debug.log*',
-      '**/yarn-debug.log*',
-      '**/yarn-error.log*',
-      '**/node_modules/',
-      '**/pids',
-      '**/*.pid',
-      '**/*.seed',
-      '**/*.pid.lock',
-      '**/lib-cov',
-      '**/coverage',
-      '**/bin/',
-      '**/dist/',
-      '**/victoriametrics-datasource/',
-      '**/plugins/',
-      '**/artifacts/',
-      '**/work/',
-      '**/ci/',
-      '**/e2e-results/',
-      'packages/lezer-metricsql/src/parser.js',
-      'packages/lezer-metricsql/src/parser.terms.js',
-      '**/.idea',
-      '**/.vscode',
-      '**/.npm',
-      '**/.eslintcache',
-      'cypress/report.json',
-      'cypress/videos',
-      '**/.cache',
-      '**/gocache-for-docker',
-    ],
-  },
-  ...grafanaConfig,
-  {
-    plugins: {
-      '@emotion': fixupPluginRules(emotionPlugin),
-      lodash: lodash,
-      jest: jest,
-      import: importPlugin,
-      'unused-imports': unusedImports,
-    },
-
-    rules: {
-      'unused-imports/no-unused-imports': 'error',
-      'react/prop-types': 'off',
-      '@emotion/jsx-import': 'error',
-      'object-curly-spacing': [2, 'always'],
-      'lodash/import-scope': [2, 'member'],
-      'jest/no-focused-tests': 'error',
-      '@typescript-eslint/array-type': 0,
-
-      'import/order': [
-        'error',
-        {
-          groups: [['builtin', 'external'], 'internal', 'parent', 'sibling', 'index'],
-          'newlines-between': 'always',
-
-          alphabetize: {
-            order: 'asc',
+      grafanaEslintConfig,
+      prettier,
+      {
+        ignores: [
+          '**/node_modules/**',
+          '**/dist/**',
+          '**/build/**',
+          '**/coverage/**',
+          '**/.yarn/**',
+          '**/.cache/**',
+          '**/.config/**',
+          '**/vendor/**',
+          '**/pkg/**',
+          '**/plugins/**',
+          '**/bin/**',
+          '**/*.min.js',
+          '.prettierrc.js',
+          'webpack.config.ts',
+          'jest.config.js',
+          'jest-setup.js',
+        ],
+      },
+      {
+        files: ['**/*.{ts,tsx,js,jsx}'],
+        plugins: {
+          'react': react,
+          'jest': jest,
+          'lodash': lodash,
+          'deprecation': deprecation,
+          'unused-imports': unusedImports,
+          '@emotion': fixupPluginRules(emotionPlugin),
+          'import': importPlugin,
+          '@stylistic': stylistic,
+        },
+        languageOptions: {
+          parserOptions: {
+            ecmaVersion: 'latest',
+            sourceType: 'module',
+            ecmaFeatures: {
+              jsx: true,
+            },
+            project: './tsconfig.json',
+          },
+          globals: {
+            // Browser globals
+            window: 'readonly',
+            document: 'readonly',
+            navigator: 'readonly',
+            console: 'readonly',
+            // Node globals
+            process: 'readonly',
+            __dirname: 'readonly',
+            __filename: 'readonly',
+            module: 'readonly',
+            require: 'readonly',
           },
         },
-      ],
 
-      'no-redeclare': 'off',
-      '@typescript-eslint/no-redeclare': ['error'],
-    },
 
-    settings: {
-      'import/internal-regex': '^(src/)|(@grafana)',
-      'import/external-module-folders': ['node_modules', '.yarn'],
-    },
-  },
-]);
+        rules: {
+          'react-hooks/rules-of-hooks': 'error',
+          'react-hooks/exhaustive-deps': 'warn',
+          '@typescript-eslint/no-explicit-any': 'warn',
+          "unused-imports/no-unused-imports": "error",
+          '@typescript-eslint/no-unused-vars': ['warn', {
+            argsIgnorePattern: '^_',
+            varsIgnorePattern: '^_'
+          }],
+          'no-console': ['warn', { allow: ['warn', 'error'] }],
+          "react/prop-types": "off",
+          "@emotion/jsx-import": "error",
+          "object-curly-spacing": [2, "always"],
+          "lodash/import-scope": [2, "member"],
+          "jest/no-focused-tests": "error",
+          "@typescript-eslint/array-type": 0,
+          "no-useless-escape": 0,
+          "no-prototype-builtins": 0,
+          '@stylistic/indent': ['error', 2, {
+            'SwitchCase': 1,
+            'FunctionDeclaration': { 'parameters': 'first' },
+            'FunctionExpression': { 'parameters': 'first' },
+            'CallExpression': { 'arguments': 1 },
+            'ObjectExpression': 'first',
+            'ignoredNodes': [
+              'TSTypeAnnotation *',
+            ],
+          }],
+          '@stylistic/jsx-max-props-per-line': ['error', {
+            maximum: 1,
+            when: 'multiline'
+          }],
+          '@stylistic/jsx-first-prop-new-line': ['error', 'multiline-multiprop'],
+          '@stylistic/jsx-closing-bracket-location': ['error', 'tag-aligned'],
+          "import/order": [
+            "error",
+            {
+              "groups": [["builtin", "external"], "internal", "parent", "sibling", "index"],
+              'pathGroups': [
+                {
+                  pattern: '@grafana/**',
+                  group: 'external',
+                  position: 'after'
+                }
+              ],
+              'pathGroupsExcludedImportTypes': ['react', 'react-dom'],
+              "newlines-between": "always",
+              "alphabetize": { "order": "asc" }
+            }
+          ],
+
+          // Use typescript's no-redeclare for compatibility with overrides
+          "no-redeclare": "off",
+          "@typescript-eslint/no-redeclare": ["error"]
+        },
+      },
+
+      {
+        files: ['**/*.test.{ts,tsx,js,jsx}', '**/__tests__/**'],
+        plugins: {
+          jest,
+        },
+        rules: {
+          ...jest.configs.recommended.rules,
+          '@typescript-eslint/no-explicit-any': 'off',
+        },
+      },
+    ]
+);
