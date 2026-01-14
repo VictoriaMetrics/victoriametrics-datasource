@@ -1067,27 +1067,25 @@ describe('processTargetV2', () => {
     const result = datasource.processTargetV2(target, request);
 
     expect(result).toHaveLength(2);
-    if (Array.isArray(result)) {
-      expect(result[0]).toEqual({
-        expr: 'metric_name',
-        queryType: 'timeSeriesQuery',
-        requestId: '2A',
-        utcOffsetSec: 0,
-        refId: 'A',
-        range: true,
-        instant: false,
-      });
-      expect(result[1]).toEqual({
-        expr: 'metric_name',
-        queryType: 'timeSeriesQuery',
-        requestId: '2A',
-        utcOffsetSec: 0,
-        refId: 'A_instant',
-        range: false,
-        instant: true,
-        format: undefined,
-      });
-    }
+    expect((result as any[])[0]).toEqual({
+      expr: 'metric_name',
+      queryType: 'timeSeriesQuery',
+      requestId: '2A',
+      utcOffsetSec: 0,
+      refId: 'A',
+      range: true,
+      instant: false,
+    });
+    expect((result as any[])[1]).toEqual({
+      expr: 'metric_name',
+      queryType: 'timeSeriesQuery',
+      requestId: '2A',
+      utcOffsetSec: 0,
+      refId: 'A_instant',
+      range: false,
+      instant: true,
+      format: undefined,
+    });
   });
 
   it('should handle case where no matching template is found', () => {

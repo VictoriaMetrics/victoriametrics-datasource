@@ -136,10 +136,12 @@ export const PromQueryBuilder = React.memo<Props>((props) => {
       {showExplain && (
         <OperationExplainedBox
           stepNumber={1}
-          title={<RawQuery
-            query={`${query.metric} ${promQueryModeller.renderLabels(query.labels)}`}
-            lang={lang}
-          />}
+          title={
+            <RawQuery
+              query={`${query.metric} ${promQueryModeller.renderLabels(query.labels)}`}
+              lang={lang}
+            />
+          }
         >
           {EXPLAIN_LABEL_FILTER_CONTENT}
         </OperationExplainedBox>

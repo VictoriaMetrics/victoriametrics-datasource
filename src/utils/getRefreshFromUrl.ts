@@ -28,12 +28,12 @@ interface Args {
 // try to find the first refresh interval that matches the minRefreshInterval (min_refresh_interval in ini)
 // or just take the first interval.
 export function getRefreshFromUrl({
-                                    urlRefresh,
-                                    currentRefresh,
-                                    isAllowedIntervalFn,
-                                    minRefreshInterval,
-                                    refreshIntervals = defaultIntervals,
-                                  }: Args): string | boolean | undefined {
+  urlRefresh,
+  currentRefresh,
+  isAllowedIntervalFn,
+  minRefreshInterval,
+  refreshIntervals = defaultIntervals,
+}: Args): string | boolean | undefined {
   if (!urlRefresh) {
     return currentRefresh;
   }

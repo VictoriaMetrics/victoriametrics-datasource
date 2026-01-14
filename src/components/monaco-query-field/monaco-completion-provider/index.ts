@@ -79,11 +79,11 @@ export function getCompletionProvider(
     const range =
       word != null
         ? monaco.Range.lift({
-            startLineNumber: position.lineNumber,
-            endLineNumber: position.lineNumber,
-            startColumn: word.startColumn,
-            endColumn: word.endColumn,
-          })
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: word.startColumn,
+          endColumn: word.endColumn,
+        })
         : monaco.Range.fromPositions(position);
     // documentation says `position` will be "adjusted" in `getOffsetAt`
     // i don't know what that means, to be sure i clone it
@@ -109,9 +109,9 @@ export function getCompletionProvider(
         range,
         command: item.triggerOnInsert
           ? {
-              id: 'editor.action.triggerSuggest',
-              title: '',
-            }
+            id: 'editor.action.triggerSuggest',
+            title: '',
+          }
           : undefined,
       }));
       return { suggestions };

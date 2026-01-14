@@ -2,7 +2,7 @@ import { toUtc, AbsoluteTimeRange, TimeRange } from '@grafana/data';
 
 import { getShiftedTimeRange, getZoomedTimeRange } from './timePicker';
 
-export const setup = (options?: { direction?: number; range?: TimeRange }) => {
+const setup = (options?: { direction?: number; range?: TimeRange }) => {
   const defaultOptions = {
     range: {
       from: toUtc('2019-01-01 10:00:00'),

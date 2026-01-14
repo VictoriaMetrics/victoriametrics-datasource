@@ -90,11 +90,13 @@ describe("Prettyfied Query", () => {
       });
 
       act(() => {
-        render(<PrettifyQuery
-          datasource={datasource}
-          query={{ expr: got, refId: 'A' }}
-          onChange={mockCallback}
-        />);
+        render(
+          <PrettifyQuery
+            datasource={datasource}
+            query={{ expr: got, refId: 'A' }}
+            onChange={mockCallback}
+          />
+        ); 
       });
 
       const btn = await screen.findByRole('button');

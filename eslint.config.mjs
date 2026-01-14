@@ -28,6 +28,7 @@ export default defineConfig([
           '**/plugins/**',
           '**/bin/**',
           '**/*.min.js',
+          '**/packages/**',
           '.prettierrc.js',
           'webpack.config.ts',
           'jest.config.js',
