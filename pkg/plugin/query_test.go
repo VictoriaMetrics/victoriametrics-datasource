@@ -197,6 +197,25 @@ func TestQuery_getQueryURL(t *testing.T) {
 	}
 	f(o)
 
+	// end interval rounded to ceil
+	o = opts{
+		RefID:      "1",
+		Instant:    false,
+		Range:      true,
+		Expr:       "rate(rpc_durations_seconds_count[$__rate_interval])",
+		Interval:   "30s",
+		IntervalMs: 30000,
+		getTimeRange: func() TimeRange {
+			from := time.Unix(1670226733, 0)
+			to := from.Add(time.Millisecond * 100)
+			return TimeRange{From: from, To: to}
+		},
+		rawURL:  "http://127.0.0.1:8428",
+		wantErr: false,
+		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670226734&query=rate%28rpc_durations_seconds_count%5B2m0s%5D%29&start=1670226733&step=30s",
+	}
+	f(o)
+
 	// minStep is $__rate_interval and time range 1 hour
 	o = opts{
 		RefID:      "1",

@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"fmt"
+	"math"
 	"net/url"
 	"regexp"
 	"sort"
@@ -78,7 +79,8 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 			}
 		}
 		values.Add("start", strconv.FormatInt(q.TimeRange.From.Unix(), 10))
-		values.Add("end", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
+		entTime := int64(math.Ceil(float64(q.TimeRange.To.UnixMilli()) / 1000))
+		values.Add("end", strconv.FormatInt(entTime, 10))
 	} else {
 		u, err = newURL(rawURL, instantQueryPath, false)
 		if err != nil {

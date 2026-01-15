@@ -3,6 +3,7 @@
 ## tip
 
 * BUGFIX: fix [React Router vulnerability to XSS via Open Redirects](https://github.com/advisories/GHSA-2w69-qvjg-hvjx) by updating the transitive dependencies: grafana packages. See [pr #426](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/426).
+* BUGFIX: fix time range rounding for the small intervals. See [#310](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/310).
 
 ## v0.19.7
 
