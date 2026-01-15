@@ -187,15 +187,15 @@ export const getValueFromEventItem = (eventItem: SyntheticEvent<HTMLInputElement
 
 const onChangeHandler =
   (key: keyof PromOptions, options: Props['options'], onOptionsChange: Props['onOptionsChange']) =>
-  (eventItem: SyntheticEvent<HTMLInputElement> | SelectableValue<string>) => {
-    onOptionsChange({
-      ...options,
-      jsonData: {
-        ...options.jsonData,
-        [key]: getValueFromEventItem(eventItem),
-      },
-    });
-  };
+    (eventItem: SyntheticEvent<HTMLInputElement> | SelectableValue<string>) => {
+      onOptionsChange({
+        ...options,
+        jsonData: {
+          ...options.jsonData,
+          [key]: getValueFromEventItem(eventItem),
+        },
+      });
+    };
 
 const getDefaultOptions = (options: Props['options']): Props['options'] => {
   return options.jsonData.httpMethod ? options : {

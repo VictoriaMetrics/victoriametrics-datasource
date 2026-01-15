@@ -144,34 +144,34 @@ export type Label = {
 
 export type Situation =
   | {
-      type: 'IN_FUNCTION';
-    }
+    type: 'IN_FUNCTION';
+  }
   | {
-      type: 'AT_ROOT';
-    }
+    type: 'AT_ROOT';
+  }
   | {
-      type: 'EMPTY';
-    }
+    type: 'EMPTY';
+  }
   | {
-      type: 'IN_DURATION';
-    }
+    type: 'IN_DURATION';
+  }
   | {
-      type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME';
-      metricName?: string;
-      otherLabels: Label[];
-    }
+    type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME';
+    metricName?: string;
+    otherLabels: Label[];
+  }
   | {
-      type: 'IN_GROUPING';
-      metricName: string;
-      otherLabels: Label[];
-    }
+    type: 'IN_GROUPING';
+    metricName: string;
+    otherLabels: Label[];
+  }
   | {
-      type: 'IN_LABEL_SELECTOR_WITH_LABEL_NAME';
-      metricName?: string;
-      labelName: string;
-      betweenQuotes: boolean;
-      otherLabels: Label[];
-    };
+    type: 'IN_LABEL_SELECTOR_WITH_LABEL_NAME';
+    metricName?: string;
+    labelName: string;
+    betweenQuotes: boolean;
+    otherLabels: Label[];
+  };
 
 type Resolver = {
   path: NodeTypeId[];

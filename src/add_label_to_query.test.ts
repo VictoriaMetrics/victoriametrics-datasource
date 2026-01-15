@@ -97,7 +97,7 @@ describe('addLabelToQuery()', () => {
       'max by (id, name, type) (my_metric{type=~"foo|bar|baz-test", bar="baz"}) * on(id) group_right(id, type, name) sum by (id) (my_metric{bar="baz"}) * 1000'
     );
   });
-  it('should not add ad-hoc filter to labels in label list provided with the group modifier', () => {
+  it('should to labels in label list provided with the group modifier', () => {
     expect(addLabelToQuery('rate(my_metric[${__range_s}s])', 'bar', 'baz')).toBe(
       'rate(my_metric{bar="baz"}[${__range_s}s])'
     );

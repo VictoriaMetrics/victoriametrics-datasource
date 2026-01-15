@@ -285,12 +285,12 @@ type ValueFieldOptions = {
 };
 
 function getValueField({
-                         data,
-                         valueName = TIME_SERIES_VALUE_FIELD_NAME,
-                         parseValue = true,
-                         labels,
-                         displayNameFromDS,
-                       }: ValueFieldOptions): MutableField {
+  data,
+  valueName = TIME_SERIES_VALUE_FIELD_NAME,
+  parseValue = true,
+  labels,
+  displayNameFromDS,
+}: ValueFieldOptions): MutableField {
   return {
     name: valueName,
     type: FieldType.number,

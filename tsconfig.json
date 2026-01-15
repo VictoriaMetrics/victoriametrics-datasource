@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "jsx": "react",
-    "baseUrl": "/",
+    "baseUrl": "./src",
     "outDir": "victoriametrics-datasource",
-    "rootDirs": ["/"],
+    "rootDirs": ["./src"],
     "allowJs": true,
     "strict": true,
     "resolveJsonModule": true,
@@ -11,5 +11,5 @@
     "incremental": true,
     "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
   },
-  "extends": "./.config/tsconfig.json",
+  "extends": "./.config/tsconfig.json"
 }

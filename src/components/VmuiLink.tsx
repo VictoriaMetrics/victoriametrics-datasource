@@ -130,7 +130,8 @@ const VmuiLink: FC<Props> = ({
   return (
     <a
       href={textUtil.sanitizeUrl(href)}
-      target="_blank" rel="noopener noreferrer"
+      target="_blank"
+      rel="noopener noreferrer"
       style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
     >
       <IconButton

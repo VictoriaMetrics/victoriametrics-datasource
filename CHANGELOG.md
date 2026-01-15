@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix [React Router vulnerability to XSS via Open Redirects](https://github.com/advisories/GHSA-2w69-qvjg-hvjx) by updating the transitive dependencies: grafana packages. See [pr #426](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/426).
+
 ## v0.19.7
 
 * BUGFIX: fix an issue where `Min step` > `Min interval` causes an empty graph. See [#377](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/377).

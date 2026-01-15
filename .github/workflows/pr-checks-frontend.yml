@@ -33,13 +33,13 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@v4
         with:
-          node-version: v20.18.2
+          node-version: v24.11.1
 
       - name: Install all dependencies
         run: yarn install
 
       - name: Run tests
-        run: yarn test
+        run: yarn test:ci
 
       - name: Run typecheck
         run: yarn typecheck

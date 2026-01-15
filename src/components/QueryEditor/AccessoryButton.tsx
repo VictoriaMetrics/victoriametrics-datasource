@@ -22,7 +22,7 @@ import React from 'react';
 import { GrafanaTheme2 } from '@grafana/data';
 import { useTheme2, stylesFactory, Button, ButtonProps } from '@grafana/ui';
 
-interface AccessoryButtonProps extends ButtonProps {}
+type AccessoryButtonProps = ButtonProps;
 
 export const AccessoryButton: React.FC<AccessoryButtonProps> = ({ className, ...props }) => {
   const theme = useTheme2();

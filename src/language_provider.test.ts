@@ -151,7 +151,7 @@ describe('Language completion provider', () => {
   });
 
   describe('metric suggestions', () => {
-    it('returns history, metrics and function suggestions in an uknown context ', async () => {
+    it('returns history, metrics and function suggestions in an uknown context', async () => {
       const instance = new LanguageProvider(datasource);
       instance.metrics = ['foo', 'bar'];
       const history: Array<HistoryItem<PromQuery>> = [

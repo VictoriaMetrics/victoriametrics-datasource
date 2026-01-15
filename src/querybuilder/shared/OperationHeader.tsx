@@ -72,6 +72,7 @@ export const OperationHeader = React.memo<Props>(
                 fill="text"
                 variant="secondary"
                 title="Click to view alternative operations"
+                aria-label="View alternative operations"
               />
               <OperationInfoButton def={def} operation={operation} />
               <Button
@@ -81,6 +82,7 @@ export const OperationHeader = React.memo<Props>(
                 fill="text"
                 variant="secondary"
                 title="Remove operation"
+                aria-label="Remove operation"
               />
             </div>
           </>

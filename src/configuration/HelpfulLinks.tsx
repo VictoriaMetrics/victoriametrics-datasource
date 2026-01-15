@@ -28,10 +28,13 @@ export const HelpfulLinks = () => (
     <h3 className="page-heading">Helpful links</h3>
     <div className="gf-form-group gf-form-inline markdown-html">
       {tips.map(t => (
-        <a key={t.url}  className="gf-form-label gf-form-label--dashlink"
-           href={t.url}
-           target="_blank"
-           rel="docs noreferrer">
+        <a
+          key={t.url}
+          className="gf-form-label gf-form-label--dashlink"
+          href={t.url}
+          target="_blank"
+          rel="docs noreferrer"
+        >
           {t.title}
         </a>
       ))}
