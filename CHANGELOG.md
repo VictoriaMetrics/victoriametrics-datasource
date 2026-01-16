@@ -2,6 +2,8 @@
 
 ## tip
 
+* FEATURE: add a setting to the datasource configuration to choose the api for label names and label values. If enabled, the datasource will use the `/api/v1/labels` for the label names and the `/api/v1/label/<label>/values` endpoint for label values. See [#187](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/187).
+
 * BUGFIX: fix [React Router vulnerability to XSS via Open Redirects](https://github.com/advisories/GHSA-2w69-qvjg-hvjx) by updating the transitive dependencies: grafana packages. See [pr #426](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/426).
 * BUGFIX: fix time range rounding for the small intervals. See [#310](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/310).
 
