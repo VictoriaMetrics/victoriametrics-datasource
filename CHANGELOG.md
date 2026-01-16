@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.20.1
+
 * DEPENDENCY: upgrade `grafana-plugin-sdk-go`.
 
 ## v0.20.0
