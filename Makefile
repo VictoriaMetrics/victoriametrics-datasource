@@ -32,7 +32,7 @@ frontend-build: frontend-package-base-image
 		--env YARN_CACHE_FOLDER="/$(PLUGIN_ID)/.cache" \
 		--env GRAFANA_ACCESS_POLICY_TOKEN=$$GRAFANA_ACCESS_POLICY_TOKEN \
 		--entrypoint=/bin/bash \
-		frontent-builder-image -c "yarn preinstall && yarn install --omit=dev && yarn build && mkdir -p plugins/$(PLUGIN_ID) && cp -r dist/* plugins/$(PLUGIN_ID)/ && yarn sign --distDir plugins/$(PLUGIN_ID)"
+		frontent-builder-image -c "yarn preinstall && yarn install --omit=dev && yarn build && yarn sign --distDir plugins/$(PLUGIN_ID)"
 
 vm-backend-plugin-build: mage
 	$(MAGE) -v
