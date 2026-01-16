@@ -2,6 +2,8 @@
 
 ## tip
 
+* DEPENDENCY: upgrade `grafana-plugin-sdk-go`.
+
 ## v0.20.0
 
 * FEATURE: add a setting to the datasource configuration to choose the api for label names and label values. If enabled, the datasource will use the `/api/v1/labels` for the label names and the `/api/v1/label/<label>/values` endpoint for label values. See [#187](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/187).
