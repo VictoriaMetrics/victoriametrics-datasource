@@ -117,11 +117,7 @@ export const PromQueryBuilder = React.memo<Props>((props) => {
   return (
     <>
       <EditorRow>
-        <MetricSelect
-          query={query}
-          onChange={onChange}
-          onGetMetrics={onGetMetrics}
-        />
+        <MetricSelect query={query} onChange={onChange} onGetMetrics={onGetMetrics} datasource={datasource} />
         <LabelFilters
           labelsFilters={query.labels}
           onChange={onChangeLabels}
@@ -136,12 +132,7 @@ export const PromQueryBuilder = React.memo<Props>((props) => {
       {showExplain && (
         <OperationExplainedBox
           stepNumber={1}
-          title={
-            <RawQuery
-              query={`${query.metric} ${promQueryModeller.renderLabels(query.labels)}`}
-              lang={lang}
-            />
-          }
+          title={<RawQuery query={`${query.metric} ${promQueryModeller.renderLabels(query.labels)}`} lang={lang} />}
         >
           {EXPLAIN_LABEL_FILTER_CONTENT}
         </OperationExplainedBox>

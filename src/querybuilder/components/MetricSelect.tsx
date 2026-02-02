@@ -18,14 +18,17 @@
 
 import { css } from '@emotion/css';
 import React, { useCallback, useState } from 'react';
-import HighlighterComponent,{ HighlighterProps } from 'react-highlight-words';
+import HighlighterComponent, { HighlighterProps } from 'react-highlight-words';
 
-import { SelectableValue, toOption, GrafanaTheme2 } from '@grafana/data';
-import { Select, FormatOptionLabelMeta, useStyles2, InlineField, InlineFieldRow } from '@grafana/ui';
+import { GrafanaTheme2, SelectableValue, toOption } from '@grafana/data';
+import { Button, FormatOptionLabelMeta, InlineField, InlineFieldRow, Select, useStyles2 } from '@grafana/ui';
 
 import { EditorField, EditorFieldGroup } from '../../components/QueryEditor';
-import { escapeMetricNameSpecialCharacters } from "../../language_utils";
+import { PrometheusDatasource } from '../../datasource';
+import { escapeMetricNameSpecialCharacters } from '../../language_utils';
 import { PromVisualQuery } from '../types';
+
+import { MetricsExplorerModal } from './MetricsExplorerModal';
 
 // typecast to fix compatibility issues with the React types
 const Highlighter = HighlighterComponent as React.ComponentType<HighlighterProps>;
@@ -37,15 +40,17 @@ export interface Props {
   query: PromVisualQuery;
   onChange: (query: PromVisualQuery) => void;
   onGetMetrics: () => Promise<SelectableValue[]>;
+  datasource: PrometheusDatasource;
   variableEditor?: boolean;
 }
 
-export function MetricSelect({ query, onChange, onGetMetrics, variableEditor }: Props) {
+export function MetricSelect({ query, onChange, onGetMetrics, datasource, variableEditor }: Props) {
   const styles = useStyles2(getStyles);
   const [state, setState] = useState<{
     metrics?: Array<SelectableValue<any>>;
     isLoading?: boolean;
   }>({});
+  const [showMetricsExplorer, setShowMetricsExplorer] = useState(false);
 
   const customFilterOption = useCallback((option: SelectableValue<any>, searchQuery: string) => {
     const label = option.label ?? option.value;
@@ -84,54 +89,85 @@ export function MetricSelect({ query, onChange, onGetMetrics, variableEditor }: 
     setState({ isLoading: true });
     const metrics = await onGetMetrics();
     setState({ metrics, isLoading: undefined });
-  }
+  };
 
   const handleChange = ({ value }: SelectableValue) => {
     if (value) {
       onChange({ ...query, metric: escapeMetricNameSpecialCharacters(value) });
     }
-  }
+  };
+
+  const handleMetricExplorerSelect = useCallback((metric: string) => {
+    onChange({ ...query, metric: escapeMetricNameSpecialCharacters(metric) });
+  },
+  [onChange, query]
+  );
 
   const metricSelect = () => (
-    <Select
-      inputId="vm-metric-select"
-      className={styles.select}
-      value={query.metric ? toOption(query.metric) : undefined}
-      placeholder="Select metric"
-      allowCustomValue
-      formatOptionLabel={formatOptionLabel}
-      filterOption={customFilterOption}
-      onOpenMenu={handleOpenMenu}
-      isLoading={state.isLoading}
-      options={state.metrics}
-      onChange={handleChange}
-    />
-  )
+    <div className={styles.selectWrapper}>
+      <Select
+        inputId="vm-metric-select"
+        className={styles.select}
+        value={query.metric ? toOption(query.metric) : undefined}
+        placeholder="Select metric"
+        allowCustomValue
+        formatOptionLabel={formatOptionLabel}
+        filterOption={customFilterOption}
+        onOpenMenu={handleOpenMenu}
+        isLoading={state.isLoading}
+        options={state.metrics}
+        onChange={handleChange}
+      />
+      <Button
+        aria-label={"Open metrics explorer"}
+        icon={"book-open"}
+        variant={"secondary"}
+        tooltip={"Open metrics explorer"}
+        onClick={() => setShowMetricsExplorer(true)}
+        className={styles.metricExplorerButton}
+      />
+    </div>
+  );
 
   return (
-    variableEditor ? (
-      <InlineFieldRow>
-        <InlineField
-          label="Metric"
-          labelWidth={20}
-          tooltip={<div>Optional: returns a list of label values for the label name in the specified metric.</div>}
-        >
-          {metricSelect()}
-        </InlineField>
-      </InlineFieldRow>
-    ) : (
-      <EditorFieldGroup>
-        <EditorField label="Metric">
-          {metricSelect()}
-        </EditorField>
-      </EditorFieldGroup>
-    )
+    <>
+      {variableEditor ? (
+        <InlineFieldRow>
+          <InlineField
+            label="Metric"
+            labelWidth={20}
+            tooltip={<div>Optional: returns a list of label values for the label name in the specified metric.</div>}
+          >
+            {metricSelect()}
+          </InlineField>
+        </InlineFieldRow>
+      ) : (
+        <EditorFieldGroup>
+          <EditorField label="Metric">{metricSelect()}</EditorField>
+        </EditorFieldGroup>
+      )}
+      <MetricsExplorerModal
+        isOpen={showMetricsExplorer}
+        onClose={() => setShowMetricsExplorer(false)}
+        datasource={datasource}
+        onSelectMetric={handleMetricExplorerSelect}
+        selectedMetric={query.metric}
+      />
+    </>
   );
 }
 
 const getStyles = (theme: GrafanaTheme2) => ({
   select: css`
     min-width: 125px;
+  `,
+  selectWrapper: css`
+    display: flex;
+    align-items: center;
+  `,
+  metricExplorerButton: css`
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   `,
   highlight: css`
     label: select__match-highlight;
