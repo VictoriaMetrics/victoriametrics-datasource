@@ -174,12 +174,12 @@ export function MetricsLabelsSection({
   }, [datasource, query, withTemplateVariableOptions]);
 
   const handleGetLabelNames = (forLabel: Partial<QueryBuilderLabelFilter>) => {
-    return withTemplateVariableOptions(onGetLabelNames(forLabel))
-  }
+    return withTemplateVariableOptions(onGetLabelNames(forLabel));
+  };
 
   const handleGetLabelValues = (forLabel: Partial<QueryBuilderLabelFilter>) => {
-    return withTemplateVariableOptions(onGetLabelValues(forLabel))
-  }
+    return withTemplateVariableOptions(onGetLabelValues(forLabel));
+  };
 
   return (
     <>
@@ -187,6 +187,7 @@ export function MetricsLabelsSection({
         query={query}
         onChange={onChange}
         onGetMetrics={onGetMetrics}
+        datasource={datasource}
         variableEditor={variableEditor}
       />
       <LabelFilters

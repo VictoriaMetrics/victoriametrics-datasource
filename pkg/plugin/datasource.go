@@ -55,6 +55,7 @@ func NewDatasource() *Datasource {
 	mux.HandleFunc("/api/v1/labels", ds.VMAPIQuery)
 	mux.HandleFunc("/api/v1/query", ds.VMAPIQuery)
 	mux.HandleFunc("/api/v1/series", ds.VMAPIQuery)
+	mux.HandleFunc("/api/v1/metadata", ds.VMAPIQuery)
 	mux.HandleFunc("/prettify-query", ds.VMAPIQuery)
 	mux.HandleFunc("/expand-with-exprs", ds.VMAPIQuery)
 	mux.HandleFunc("/api/v1/label/{key}/values", ds.VMAPIQuery)
