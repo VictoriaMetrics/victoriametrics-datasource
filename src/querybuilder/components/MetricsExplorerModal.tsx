@@ -86,7 +86,13 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
     }
   }, [isOpen, fetchMetadata]);
 
-  const setDebouncedNameFilter = useMemo(() => debounce(setNameFilter, DEBOUNCE_DELAY), [setNameFilter]);
+  const setDebouncedNameFilter = useMemo(() => debounce(setNameFilter, DEBOUNCE_DELAY), []);
+
+  useEffect(() => {
+    return () => {
+      setDebouncedNameFilter.cancel();
+    };
+  }, [setDebouncedNameFilter]);
 
   const transformMetadata = (data: MetadataApiResponse): MetricMetadata[] => {
     return Object.entries(data).flatMap(([name, entries]) =>
