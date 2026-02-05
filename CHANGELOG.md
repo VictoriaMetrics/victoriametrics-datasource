@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.21.0
+
 * FEATURE: add metrics metadata exploration to the query builder. The button with the book-open icon opens the metrics explorer modal, where the user can explore the metrics metadata. See [#417](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/417).
 
 ## v0.20.1
