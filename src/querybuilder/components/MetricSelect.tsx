@@ -28,7 +28,7 @@ import { PrometheusDatasource } from '../../datasource';
 import { escapeMetricNameSpecialCharacters } from '../../language_utils';
 import { PromVisualQuery } from '../types';
 
-import { MetricsExplorerModal } from './MetricsExplorerModal';
+import { MetricsExplorerModal } from './MetricsExplorerModal/MetricsExplorerModal';
 
 // typecast to fix compatibility issues with the React types
 const Highlighter = HighlighterComponent as React.ComponentType<HighlighterProps>;

@@ -6,7 +6,9 @@ import { CellProps, DefaultSortTypes } from 'react-table';
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
 import { Input, InteractiveTable, Modal, MultiSelect, Spinner, useStyles2 } from '@grafana/ui';
 
-import { PrometheusDatasource } from '../../datasource';
+import { PrometheusDatasource } from '../../../datasource';
+
+import { MetricMetadata, useFetchMetricsWithMetadata } from "./useFetchMetricsWithMetadata";
 
 export interface MetricsExplorerModalProps {
   isOpen: boolean;
@@ -14,20 +16,6 @@ export interface MetricsExplorerModalProps {
   datasource: PrometheusDatasource;
   onSelectMetric: (metric: string) => void;
   selectedMetric?: string;
-}
-
-interface MetricMetadata {
-  name: string;
-  type: string;
-  help: string;
-}
-
-interface MetadataApiResponse {
-  [metric: string]: Array<{
-    type: string;
-    help: string;
-    unit?: string;
-  }>;
 }
 
 type MetricMetadataColumn = {
@@ -41,12 +29,36 @@ const PAGE_SIZE = 40;
 const DEBOUNCE_DELAY = 300;
 
 const typeOptions = [
-  { label: 'Counter', value: 'counter', description: 'A cumulative metric that represents a single monotonically increasing counter whose value can only increase or be reset to zero on restart.' },
-  { label: 'Gauge', value: 'gauge', description: 'A metric that represents a single numerical value that can arbitrarily go up and down.' },
-  { label: 'Histogram', value: 'histogram', description: 'A histogram samples observations (usually things like request durations or response sizes) and counts them in configurable buckets.' },
-  { label: 'Summary', value: 'summary', description: 'A summary samples observations (usually things like request durations and response sizes) and can calculate configurable quantiles over a sliding time window.' },
-  { label: 'Unknown', value: 'unknown', description: 'These metrics have been given the type unknown in the metadata.' },
-  { label: 'No type', value: 'no_type', description: 'These metrics have no defined type in the metadata.' },
+  {
+    label: 'Counter',
+    value: 'counter',
+    description: 'A cumulative metric that represents a single monotonically increasing counter whose value can only increase or be reset to zero on restart.'
+  },
+  {
+    label: 'Gauge',
+    value: 'gauge',
+    description: 'A metric that represents a single numerical value that can arbitrarily go up and down.'
+  },
+  {
+    label: 'Histogram',
+    value: 'histogram',
+    description: 'A histogram samples observations (usually things like request durations or response sizes) and counts them in configurable buckets.'
+  },
+  {
+    label: 'Summary',
+    value: 'summary',
+    description: 'A summary samples observations (usually things like request durations and response sizes) and can calculate configurable quantiles over a sliding time window.'
+  },
+  {
+    label: 'Unknown',
+    value: 'unknown',
+    description: 'These metrics have been given the type unknown in the metadata.'
+  },
+  {
+    label: 'No type',
+    value: 'no_type',
+    description: 'These metrics have no defined type in the metadata.'
+  },
 ];
 
 export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
@@ -58,27 +70,9 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
 }) => {
   const styles = useStyles2(getStyles);
 
-  const [metrics, setMetrics] = useState<MetricMetadata[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [nameFilter, setNameFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState<string[]>([]);
-
-  const fetchMetadata = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await datasource.getRequest('api/v1/metadata');
-      const data: MetadataApiResponse = response.data || response;
-      const transformedData = transformMetadata(data);
-      setMetrics(transformedData);
-    } catch (err) {
-      setError('Failed to load metrics metadata');
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [datasource]);
+  const { fetchMetadata, metrics, isLoading, error } = useFetchMetricsWithMetadata(datasource);
 
   useEffect(() => {
     if (isOpen) {
@@ -94,30 +88,26 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
     };
   }, [setDebouncedNameFilter]);
 
-  const transformMetadata = (data: MetadataApiResponse): MetricMetadata[] => {
-    return Object.entries(data).flatMap(([name, entries]) =>
-      entries.map((entry) => ({
-        name,
-        type: entry.type,
-        help: entry.help,
-      }))
-    );
-  };
-
   const filteredMetrics = useMemo(() => {
     return metrics.filter((metric) => {
       const matchesName = metric.name.toLowerCase().includes(nameFilter.toLowerCase());
-      const matchesType = !typeFilter.length || typeFilter.includes(metric.type) || (typeFilter.includes('no_type') && !metric.type);
+      const matchesType =
+        !typeFilter.length
+        || typeFilter.includes(metric.type)
+        || (typeFilter.includes('no_type') && !metric.type);
       return matchesName && matchesType;
     });
   }, [metrics, nameFilter, typeFilter]);
 
-  const handleNameFilterChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setDebouncedNameFilter(e.target.value);
-  }, [setDebouncedNameFilter]);
+  const handleNameFilterChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setDebouncedNameFilter(e.target.value);
+    },
+    [setDebouncedNameFilter]
+  );
 
   const handleTypeFilterChange = useCallback((option: SelectableValue<string>[]) => {
-    const types = option.map(v => v.value).filter(Boolean) as string[];
+    const types = option.map((v) => v.value).filter(Boolean) as string[];
     setTypeFilter(types);
   }, []);
 
@@ -166,7 +156,6 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
         id: 'type',
         header: 'Type',
         cell: ({ row }: CellProps<MetricMetadata>) => <span className={styles.typeCell}>{row.original.type}</span>,
-        sortType: 'alphanumeric',
       },
       {
         id: 'help',
@@ -193,11 +182,7 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
     >
       <div className={styles.content}>
         <div className={styles.filters}>
-          <Input
-            placeholder="Filter by name"
-            onChange={handleNameFilterChange}
-            className={styles.nameFilter}
-          />
+          <Input placeholder="Filter by name" onChange={handleNameFilterChange} className={styles.nameFilter}/>
           <MultiSelect
             options={typeOptions}
             value={typeFilter}
