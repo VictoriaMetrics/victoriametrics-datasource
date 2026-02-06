@@ -8,7 +8,7 @@ import { Input, InteractiveTable, Modal, MultiSelect, Spinner, useStyles2 } from
 
 import { PrometheusDatasource } from '../../../datasource';
 
-import { MetricMetadata, useFetchMetricsWithMetadata } from "./useFetchMetricsWithMetadata";
+import { MetricMetadata, useFetchMetricsWithMetadata } from './useFetchMetricsWithMetadata';
 
 export interface MetricsExplorerModalProps {
   isOpen: boolean;
@@ -182,7 +182,7 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
     >
       <div className={styles.content}>
         <div className={styles.filters}>
-          <Input placeholder="Filter by name" onChange={handleNameFilterChange} className={styles.nameFilter}/>
+          <Input placeholder="Filter by name" onChange={handleNameFilterChange} className={styles.nameFilter} />
           <MultiSelect
             options={typeOptions}
             value={typeFilter}
@@ -200,7 +200,7 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
 
         {isLoading && (
           <div className={styles.centered}>
-            <Spinner/>
+            <Spinner />
           </div>
         )}
 
@@ -294,6 +294,8 @@ const getStyles = (theme: GrafanaTheme2) => ({
     flex: 1,
     minHeight: 0,
     overflow: 'hidden',
+    position: 'relative',
+    zIndex: 0,
   }),
   tableWrapper: css({
     flex: 1,
