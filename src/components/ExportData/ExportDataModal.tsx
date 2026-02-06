@@ -1,12 +1,13 @@
 import { css } from '@emotion/css';
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getDefaultTimeRange, GrafanaTheme2 } from '@grafana/data';
-import { Modal, RadioButtonGroup, Select, Input, Button, Field, useStyles2, Alert } from '@grafana/ui';
+import { Alert, Button, Field, Icon, Input, Modal, RadioButtonGroup, Select, Tooltip, useStyles2 } from '@grafana/ui';
 
+import { convertLDMLLayoutToGoTimeLayout, formatDescriptions } from "../../utils/convertLDMLLayoutToGoTimeLayout";
 import { downloadFile } from "../../utils/downloadFile";
 
-import { ExportDataModalProps, ExportFormat, TimestampFormat, ExportOptions } from './types';
+import { ExportDataModalProps, ExportFormat, ExportOptions, TimestampFormat } from './types';
 
 const formatOptions = [
   { label: 'JSON Line', value: 'json' as ExportFormat },
@@ -28,12 +29,33 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
   const [options, setOptions] = useState<ExportOptions>({
     format: 'json',
     timestampFormat: 'unix_s',
-    customLayout: '2006-01-02T15:04:05Z07:00',
+    customLayout: 'YYYY-MM-DDThh:mm:ss.SSSZ',
   });
+  const customLayoutDescription = useMemo(() => {
+    const helpText = Object.entries(formatDescriptions).reduce((acc, [key, value]) => {
+      acc += `${key}: ${value}\n`;
+      return acc;
+    }, '');
+    const helpTooltipContent = <pre>{helpText}</pre>
+    return (
+      <span>
+        Custom layout format
+        <Tooltip placement="top" content={helpTooltipContent} theme="info">
+          <Icon title={"Format"} name="info-circle" size="sm" width={16} height={16} />
+        </Tooltip>
+      </span>
+    );
+  }, [])
 
   const timeRange = panelData?.timeRange || getDefaultTimeRange();
   const start = timeRange.from.valueOf();
   const end = timeRange.to.valueOf();
+
+  useEffect(() => {
+    if (isOpen) {
+      setError(null);
+    }
+  }, [isOpen]);
 
   const handleExport = useCallback(async () => {
     setIsLoading(true);
@@ -43,6 +65,11 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
       const templateSrv = datasource.getTemplateSrv();
       const expr = templateSrv.replace(query.expr, panelData?.request?.scopedVars);
 
+      let customLayout = '';
+      if (options.timestampFormat === 'custom') {
+        customLayout = convertLDMLLayoutToGoTimeLayout(options.customLayout);
+      }
+
       const blob = await datasource.getResource(
         'export-data',
         {
@@ -51,7 +78,7 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
           end: end,
           format: options.format,
           timestampFormat: options.timestampFormat,
-          customLayout: options.timestampFormat === 'custom' ? options.customLayout : '',
+          customLayout: customLayout,
         },
         { responseType: 'blob' }
       );
@@ -99,11 +126,11 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
             </Field>
 
             {options.timestampFormat === 'custom' && (
-              <Field label="Custom layout" description="Go time format layout">
+              <Field label="Custom layout" description={customLayoutDescription}>
                 <Input
                   value={options.customLayout}
                   onChange={(e) => setOptions({ ...options, customLayout: e.currentTarget.value })}
-                  placeholder="2006-01-02T15:04:05Z07:00"
+                  placeholder="YYYY-MM-DDThh:mm:ss.SSSSSSSSSZ"
                 />
               </Field>
             )}
