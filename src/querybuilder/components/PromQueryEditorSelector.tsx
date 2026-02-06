@@ -161,6 +161,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
         />
         <PrettifyQuery query={query} datasource={datasource} onChange={onChange} />
         <VmuiLink query={query} datasource={datasource} panelData={data} dashboardUID={dashboardUID} />
+        <ExportDataButton query={query} datasource={datasource} panelData={data} />
         {app !== CoreApp.Explore && (
           <IconButton
             key='run'
