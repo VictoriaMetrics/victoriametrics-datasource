@@ -60,6 +60,7 @@ func NewDatasource() *Datasource {
 	mux.HandleFunc("/expand-with-exprs", ds.VMAPIQuery)
 	mux.HandleFunc("/api/v1/label/{key}/values", ds.VMAPIQuery)
 	mux.HandleFunc("/vmui", ds.VMUIQuery)
+	mux.HandleFunc("/export-data", ds.ExportData)
 	ds.CallResourceHandler = httpadapter.New(mux)
 
 	return &ds
@@ -449,6 +450,95 @@ func writeError(rw http.ResponseWriter, statusCode int, err error) {
 	_, err = rw.Write(b)
 	if err != nil {
 		log.DefaultLogger.Warn("Error writing response")
+	}
+}
+
+// ExportData proxies export request to VictoriaMetrics and streams response to client
+func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	pluginCxt := backend.PluginConfigFromContext(ctx)
+	di, err := d.getInstance(ctx, pluginCxt)
+	if err != nil {
+		d.logger.Error("Error loading datasource", "error", err)
+		writeError(rw, http.StatusInternalServerError, err)
+		return
+	}
+
+	// Parse query parameters
+	queryParams := req.URL.Query()
+	query := queryParams.Get("query")
+	startStr := queryParams.Get("start")
+	endStr := queryParams.Get("end")
+	format := queryParams.Get("format")                   // "json" or "csv"
+	timestampFormat := queryParams.Get("timestampFormat") // unix_s, unix_ms, unix_ns, rfc3339, custom
+	customLayout := queryParams.Get("customLayout")       // custom timestamp format
+
+	if query == "" {
+		writeError(rw, http.StatusBadRequest, fmt.Errorf("query parameter is required"))
+		return
+	}
+
+	var exportPath string
+	params := url.Values{}
+	params.Add("match[]", query)
+	if startStr != "" {
+		params.Add("start", startStr)
+	}
+	if endStr != "" {
+		params.Add("end", endStr)
+	}
+
+	if format == "csv" {
+		exportPath = "/api/v1/export/csv"
+		tsFormat := timestampFormat
+		if tsFormat == "" {
+			tsFormat = "unix_s"
+		}
+		if tsFormat == "custom" && customLayout != "" {
+			tsFormat = "custom:" + customLayout
+		}
+		// CSV format: metric_name, value, timestamp
+		params.Add("format", "__name__,__value__,__timestamp__:"+tsFormat)
+	} else {
+		exportPath = "/api/v1/export"
+	}
+
+	exportURL, err := newURL(di.url, exportPath, false)
+	if err != nil {
+		d.logger.Error("Error building export URL", "error", err)
+		writeError(rw, http.StatusInternalServerError, err)
+		return
+	}
+	exportURL.RawQuery = params.Encode()
+
+	vmReq, err := http.NewRequestWithContext(ctx, http.MethodGet, exportURL.String(), nil)
+	if err != nil {
+		d.logger.Error("Error creating VM request", "error", err)
+		writeError(rw, http.StatusInternalServerError, err)
+		return
+	}
+
+	resp, err := di.httpClient.Do(vmReq)
+	if err != nil {
+		d.logger.Error("Error executing VM request", "error", err)
+		writeError(rw, http.StatusBadGateway, err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		d.logger.Error("VM returned error", "status", resp.StatusCode, "body", string(body))
+		writeError(rw, resp.StatusCode, fmt.Errorf("VictoriaMetrics returned status %d: %s", resp.StatusCode, string(body)))
+		return
+	}
+
+	rw.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
+	rw.Header().Set("Content-Encoding", resp.Header.Get("Content-Encoding"))
+
+	rw.WriteHeader(http.StatusOK)
+	if _, err := io.Copy(rw, resp.Body); err != nil {
+		d.logger.Error("Error streaming response", "error", err)
 	}
 }
 
