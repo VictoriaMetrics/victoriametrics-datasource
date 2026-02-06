@@ -22,6 +22,7 @@ import { CoreApp, DataQueryRequest, LoadingState } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
 import { ConfirmModal, IconButton } from '@grafana/ui';
 
+import { ExportDataButton } from '../../components/ExportData';
 import PrettifyQuery from '../../components/PrettifyQuery';
 import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../components/QueryEditor';
 import VmuiLink from '../../components/VmuiLink';
