@@ -18,7 +18,7 @@ interface UpdateDatasourceResult {
 }
 
 export default ({ datasourceUID, dashboardUID }: UpdateDatasourceArgs) => {
-  const fetchDatasource = useCallback(async (method: 'GET' | 'PUT', data?: DataSourceInstanceSettings<PromOptions>) => {
+  const fetchDatasource = useCallback(async (method: "GET" | "PUT", data?: DataSourceInstanceSettings<PromOptions>) => {
     return await lastValueFrom(getBackendSrv().fetch({
       url: `/api/datasources/uid/${datasourceUID}`,
       method,
@@ -27,7 +27,7 @@ export default ({ datasourceUID, dashboardUID }: UpdateDatasourceArgs) => {
   }, [datasourceUID])
 
   const getDatasourceBody = useCallback(async (value: string) => {
-    const response = await fetchDatasource('GET')
+    const response = await fetchDatasource("GET")
     const data = response.data as DataSourceInstanceSettings<PromOptions>
     const withTemplates = data?.jsonData?.withTemplates || []
     const targetTemplate = withTemplates.find(t => t?.uid === dashboardUID)
@@ -48,7 +48,7 @@ export default ({ datasourceUID, dashboardUID }: UpdateDatasourceArgs) => {
 
   const updateDatasource = useCallback(async (value: string) => {
     const data = await getDatasourceBody(value)
-    const response = await fetchDatasource('PUT', data) as UpdateDatasourceResult
+    const response = await fetchDatasource("PUT", data) as UpdateDatasourceResult
     return response?.data?.datasource?.jsonData?.withTemplates || []
   }, [getDatasourceBody, fetchDatasource])
 

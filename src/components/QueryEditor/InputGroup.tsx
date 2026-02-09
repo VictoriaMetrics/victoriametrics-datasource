@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from '@emotion/css';
-import React from 'react';
+import { css } from "@emotion/css";
+import React from "react";
 
-import { useStyles2 } from '@grafana/ui';
+import { useStyles2 } from "@grafana/ui";
 
 interface InputGroupProps {
   children: React.ReactNode;
@@ -33,37 +33,37 @@ export const InputGroup: React.FC<InputGroupProps> = ({ children }) => {
 
 const getStyles = () => ({
   root: css({
-    display: 'flex',
+    display: "flex",
 
     // Style the direct children of the component
-    '> *': {
-      '&:not(:first-child)': {
+    "> *": {
+      "&:not(:first-child)": {
         // Negative margin hides the double-border on adjacent selects
         marginLeft: -1,
       },
 
-      '&:first-child': {
+      "&:first-child": {
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0,
       },
 
-      '&:last-child': {
+      "&:last-child": {
         borderTopLeftRadius: 0,
         borderBottomLeftRadius: 0,
       },
 
-      '&:not(:first-child):not(:last-child)': {
+      "&:not(:first-child):not(:last-child)": {
         borderRadius: 0,
       },
 
       //
-      position: 'relative',
+      position: "relative",
       zIndex: 1,
 
-      '&:hover': {
+      "&:hover": {
         zIndex: 2,
       },
-      '&:focus-within': {
+      "&:focus-within": {
         zIndex: 2,
       },
     },

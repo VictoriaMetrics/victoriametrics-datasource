@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from '@emotion/css';
-import React, { useState } from 'react';
-import { usePopperTooltip } from 'react-popper-tooltip';
+import { css } from "@emotion/css";
+import React, { useState } from "react";
+import { usePopperTooltip } from "react-popper-tooltip";
 
-import { GrafanaTheme2, renderMarkdown } from '@grafana/data';
-import { Button, Portal, useStyles2 } from '@grafana/ui';
+import { GrafanaTheme2, renderMarkdown } from "@grafana/data";
+import { Button, Portal, useStyles2 } from "@grafana/ui";
 
-import { FlexItem } from '../../components/QueryEditor';
+import { FlexItem } from "../../components/QueryEditor";
 
-import { QueryBuilderOperation, QueryBuilderOperationDef } from './types';
+import { QueryBuilderOperation, QueryBuilderOperationDef } from "./types";
 
 export interface Props {
   operation: QueryBuilderOperation;
@@ -36,12 +36,12 @@ export const OperationInfoButton = React.memo<Props>(({ def, operation }) => {
   const styles = useStyles2(getStyles);
   const [show, setShow] = useState(false);
   const { getTooltipProps, setTooltipRef, setTriggerRef, visible } = usePopperTooltip({
-    placement: 'top',
+    placement: "top",
     visible: show,
     offset: [0, 16],
     onVisibleChange: setShow,
     interactive: true,
-    trigger: ['click'],
+    trigger: ["click"],
   });
 
   return (
@@ -59,7 +59,7 @@ export const OperationInfoButton = React.memo<Props>(({ def, operation }) => {
         <Portal>
           <div ref={setTooltipRef} {...getTooltipProps()} className={styles.docBox}>
             <div className={styles.docBoxHeader}>
-              <span>{def.renderer(operation, def, '<expr>')}</span>
+              <span>{def.renderer(operation, def, "<expr>")}</span>
               <FlexItem grow={1} />
               <Button
                 icon="times"
@@ -81,16 +81,16 @@ export const OperationInfoButton = React.memo<Props>(({ def, operation }) => {
   );
 });
 
-OperationInfoButton.displayName = 'OperationDocs';
+OperationInfoButton.displayName = "OperationDocs";
 
 const getStyles = (theme: GrafanaTheme2) => {
   return {
     docBox: css({
-      overflow: 'hidden',
+      overflow: "hidden",
       background: theme.colors.background.primary,
       border: `1px solid ${theme.colors.border.strong}`,
       boxShadow: theme.shadows.z3,
-      maxWidth: '600px',
+      maxWidth: "600px",
       padding: theme.spacing(1),
       borderRadius: theme.shape.borderRadius(),
       zIndex: theme.zIndex.tooltip,
@@ -99,8 +99,8 @@ const getStyles = (theme: GrafanaTheme2) => {
       fontSize: theme.typography.h5.fontSize,
       fontFamily: theme.typography.fontFamilyMonospace,
       paddingBottom: theme.spacing(1),
-      display: 'flex',
-      alignItems: 'center',
+      display: "flex",
+      alignItems: "center",
     }),
     docBoxBody: css({
       // The markdown paragraph has a marginBottom this removes it
@@ -118,5 +118,5 @@ const getStyles = (theme: GrafanaTheme2) => {
   };
 };
 function getOperationDocs(def: QueryBuilderOperationDef, op: QueryBuilderOperation): string {
-  return renderMarkdown(def.explainHandler ? def.explainHandler(op, def) : def.documentation ?? 'no docs');
+  return renderMarkdown(def.explainHandler ? def.explainHandler(op, def) : def.documentation ?? "no docs");
 }

@@ -19,7 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-'use strict';
+"use strict";
 // import { languages } from "monaco-editor";
 // noinspection JSUnusedGlobalSymbols
 export const languageConfiguration = {
@@ -27,120 +27,120 @@ export const languageConfiguration = {
   wordPattern: /(-?\d*\.\d\w*)|([^`~!#%^&*()\-=+\[{\]}\\|;:'",.<>\/?\s]+)/g,
   // Not possible to make comments in PromQL syntax
   comments: {
-    lineComment: '#',
+    lineComment: "#",
   },
   brackets: [
-    ['{', '}'],
-    ['[', ']'],
-    ['(', ')'],
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"],
   ],
   autoClosingPairs: [
-    { open: '{', close: '}' },
-    { open: '[', close: ']' },
-    { open: '(', close: ')' },
+    { open: "{", close: "}" },
+    { open: "[", close: "]" },
+    { open: "(", close: ")" },
     { open: '"', close: '"' },
     { open: "'", close: "'" },
   ],
   surroundingPairs: [
-    { open: '{', close: '}' },
-    { open: '[', close: ']' },
-    { open: '(', close: ')' },
+    { open: "{", close: "}" },
+    { open: "[", close: "]" },
+    { open: "(", close: ")" },
     { open: '"', close: '"' },
     { open: "'", close: "'" },
-    { open: '<', close: '>' },
+    { open: "<", close: ">" },
   ],
   folding: {},
 };
 // PromQL Aggregation Operators
 // (https://prometheus.io/docs/prometheus/latest/querying/operators/#aggregation-operators)
 const aggregations = [
-  'sum',
-  'min',
-  'max',
-  'avg',
-  'group',
-  'stddev',
-  'stdvar',
-  'count',
-  'count_values',
-  'bottomk',
-  'topk',
-  'quantile',
+  "sum",
+  "min",
+  "max",
+  "avg",
+  "group",
+  "stddev",
+  "stdvar",
+  "count",
+  "count_values",
+  "bottomk",
+  "topk",
+  "quantile",
 ];
 // PromQL functions
 // (https://prometheus.io/docs/prometheus/latest/querying/functions/)
 const functions = [
-  'abs',
-  'absent',
-  'ceil',
-  'changes',
-  'clamp_max',
-  'clamp_min',
-  'day_of_month',
-  'day_of_week',
-  'days_in_month',
-  'delta',
-  'deriv',
-  'double_exponential_smoothing',
-  'exp',
-  'floor',
-  'histogram_quantile',
-  'histogram_avg',
-  'histogram_count',
-  'histogram_sum',
-  'histogram_fraction',
-  'histogram_stddev',
-  'histogram_stdvar',
+  "abs",
+  "absent",
+  "ceil",
+  "changes",
+  "clamp_max",
+  "clamp_min",
+  "day_of_month",
+  "day_of_week",
+  "days_in_month",
+  "delta",
+  "deriv",
+  "double_exponential_smoothing",
+  "exp",
+  "floor",
+  "histogram_quantile",
+  "histogram_avg",
+  "histogram_count",
+  "histogram_sum",
+  "histogram_fraction",
+  "histogram_stddev",
+  "histogram_stdvar",
   // Renamed as DoubleExponentialSmoothing with Prometheus v3.x
   // https://github.com/prometheus/prometheus/pull/14930
-  'holt_winters',
-  'hour',
-  'idelta',
-  'increase',
-  'irate',
-  'label_join',
-  'label_replace',
-  'ln',
-  'log2',
-  'log10',
-  'minute',
-  'month',
-  'predict_linear',
-  'rate',
-  'resets',
-  'round',
-  'scalar',
-  'sort',
-  'sort_desc',
-  'sqrt',
-  'time',
-  'timestamp',
-  'vector',
-  'year',
+  "holt_winters",
+  "hour",
+  "idelta",
+  "increase",
+  "irate",
+  "label_join",
+  "label_replace",
+  "ln",
+  "log2",
+  "log10",
+  "minute",
+  "month",
+  "predict_linear",
+  "rate",
+  "resets",
+  "round",
+  "scalar",
+  "sort",
+  "sort_desc",
+  "sqrt",
+  "time",
+  "timestamp",
+  "vector",
+  "year",
 ];
 // PromQL specific functions: Aggregations over time
 // (https://prometheus.io/docs/prometheus/latest/querying/functions/#aggregation_over_time)
 const aggregationsOverTime = [];
 for (let _i = 0, aggregations_1 = aggregations; _i < aggregations_1.length; _i++) {
   let agg = aggregations_1[_i];
-  aggregationsOverTime.push(agg + '_over_time');
+  aggregationsOverTime.push(agg + "_over_time");
 }
 // PromQL vector matching + the by and without clauses
 // (https://prometheus.io/docs/prometheus/latest/querying/operators/#vector-matching)
-const vectorMatching = ['on', 'ignoring', 'group_right', 'group_left', 'by', 'without'];
+const vectorMatching = ["on", "ignoring", "group_right", "group_left", "by", "without"];
 // Produce a regex matching elements : (elt1|elt2|...)
 const vectorMatchingRegex =
-  '(' +
+  "(" +
   vectorMatching.reduce(function (prev, curr) {
-    return prev + '|' + curr;
+    return prev + "|" + curr;
   }) +
-  ')';
+  ")";
 // PromQL Operators
 // (https://prometheus.io/docs/prometheus/latest/querying/operators/)
-const operators = ['+', '-', '*', '/', '%', '^', '==', '!=', '>', '<', '>=', '<=', 'and', 'or', 'unless'];
+const operators = ["+", "-", "*", "/", "%", "^", "==", "!=", ">", "<", ">=", "<=", "and", "or", "unless"];
 // PromQL offset modifier
 // (https://prometheus.io/docs/prometheus/latest/querying/basics/#offset-modifier)
-const offsetModifier = ['offset'];
+const offsetModifier = ["offset"];
 // Merging all the keywords in one list
 const keywords = aggregations
   .concat(functions)
@@ -150,8 +150,8 @@ const keywords = aggregations
 // noinspection JSUnusedGlobalSymbols
 export const language = {
   ignoreCase: false,
-  defaultToken: '',
-  tokenPostfix: '.promql',
+  defaultToken: "",
+  tokenPostfix: ".promql",
   keywords: keywords,
   operators: operators,
   vectorMatching: vectorMatchingRegex,
@@ -168,74 +168,74 @@ export const language = {
   tokenizer: {
     root: [
       // 'by', 'without' and vector matching
-      [/@vectorMatching\s*(?=\()/, 'type', '@clauses'],
+      [/@vectorMatching\s*(?=\()/, "type", "@clauses"],
       // labels
-      [/[a-z_]\w*(?=\s*(=|!=|=~|!~))/, 'tag'],
+      [/[a-z_]\w*(?=\s*(=|!=|=~|!~))/, "tag"],
       // comments
-      [/(^#.*$)/, 'comment'],
+      [/(^#.*$)/, "comment"],
       // all keywords have the same color
       [
         /[a-zA-Z_]\w*/,
         {
           cases: {
-            '@keywords': 'type',
-            '@default': 'identifier',
+            "@keywords": "type",
+            "@default": "identifier",
           },
         },
       ],
       // strings
-      [/"([^"\\]|\\.)*$/, 'string.invalid'],
-      [/'([^'\\]|\\.)*$/, 'string.invalid'],
-      [/"/, 'string', '@string_double'],
-      [/'/, 'string', '@string_single'],
-      [/`/, 'string', '@string_backtick'],
+      [/"([^"\\]|\\.)*$/, "string.invalid"],
+      [/'([^'\\]|\\.)*$/, "string.invalid"],
+      [/"/, "string", "@string_double"],
+      [/'/, "string", "@string_single"],
+      [/`/, "string", "@string_backtick"],
       // whitespace
-      { include: '@whitespace' },
+      { include: "@whitespace" },
       // delimiters and operators
-      [/[{}()\[\]]/, '@brackets'],
-      [/[<>](?!@symbols)/, '@brackets'],
+      [/[{}()\[\]]/, "@brackets"],
+      [/[<>](?!@symbols)/, "@brackets"],
       [
         /@symbols/,
         {
           cases: {
-            '@operators': 'delimiter',
-            '@default': '',
+            "@operators": "delimiter",
+            "@default": "",
           },
         },
       ],
       // numbers
-      [/\d+[smhdwy]/, 'number'],
-      [/\d*\d+[eE]([\-+]?\d+)?(@floatsuffix)/, 'number.float'],
-      [/\d*\.\d+([eE][\-+]?\d+)?(@floatsuffix)/, 'number.float'],
-      [/0[xX][0-9a-fA-F']*[0-9a-fA-F](@integersuffix)/, 'number.hex'],
-      [/0[0-7']*[0-7](@integersuffix)/, 'number.octal'],
-      [/0[bB][0-1']*[0-1](@integersuffix)/, 'number.binary'],
-      [/\d[\d']*\d(@integersuffix)/, 'number'],
-      [/\d(@integersuffix)/, 'number'],
+      [/\d+[smhdwy]/, "number"],
+      [/\d*\d+[eE]([\-+]?\d+)?(@floatsuffix)/, "number.float"],
+      [/\d*\.\d+([eE][\-+]?\d+)?(@floatsuffix)/, "number.float"],
+      [/0[xX][0-9a-fA-F']*[0-9a-fA-F](@integersuffix)/, "number.hex"],
+      [/0[0-7']*[0-7](@integersuffix)/, "number.octal"],
+      [/0[bB][0-1']*[0-1](@integersuffix)/, "number.binary"],
+      [/\d[\d']*\d(@integersuffix)/, "number"],
+      [/\d(@integersuffix)/, "number"],
     ],
     string_double: [
-      [/[^\\"]+/, 'string'],
-      [/@escapes/, 'string.escape'],
-      [/\\./, 'string.escape.invalid'],
-      [/"/, 'string', '@pop'],
+      [/[^\\"]+/, "string"],
+      [/@escapes/, "string.escape"],
+      [/\\./, "string.escape.invalid"],
+      [/"/, "string", "@pop"],
     ],
     string_single: [
-      [/[^\\']+/, 'string'],
-      [/@escapes/, 'string.escape'],
-      [/\\./, 'string.escape.invalid'],
-      [/'/, 'string', '@pop'],
+      [/[^\\']+/, "string"],
+      [/@escapes/, "string.escape"],
+      [/\\./, "string.escape.invalid"],
+      [/'/, "string", "@pop"],
     ],
     string_backtick: [
-      [/[^\\`$]+/, 'string'],
-      [/@escapes/, 'string.escape'],
-      [/\\./, 'string.escape.invalid'],
-      [/`/, 'string', '@pop'],
+      [/[^\\`$]+/, "string"],
+      [/@escapes/, "string.escape"],
+      [/\\./, "string.escape.invalid"],
+      [/`/, "string", "@pop"],
     ],
     clauses: [
-      [/[^(,)]/, 'tag'],
-      [/\)/, 'identifier', '@pop'],
+      [/[^(,)]/, "tag"],
+      [/\)/, "identifier", "@pop"],
     ],
-    whitespace: [[/[ \t\r\n]+/, 'white']],
+    whitespace: [[/[ \t\r\n]+/, "white"]],
   },
 };
 // noinspection JSUnusedGlobalSymbols

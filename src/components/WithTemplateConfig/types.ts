@@ -20,7 +20,7 @@ export interface DashboardType {
   uri: string;
   url: string;
   slug: string;
-  type: 'dash-db';
+  type: "dash-db";
   tags: string[];
   isStarred: boolean;
   sortMeta: number;

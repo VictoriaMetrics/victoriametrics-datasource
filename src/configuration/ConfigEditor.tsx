@@ -16,32 +16,32 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useRef } from 'react';
-import { gte } from 'semver';
+import React, { useRef } from "react";
+import { gte } from "semver";
 
-import { SIGV4ConnectionConfig } from '@grafana/aws-sdk';
-import { DataSourcePluginOptionsEditorProps, DataSourceSettings, FeatureToggles } from '@grafana/data';
-import { config } from '@grafana/runtime';
-import { InlineField, InlineSwitch, AlertingSettings, DataSourceHttpSettings } from '@grafana/ui';
+import { SIGV4ConnectionConfig } from "@grafana/aws-sdk";
+import { DataSourcePluginOptionsEditorProps, DataSourceSettings, FeatureToggles } from "@grafana/data";
+import { config } from "@grafana/runtime";
+import { InlineField, InlineSwitch, AlertingSettings, DataSourceHttpSettings } from "@grafana/ui";
 
-import { PromOptions } from '../types';
+import { PromOptions } from "../types";
 
 import { AutocompleteSettings } from "./AutocompleteSettings";
-import { AzureAuthSettings } from './AzureAuthSettings';
-import { hasCredentials, setDefaultCredentials, resetCredentials } from './AzureCredentialsConfig';
+import { AzureAuthSettings } from "./AzureAuthSettings";
+import { hasCredentials, setDefaultCredentials, resetCredentials } from "./AzureCredentialsConfig";
 import { HelpfulLinks } from "./HelpfulLinks";
 import { LimitsSettings } from "./LimitsSettings";
-import { PromSettings } from './PromSettings';
+import { PromSettings } from "./PromSettings";
 
 export enum DataSourceType {
-  Alertmanager = 'alertmanager',
+  Alertmanager = "alertmanager",
 }
 
 export type Props = DataSourcePluginOptionsEditorProps<PromOptions>;
 export const ConfigEditor = (props: Props) => {
   const { options, onOptionsChange } = props;
   // use ref so this is evaluated only first time it renders and the select does not disappear suddenly.
-  const showAccessOptions = useRef(props.options.access === 'direct');
+  const showAccessOptions = useRef(props.options.access === "direct");
 
   const azureAuthSettings = {
     azureAuthSupported: config.azureAuthEnabled,
@@ -55,7 +55,7 @@ export const ConfigEditor = (props: Props) => {
 
   return (
     <>
-      <HelpfulLinks/>
+      <HelpfulLinks />
 
       <DataSourceHttpSettings
         defaultUrl="http://localhost:8428"
@@ -68,15 +68,15 @@ export const ConfigEditor = (props: Props) => {
       />
 
       {/*// @ts-ignore The prop `alertmanagerDataSources` is absent in Grafana > 10.0.0. */}
-      <AlertingSettings<PromOptions> {...props} alertmanagerDataSources={alertmanagers}/>
+      <AlertingSettings<PromOptions> {...props} alertmanagerDataSources={alertmanagers} />
 
-      <PromSettings {...props}/>
+      <PromSettings {...props} />
 
-      <LimitsSettings {...props}/>
+      <LimitsSettings {...props} />
 
-      <AutocompleteSettings {...props}/>
+      <AutocompleteSettings {...props} />
 
-      {config.featureToggles['secureSocksDSProxyEnabled' as keyof FeatureToggles] && gte(config.buildInfo.version, '10.0.0') && (
+      {config.featureToggles["secureSocksDSProxyEnabled" as keyof FeatureToggles] && gte(config.buildInfo.version, "10.0.0") && (
         <>
           <InlineField
             label="Secure Socks Proxy"
@@ -85,7 +85,7 @@ export const ConfigEditor = (props: Props) => {
                 Enable proxying the data source connection through the
                 secure socks proxy to a
                 different network.
-                See{' '}
+                See{" "}
                 <a
                   href="https://grafana.com/docs/grafana/next/setup-grafana/configure-grafana/proxy/"
                   target="_blank"

@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { flatten, forOwn, groupBy, partition } from 'lodash';
+import { flatten, forOwn, groupBy, partition } from "lodash";
 
 import {
   CoreApp,
@@ -33,21 +33,21 @@ import {
   PreferredVisualisationType,
   TIME_SERIES_TIME_FIELD_NAME,
   TIME_SERIES_VALUE_FIELD_NAME,
-} from '@grafana/data';
-import { getDataSourceSrv } from '@grafana/runtime';
+} from "@grafana/data";
+import { getDataSourceSrv } from "@grafana/runtime";
 
 import {
   ExemplarTraceIdDestination,
   PromMetric,
   PromQuery,
   PromValue,
-} from './types';
+} from "./types";
 
 // handles case-insensitive Inf, +Inf, -Inf (with optional "inity" suffix)
 const INFINITY_SAMPLE_REGEX = /^[+-]?inf(?:inity)?$/i;
 
 const isExploreVectorOrScalar = (dataFrame: DataFrame, app: CoreApp | string): boolean => {
-  return app === CoreApp.Explore && (dataFrame.meta?.custom?.resultType === 'vector' || dataFrame.meta?.custom?.resultType === 'scalar');
+  return app === CoreApp.Explore && (dataFrame.meta?.custom?.resultType === "vector" || dataFrame.meta?.custom?.resultType === "scalar");
 }
 
 const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
@@ -58,12 +58,12 @@ const isTableResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery
 
   // We want to process all dataFrames with target.format === 'table' as table
   const target = options.targets.find((target) => target.refId === dataFrame.refId);
-  return target?.format === 'table';
+  return target?.format === "table";
 };
 
 const isHeatmapResult = (dataFrame: DataFrame, options: DataQueryRequest<PromQuery>): boolean => {
   const target = options.targets.find((target) => target.refId === dataFrame.refId);
-  return target?.format === 'heatmap';
+  return target?.format === "heatmap";
 };
 
 // V2 result trasnformer used to transform query results from queries that were run trough prometheus backend
@@ -72,7 +72,7 @@ export function transformV2(
   request: DataQueryRequest<PromQuery>,
   options: { exemplarTraceIdDestinations?: ExemplarTraceIdDestination[] }
 ) {
-  const [traceFrames, framesWithoutTraces] = partition<DataFrame>(response.data, ({ meta }) => meta?.custom?.resultType === 'trace');
+  const [traceFrames, framesWithoutTraces] = partition<DataFrame>(response.data, ({ meta }) => meta?.custom?.resultType === "trace");
   const processedTraceFrames = transformTraceDataFrames(traceFrames, request.targets);
 
   const [tableFrames, framesWithoutTable] = partition<DataFrame>(framesWithoutTraces, (df) => isTableResult(df, request));
@@ -80,7 +80,7 @@ export function transformV2(
 
   const [exemplarFrames, framesWithoutTableAndExemplars] = partition<DataFrame>(
     framesWithoutTable,
-    (df) => df.meta?.custom?.resultType === 'exemplar'
+    (df) => df.meta?.custom?.resultType === "exemplar"
   );
 
   // EXEMPLAR FRAMES: We enrich exemplar frames with data links and add dataTopic meta info
@@ -146,7 +146,7 @@ export function transformV2(
       ...dataFrame,
       meta: {
         ...dataFrame.meta,
-        preferredVisualisationType: 'graph',
+        preferredVisualisationType: "graph",
       },
     } as DataFrame;
   });
@@ -159,7 +159,7 @@ export function transformV2(
   };
 }
 
-const HISTOGRAM_QUANTILE_LABEL_NAME = 'le';
+const HISTOGRAM_QUANTILE_LABEL_NAME = "le";
 
 export function transformDFToTable(dfs: DataFrame[]): DataFrame[] {
   // If no dataFrames or if 1 dataFrames with no values, return original dataFrame
@@ -168,7 +168,7 @@ export function transformDFToTable(dfs: DataFrame[]): DataFrame[] {
   }
 
   // Group results by refId and process dataFrames with the same refId as 1 dataFrame
-  const dataFramesByRefId = groupBy(dfs, 'refId');
+  const dataFramesByRefId = groupBy(dfs, "refId");
   const refIds = Object.keys(dataFramesByRefId);
 
   return refIds.map((refId) => {
@@ -213,14 +213,14 @@ export function transformDFToTable(dfs: DataFrame[]): DataFrame[] {
     return {
       refId,
       fields,
-      meta: { ...dfs[0].meta, preferredVisualisationType: 'table' as PreferredVisualisationType },
+      meta: { ...dfs[0].meta, preferredVisualisationType: "table" as PreferredVisualisationType },
       length: timeField.values.length,
     };
   });
 }
 
-function getValueText(responseLength: number, refId = '') {
-  return responseLength > 1 ? `Value #${refId}` : 'Value';
+function getValueText(responseLength: number, refId = "") {
+  return responseLength > 1 ? `Value #${refId}` : "Value";
 }
 
 function getDataLinks(options: ExemplarTraceIdDestination): DataLink[] {
@@ -237,11 +237,11 @@ function getDataLinks(options: ExemplarTraceIdDestination): DataLink[] {
     if (dsSettings) {
       dataLinks.push({
         title: options.urlDisplayLabel || `Query with ${dsSettings?.name}`,
-        url: '',
+        url: "",
         internal: {
-          query: { query: '${__value.raw}', queryType: 'traceId' },
+          query: { query: "${__value.raw}", queryType: "traceId" },
           datasourceUid: options.datasourceUid,
-          datasourceName: dsSettings?.name ?? 'Data source not found',
+          datasourceName: dsSettings?.name ?? "Data source not found",
         },
       });
     }
@@ -264,7 +264,7 @@ function getLabelValue(metric: PromMetric, label: string): string | number {
     }
     return metric[label];
   }
-  return '';
+  return "";
 }
 
 function getTimeField(data: PromValue[], isMs = false): MutableField {
@@ -304,11 +304,11 @@ function getValueField({
 }
 
 export function getOriginalMetricName(labelData: { [key: string]: string }) {
-  const metricName = labelData.__name__ || '';
+  const metricName = labelData.__name__ || "";
   delete labelData.__name__;
   const labelPart = Object.entries(labelData)
     .map((label) => `${label[0]}="${label[1]}"`)
-    .join(',');
+    .join(",");
   return `${metricName}{${labelPart}}`;
 }
 
@@ -350,7 +350,7 @@ function transformToHistogramOverTime(seriesList: DataFrame[]) {
     const topSeries = seriesList[i].fields.find((s) => s.name === TIME_SERIES_VALUE_FIELD_NAME);
     const bottomSeries = seriesList[i - 1].fields.find((s) => s.name === TIME_SERIES_VALUE_FIELD_NAME);
     if (!topSeries || !bottomSeries) {
-      throw new Error('Prometheus heatmap transform error: data should be a time series');
+      throw new Error("Prometheus heatmap transform error: data should be a time series");
     }
 
     for (let j = 0; j < topSeries.values.length; j++) {
@@ -367,8 +367,8 @@ function sortSeriesByLabel(s1: DataFrame, s2: DataFrame): number {
 
   try {
     // fail if not integer. might happen with bad queries
-    le1 = parseSampleValue(s1.name ?? '');
-    le2 = parseSampleValue(s2.name ?? '');
+    le1 = parseSampleValue(s1.name ?? "");
+    le2 = parseSampleValue(s2.name ?? "");
   } catch (err) {
     console.error(err);
     return 0;
@@ -388,7 +388,7 @@ function sortSeriesByLabel(s1: DataFrame, s2: DataFrame): number {
 /** @internal */
 export function parseSampleValue(value: string): number {
   if (INFINITY_SAMPLE_REGEX.test(value)) {
-    return value[0] === '-' ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+    return value[0] === "-" ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
   }
   return parseFloat(value);
 }
@@ -396,9 +396,9 @@ export function parseSampleValue(value: string): number {
 
 function transformTraceDataFrames(dataFrames: DataFrame[], targets: PromQuery[]): DataFrame[] {
   return dataFrames.map((dataFrame) => {
-    if (dataFrame.refId && dataFrame.refId.includes('instant')) {
+    if (dataFrame.refId && dataFrame.refId.includes("instant")) {
       // Find the original request from targets to get the original refId
-      const originalTarget = targets.find((target) => target.refId + '_instant' === dataFrame.refId);
+      const originalTarget = targets.find((target) => target.refId + "_instant" === dataFrame.refId);
       return {
         ...dataFrame,
         // Restore original refId for trace frames that contain 'instant'

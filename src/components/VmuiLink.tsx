@@ -13,14 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { FC, memo, useEffect, useState } from 'react';
+import React, { FC, memo, useEffect, useState } from "react";
 
-import { getDefaultTimeRange, PanelData, rangeUtil, textUtil } from '@grafana/data';
+import { getDefaultTimeRange, PanelData, rangeUtil, textUtil } from "@grafana/data";
 import { IconButton } from "@grafana/ui";
 
 import { mergeTemplateWithQuery } from "../components/WithTemplateConfig/utils/getArrayFromTemplate";
-import { PrometheusDatasource } from '../datasource';
-import { PromQuery } from '../types';
+import { PrometheusDatasource } from "../datasource";
+import { PromQuery } from "../types";
 import { getDurationFromMilliseconds } from "../utils/time";
 
 interface Props {
@@ -58,7 +58,7 @@ const getRateIntervalScopedVariable = (interval: number, scrapeInterval: number)
     scrapeInterval = 15;
   }
   const rateInterval = Math.max(interval + scrapeInterval, 4 * scrapeInterval);
-  return { __rate_interval: { text: rateInterval + 's', value: rateInterval + 's' } };
+  return { __rate_interval: { text: rateInterval + "s", value: rateInterval + "s" } };
 }
 
 const VmuiLink: FC<Props> = ({
@@ -67,7 +67,7 @@ const VmuiLink: FC<Props> = ({
   datasource,
   dashboardUID,
 }) => {
-  const [href, setHref] = useState('');
+  const [href, setHref] = useState("");
 
   useEffect(() => {
     const getExternalLink = async () => {
@@ -75,15 +75,15 @@ const VmuiLink: FC<Props> = ({
       const rangeRaw = timeRange.raw;
       const interval = panelData?.request?.interval || datasource.interval;
       let scopedVars = panelData?.request?.scopedVars || {};
-      let relativeTimeId = 'none';
-      if (typeof rangeRaw?.from === 'string') {
-        const duration = rangeRaw.from.replace('now-', '')
-        relativeTimeId = relativeTimeOptionsVMUI.find(ops => ops.duration === duration)?.id || 'none'
+      let relativeTimeId = "none";
+      if (typeof rangeRaw?.from === "string") {
+        const duration = rangeRaw.from.replace("now-", "")
+        relativeTimeId = relativeTimeOptionsVMUI.find(ops => ops.duration === duration)?.id || "none"
       }
       const start = datasource.getPrometheusTime(timeRange.from, false);
       const end = datasource.getPrometheusTime(timeRange.to, true);
       const rangeDiff = Math.ceil(end - start);
-      const endTime = timeRange.to.utc().format('YYYY-MM-DD HH:mm');
+      const endTime = timeRange.to.utc().format("YYYY-MM-DD HH:mm");
       scopedVars = Object.assign({}, scopedVars, getRateIntervalScopedVariable(
         rangeUtil.intervalToSeconds(interval),
         rangeUtil.intervalToSeconds(datasource.interval)
@@ -103,21 +103,21 @@ const VmuiLink: FC<Props> = ({
       if (step !== adjustedStep) {
         step = adjustedStep;
         scopedVars = Object.assign({}, scopedVars, {
-          __interval: { text: step + 's', value: step + 's' },
+          __interval: { text: step + "s", value: step + "s" },
           __interval_ms: { text: step * 1000, value: step * 1000 },
           ...getRateIntervalScopedVariable(step, scrapeInterval),
         });
       }
       let expr = mergeTemplateWithQuery(query.expr, datasource.withTemplates.find(t => t.uid === dashboardUID))
       expr = templateSrv.replace(expr, scopedVars, datasource.interpolateQueryExpr);
-      const resp = await datasource.postResource<{ vmuiURL: string }>('vmui', {
+      const resp = await datasource.postResource<{ vmuiURL: string }>("vmui", {
         vmui: {
           expr: expr,
           range_input: getDurationFromMilliseconds(rangeDiff * 1000),
           end_input: endTime,
-          step_input: step ? getDurationFromMilliseconds(step * 1000) : '',
+          step_input: step ? getDurationFromMilliseconds(step * 1000) : "",
           relative_time: relativeTimeId,
-          tab: '0',
+          tab: "0",
         },
       });
 

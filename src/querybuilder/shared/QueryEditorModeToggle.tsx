@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react';
+import React from "react";
 
-import { RadioButtonGroup } from '@grafana/ui';
+import { RadioButtonGroup } from "@grafana/ui";
 
 
-import { QueryEditorMode } from './types';
+import { QueryEditorMode } from "./types";
 
 export interface Props {
   mode: QueryEditorMode;
@@ -30,15 +30,15 @@ export interface Props {
 
 const editorModes = [
   {
-    label: 'Builder',
+    label: "Builder",
     value: QueryEditorMode.Builder,
   },
-  { label: 'Code', value: QueryEditorMode.Code },
+  { label: "Code", value: QueryEditorMode.Code },
 ];
 
 export function QueryEditorModeToggle({ mode, onChange }: Props) {
   return (
-    <div data-testid={'QueryEditorModeToggle'}>
+    <div data-testid={"QueryEditorModeToggle"}>
       <RadioButtonGroup options={editorModes} size="sm" value={mode} onChange={onChange} />
     </div>
   );

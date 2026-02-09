@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useRef } from 'react';
+import React, { useRef } from "react";
 
-import { MonacoQueryFieldLazy } from './MonacoQueryFieldLazy';
-import { Props as MonacoProps } from './MonacoQueryFieldProps';
+import { MonacoQueryFieldLazy } from "./MonacoQueryFieldLazy";
+import { Props as MonacoProps } from "./MonacoQueryFieldProps";
 
-type Props = Omit<MonacoProps, 'onRunQuery' | 'onBlur'> & {
+type Props = Omit<MonacoProps, "onRunQuery" | "onBlur"> & {
   onChange: (query: string) => void;
   onRunQuery: () => void;
   runQueryOnBlur: boolean;

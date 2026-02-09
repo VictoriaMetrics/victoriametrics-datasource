@@ -11,7 +11,7 @@ const bitmapFunctions = [
 export function getBitmapFunctions(): QueryBuilderOperationDef[] {
   return bitmapFunctions.map(id => createFunction({
     id,
-    params: [{ name: 'mask', type: 'number' }],
+    params: [{ name: "mask", type: "number" }],
     defaultParams: [1],
   }))
 }

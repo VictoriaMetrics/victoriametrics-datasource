@@ -6,7 +6,7 @@ import { Stack } from "../../../components/QueryEditor";
 
 import NestedNav from "./NestedNav/NestedNav";
 import Trace from "./Trace";
-import getStyles from './style'
+import getStyles from "./style"
 
 
 export const TraceItem = ({ trace, id, queryExpr }: { trace: Trace, id: number, queryExpr: string }) => {
@@ -46,7 +46,7 @@ export const TraceItem = ({ trace, id, queryExpr }: { trace: Trace, id: number, 
       navigator.clipboard.writeText(trace.JSON)
       setCopied(true)
     } catch (e) {
-      console.error('Failed to copy: ', e);
+      console.error("Failed to copy: ", e);
       if (e instanceof Error) {
         setCopyError(e.message)
       }
@@ -83,16 +83,16 @@ export const TraceItem = ({ trace, id, queryExpr }: { trace: Trace, id: number, 
           </pre>
           <Modal.ButtonRow>
             {copyError && (<div className={styles.error}>
-              <Icon name={"exclamation-triangle"} size="sm"/>
+              <Icon name={"exclamation-triangle"} size="sm" />
               <span>{copyError}</span>
             </div>)}
             <Button
               variant={copied ? "success" : "primary"}
               size="sm"
               onClick={handleCopyToClipboard}
-              icon={copied ? 'check' : 'copy'}
+              icon={copied ? "check" : "copy"}
             >
-              {copied ? 'Copied' : 'Copy JSON'}
+              {copied ? "Copied" : "Copy JSON"}
             </Button>
           </Modal.ButtonRow>
         </div>

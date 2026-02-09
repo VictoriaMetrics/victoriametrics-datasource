@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import type { SyntaxNode, Tree } from '@lezer/common';
+import type { SyntaxNode, Tree } from "@lezer/common";
 import {
   AggregateExpr,
   AggregateModifier,
@@ -38,11 +38,11 @@ import {
   MetricsQL,
   StringLiteral,
   VectorSelector,
-} from 'lezer-metricsql';
+} from "lezer-metricsql";
 
-import { NeverCaseError } from './util';
+import { NeverCaseError } from "./util";
 
-type Direction = 'parent' | 'firstChild' | 'lastChild' | 'nextSibling';
+type Direction = "parent" | "firstChild" | "lastChild" | "nextSibling";
 
 type NodeTypeId =
   | 0 // this is used as error-id
@@ -70,13 +70,13 @@ type Path = Array<[Direction, NodeTypeId]>;
 
 function move(node: SyntaxNode, direction: Direction): SyntaxNode | null {
   switch (direction) {
-    case 'parent':
+    case "parent":
       return node.parent;
-    case 'firstChild':
+    case "firstChild":
       return node.firstChild;
-    case 'lastChild':
+    case "lastChild":
       return node.lastChild;
-    case 'nextSibling':
+    case "nextSibling":
       return node.nextSibling;
     default:
       throw new NeverCaseError();
@@ -127,14 +127,14 @@ function parsePromQLStringLiteral(text: string): string {
   }
 
   // then backticks
-  if (text.startsWith('`') && text.endsWith('`')) {
+  if (text.startsWith("`") && text.endsWith("`")) {
     return inside;
   }
 
-  throw new Error('FIXME: invalid string literal');
+  throw new Error("FIXME: invalid string literal");
 }
 
-type LabelOperator = '=' | '!=' | '=~' | '!~';
+type LabelOperator = "=" | "!=" | "=~" | "!~";
 
 export type Label = {
   name: string;
@@ -144,29 +144,29 @@ export type Label = {
 
 export type Situation =
   | {
-    type: 'IN_FUNCTION';
+    type: "IN_FUNCTION";
   }
   | {
-    type: 'AT_ROOT';
+    type: "AT_ROOT";
   }
   | {
-    type: 'EMPTY';
+    type: "EMPTY";
   }
   | {
-    type: 'IN_DURATION';
+    type: "IN_DURATION";
   }
   | {
-    type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME';
+    type: "IN_LABEL_SELECTOR_NO_LABEL_NAME";
     metricName?: string;
     otherLabels: Label[];
   }
   | {
-    type: 'IN_GROUPING';
+    type: "IN_GROUPING";
     metricName: string;
     otherLabels: Label[];
   }
   | {
-    type: 'IN_LABEL_SELECTOR_WITH_LABEL_NAME';
+    type: "IN_LABEL_SELECTOR_WITH_LABEL_NAME";
     metricName?: string;
     labelName: string;
     betweenQuotes: boolean;
@@ -216,10 +216,10 @@ const RESOLVERS: Resolver[] = [
 ];
 
 const LABEL_OP_MAP = new Map<number, LabelOperator>([
-  [EqlSingle, '='],
-  [EqlRegex, '=~'],
-  [Neq, '!='],
-  [NeqRegex, '!~'],
+  [EqlSingle, "="],
+  [EqlRegex, "=~"],
+  [Neq, "!="],
+  [NeqRegex, "!~"],
 ]);
 
 function getLabelOp(opNode: SyntaxNode): LabelOperator | null {
@@ -236,13 +236,13 @@ function getLabel(labelMatcherNode: SyntaxNode, text: string): Label | null {
     return null;
   }
 
-  const nameNode = walk(labelMatcherNode, [['firstChild', LabelName]]);
+  const nameNode = walk(labelMatcherNode, [["firstChild", LabelName]]);
 
   if (nameNode === null) {
     return null;
   }
 
-  const opNode = walk(nameNode, [['nextSibling', MatchOp]]);
+  const opNode = walk(nameNode, [["nextSibling", MatchOp]]);
   if (opNode === null) {
     return null;
   }
@@ -252,7 +252,7 @@ function getLabel(labelMatcherNode: SyntaxNode, text: string): Label | null {
     return null;
   }
 
-  const valueNode = walk(labelMatcherNode, [['lastChild', StringLiteral]]);
+  const valueNode = walk(labelMatcherNode, [["lastChild", StringLiteral]]);
 
   if (valueNode === null) {
     return null;
@@ -269,12 +269,12 @@ function getLabels(labelMatchersNode: SyntaxNode, text: string): Label[] {
     return [];
   }
 
-  let listNode: SyntaxNode | null = walk(labelMatchersNode, [['firstChild', LabelMatchList]]);
+  let listNode: SyntaxNode | null = walk(labelMatchersNode, [["firstChild", LabelMatchList]]);
 
   const labels: Label[] = [];
 
   while (listNode !== null) {
-    const matcherNode = walk(listNode, [['lastChild', LabelMatcher]]);
+    const matcherNode = walk(listNode, [["lastChild", LabelMatcher]]);
     if (matcherNode === null) {
       // unexpected, we stop
       return [];
@@ -286,7 +286,7 @@ function getLabels(labelMatchersNode: SyntaxNode, text: string): Label[] {
     }
 
     // there might be more labels
-    listNode = walk(listNode, [['firstChild', LabelMatchList]]);
+    listNode = walk(listNode, [["firstChild", LabelMatchList]]);
   }
 
   // our labels-list is last-first, so we reverse it
@@ -325,8 +325,8 @@ function getNodeInSubtree(node: SyntaxNode, typeId: NodeTypeId): SyntaxNode | nu
 
 function resolveLabelsForGrouping(node: SyntaxNode, text: string): Situation | null {
   const aggrExpNode = walk(node, [
-    ['parent', AggregateModifier],
-    ['parent', AggregateExpr],
+    ["parent", AggregateModifier],
+    ["parent", AggregateExpr],
   ]);
   if (aggrExpNode === null) {
     return null;
@@ -341,14 +341,14 @@ function resolveLabelsForGrouping(node: SyntaxNode, text: string): Situation | n
     return null;
   }
 
-  const idNode = walk(metricIdNode, [['firstChild', Identifier]]);
+  const idNode = walk(metricIdNode, [["firstChild", Identifier]]);
   if (idNode === null) {
     return null;
   }
 
   const metricName = getNodeText(idNode, text);
   return {
-    type: 'IN_GROUPING',
+    type: "IN_GROUPING",
     metricName,
     otherLabels: [],
   };
@@ -360,12 +360,12 @@ function resolveLabelMatcher(node: SyntaxNode, text: string): Situation | null {
   // - or an error node (like in `{job=^}`)
   const inStringNode = !node.type.isError;
 
-  const parent = walk(node, [['parent', LabelMatcher]]);
+  const parent = walk(node, [["parent", LabelMatcher]]);
   if (parent === null) {
     return null;
   }
 
-  const labelNameNode = walk(parent, [['firstChild', LabelName]]);
+  const labelNameNode = walk(parent, [["firstChild", LabelName]]);
   if (labelNameNode === null) {
     return null;
   }
@@ -376,7 +376,7 @@ function resolveLabelMatcher(node: SyntaxNode, text: string): Situation | null {
   // there can be one or many `LabelMatchList` parents, we have
   // to go through all of them
 
-  const firstListNode = walk(parent, [['parent', LabelMatchList]]);
+  const firstListNode = walk(parent, [["parent", LabelMatchList]]);
   if (firstListNode === null) {
     return null;
   }
@@ -417,15 +417,15 @@ function resolveLabelMatcher(node: SyntaxNode, text: string): Situation | null {
   const otherLabels = allLabels.filter((label) => label.name !== labelName);
 
   const metricNameNode = walk(labelMatchersNode, [
-    ['parent', VectorSelector],
-    ['firstChild', MetricIdentifier],
-    ['firstChild', Identifier],
+    ["parent", VectorSelector],
+    ["firstChild", MetricIdentifier],
+    ["firstChild", Identifier],
   ]);
 
   if (metricNameNode === null) {
     // we are probably in a situation without a metric name
     return {
-      type: 'IN_LABEL_SELECTOR_WITH_LABEL_NAME',
+      type: "IN_LABEL_SELECTOR_WITH_LABEL_NAME",
       labelName,
       betweenQuotes: inStringNode,
       otherLabels,
@@ -435,7 +435,7 @@ function resolveLabelMatcher(node: SyntaxNode, text: string): Situation | null {
   const metricName = getNodeText(metricNameNode, text);
 
   return {
-    type: 'IN_LABEL_SELECTOR_WITH_LABEL_NAME',
+    type: "IN_LABEL_SELECTOR_WITH_LABEL_NAME",
     metricName,
     labelName,
     betweenQuotes: inStringNode,
@@ -445,19 +445,19 @@ function resolveLabelMatcher(node: SyntaxNode, text: string): Situation | null {
 
 function resolveTopLevel(): Situation {
   return {
-    type: 'AT_ROOT',
+    type: "AT_ROOT",
   };
 }
 
 function resolveInFunction(): Situation {
   return {
-    type: 'IN_FUNCTION',
+    type: "IN_FUNCTION",
   };
 }
 
 function resolveDurations(): Situation {
   return {
-    type: 'IN_DURATION',
+    type: "IN_DURATION",
   };
 }
 
@@ -477,7 +477,7 @@ function resolveLabelKeysWithEquals(node: SyntaxNode, text: string, pos: number)
 
   // next false positive:
   // `something{a="1"^}`
-  const child = walk(node, [['firstChild', LabelMatchList]]);
+  const child = walk(node, [["firstChild", LabelMatchList]]);
   if (child !== null) {
     // means the label-matching part contains at least one label already.
     //
@@ -487,15 +487,15 @@ function resolveLabelKeysWithEquals(node: SyntaxNode, text: string, pos: number)
     // must contain a `,` in this case.
     const textToCheck = text.slice(child.to, pos);
 
-    if (!textToCheck.includes(',')) {
+    if (!textToCheck.includes(",")) {
       return null;
     }
   }
 
   const metricNameNode = walk(node, [
-    ['parent', VectorSelector],
-    ['firstChild', MetricIdentifier],
-    ['firstChild', Identifier],
+    ["parent", VectorSelector],
+    ["firstChild", MetricIdentifier],
+    ["firstChild", Identifier],
   ]);
 
   const otherLabels = getLabels(node, text);
@@ -503,7 +503,7 @@ function resolveLabelKeysWithEquals(node: SyntaxNode, text: string, pos: number)
   if (metricNameNode === null) {
     // we are probably in a situation without a metric name.
     return {
-      type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME',
+      type: "IN_LABEL_SELECTOR_NO_LABEL_NAME",
       otherLabels,
     };
   }
@@ -511,7 +511,7 @@ function resolveLabelKeysWithEquals(node: SyntaxNode, text: string, pos: number)
   const metricName = getNodeText(metricNameNode, text);
 
   return {
-    type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME',
+    type: "IN_LABEL_SELECTOR_NO_LABEL_NAME",
     metricName,
     otherLabels,
   };
@@ -544,9 +544,9 @@ export function getSituation(text: string, pos: number): Situation | null {
   // there is a special-case when we are at the start of writing text,
   // so we handle that case first
 
-  if (text === '') {
+  if (text === "") {
     return {
-      type: 'EMPTY',
+      type: "EMPTY",
     };
   }
 

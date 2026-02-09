@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import { EventBusSrv, EventBusExtended } from '@grafana/data';
+import { EventBusSrv, EventBusExtended } from "@grafana/data";
 
 export const appEvents: EventBusExtended = new EventBusSrv();
 

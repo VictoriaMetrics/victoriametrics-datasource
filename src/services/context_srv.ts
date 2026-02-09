@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { extend } from 'lodash';
+import { extend } from "lodash";
 
-import { AnalyticsSettings, OrgRole, rangeUtil, WithAccessControlMetadata } from '@grafana/data';
-import { config as config1 } from '@grafana/runtime';
+import { AnalyticsSettings, OrgRole, rangeUtil, WithAccessControlMetadata } from "@grafana/data";
+import { config as config1 } from "@grafana/runtime";
 
-import { AccessControlAction, UserPermission } from '../types/accessControl';
-import { CurrentUserInternal } from '../types/config';
+import { AccessControlAction, UserPermission } from "../types/accessControl";
+import { CurrentUserInternal } from "../types/config";
 
-export class User implements Omit<CurrentUserInternal, 'lightTheme'> {
+export class User implements Omit<CurrentUserInternal, "lightTheme"> {
   isSignedIn: boolean;
   id: number;
   uid: string;
@@ -36,7 +36,7 @@ export class User implements Omit<CurrentUserInternal, 'lightTheme'> {
   orgCount: number;
   orgId: number;
   orgName: string;
-  orgRole: OrgRole | '';
+  orgRole: OrgRole | "";
   isGrafanaAdmin: boolean;
   gravatarUrl: string;
   timezone: string;
@@ -53,31 +53,31 @@ export class User implements Omit<CurrentUserInternal, 'lightTheme'> {
 
   constructor() {
     this.id = 0;
-    this.uid = '';
+    this.uid = "";
     this.isGrafanaAdmin = false;
     this.isSignedIn = false;
-    this.orgRole = '';
+    this.orgRole = "";
     this.orgId = 0;
-    this.orgName = '';
-    this.login = '';
-    this.externalUserId = '';
+    this.orgName = "";
+    this.login = "";
+    this.externalUserId = "";
     this.orgCount = 0;
-    this.timezone = '';
+    this.timezone = "";
     this.fiscalYearStartMonth = 0;
     this.helpFlags1 = 0;
-    this.theme = 'dark';
+    this.theme = "dark";
     this.hasEditPermissionInFolders = false;
-    this.email = '';
-    this.name = '';
-    this.locale = '';
-    this.language = '';
-    this.weekStart = '';
-    this.gravatarUrl = '';
+    this.email = "";
+    this.name = "";
+    this.locale = "";
+    this.language = "";
+    this.weekStart = "";
+    this.gravatarUrl = "";
     this.analytics = {
-      identifier: '',
+      identifier: "",
     };
-    this.authenticatedBy = '';
-    this.regionalFormat = '';
+    this.authenticatedBy = "";
+    this.regionalFormat = "";
 
     if (config1.bootData.user) {
       extend(this, config1.bootData.user);
@@ -102,13 +102,13 @@ export class ContextSrv {
     this.user = new User();
     this.isSignedIn = this.user.isSignedIn;
     this.isGrafanaAdmin = this.user.isGrafanaAdmin;
-    this.isEditor = this.hasRole('Editor') || this.hasRole('Admin');
+    this.isEditor = this.hasRole("Editor") || this.hasRole("Admin");
     this.hasEditPermissionInFolders = this.user.hasEditPermissionInFolders;
     this.minRefreshInterval = config1.minRefreshInterval;
   }
 
   hasRole(role: string) {
-    if (role === 'ServerAdmin') {
+    if (role === "ServerAdmin") {
       return this.isGrafanaAdmin;
     } else {
       return this.user.orgRole === role;
@@ -140,7 +140,7 @@ export class ContextSrv {
   }
 
   isGrafanaVisible() {
-    return document.visibilityState === undefined || document.visibilityState === 'visible';
+    return document.visibilityState === undefined || document.visibilityState === "visible";
   }
 
   // checks whether the passed interval is longer than the configured minimum refresh rate

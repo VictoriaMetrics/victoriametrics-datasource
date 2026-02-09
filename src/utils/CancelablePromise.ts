@@ -25,7 +25,7 @@ export interface CancelablePromiseRejection {
 }
 
 export function isCancelablePromiseRejection(promise: unknown): promise is CancelablePromiseRejection {
-  return typeof promise === 'object' && promise !== null && 'isCanceled' in promise;
+  return typeof promise === "object" && promise !== null && "isCanceled" in promise;
 }
 
 export const makePromiseCancelable = <T>(promise: Promise<T>): CancelablePromise<T> => {

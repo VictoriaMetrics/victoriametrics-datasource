@@ -16,19 +16,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react';
+import React from "react";
 
-import { CoreApp, SelectableValue } from '@grafana/data';
-import { RadioButtonGroup, Select } from '@grafana/ui';
+import { CoreApp, SelectableValue } from "@grafana/data";
+import { RadioButtonGroup, Select } from "@grafana/ui";
 
-import { getQueryTypeChangeHandler, getQueryTypeOptions } from '../../components/PromExploreExtraField';
-import { EditorField, EditorRow } from '../../components/QueryEditor';
+import { getQueryTypeChangeHandler, getQueryTypeOptions } from "../../components/PromExploreExtraField";
+import { EditorField, EditorRow } from "../../components/QueryEditor";
 import { AutoSizeInput } from "../../components/QueryEditor/AutoSizeInput";
 import { FORMAT_OPTIONS, INTERVAL_FACTOR_OPTIONS } from "../../consts";
-import { PromQuery } from '../../types';
-import { QueryOptionGroup } from '../shared/QueryOptionGroup';
+import { PromQuery } from "../../types";
+import { QueryOptionGroup } from "../shared/QueryOptionGroup";
 
-import { getLegendModeLabel, PromQueryLegendEditor } from './PromQueryLegendEditor';
+import { getLegendModeLabel, PromQueryLegendEditor } from "./PromQueryLegendEditor";
 
 export interface Props {
   query: PromQuery;
@@ -75,7 +75,7 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
           label="Min step"
           tooltip={
             <>
-              An additional lower limit for the step parameter of the Prometheus query and for the{' '}
+              An additional lower limit for the step parameter of the Prometheus query and for the{" "}
               <code>$__interval</code> and <code>$__rate_interval</code> variables.
             </>
           }
@@ -83,7 +83,7 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
           <AutoSizeInput
             type="text"
             aria-label="Set lower limit for the step parameter"
-            placeholder={'auto'}
+            placeholder={"auto"}
             minWidth={10}
             onCommitChange={onChangeStep}
             defaultValue={query.interval}
@@ -112,12 +112,12 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
 });
 
 function getQueryTypeValue(query: PromQuery, options: string[]) {
-  if (query.range && query.instant && options.includes('both')) {
-    return 'both'
-  } else if (!query.range && query.instant && options.includes('instant')) {
-    return 'instant'
-  } else if (options.includes('range')) {
-    return 'range'
+  if (query.range && query.instant && options.includes("both")) {
+    return "both"
+  } else if (!query.range && query.instant && options.includes("instant")) {
+    return "instant"
+  } else if (options.includes("range")) {
+    return "range"
   }
   return options[0]
 }
@@ -127,9 +127,9 @@ function getCollapsedInfo(query: PromQuery, formatOption: string, queryType: str
 
   items.push(`Legend: ${getLegendModeLabel(query.legendFormat)}`);
   items.push(`Format: ${formatOption}`);
-  items.push(`Step: ${query.interval ?? 'auto'}`);
+  items.push(`Step: ${query.interval ?? "auto"}`);
   items.push(`Type: ${queryType}`);
   return items;
 }
 
-PromQueryBuilderOptions.displayName = 'PromQueryBuilderOptions';
+PromQueryBuilderOptions.displayName = "PromQueryBuilderOptions";

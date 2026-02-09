@@ -4,7 +4,7 @@ import { IconButton, useStyles2 } from "@grafana/ui";
 
 import Trace from "../Trace";
 
-import getStyles from './style'
+import getStyles from "./style"
 
 interface RecursiveProps {
   trace: Trace;
@@ -33,11 +33,11 @@ const NestedNav: FC<RecursiveProps> = ({ trace, totalMsec }) => {
         <div className={styles.topRow}>
           <div className={styles.arrow}>
             {hasChildren && (
-              <IconButton aria-label="" name={openLevels[trace.idValue] ? "angle-up" : "angle-down"}/>
+              <IconButton aria-label="" name={openLevels[trace.idValue] ? "angle-up" : "angle-down"} />
             )}
           </div>
           <div className={styles.progressWrapper}>
-            <div className={styles.progressLine} style={{ width: `${progress}%`, }}/>
+            <div className={styles.progressLine} style={{ width: `${progress}%`, }} />
             <div className={styles.progressNum}>{`${progress}%`}</div>
           </div>
         </div>

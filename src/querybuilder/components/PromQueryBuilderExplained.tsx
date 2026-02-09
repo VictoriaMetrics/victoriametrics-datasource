@@ -16,26 +16,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react';
+import React from "react";
 
-import { Stack } from '../../components/QueryEditor';
-import metricsqlGrammar from '../../metricsql';
-import { promQueryModeller } from '../PromQueryModeller';
-import { buildVisualQueryFromString } from '../parsing';
-import { OperationExplainedBox } from '../shared/OperationExplainedBox';
-import { OperationListExplained } from '../shared/OperationListExplained';
-import { RawQuery } from '../shared/RawQuery';
-import { PromVisualQuery } from '../types';
+import { Stack } from "../../components/QueryEditor";
+import metricsqlGrammar from "../../metricsql";
+import { promQueryModeller } from "../PromQueryModeller";
+import { buildVisualQueryFromString } from "../parsing";
+import { OperationExplainedBox } from "../shared/OperationExplainedBox";
+import { OperationListExplained } from "../shared/OperationListExplained";
+import { RawQuery } from "../shared/RawQuery";
+import { PromVisualQuery } from "../types";
 
-export const EXPLAIN_LABEL_FILTER_CONTENT = 'Fetch all series matching metric name and label filters.';
+export const EXPLAIN_LABEL_FILTER_CONTENT = "Fetch all series matching metric name and label filters.";
 
 export interface Props {
   query: string;
 }
 
 export const PromQueryBuilderExplained = React.memo<Props>(({ query }) => {
-  const visQuery = buildVisualQueryFromString(query || '').query;
-  const lang = { grammar: metricsqlGrammar, name: 'promql' };
+  const visQuery = buildVisualQueryFromString(query || "").query;
+  const lang = { grammar: metricsqlGrammar, name: "promql" };
 
   return (
     <Stack gap={0.5} direction="column">
@@ -55,4 +55,4 @@ export const PromQueryBuilderExplained = React.memo<Props>(({ query }) => {
   );
 });
 
-PromQueryBuilderExplained.displayName = 'PromQueryBuilderExplained';
+PromQueryBuilderExplained.displayName = "PromQueryBuilderExplained";

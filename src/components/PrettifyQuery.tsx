@@ -1,8 +1,8 @@
-import React, { FC, useState, memo } from 'react';
+import React, { FC, useState, memo } from "react";
 
 import { IconButton } from "@grafana/ui";
 
-import { PrometheusDatasource } from '../datasource';
+import { PrometheusDatasource } from "../datasource";
 import { PromQuery } from "../types";
 
 interface Props {
@@ -12,11 +12,11 @@ interface Props {
 }
 
 enum ResponseStatus {
-  Success = 'success',
-  Error = 'error'
+  Success = "success",
+  Error = "error"
 }
 
-const TMP_ID = 'tmp_victoriametrics_prettify_query';
+const TMP_ID = "tmp_victoriametrics_prettify_query";
 
 const GRAFANA_VARIABLES = [
   "$__interval",
@@ -44,7 +44,7 @@ const PrettifyQuery: FC<Props> = ({
   const handleClickPrettify = async () => {
     if (loading) {return;}
 
-    let expr = query.expr || '';
+    let expr = query.expr || "";
     if (!expr.trim()) {
       return;
     }
@@ -59,7 +59,7 @@ const PrettifyQuery: FC<Props> = ({
         }
       });
 
-      const response = await datasource.getRequest('prettify-query', { query: expr }, {});
+      const response = await datasource.getRequest("prettify-query", { query: expr }, {});
       if (response.status === ResponseStatus.Success && response.query) {
         let prettifiedQuery = response.query;
 
@@ -73,10 +73,10 @@ const PrettifyQuery: FC<Props> = ({
 
         onChange({ ...query, expr: prettifiedQuery });
       } else {
-        console.error(`Error prettifying query: ${response.status || 'Unknown error'}`);
+        console.error(`Error prettifying query: ${response.status || "Unknown error"}`);
       }
     } catch (e) {
-      console.error('Error prettifying query:', e);
+      console.error("Error prettifying query:", e);
     }
 
     setLoading(false);
@@ -85,7 +85,7 @@ const PrettifyQuery: FC<Props> = ({
   return (
     <IconButton
       key="prettify"
-      name={loading ? 'fa fa-spinner' : 'brackets-curly'}
+      name={loading ? "fa fa-spinner" : "brackets-curly"}
       tooltip="Prettify query"
       disabled={loading}
       onClick={handleClickPrettify}

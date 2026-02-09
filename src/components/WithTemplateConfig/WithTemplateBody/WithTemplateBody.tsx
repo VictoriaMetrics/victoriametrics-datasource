@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from "react"
 
 import { Badge, Button, useStyles2 } from "@grafana/ui";
 
@@ -75,7 +75,7 @@ const WithTemplateBody: FC<Props> = ({ datasource, dashboardUID, template, setTe
           rel="noreferrer"
         >
           <Button
-            variant={'secondary'}
+            variant={"secondary"}
             fill={"text"}
             icon={"book"}
             size={"sm"}
@@ -84,7 +84,7 @@ const WithTemplateBody: FC<Props> = ({ datasource, dashboardUID, template, setTe
           </Button>
         </a>
         <Button
-          variant={'success'}
+          variant={"success"}
           onClick={handleSave}
           disabled={isLoading}
         >

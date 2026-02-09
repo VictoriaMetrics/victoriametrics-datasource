@@ -13,10 +13,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react';
+import React from "react";
 
-import PromQueryField from './PromQueryField';
-import { PromQueryEditorProps } from './types';
+import PromQueryField from "./PromQueryField";
+import { PromQueryEditorProps } from "./types";
 
 export function PromQueryEditorForAlerting(props: PromQueryEditorProps) {
   const { datasource, query, range, data, onChange, onRunQuery } = props;
@@ -36,5 +36,5 @@ export function PromQueryEditorForAlerting(props: PromQueryEditorProps) {
 }
 
 export const testIds = {
-  editor: 'prom-editor-cloud-alerting',
+  editor: "prom-editor-cloud-alerting",
 };

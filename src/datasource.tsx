@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from "rxjs";
+import { map } from "rxjs/operators";
 
 import {
   AbstractQuery,
@@ -40,27 +40,27 @@ import {
   rangeUtil,
   ScopedVars,
   TimeRange,
-} from '@grafana/data';
-import { BackendSrvRequest, DataSourceWithBackend, getTemplateSrv, TemplateSrv } from '@grafana/runtime';
+} from "@grafana/data";
+import { BackendSrvRequest, DataSourceWithBackend, getTemplateSrv, TemplateSrv } from "@grafana/runtime";
 
-import { addLabelToQuery } from './add_label_to_query';
+import { addLabelToQuery } from "./add_label_to_query";
 import { AnnotationQueryEditor } from "./components/Annotations/AnnotationQueryEditor";
 import { WithTemplate } from "./components/WithTemplateConfig/types";
 import { mergeTemplateWithQuery } from "./components/WithTemplateConfig/utils/getArrayFromTemplate";
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
-import PrometheusLanguageProvider from './language_provider';
-import { expandRecordingRules, getVictoriaMetricsTime } from './language_utils';
-import { renderLegendFormat } from './legend';
-import PrometheusMetricFindQuery from './metric_find_query';
-import { getInitHints, getQueryHints } from './query_hints';
-import { getOriginalMetricName, transformV2 } from './result_transformer';
-import { getTimeSrv, TimeSrv } from './services/TimeSrv';
-import { AutocompleteSettings, ExemplarTraceIdDestination, LimitMetrics, PromOptions, PromQuery, PromQueryType } from './types';
-import { utf8Support, wrapUtf8Filters } from './utf8_support';
-import { PrometheusVariableSupport } from './variables';
+import PrometheusLanguageProvider from "./language_provider";
+import { expandRecordingRules, getVictoriaMetricsTime } from "./language_utils";
+import { renderLegendFormat } from "./legend";
+import PrometheusMetricFindQuery from "./metric_find_query";
+import { getInitHints, getQueryHints } from "./query_hints";
+import { getOriginalMetricName, transformV2 } from "./result_transformer";
+import { getTimeSrv, TimeSrv } from "./services/TimeSrv";
+import { AutocompleteSettings, ExemplarTraceIdDestination, LimitMetrics, PromOptions, PromQuery, PromQueryType } from "./types";
+import { utf8Support, wrapUtf8Filters } from "./utf8_support";
+import { PrometheusVariableSupport } from "./variables";
 
 enum PromApplication {
-  VictoriaMetrics = 'VictoriaMetrics',
+  VictoriaMetrics = "VictoriaMetrics",
 }
 
 export class PrometheusDatasource
@@ -71,7 +71,7 @@ export class PrometheusDatasource
   url: string;
   id: number;
   directUrl: string;
-  access: 'direct' | 'proxy';
+  access: "direct" | "proxy";
   basicAuth: any;
   withCredentials: any;
   // metricsNameCache = new LRU<string, string[]>({max: 10});
@@ -105,9 +105,9 @@ export class PrometheusDatasource
     this.access = instanceSettings.access;
     this.basicAuth = instanceSettings.basicAuth;
     this.withCredentials = instanceSettings.withCredentials;
-    this.interval = instanceSettings.jsonData.timeInterval || '15s';
+    this.interval = instanceSettings.jsonData.timeInterval || "15s";
     this.queryTimeout = instanceSettings.jsonData.queryTimeout;
-    this.httpMethod = instanceSettings.jsonData.httpMethod || 'GET';
+    this.httpMethod = instanceSettings.jsonData.httpMethod || "GET";
     this.directUrl = instanceSettings.jsonData.directUrl ?? this.url;
     this.exemplarTraceIdDestinations = instanceSettings.jsonData.exemplarTraceIdDestinations;
     this.ruleMappings = {};
@@ -163,7 +163,7 @@ export class PrometheusDatasource
       return prometheusRegularEscape(value);
     }
 
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       return prometheusSpecialRegexEscape(value);
     }
 
@@ -173,7 +173,7 @@ export class PrometheusDatasource
       return escapedValues[0];
     }
 
-    return '(' + escapedValues.join('|') + ')';
+    return "(" + escapedValues.join("|") + ")";
   }
 
   targetContainsTemplate(target: PromQuery) {
@@ -203,7 +203,7 @@ export class PrometheusDatasource
           instant: false,
         }, {
           ...baseTarget,
-          refId: baseTarget.refId + '_instant',
+          refId: baseTarget.refId + "_instant",
           requestId: baseTarget.requestId,
           // for 'Both' type of query send the second query as instant
           range: false,
@@ -217,7 +217,7 @@ export class PrometheusDatasource
   }
 
   query(request: DataQueryRequest<PromQuery>): Observable<DataQueryResponse> {
-    if (this.access === 'direct') {
+    if (this.access === "direct") {
       return this.directAccessError();
     }
     const targets = request.targets.map((target) => this.processTargetV2(target, request));
@@ -233,7 +233,7 @@ export class PrometheusDatasource
     return of({
       data: [],
       error: {
-        message: 'Direct access is not supported for this datasource. Please use proxy access.',
+        message: "Direct access is not supported for this datasource. Please use proxy access.",
       },
     });
   }
@@ -273,12 +273,12 @@ export class PrometheusDatasource
     return {
       __range_ms: { text: msRange, value: msRange },
       __range_s: { text: sRange, value: sRange },
-      __range: { text: sRange + 's', value: sRange + 's' },
+      __range: { text: sRange + "s", value: sRange + "s" },
     };
   }
 
   prepareQuery = (annotation: AnnotationQuery<PromQuery>): PromQuery | undefined => {
-    const { expr = '', datasource, step, legendFormat } = annotation;
+    const { expr = "", datasource, step, legendFormat } = annotation;
 
     if (!expr) {
       return undefined
@@ -290,7 +290,7 @@ export class PrometheusDatasource
       instant: false,
       exemplar: false,
       interval: step || ANNOTATION_QUERY_STEP_DEFAULT,
-      refId: 'X',
+      refId: "X",
       datasource,
       legendFormat: legendFormat ?? ""
     };
@@ -301,10 +301,10 @@ export class PrometheusDatasource
       return of([])
     }
 
-    const { tagKeys = '', titleFormat = '', textFormat = '', useValueForTime } = annotation;
+    const { tagKeys = "", titleFormat = "", textFormat = "", useValueForTime } = annotation;
 
     const step = rangeUtil.intervalToSeconds(annotation.step || ANNOTATION_QUERY_STEP_DEFAULT) * 1000;
-    const tagKeysArray = tagKeys.split(',');
+    const tagKeysArray = tagKeys.split(",");
 
     const eventList: AnnotationEvent[] = [];
 
@@ -406,14 +406,14 @@ export class PrometheusDatasource
       }
     } else {
       // Get all tags
-      const limit = this.getLimitMetrics('maxTagKeys');
-      const result = await this.getRequest('api/v1/labels', { limit });
+      const limit = this.getLimitMetrics("maxTagKeys");
+      const result = await this.getRequest("api/v1/labels", { limit });
       return result?.data?.map((value: any) => ({ text: value })) ?? [];
     }
   }
 
   async getTagValues(options: { key?: string } = {}) {
-    const limit = this.getLimitMetrics('maxTagValues');
+    const limit = this.getLimitMetrics("maxTagValues");
     const result = await this.getRequest(`api/v1/label/${options.key}/values`, { limit });
     return result?.data?.map((value: any) => ({ text: value })) ?? [];
   }
@@ -432,7 +432,7 @@ export class PrometheusDatasource
   }
 
   getQueryHints(query: PromQuery, result: any[]) {
-    return getQueryHints(query.expr ?? '', result, this);
+    return getQueryHints(query.expr ?? "", result, this);
   }
 
   getInitHints() {
@@ -441,22 +441,22 @@ export class PrometheusDatasource
 
   async loadRules() {
     try {
-      const res = await this.getRequest('api/v1/rules', {}, { showErrorAlert: false });
+      const res = await this.getRequest("api/v1/rules", {}, { showErrorAlert: false });
       const groups = res.data?.groups;
 
       if (groups) {
         this.ruleMappings = extractRuleMappingFromGroups(groups);
       }
     } catch (e) {
-      console.log('Rules API is experimental. Ignore next error.');
+      console.log("Rules API is experimental. Ignore next error.");
       console.error(e);
     }
   }
 
   modifyQuery(query: PromQuery, action: QueryFixAction): PromQuery {
-    let expression = query.expr ?? '';
+    let expression = query.expr ?? "";
     switch (action.type) {
-      case 'ADD_FILTER': {
+      case "ADD_FILTER": {
         const { key, value } = action.options ?? {};
         if (key && value) {
           expression = addLabelToQuery(expression, key, value);
@@ -464,26 +464,26 @@ export class PrometheusDatasource
 
         break;
       }
-      case 'ADD_FILTER_OUT': {
+      case "ADD_FILTER_OUT": {
         const { key, value } = action.options ?? {};
         if (key && value) {
-          expression = addLabelToQuery(expression, key, value, '!=');
+          expression = addLabelToQuery(expression, key, value, "!=");
         }
         break;
       }
-      case 'ADD_HISTOGRAM_QUANTILE': {
+      case "ADD_HISTOGRAM_QUANTILE": {
         expression = `histogram_quantile(0.95, sum(rate(${expression}[$__rate_interval])) by (le))`;
         break;
       }
-      case 'ADD_RATE': {
+      case "ADD_RATE": {
         expression = `rate(${expression}[$__rate_interval])`;
         break;
       }
-      case 'ADD_SUM': {
+      case "ADD_SUM": {
         expression = `sum(${expression.trim()}) by ($1)`;
         break;
       }
-      case 'EXPAND_RULES': {
+      case "EXPAND_RULES": {
         if (action.options) {
           expression = expandRecordingRules(expression, action.options);
         }
@@ -496,7 +496,7 @@ export class PrometheusDatasource
   }
 
   getPrometheusTime(date: string | DateTime, roundUp: boolean) {
-    if (typeof date === 'string') {
+    if (typeof date === "string") {
       date = dateMath.parse(date, roundUp)!;
     }
 
@@ -535,7 +535,7 @@ export class PrometheusDatasource
     return resultFilters.reduce((acc: string, filter: { key: string, operator: string, value: string }) => {
       const { key, operator } = filter;
       let { value } = filter;
-      if (operator === '=~' || operator === '!~') {
+      if (operator === "=~" || operator === "!~") {
         value = prometheusRegularEscape(value);
       }
       return addLabelToQuery(acc, key, value, operator);
@@ -554,10 +554,10 @@ export class PrometheusDatasource
     // We want to interpolate these variables on backend.
     // The pre-calculated values are replaced withe the variable strings.
     variables.__interval = {
-      value: '$__interval',
+      value: "$__interval",
     };
     variables.__interval_ms = {
-      value: '$__interval_ms',
+      value: "$__interval_ms",
     };
 
     //Add ad hoc filters
@@ -589,11 +589,11 @@ export class PrometheusDatasource
 
   interpolateExploreMetrics(fromExploreMetrics?: boolean) {
     return (value: string | string[] = [], variable: QueryVariableModel | CustomVariableModel) => {
-      if (typeof value === 'string' && fromExploreMetrics) {
-        if (variable.name === 'filters') {
+      if (typeof value === "string" && fromExploreMetrics) {
+        if (variable.name === "filters") {
           return wrapUtf8Filters(value);
         }
-        if (variable.name === 'groupby') {
+        if (variable.name === "groupby") {
           return utf8Support(value);
         }
       }
@@ -621,7 +621,7 @@ export function extractRuleMappingFromGroups(groups: any[]) {
   return groups.reduce(
     (mapping, group) =>
       group.rules
-        .filter((rule: any) => rule.type === 'recording')
+        .filter((rule: any) => rule.type === "recording")
         .reduce(
           (acc: { [key: string]: string }, rule: any) => ({
             ...acc,
@@ -637,9 +637,9 @@ export function extractRuleMappingFromGroups(groups: any[]) {
 // in language_utils.ts, but they are not exactly the same algorithm, and we found
 // no way to reuse one in the another or vice versa.
 export function prometheusRegularEscape(value: any) {
-  return typeof value === 'string' ? value.replace(/\\/g, '\\\\').replace(/'/g, "\\\\'") : value;
+  return typeof value === "string" ? value.replace(/\\/g, "\\\\").replace(/'/g, "\\\\'") : value;
 }
 
 export function prometheusSpecialRegexEscape(value: any) {
-  return typeof value === 'string' ? value.replace(/\\/g, '\\\\\\\\').replace(/[$^*{}\[\]'+?.()|]/g, '\\\\$&') : value;
+  return typeof value === "string" ? value.replace(/\\/g, "\\\\\\\\").replace(/[$^*{}\[\]'+?.()|]/g, "\\\\$&") : value;
 }

@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from "react";
 
-import store from '../../../store';
+import store from "../../../store";
 
-export const queryEditorExplainKey = 'VictoriaMetricsQueryEditorExplainDefault';
-export const queryEditorRawQueryKey = 'VictoriaMetricsQueryEditorRawQueryDefault';
+export const queryEditorExplainKey = "VictoriaMetricsQueryEditorExplainDefault";
+export const queryEditorRawQueryKey = "VictoriaMetricsQueryEditorRawQueryDefault";
 
 export type QueryEditorFlags =
   | typeof queryEditorExplainKey
@@ -33,7 +33,7 @@ function getFlagValue(key: QueryEditorFlags, defaultValue = false): boolean {
 }
 
 function setFlagValue(key: QueryEditorFlags, value: boolean) {
-  store.set(key, value ? '1' : '0');
+  store.set(key, value ? "1" : "0");
 }
 
 type UseFlagHookReturnType = { flag: boolean; setFlag: (val: boolean) => void };

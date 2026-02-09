@@ -16,53 +16,53 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { LanguageMap, languages as prismLanguages } from 'prismjs';
-import React, { ReactNode } from 'react';
-import { Plugin } from 'slate';
-import { Editor } from 'slate-react';
+import { LanguageMap, languages as prismLanguages } from "prismjs";
+import React, { ReactNode } from "react";
+import { Plugin } from "slate";
+import { Editor } from "slate-react";
 
-import { isDataFrame, QueryEditorProps, QueryHint, TimeRange, toLegacyResponseData } from '@grafana/data';
+import { isDataFrame, QueryEditorProps, QueryHint, TimeRange, toLegacyResponseData } from "@grafana/data";
 import {
   BracesPlugin,
   Icon,
   SlatePrism,
-} from '@grafana/ui';
+} from "@grafana/ui";
 
-import { PrometheusDatasource } from '../datasource';
+import { PrometheusDatasource } from "../datasource";
 import PromQlLanguageProvider from "../language_provider";
-import { roundMsToMin } from '../language_utils';
-import { PromOptions, PromQuery } from '../types';
+import { roundMsToMin } from "../language_utils";
+import { PromOptions, PromQuery } from "../types";
 import {
   CancelablePromise,
   isCancelablePromiseRejection,
   makePromiseCancelable,
-} from '../utils/CancelablePromise';
+} from "../utils/CancelablePromise";
 
 import { LocalStorageValueProvider } from "./LocalStorageValueProvider";
-import { PrometheusMetricsBrowser } from './PrometheusMetricsBrowser';
-import { MonacoQueryFieldWrapper } from './monaco-query-field/MonacoQueryFieldWrapper';
+import { PrometheusMetricsBrowser } from "./PrometheusMetricsBrowser";
+import { MonacoQueryFieldWrapper } from "./monaco-query-field/MonacoQueryFieldWrapper";
 
-const LAST_USED_LABELS_KEY = 'grafana.datasources.prometheus.browser.labels';
+const LAST_USED_LABELS_KEY = "grafana.datasources.prometheus.browser.labels";
 
 function getChooserText(metricsLookupDisabled: boolean, hasSyntax: boolean, hasMetrics: boolean) {
   if (metricsLookupDisabled) {
-    return '(Disabled)';
+    return "(Disabled)";
   }
 
   if (!hasSyntax) {
-    return 'Loading metrics...';
+    return "Loading metrics...";
   }
 
   if (!hasMetrics) {
-    return '(No metrics found)';
+    return "(No metrics found)";
   }
 
-  return 'Metrics browser';
+  return "Metrics browser";
 }
 
 interface PromQueryFieldProps extends QueryEditorProps<PrometheusDatasource, PromQuery, PromOptions> {
   ExtraFieldElement?: ReactNode;
-  'data-testid'?: string;
+  "data-testid"?: string;
 }
 
 interface PromQueryFieldState {
@@ -86,8 +86,8 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
       // @ts-ignore
       SlatePrism(
         {
-          onlyIn: (node: any) => node.type === 'code_block',
-          getSyntax: () => 'promql',
+          onlyIn: (node: any) => node.type === "code_block",
+          getSyntax: () => "promql",
         },
         { ...(prismLanguages as LanguageMap), promql: this.props.datasource.languageProvider.syntax }
       ),
@@ -249,7 +249,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
             <>
               <div
                 className="gf-form-inline gf-form-inline--xs-view-flex-column flex-grow-1"
-                data-testid={this.props['data-testid']}
+                data-testid={this.props["data-testid"]}
               >
                 <button
                   className="gf-form-label query-keyword pointer"
@@ -258,7 +258,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
                   type="button"
                 >
                   {chooserText}
-                  <Icon name={labelBrowserVisible ? 'angle-down' : 'angle-right'} />
+                  <Icon name={labelBrowserVisible ? "angle-down" : "angle-right"} />
                 </button>
 
                 <div className="gf-form gf-form--grow flex-shrink-1 min-width-15">
@@ -268,7 +268,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
                     history={history}
                     onChange={this.onChangeQuery}
                     onRunQuery={this.props.onRunQuery}
-                    initialValue={query.expr ?? ''}
+                    initialValue={query.expr ?? ""}
                     placeholder="Enter a MetricsQL query…"
                   />
                 </div>
@@ -289,7 +289,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
               {hint ? (
                 <div className="query-row-break">
                   <div className="prom-query-field-info text-warning">
-                    {hint.label}{' '}
+                    {hint.label}{" "}
                     {hint.fix ? (
                       <a className="text-link muted" onClick={this.onClickHintFix}>
                         {hint.fix.label}

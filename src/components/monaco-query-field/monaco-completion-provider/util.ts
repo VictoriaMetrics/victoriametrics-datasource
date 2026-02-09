@@ -38,6 +38,6 @@
 
 export class NeverCaseError extends Error {
   constructor() {
-    super('should never happen');
+    super("should never happen");
   }
 }

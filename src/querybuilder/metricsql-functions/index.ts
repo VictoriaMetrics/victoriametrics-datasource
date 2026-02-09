@@ -1,4 +1,4 @@
-import { QueryBuilderOperationDef } from '../shared/types';
+import { QueryBuilderOperationDef } from "../shared/types";
 
 import { getAggregations } from "./aggregations/";
 import { getBasicFunctions } from "./basic/";

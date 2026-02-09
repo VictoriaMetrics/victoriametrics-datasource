@@ -13,7 +13,7 @@
  * utf8Support('metric-📈') // returns '"metric-📈"'
  */
 export const utf8Support = (value: string) => {
-  if (value === '') {
+  if (value === "") {
     return value;
   }
   const isLegacyLabel = isValidLegacyName(value);
@@ -45,22 +45,22 @@ export const escapeForUtf8Support = (value: string) => {
     return value;
   }
 
-  let escaped = 'U__';
+  let escaped = "U__";
 
   for (let i = 0; i < value.length; i++) {
     const char = value[i];
     const codePoint = value.codePointAt(i);
 
-    if (char === '_') {
-      escaped += '__';
+    if (char === "_") {
+      escaped += "__";
     } else if (codePoint !== undefined && isValidLegacyRune(char, i)) {
       escaped += char;
     } else if (codePoint === undefined || !isValidCodePoint(codePoint)) {
-      escaped += '_FFFD_';
+      escaped += "_FFFD_";
     } else {
-      escaped += '_';
+      escaped += "_";
       escaped += codePoint.toString(16); // Convert code point to hexadecimal
-      escaped += '_';
+      escaped += "_";
     }
 
     // Handle surrogate pairs for characters outside the Basic Multilingual Plane
@@ -146,10 +146,10 @@ const isValidCodePoint = (codePoint: number): boolean => {
 export const wrapUtf8Filters = (filterStr: string): string => {
   const resultArray: string[] = [];
   const operatorRegex = /(=~|!=|!~|=)/; // NOTE: the order of the operators is important here
-  let currentKey = '';
-  let currentValue = '';
+  let currentKey = "";
+  let currentValue = "";
   let inQuotes = false;
-  let temp = '';
+  let temp = "";
   const addResult = () => {
     const operatorMatch = temp.match(operatorRegex);
     if (operatorMatch) {
@@ -160,14 +160,14 @@ export const wrapUtf8Filters = (filterStr: string): string => {
   };
 
   for (const char of filterStr) {
-    if (char === '"' && temp[temp.length - 1] !== '\\') {
+    if (char === '"' && temp[temp.length - 1] !== "\\") {
       // Toggle inQuotes when an unescaped quote is found
       inQuotes = !inQuotes;
       temp += char;
-    } else if (char === ',' && !inQuotes) {
+    } else if (char === "," && !inQuotes) {
       // When outside quotes and encountering ',', finalize the current pair
       addResult();
-      temp = ''; // Reset for the next pair
+      temp = ""; // Reset for the next pair
     } else {
       // Collect characters
       temp += char;
@@ -178,5 +178,5 @@ export const wrapUtf8Filters = (filterStr: string): string => {
   if (temp) {
     addResult();
   }
-  return resultArray.join(',');
+  return resultArray.join(",");
 };

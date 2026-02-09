@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css, cx } from '@emotion/css';
-import React, { useState } from 'react';
-import { GroupBase } from 'react-select';
+import { css, cx } from "@emotion/css";
+import React, { useState } from "react";
+import { GroupBase } from "react-select";
 
-import { GrafanaTheme2 } from '@grafana/data';
+import { GrafanaTheme2 } from "@grafana/data";
 import {
   stylesFactory,
   useTheme2,
@@ -28,7 +28,7 @@ import {
   SelectContainerProps,
   SelectContainer as BaseSelectContainer,
   SelectCommonProps
-} from '@grafana/ui';
+} from "@grafana/ui";
 
 interface InlineSelectProps<T> extends SelectCommonProps<T> {
   label?: string;
@@ -49,7 +49,7 @@ export function InlineSelect<T>({ label: labelProp, ...props }: InlineSelectProp
       {labelProp && (
         <label className={styles.label} htmlFor={id}>
           {labelProp}
-          {':'}&nbsp;
+          {":"}&nbsp;
         </label>
       )}
       {/* @ts-ignore */}
@@ -85,25 +85,25 @@ const ValueContainer = <Option, isMulti extends boolean, Group extends GroupBase
 
 const getSelectStyles = stylesFactory((theme: GrafanaTheme2) => ({
   root: css({
-    display: 'flex',
+    display: "flex",
     fontSize: 12,
-    alignItems: 'center',
+    alignItems: "center",
   }),
 
   label: css({
     color: theme.colors.text.secondary,
-    whiteSpace: 'nowrap',
+    whiteSpace: "nowrap",
   }),
 
   container: css({
-    background: 'none',
-    borderColor: 'transparent',
+    background: "none",
+    borderColor: "transparent",
   }),
 
   valueContainer: css({
-    display: 'flex',
-    alignItems: 'center',
-    flex: 'initial',
+    display: "flex",
+    alignItems: "center",
+    flex: "initial",
     color: theme.colors.text.secondary,
     fontSize: 12,
   }),

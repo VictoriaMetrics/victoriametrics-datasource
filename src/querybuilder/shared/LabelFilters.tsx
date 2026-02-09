@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { isEqual } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import { isEqual } from "lodash";
+import React, { useEffect, useState } from "react";
 
-import { SelectableValue } from '@grafana/data';
+import { SelectableValue } from "@grafana/data";
 
-import { EditorFieldGroup, EditorField, EditorList } from '../../components/QueryEditor';
+import { EditorFieldGroup, EditorField, EditorList } from "../../components/QueryEditor";
 
-import { LabelFilterItem } from './LabelFilterItem';
-import { QueryBuilderLabelFilter } from './types';
+import { LabelFilterItem } from "./LabelFilterItem";
+import { QueryBuilderLabelFilter } from "./types";
 
 
 export interface Props {
@@ -36,7 +36,7 @@ export interface Props {
 }
 
 export function LabelFilters({ labelsFilters, onChange, onGetLabelNames, onGetLabelValues, error }: Props) {
-  const defaultOp = '=';
+  const defaultOp = "=";
   const [items, setItems] = useState<Array<Partial<QueryBuilderLabelFilter>>>([{ op: defaultOp }]);
 
   useEffect(() => {

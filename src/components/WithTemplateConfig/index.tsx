@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from "react"
 
 import { CoreApp } from "@grafana/data";
 import { IconButton, Modal } from "@grafana/ui";

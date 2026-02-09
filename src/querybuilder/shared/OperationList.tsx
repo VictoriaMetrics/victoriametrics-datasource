@@ -16,18 +16,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { DragDropContext, Droppable, DropResult, DroppableProvided } from '@atlaskit/pragmatic-drag-and-drop-react-beautiful-dnd-migration';
-import { css } from '@emotion/css';
-import React, { useState } from 'react';
-import { useMountedState, usePrevious } from 'react-use';
+import { DragDropContext, Droppable, DropResult, DroppableProvided } from "@atlaskit/pragmatic-drag-and-drop-react-beautiful-dnd-migration";
+import { css } from "@emotion/css";
+import React, { useState } from "react";
+import { useMountedState, usePrevious } from "react-use";
 
-import { DataSourceApi, GrafanaTheme2 } from '@grafana/data';
-import { Button, Cascader, CascaderOption, useStyles2 } from '@grafana/ui';
+import { DataSourceApi, GrafanaTheme2 } from "@grafana/data";
+import { Button, Cascader, CascaderOption, useStyles2 } from "@grafana/ui";
 
-import { Stack } from '../../components/QueryEditor';
+import { Stack } from "../../components/QueryEditor";
 
-import { OperationEditor } from './OperationEditor/OperationEditor';
-import { QueryBuilderOperation, QueryWithOperations, VisualQueryModeller } from './types';
+import { OperationEditor } from "./OperationEditor/OperationEditor";
+import { QueryBuilderOperation, QueryWithOperations, VisualQueryModeller } from "./types";
 
 export interface Props<T extends QueryWithOperations> {
   query: T;
@@ -153,14 +153,14 @@ export function OperationList<T extends QueryWithOperations>({
               autoFocus={true}
               alwaysOpen={true}
               hideActiveLevelLabel={true}
-              placeholder={'Search'}
+              placeholder={"Search"}
             />
           ) : (
             <Button
-              icon={'plus'}
-              variant={'secondary'}
+              icon={"plus"}
+              variant={"secondary"}
               onClick={() => setCascaderOpen(true)}
-              title={'Add operation'}
+              title={"Add operation"}
             >
               Operations
             </Button>
@@ -217,19 +217,19 @@ function isSameOp(op1?: string, op2?: string) {
 const getStyles = (theme: GrafanaTheme2) => {
   return {
     heading: css({
-      label: 'heading',
+      label: "heading",
       fontSize: 12,
       fontWeight: theme.typography.fontWeightMedium,
       marginBottom: 0,
     }),
     operationList: css({
-      label: 'operationList',
-      display: 'flex',
-      flexWrap: 'wrap',
+      label: "operationList",
+      display: "flex",
+      flexWrap: "wrap",
       gap: theme.spacing(2),
     }),
     addButton: css({
-      label: 'addButton',
+      label: "addButton",
       width: 126,
       paddingBottom: theme.spacing(1),
     }),

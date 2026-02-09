@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react';
+import React from "react";
 
-import { EditorRow, EditorFieldGroup, EditorField } from '../../components/QueryEditor';
+import { EditorRow, EditorFieldGroup, EditorField } from "../../components/QueryEditor";
 import { WithTemplate } from "../../components/WithTemplateConfig/types";
 import { mergeTemplateWithQuery } from "../../components/WithTemplateConfig/utils/getArrayFromTemplate";
-import metricsqlGrammar from '../../metricsql';
-import { RawQuery } from '../shared/RawQuery';
+import metricsqlGrammar from "../../metricsql";
+import { RawQuery } from "../shared/RawQuery";
 
 export interface Props {
   query: string;
@@ -36,7 +36,7 @@ export function QueryPreview({ query, withTemplate }: Props) {
         <EditorField label="Raw query">
           <RawQuery
             query={mergeTemplateWithQuery(query, withTemplate)}
-            lang={{ grammar: metricsqlGrammar, name: 'promql' }}
+            lang={{ grammar: metricsqlGrammar, name: "promql" }}
           />
         </EditorField>
       </EditorFieldGroup>

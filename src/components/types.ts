@@ -13,10 +13,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { DataSourceJsonData, DataSourceSettings, QueryEditorProps } from '@grafana/data';
+import { DataSourceJsonData, DataSourceSettings, QueryEditorProps } from "@grafana/data";
 
-import { PrometheusDatasource } from '../datasource';
-import { PromOptions, PromQuery } from '../types';
+import { PrometheusDatasource } from "../datasource";
+import { PromOptions, PromQuery } from "../types";
 
 export type PromQueryEditorProps = QueryEditorProps<PrometheusDatasource, PromQuery, PromOptions>;
 

@@ -13,12 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { DataSourceSettings } from '@grafana/data';
-import { config } from '@grafana/runtime';
+import { DataSourceSettings } from "@grafana/data";
+import { config } from "@grafana/runtime";
 
-import { AzureCloud, AzureCredentials, ConcealedSecret } from './AzureCredentials';
+import { AzureCloud, AzureCredentials, ConcealedSecret } from "./AzureCredentials";
 
-const concealed: ConcealedSecret = Symbol('Concealed client secret');
+const concealed: ConcealedSecret = Symbol("Concealed client secret");
 
 function getDefaultAzureCloud(): string {
   return config.azure.cloud || AzureCloud.Public;
@@ -30,7 +30,7 @@ function getSecret(options: DataSourceSettings<any, any>): undefined | string | 
     return concealed;
   } else {
     const secret = options.secureJsonData?.azureClientSecret;
-    return typeof secret === 'string' && secret.length > 0 ? secret : undefined;
+    return typeof secret === "string" && secret.length > 0 ? secret : undefined;
   }
 }
 
@@ -40,9 +40,9 @@ export function hasCredentials(options: DataSourceSettings<any, any>): boolean {
 
 export function getDefaultCredentials(): AzureCredentials {
   if (config.azure.managedIdentityEnabled) {
-    return { authType: 'msi' };
+    return { authType: "msi" };
   } else {
-    return { authType: 'clientsecret', azureCloud: getDefaultAzureCloud() };
+    return { authType: "clientsecret", azureCloud: getDefaultAzureCloud() };
   }
 }
 
@@ -56,22 +56,22 @@ export function getCredentials(options: DataSourceSettings<any, any>): AzureCred
   }
 
   switch (credentials.authType) {
-    case 'msi':
+    case "msi":
       if (config.azure.managedIdentityEnabled) {
         return {
-          authType: 'msi',
+          authType: "msi",
         };
       } else {
         // If authentication type is managed identity but managed identities were disabled in Grafana config,
         // then we should fallback to an empty app registration (client secret) configuration
         return {
-          authType: 'clientsecret',
+          authType: "clientsecret",
           azureCloud: getDefaultAzureCloud(),
         };
       }
-    case 'clientsecret':
+    case "clientsecret":
       return {
-        authType: 'clientsecret',
+        authType: "clientsecret",
         azureCloud: credentials.azureCloud || getDefaultAzureCloud(),
         tenantId: credentials.tenantId,
         clientId: credentials.clientId,
@@ -85,9 +85,9 @@ export function updateCredentials(
   credentials: AzureCredentials
 ): DataSourceSettings<any, any> {
   switch (credentials.authType) {
-    case 'msi':
+    case "msi":
       if (!config.azure.managedIdentityEnabled) {
-        throw new Error('Managed Identity authentication is not enabled in Grafana config.');
+        throw new Error("Managed Identity authentication is not enabled in Grafana config.");
       }
 
       options = {
@@ -95,20 +95,20 @@ export function updateCredentials(
         jsonData: {
           ...options.jsonData,
           azureCredentials: {
-            authType: 'msi',
+            authType: "msi",
           },
         },
       };
 
       return options;
 
-    case 'clientsecret':
+    case "clientsecret":
       options = {
         ...options,
         jsonData: {
           ...options.jsonData,
           azureCredentials: {
-            authType: 'clientsecret',
+            authType: "clientsecret",
             azureCloud: credentials.azureCloud || getDefaultAzureCloud(),
             tenantId: credentials.tenantId,
             clientId: credentials.clientId,
@@ -117,13 +117,13 @@ export function updateCredentials(
         secureJsonData: {
           ...options.secureJsonData,
           azureClientSecret:
-            typeof credentials.clientSecret === 'string' && credentials.clientSecret.length > 0
+            typeof credentials.clientSecret === "string" && credentials.clientSecret.length > 0
               ? credentials.clientSecret
               : undefined,
         },
         secureJsonFields: {
           ...options.secureJsonFields,
-          azureClientSecret: typeof credentials.clientSecret === 'symbol',
+          azureClientSecret: typeof credentials.clientSecret === "symbol",
         },
       };
 

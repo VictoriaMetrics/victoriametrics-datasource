@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { SyntheticEvent, useMemo } from 'react';
+import React, { SyntheticEvent, useMemo } from "react";
 
 import {
   DataSourcePluginOptionsEditorProps,
   onUpdateDatasourceJsonDataOptionChecked,
   SelectableValue,
-} from '@grafana/data';
+} from "@grafana/data";
 import {
   Select,
   InlineField,
@@ -31,20 +31,20 @@ import {
   InlineFormLabel,
   LegacyForms,
   regexValidation,
-} from '@grafana/ui';
+} from "@grafana/ui";
 
-import { PromOptions } from '../types';
+import { PromOptions } from "../types";
 
 const { Input, FormField } = LegacyForms;
 
 const httpOptions = [
-  { value: 'POST', label: 'POST' },
-  { value: 'GET', label: 'GET' },
+  { value: "POST", label: "POST" },
+  { value: "GET", label: "GET" },
 ];
 
 export const getDefaultVmuiUrl = (serverUrl = "#") => `${serverUrl.replace(/\/$/, "")}/vmui/`
 
-type Props = Pick<DataSourcePluginOptionsEditorProps<PromOptions>, 'options' | 'onOptionsChange'>;
+type Props = Pick<DataSourcePluginOptionsEditorProps<PromOptions>, "options" | "onOptionsChange">;
 
 export const PromSettings = (props: Props) => {
   const { options, onOptionsChange } = props;
@@ -66,7 +66,7 @@ export const PromSettings = (props: Props) => {
                   value={defaultOptions.jsonData.timeInterval}
                   spellCheck={false}
                   placeholder="15s"
-                  onChange={onChangeHandler('timeInterval', defaultOptions, onOptionsChange)}
+                  onChange={onChangeHandler("timeInterval", defaultOptions, onOptionsChange)}
                   validationEvents={promSettingsValidationEvents}
                 />
               }
@@ -83,7 +83,7 @@ export const PromSettings = (props: Props) => {
                 <Input
                   className="width-7"
                   value={defaultOptions.jsonData.queryTimeout}
-                  onChange={onChangeHandler('queryTimeout', defaultOptions, onOptionsChange)}
+                  onChange={onChangeHandler("queryTimeout", defaultOptions, onOptionsChange)}
                   spellCheck={false}
                   placeholder="60s"
                   validationEvents={promSettingsValidationEvents}
@@ -104,7 +104,7 @@ export const PromSettings = (props: Props) => {
             aria-label="Select HTTP method"
             options={httpOptions}
             value={httpOptions.find((o) => o.value === defaultOptions.jsonData.httpMethod)}
-            onChange={onChangeHandler('httpMethod', defaultOptions, onOptionsChange)}
+            onChange={onChangeHandler("httpMethod", defaultOptions, onOptionsChange)}
             width={14}
           />
         </div>
@@ -119,7 +119,7 @@ export const PromSettings = (props: Props) => {
           >
             <InlineSwitch
               value={defaultOptions.jsonData.disableMetricsLookup ?? false}
-              onChange={onUpdateDatasourceJsonDataOptionChecked(props, 'disableMetricsLookup')}
+              onChange={onUpdateDatasourceJsonDataOptionChecked(props, "disableMetricsLookup")}
             />
           </InlineField>
         </div>
@@ -133,7 +133,7 @@ export const PromSettings = (props: Props) => {
                 <Input
                   className="width-25"
                   value={defaultOptions.jsonData.customQueryParameters}
-                  onChange={onChangeHandler('customQueryParameters', defaultOptions, onOptionsChange)}
+                  onChange={onChangeHandler("customQueryParameters", defaultOptions, onOptionsChange)}
                   spellCheck={false}
                   placeholder="Example: max_source_resolution=5m&timeout=10"
                 />
@@ -151,7 +151,7 @@ export const PromSettings = (props: Props) => {
                 <Input
                   className="width-25"
                   value={defaultOptions.jsonData.vmuiUrl}
-                  onChange={onChangeHandler('vmuiUrl', defaultOptions, onOptionsChange)}
+                  onChange={onChangeHandler("vmuiUrl", defaultOptions, onOptionsChange)}
                   spellCheck={false}
                   placeholder={getDefaultVmuiUrl(defaultOptions.url)}
                 />
@@ -168,17 +168,17 @@ export const promSettingsValidationEvents = {
   [EventsWithValidation.onBlur]: [
     regexValidation(
       /^$|^\d+(ms|[Mwdhmsy])$/,
-      'Value is not valid, you can use number with time unit specifier: y, M, w, d, h, m, s'
+      "Value is not valid, you can use number with time unit specifier: y, M, w, d, h, m, s"
     ),
   ],
 };
 
 export const getValueFromEventItem = (eventItem: SyntheticEvent<HTMLInputElement> | SelectableValue<string>) => {
   if (!eventItem) {
-    return '';
+    return "";
   }
 
-  if (eventItem.hasOwnProperty('currentTarget')) {
+  if (eventItem.hasOwnProperty("currentTarget")) {
     return eventItem.currentTarget.value;
   }
 
@@ -186,7 +186,7 @@ export const getValueFromEventItem = (eventItem: SyntheticEvent<HTMLInputElement
 };
 
 const onChangeHandler =
-  (key: keyof PromOptions, options: Props['options'], onOptionsChange: Props['onOptionsChange']) =>
+  (key: keyof PromOptions, options: Props["options"], onOptionsChange: Props["onOptionsChange"]) =>
     (eventItem: SyntheticEvent<HTMLInputElement> | SelectableValue<string>) => {
       onOptionsChange({
         ...options,
@@ -197,12 +197,12 @@ const onChangeHandler =
       });
     };
 
-const getDefaultOptions = (options: Props['options']): Props['options'] => {
+const getDefaultOptions = (options: Props["options"]): Props["options"] => {
   return options.jsonData.httpMethod ? options : {
     ...options,
     jsonData: {
       ...options.jsonData,
-      httpMethod: 'POST',
+      httpMethod: "POST",
     },
   };
 }

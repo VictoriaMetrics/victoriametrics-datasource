@@ -16,18 +16,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { chain, map as _map } from 'lodash';
+import { chain, map as _map } from "lodash";
 
-import { getDefaultTimeRange, MetricFindValue, TimeRange } from '@grafana/data';
+import { getDefaultTimeRange, MetricFindValue, TimeRange } from "@grafana/data";
 
-import { PrometheusDatasource } from './datasource';
-import { getVictoriaMetricsTime } from './language_utils';
+import { PrometheusDatasource } from "./datasource";
+import { getVictoriaMetricsTime } from "./language_utils";
 import {
   PrometheusLabelNamesRegex,
   PrometheusLabelNamesRegexWithMatch,
   PrometheusMetricNamesRegex,
   PrometheusQueryResultRegex,
-} from './migrations/variableMigration';
+} from "./migrations/variableMigration";
 
 export default class PrometheusMetricFindQuery {
   range: TimeRange;
@@ -87,7 +87,7 @@ export default class PrometheusMetricFindQuery {
     }
 
     // if query contains full metric name, return metric name and label list
-    const expressions = ['label_values()', 'metrics()', 'query_result()'];
+    const expressions = ["label_values()", "metrics()", "query_result()"];
     if (!expressions.includes(this.query)) {
       return this.metricNameAndLabelsQuery(this.query);
     }
@@ -98,7 +98,7 @@ export default class PrometheusMetricFindQuery {
   labelValuesQuery(label: string, metric?: string) {
     const start = getVictoriaMetricsTime(this.range.from, false);
     const end = getVictoriaMetricsTime(this.range.to, true);
-    const params = { ...(metric && { 'match[]': metric }), start: start.toString(), end: end.toString() };
+    const params = { ...(metric && { "match[]": metric }), start: start.toString(), end: end.toString() };
 
     const url = `api/v1/label/${label}/values`;
 
@@ -114,7 +114,7 @@ export default class PrometheusMetricFindQuery {
       start: start.toString(),
       end: end.toString(),
     };
-    const url = 'api/v1/label/__name__/values';
+    const url = "api/v1/label/__name__/values";
 
     return this.datasource.getRequest(url, params).then((result: any) => {
       return chain(result.data)
@@ -133,32 +133,32 @@ export default class PrometheusMetricFindQuery {
   }
 
   queryResultQuery(query: string) {
-    const url = 'api/v1/query';
+    const url = "api/v1/query";
     const params = {
       query,
       time: getVictoriaMetricsTime(this.range.to, true).toString(),
     };
     return this.datasource.getRequest(url, params).then((result: any) => {
       switch (result.data.resultType) {
-        case 'scalar': // [ <unix_time>, "<scalar_value>" ]
-        case 'string': // [ <unix_time>, "<string_value>" ]
+        case "scalar": // [ <unix_time>, "<scalar_value>" ]
+        case "string": // [ <unix_time>, "<string_value>" ]
           return [
             {
-              text: result.data.result[1] || '',
+              text: result.data.result[1] || "",
               expandable: false,
             },
           ];
-        case 'vector':
+        case "vector":
           return _map(result.data.result, (metricData) => {
-            let text = metricData.metric.__name__ || '';
+            let text = metricData.metric.__name__ || "";
             delete metricData.metric.__name__;
             text +=
-              '{' +
+              "{" +
               _map(metricData.metric, (v, k) => {
                 return k + '="' + v + '"';
-              }).join(',') +
-              '}';
-            text += ' ' + metricData.value[1] + ' ' + metricData.value[0] * 1000;
+              }).join(",") +
+              "}";
+            text += " " + metricData.value[1] + " " + metricData.value[0] * 1000;
 
             return {
               text: text,
@@ -175,12 +175,12 @@ export default class PrometheusMetricFindQuery {
     const start = getVictoriaMetricsTime(this.range.from, false);
     const end = getVictoriaMetricsTime(this.range.to, true);
     const params = {
-      'match[]': query,
+      "match[]": query,
       start: start.toString(),
       end: end.toString(),
     };
 
-    const url = 'api/v1/series';
+    const url = "api/v1/series";
     const self = this;
 
     return this.datasource.getRequest(url, params).then((result: any) => {
@@ -196,5 +196,5 @@ export default class PrometheusMetricFindQuery {
 
 function isFilterDefined(filter: string) {
   // We consider blank strings or the empty filter {} as an undefined filter
-  return filter && filter.split(' ').join('') !== '{}';
+  return filter && filter.split(" ").join("") !== "{}";
 }

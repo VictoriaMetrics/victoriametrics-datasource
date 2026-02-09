@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from '@emotion/css';
-import React, { ComponentProps } from 'react';
+import { css } from "@emotion/css";
+import React, { ComponentProps } from "react";
 
-import { GrafanaTheme2 } from '@grafana/data';
-import { stylesFactory, useTheme2, ReactUtils, Field, Icon, PopoverContent, Tooltip } from '@grafana/ui';
+import { GrafanaTheme2 } from "@grafana/data";
+import { stylesFactory, useTheme2, ReactUtils, Field, Icon, PopoverContent, Tooltip } from "@grafana/ui";
 
-import { Space } from './Space';
+import { Space } from "./Space";
 
 interface EditorFieldProps extends ComponentProps<typeof Field> {
   label: string;
@@ -75,7 +75,7 @@ const getStyles = stylesFactory((theme: GrafanaTheme2, width?: number | string) 
       fontWeight: theme.typography.fontWeightMedium,
     }),
     optional: css({
-      fontStyle: 'italic',
+      fontStyle: "italic",
       color: theme.colors.text.secondary,
     }),
     field: css({
@@ -84,7 +84,7 @@ const getStyles = stylesFactory((theme: GrafanaTheme2, width?: number | string) 
     icon: css({
       color: theme.colors.text.secondary,
       marginLeft: theme.spacing(1),
-      ':hover': {
+      ":hover": {
         color: theme.colors.text.primary,
       },
     }),

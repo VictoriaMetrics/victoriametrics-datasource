@@ -16,32 +16,32 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
-import { CoreApp, DataQueryRequest, LoadingState } from '@grafana/data';
-import { reportInteraction } from '@grafana/runtime';
-import { ConfirmModal, IconButton } from '@grafana/ui';
+import { CoreApp, DataQueryRequest, LoadingState } from "@grafana/data";
+import { reportInteraction } from "@grafana/runtime";
+import { ConfirmModal, IconButton } from "@grafana/ui";
 
 import PrettifyQuery from "../../components/PrettifyQuery";
-import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../components/QueryEditor';
+import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from "../../components/QueryEditor";
 import VmuiLink from "../../components/VmuiLink";
 import WithTemplateConfig from "../../components/WithTemplateConfig";
 import { WithTemplate } from "../../components/WithTemplateConfig/types";
 import { getArrayFromTemplate } from "../../components/WithTemplateConfig/utils/getArrayFromTemplate";
-import { PromQueryEditorProps } from '../../components/types';
+import { PromQueryEditorProps } from "../../components/types";
 import PrometheusLanguageProvider from "../../language_provider";
-import { PromQuery } from '../../types';
-import { promQueryModeller } from '../PromQueryModeller';
-import { buildVisualQueryFromString } from '../parsing';
-import { QueryEditorModeToggle } from '../shared/QueryEditorModeToggle';
-import { QueryHeaderSwitch } from '../shared/QueryHeaderSwitch';
-import { queryEditorExplainKey, useFlag } from '../shared/hooks/useFlag';
-import { QueryEditorMode } from '../shared/types';
-import { changeEditorMode, getQueryWithDefaults } from '../state';
+import { PromQuery } from "../../types";
+import { promQueryModeller } from "../PromQueryModeller";
+import { buildVisualQueryFromString } from "../parsing";
+import { QueryEditorModeToggle } from "../shared/QueryEditorModeToggle";
+import { QueryHeaderSwitch } from "../shared/QueryHeaderSwitch";
+import { queryEditorExplainKey, useFlag } from "../shared/hooks/useFlag";
+import { QueryEditorMode } from "../shared/types";
+import { changeEditorMode, getQueryWithDefaults } from "../state";
 
-import { PromQueryBuilderContainer } from './PromQueryBuilderContainer';
-import { PromQueryBuilderOptions } from './PromQueryBuilderOptions';
-import { PromQueryCodeEditor } from './PromQueryCodeEditor';
+import { PromQueryBuilderContainer } from "./PromQueryBuilderContainer";
+import { PromQueryBuilderOptions } from "./PromQueryBuilderOptions";
+import { PromQueryCodeEditor } from "./PromQueryCodeEditor";
 import { QueryPreview } from "./QueryPreview";
 import { TraceView } from "./Trace";
 
@@ -65,15 +65,15 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
 
   const onEditorModeChange = useCallback(
     (newMetricEditorMode: QueryEditorMode) => {
-      reportInteraction('user_grafana_prometheus_editor_mode_clicked', {
+      reportInteraction("user_grafana_prometheus_editor_mode_clicked", {
         newEditor: newMetricEditorMode,
-        previousEditor: query.editorMode ?? '',
+        previousEditor: query.editorMode ?? "",
         newQuery: !query.expr,
-        app: app ?? '',
+        app: app ?? "",
       });
 
       if (newMetricEditorMode === QueryEditorMode.Builder) {
-        const result = buildVisualQueryFromString(query.expr || '');
+        const result = buildVisualQueryFromString(query.expr || "");
         // If there are errors, give user a chance to decide if they want to go to builder as that can lose some data.
         if (result.errors.length) {
           setParseModalOpen(true);
@@ -139,7 +139,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
           onChange={({ value }) => {
             // TODO: Bit convoluted as we don't have access to visualQuery model here. Maybe would make sense to
             //  move it inside the editor?
-            const result = buildVisualQueryFromString(query.expr || '');
+            const result = buildVisualQueryFromString(query.expr || "");
             result.query.operations = value?.operations!;
             onChange({
               ...query,
@@ -148,10 +148,10 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
           }}
           options={promQueryModeller.getQueryPatterns().map((x) => ({ label: x.name, value: x }))}
         />
-        <QueryHeaderSwitch label="Explain" value={explain} onChange={onShowExplainChange}/>
-        <QueryHeaderSwitch label="Trace" value={trace} onChange={onShowTracingChange}/>
-        <QueryHeaderSwitch label="Raw" value={rawQuery} onChange={onShowRawChange}/>
-        <FlexItem grow={1}/>
+        <QueryHeaderSwitch label="Explain" value={explain} onChange={onShowExplainChange} />
+        <QueryHeaderSwitch label="Trace" value={trace} onChange={onShowTracingChange} />
+        <QueryHeaderSwitch label="Raw" value={rawQuery} onChange={onShowRawChange} />
+        <FlexItem grow={1} />
         <WithTemplateConfig
           app={app}
           template={templateByDashboard}
@@ -159,19 +159,19 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
           dashboardUID={dashboardUID}
           datasource={datasource}
         />
-        <PrettifyQuery query={query} datasource={datasource} onChange={onChange}/>
-        <VmuiLink query={query} datasource={datasource} panelData={data} dashboardUID={dashboardUID}/>
+        <PrettifyQuery query={query} datasource={datasource} onChange={onChange} />
+        <VmuiLink query={query} datasource={datasource} panelData={data} dashboardUID={dashboardUID} />
         {app !== CoreApp.Explore && (
           <IconButton
             key="run"
-            name={data?.state === LoadingState.Loading ? 'fa fa-spinner' : "play"}
+            name={data?.state === LoadingState.Loading ? "fa fa-spinner" : "play"}
             tooltip="Run queries"
             onClick={onRunQuery}
           />
         )}
-        <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange}/>
+        <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange} />
       </EditorHeader>
-      <Space v={0.5}/>
+      <Space v={0.5} />
       <EditorRows>
         {editorMode === QueryEditorMode.Code && (
           <>
@@ -181,7 +181,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
               query={query}
               showExplain={explain}
             />
-            {rawQuery && <QueryPreview query={query.expr} withTemplate={templateByDashboard}/>}
+            {rawQuery && <QueryPreview query={query.expr} withTemplate={templateByDashboard} />}
           </>
         )}
         {editorMode === QueryEditorMode.Builder && (
@@ -194,11 +194,11 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
             showExplain={explain}
           />
         )}
-        {trace && <TraceView query={query} datasource={datasource} data={data}/>}
-        <PromQueryBuilderOptions query={query} app={props.app} onChange={onChange} onRunQuery={onRunQuery}/>
+        {trace && <TraceView query={query} datasource={datasource} data={data} />}
+        <PromQueryBuilderOptions query={query} app={props.app} onChange={onChange} onRunQuery={onRunQuery} />
       </EditorRows>
     </>
   );
 });
 
-PromQueryEditorSelector.displayName = 'PromQueryEditorSelector';
+PromQueryEditorSelector.displayName = "PromQueryEditorSelector";

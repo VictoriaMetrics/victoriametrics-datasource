@@ -16,17 +16,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from '@emotion/css';
-import React, { ComponentType } from 'react';
+import { css } from "@emotion/css";
+import React, { ComponentType } from "react";
 
-import { GrafanaTheme2, SelectableValue, toOption } from '@grafana/data';
-import { Button, Checkbox, Select, useStyles2 } from '@grafana/ui';
+import { GrafanaTheme2, SelectableValue, toOption } from "@grafana/data";
+import { Button, Checkbox, Select, useStyles2 } from "@grafana/ui";
 
-import { Stack } from '../../components/QueryEditor';
+import { Stack } from "../../components/QueryEditor";
 import { AutoSizeInput } from "../../components/QueryEditor/AutoSizeInput";
 
-import { getOperationParamId } from './operationUtils';
-import { QueryBuilderOperationParamDef, QueryBuilderOperationParamEditorProps } from './types';
+import { getOperationParamId } from "./operationUtils";
+import { QueryBuilderOperationParamDef, QueryBuilderOperationParamEditorProps } from "./types";
 
 export function getOperationParamEditor(
   paramDef: QueryBuilderOperationParamDef
@@ -40,10 +40,10 @@ export function getOperationParamEditor(
   }
 
   switch (paramDef.type) {
-    case 'boolean':
+    case "boolean":
       return BoolInputParamEditor;
-    case 'number':
-    case 'string':
+    case "number":
+    case "string":
     default:
       return SimpleInputParamEditor;
   }
@@ -59,7 +59,7 @@ function SimpleInputParamEditor(props: QueryBuilderOperationParamEditorProps) {
       title={props.paramDef.description}
       onCommitChange={(evt) => {
         props.onChange(props.index, evt.currentTarget.value);
-        if (props.paramDef.runQueryOnEnter && evt.type === 'keydown') {
+        if (props.paramDef.runQueryOnEnter && evt.type === "keydown") {
           props.onRunQuery();
         }
       }}
@@ -133,7 +133,7 @@ function SelectInputParamEditor({
           variant="secondary"
           title={`Remove ${paramDef.name}`}
           aria-label={`Remove ${paramDef.name}`}
-          onClick={() => onChange(index, '')}
+          onClick={() => onChange(index, "")}
         />
       )}
     </Stack>

@@ -8,7 +8,7 @@ import { DashboardResponse } from "../types";
 const getDashboardByUID = async (uid: string) => {
   const response: {data: DashboardResponse} = await lastValueFrom(getBackendSrv().fetch({
     url: `/api/dashboards/uid/${uid}`,
-    method: 'GET',
+    method: "GET",
   }));
 
   return response?.data;

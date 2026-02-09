@@ -40,16 +40,16 @@ export function getOverTimeFunctions() {
       PromOperationId.RollupRate,
       {
         params: [getRangeVectorParamDef(), {
-          name: 'Rollup',
-          type: 'string',
+          name: "Rollup",
+          type: "string",
           optional: true,
           options: [
-            { label: 'min', value: 'min' },
-            { label: 'max', value: 'max' },
-            { label: 'avg', value: 'avg' },
+            { label: "min", value: "min" },
+            { label: "max", value: "max" },
+            { label: "avg", value: "avg" },
           ],
         }],
-        defaultParams: ['$__interval', ''],
+        defaultParams: ["$__interval", ""],
         renderer: rollupRateRenderer
       }
     ),
@@ -82,11 +82,11 @@ function rollupRateRenderer(
   def: QueryBuilderOperationDef,
   innerExpr: string
 ) {
-  let rangeVector = model.params?.[0] ?? '$__interval';
+  let rangeVector = model.params?.[0] ?? "$__interval";
   const args = [`${innerExpr}[${rangeVector}]`];
   const rollupParam = model.params?.[1];
   if (rollupParam) {
     args.push(`"${rollupParam}"`);
   }
-  return `${def.id}(${args.join(', ')})`;
+  return `${def.id}(${args.join(", ")})`;
 }

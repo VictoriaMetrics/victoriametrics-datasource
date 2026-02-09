@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect } from "react";
 
 import { PrometheusDatasource } from "../../../datasource";
 import PrometheusLanguageProvider from "../../../language_provider";

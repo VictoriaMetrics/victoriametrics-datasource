@@ -16,17 +16,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from '@emotion/css';
-import React, { useCallback, useState } from 'react';
-import HighlighterComponent, { HighlighterProps } from 'react-highlight-words';
+import { css } from "@emotion/css";
+import React, { useCallback, useState } from "react";
+import HighlighterComponent, { HighlighterProps } from "react-highlight-words";
 
-import { GrafanaTheme2, SelectableValue, toOption } from '@grafana/data';
-import { Button, FormatOptionLabelMeta, InlineField, InlineFieldRow, Select, useStyles2 } from '@grafana/ui';
+import { GrafanaTheme2, SelectableValue, toOption } from "@grafana/data";
+import { Button, FormatOptionLabelMeta, InlineField, InlineFieldRow, Select, useStyles2 } from "@grafana/ui";
 
-import { EditorField, EditorFieldGroup } from '../../components/QueryEditor';
-import { PrometheusDatasource } from '../../datasource';
-import { escapeMetricNameSpecialCharacters } from '../../language_utils';
-import { PromVisualQuery } from '../types';
+import { EditorField, EditorFieldGroup } from "../../components/QueryEditor";
+import { PrometheusDatasource } from "../../datasource";
+import { escapeMetricNameSpecialCharacters } from "../../language_utils";
+import { PromVisualQuery } from "../types";
 
 import { MetricsExplorerModal } from './MetricsExplorerModal/MetricsExplorerModal';
 
@@ -34,7 +34,7 @@ import { MetricsExplorerModal } from './MetricsExplorerModal/MetricsExplorerModa
 const Highlighter = HighlighterComponent as React.ComponentType<HighlighterProps>;
 
 // We are matching words split with space
-const splitSeparator = ' ';
+const splitSeparator = " ";
 
 export interface Props {
   query: PromVisualQuery;
@@ -70,14 +70,14 @@ export function MetricSelect({ query, onChange, onGetMetrics, datasource, variab
   const formatOptionLabel = useCallback(
     (option: SelectableValue<any>, meta: FormatOptionLabelMeta<any>) => {
       // For newly created custom value we don't want to add highlight
-      if (option['__isNew__']) {
+      if (option["__isNew__"]) {
         return option.label;
       }
 
       return (
         <Highlighter
           searchWords={meta.inputValue.split(splitSeparator)}
-          textToHighlight={option.label ?? ''}
+          textToHighlight={option.label ?? ""}
           highlightClassName={styles.highlight}
         />
       );

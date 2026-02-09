@@ -15,17 +15,17 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import { cx } from '@emotion/css';
-import React, { FormEvent, useMemo, useState } from 'react';
+import { cx } from "@emotion/css";
+import React, { FormEvent, useMemo, useState } from "react";
 
-import { config } from '@grafana/runtime';
-import { InlineField, InlineFieldRow, InlineSwitch, Input } from '@grafana/ui';
+import { config } from "@grafana/runtime";
+import { InlineField, InlineFieldRow, InlineSwitch, Input } from "@grafana/ui";
 
 import { HttpSettingsBaseProps } from "../components/types";
 
-import { KnownAzureClouds, AzureCredentials } from './AzureCredentials';
-import { getCredentials, updateCredentials } from './AzureCredentialsConfig';
-import { AzureCredentialsForm } from './AzureCredentialsForm';
+import { KnownAzureClouds, AzureCredentials } from "./AzureCredentials";
+import { getCredentials, updateCredentials } from "./AzureCredentialsConfig";
+import { AzureCredentialsForm } from "./AzureCredentialsForm";
 
 export const AzureAuthSettings = (props: HttpSettingsBaseProps) => {
   const { dataSourceConfig, onChange } = props;
@@ -82,8 +82,8 @@ export const AzureAuthSettings = (props: HttpSettingsBaseProps) => {
           <InlineFieldRow>
             <InlineField labelWidth={labelWidth} label="Resource ID" disabled={dataSourceConfig.readOnly}>
               <Input
-                className={cx('width-30')}
-                value={dataSourceConfig.jsonData.azureEndpointResourceId || ''}
+                className={cx("width-30")}
+                value={dataSourceConfig.jsonData.azureEndpointResourceId || ""}
                 onChange={onResourceIdChange}
               />
             </InlineField>

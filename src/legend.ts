@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Labels } from '@grafana/data';
+import { Labels } from "@grafana/data";
 
 /** replace labels in a string.  Used for loki+prometheus legend formats */
 export function renderLegendFormat(aliasPattern: string, aliasData: Labels): string {

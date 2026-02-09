@@ -12,21 +12,21 @@ export function getCopyMoveLabelFunctions() {
     id: id,
     params: [
       {
-        name: 'src_label',
-        type: 'string',
+        name: "src_label",
+        type: "string",
         restParam: true,
         editor: LabelParamEditor,
       },
       {
-        name: 'dst_label',
-        type: 'string',
+        name: "dst_label",
+        type: "string",
         restParam: true,
         editor: LabelParamEditor,
       }
     ],
-    defaultParams: ['', ''],
+    defaultParams: ["", ""],
     renderer: (model, def, innerExpr) => {
-      return `${model.id}(${innerExpr}, ${model.params.map(item => `"${item}"`).join(', ')})`;
+      return `${model.id}(${innerExpr}, ${model.params.map(item => `"${item}"`).join(", ")})`;
     },
   }))
 }

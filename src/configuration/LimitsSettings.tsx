@@ -1,18 +1,18 @@
-import React, { SyntheticEvent } from 'react';
+import React, { SyntheticEvent } from "react";
 
 import {
   DataSourcePluginOptionsEditorProps,
   SelectableValue,
-} from '@grafana/data';
+} from "@grafana/data";
 import {
   Button,
   EventsWithValidation,
   InlineField,
   LegacyForms,
   regexValidation
-} from '@grafana/ui';
+} from "@grafana/ui";
 
-import { LimitMetrics, PromOptions } from '../types';
+import { LimitMetrics, PromOptions } from "../types";
 
 import { getValueFromEventItem } from "./PromSettings";
 
@@ -22,7 +22,7 @@ const limitsSettingsValidationEvents = {
   [EventsWithValidation.onBlur]: [
     regexValidation(
       /^$|^\d+$/,
-      'Value is not valid, you can use number'
+      "Value is not valid, you can use number"
     ),
   ],
 };
@@ -48,7 +48,7 @@ const limitFields = [
   }
 ]
 
-type Props = Pick<DataSourcePluginOptionsEditorProps<PromOptions>, 'options' | 'onOptionsChange'>;
+type Props = Pick<DataSourcePluginOptionsEditorProps<PromOptions>, "options" | "onOptionsChange">;
 
 export const LimitsSettings = (props: Props) => {
   const { options, onOptionsChange } = props;
@@ -68,7 +68,7 @@ export const LimitsSettings = (props: Props) => {
             >
               <Input
                 className="width-6"
-                value={`${options.jsonData?.limitMetrics?.[field.key] || ''}`}
+                value={`${options.jsonData?.limitMetrics?.[field.key] || ""}`}
                 onChange={onChangeHandler(field.key, options, onOptionsChange)}
                 spellCheck={false}
                 placeholder={field.placeholder}
@@ -84,7 +84,7 @@ export const LimitsSettings = (props: Props) => {
           rel="noreferrer"
         >
           <Button
-            variant={'secondary'}
+            variant={"secondary"}
             fill={"text"}
             icon={"book"}
             size={"sm"}
@@ -98,7 +98,7 @@ export const LimitsSettings = (props: Props) => {
 };
 
 const onChangeHandler =
-  (key: keyof LimitMetrics, options: Props['options'], onOptionsChange: Props['onOptionsChange']) =>
+  (key: keyof LimitMetrics, options: Props["options"], onOptionsChange: Props["onOptionsChange"]) =>
     (eventItem: SyntheticEvent<HTMLInputElement> | SelectableValue<string>) => {
       onOptionsChange({
         ...options,

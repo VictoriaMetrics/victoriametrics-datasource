@@ -16,18 +16,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from '@emotion/css';
-import React, { CSSProperties, useCallback } from 'react';
+import { css } from "@emotion/css";
+import React, { CSSProperties, useCallback } from "react";
 
-import { GrafanaTheme2 } from '@grafana/data';
-import { useStyles2 } from '@grafana/ui';
+import { GrafanaTheme2 } from "@grafana/data";
+import { useStyles2 } from "@grafana/ui";
 
 interface StackProps {
-  direction?: CSSProperties['flexDirection'];
-  alignItems?: CSSProperties['alignItems'];
+  direction?: CSSProperties["flexDirection"];
+  alignItems?: CSSProperties["alignItems"];
   wrap?: boolean;
   gap?: number;
-  flexGrow?: CSSProperties['flexGrow'];
+  flexGrow?: CSSProperties["flexGrow"];
   children?: React.ReactNode;
 }
 
@@ -39,9 +39,9 @@ export const Stack: React.FC<StackProps> = ({ children, ...props }) => {
 
 const getStyles = (theme: GrafanaTheme2, props: StackProps) => ({
   root: css({
-    display: 'flex',
-    flexDirection: props.direction ?? 'row',
-    flexWrap: props.wrap ?? true ? 'wrap' : undefined,
+    display: "flex",
+    flexDirection: props.direction ?? "row",
+    flexWrap: props.wrap ?? true ? "wrap" : undefined,
     alignItems: props.alignItems,
     gap: theme.spacing(props.gap ?? 2),
     flexGrow: props.flexGrow,

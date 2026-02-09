@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { TimeRange, toUtc, AbsoluteTimeRange } from '@grafana/data';
+import { TimeRange, toUtc, AbsoluteTimeRange } from "@grafana/data";
 
 export const getShiftedTimeRange = (direction: number, origRange: TimeRange): AbsoluteTimeRange => {
   const range = {

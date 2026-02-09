@@ -1,18 +1,18 @@
-import { render, screen } from '@testing-library/react';
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import { render, screen } from "@testing-library/react";
+import React from "react";
+import { act } from "react-dom/test-utils";
 
-import '@testing-library/jest-dom';
-import { DataSourceInstanceSettings, DataSourcePluginMeta } from '@grafana/data';
+import "@testing-library/jest-dom";
+import { DataSourceInstanceSettings, DataSourcePluginMeta } from "@grafana/data";
 
-import { PrometheusDatasource } from '../../datasource';
-import PromQlLanguageProvider from '../../language_provider';
-import { EmptyLanguageProviderMock } from '../../language_provider.mock';
+import { PrometheusDatasource } from "../../datasource";
+import PromQlLanguageProvider from "../../language_provider";
+import { EmptyLanguageProviderMock } from "../../language_provider.mock";
 
-import { EXPLAIN_LABEL_FILTER_CONTENT } from './PromQueryBuilderExplained';
-import { PromQueryCodeEditor } from './PromQueryCodeEditor';
+import { EXPLAIN_LABEL_FILTER_CONTENT } from "./PromQueryBuilderExplained";
+import { PromQueryCodeEditor } from "./PromQueryCodeEditor";
 
-jest.mock('../../components/monaco-query-field/MonacoQueryFieldWrapper', () => {
+jest.mock("../../components/monaco-query-field/MonacoQueryFieldWrapper", () => {
   const fakeQueryField = () => <div>prometheus query field</div>;
   return { MonacoQueryFieldWrapper: fakeQueryField };
 });
@@ -21,7 +21,7 @@ function createDatasource() {
   const languageProvider = new EmptyLanguageProviderMock() as unknown as PromQlLanguageProvider;
   const datasource = new PrometheusDatasource(
     {
-      url: '',
+      url: "",
       jsonData: {},
       meta: {} as DataSourcePluginMeta,
     } as DataSourceInstanceSettings,
@@ -41,22 +41,22 @@ function createProps(datasource: PrometheusDatasource) {
   };
 }
 
-describe('PromQueryCodeEditor', () => {
-  it('shows explain section when showExplain is true', async () => {
+describe("PromQueryCodeEditor", () => {
+  it("shows explain section when showExplain is true", async () => {
     const { datasource } = createDatasource();
     const props = createProps(datasource);
     props.showExplain = true;
     await act(async () => {
-      render(<PromQueryCodeEditor {...props} query={{ expr: '', refId: 'refid', interval: '1s' }} />);
+      render(<PromQueryCodeEditor {...props} query={{ expr: "", refId: "refid", interval: "1s" }} />);
     });
     expect(await screen.findByText(EXPLAIN_LABEL_FILTER_CONTENT)).toBeInTheDocument();
   });
 
-  it('does not show explain section when showExplain is false', async () => {
+  it("does not show explain section when showExplain is false", async () => {
     const { datasource } = createDatasource();
     const props = createProps(datasource);
     await act(async () => {
-      render(<PromQueryCodeEditor {...props} query={{ expr: '', refId: 'refid', interval: '1s' }} />);
+      render(<PromQueryCodeEditor {...props} query={{ expr: "", refId: "refid", interval: "1s" }} />);
     });
     expect(await screen.queryByText(EXPLAIN_LABEL_FILTER_CONTENT)).not.toBeInTheDocument();
   });

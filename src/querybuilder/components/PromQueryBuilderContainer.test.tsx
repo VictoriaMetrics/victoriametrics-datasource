@@ -1,20 +1,20 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import React from "react";
+import { act } from "react-dom/test-utils";
 
-import { DataSourceInstanceSettings, DataSourcePluginMeta } from '@grafana/data';
+import { DataSourceInstanceSettings, DataSourcePluginMeta } from "@grafana/data";
 
-import { PrometheusDatasource } from '../../datasource';
-import PromQlLanguageProvider from '../../language_provider';
-import { EmptyLanguageProviderMock } from '../../language_provider.mock';
-import { PromQuery } from '../../types';
-import { getOperationParamId } from '../shared/operationUtils';
+import { PrometheusDatasource } from "../../datasource";
+import PromQlLanguageProvider from "../../language_provider";
+import { EmptyLanguageProviderMock } from "../../language_provider.mock";
+import { PromQuery } from "../../types";
+import { getOperationParamId } from "../shared/operationUtils";
 
-import { PromQueryBuilderContainer } from './PromQueryBuilderContainer';
+import { PromQueryBuilderContainer } from "./PromQueryBuilderContainer";
 
 const addOperation = async (section: string, op: string) => {
-  const addOperationButton = screen.getByTitle('Add operation');
+  const addOperationButton = screen.getByTitle("Add operation");
   expect(addOperationButton).toBeInTheDocument();
   await act(async () => await userEvent.click(addOperationButton))
   const sectionItem = screen.getByTitle(section);
@@ -27,21 +27,21 @@ const addOperation = async (section: string, op: string) => {
   await act(async () => fireEvent.click(opItem))
 }
 
-describe('PromQueryBuilderContainer', () => {
-  it('translates query between string and model', async () => {
+describe("PromQueryBuilderContainer", () => {
+  it("translates query between string and model", async () => {
     const { props } = setup({ expr: 'rate(metric_test{job="testjob"}[$__rate_interval])' });
 
-    expect(screen.getByText('metric_test')).toBeInTheDocument();
-    await addOperation('Range functions', 'Rate');
+    expect(screen.getByText("metric_test")).toBeInTheDocument();
+    await addOperation("Range functions", "Rate");
     expect(props.onChange).toHaveBeenCalledWith({
       expr: 'rate(metric_test{job="testjob"}[$__rate_interval])',
-      refId: 'A',
+      refId: "A",
     });
   });
 
-  it('Can add rest param', async () => {
-    const { container } = setup({ expr: 'sum(ALERTS)' });
-    await act(async () => await userEvent.click(screen.getByTestId('operations.0.add-rest-param')))
+  it("Can add rest param", async () => {
+    const { container } = setup({ expr: "sum(ALERTS)" });
+    await act(async () => await userEvent.click(screen.getByTestId("operations.0.add-rest-param")))
 
     waitFor(() => {
       expect(container.querySelector(`${getOperationParamId(0, 0)}`)).toBeInTheDocument();
@@ -53,7 +53,7 @@ function setup(queryOverrides: Partial<PromQuery> = {}) {
   const languageProvider = new EmptyLanguageProviderMock() as unknown as PromQlLanguageProvider;
   const datasource = new PrometheusDatasource(
     {
-      url: '',
+      url: "",
       jsonData: {},
       meta: {} as DataSourcePluginMeta,
     } as DataSourceInstanceSettings,
@@ -65,8 +65,8 @@ function setup(queryOverrides: Partial<PromQuery> = {}) {
   const props = {
     datasource,
     query: {
-      refId: 'A',
-      expr: '',
+      refId: "A",
+      expr: "",
       ...queryOverrides,
     },
     onRunQuery: jest.fn(),

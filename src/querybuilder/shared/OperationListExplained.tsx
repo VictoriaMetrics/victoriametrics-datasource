@@ -13,12 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Grammar } from 'prismjs';
-import React from 'react';
+import { Grammar } from "prismjs";
+import React from "react";
 
-import { OperationExplainedBox } from './OperationExplainedBox';
-import { RawQuery } from './RawQuery';
-import { QueryBuilderOperation, QueryWithOperations, VisualQueryModeller } from './types';
+import { OperationExplainedBox } from "./OperationExplainedBox";
+import { RawQuery } from "./RawQuery";
+import { QueryBuilderOperation, QueryWithOperations, VisualQueryModeller } from "./types";
 
 export interface Props<T extends QueryWithOperations> {
   query: T;
@@ -48,8 +48,8 @@ export function OperationListExplained<T extends QueryWithOperations>({
         if (!def) {
           return `Operation ${op.id} not found`;
         }
-        const title = def.renderer(op, def, '<expr>');
-        const body = def.explainHandler ? def.explainHandler(op, def) : def.documentation ?? 'no docs';
+        const title = def.renderer(op, def, "<expr>");
+        const body = def.explainHandler ? def.explainHandler(op, def) : def.documentation ?? "no docs";
 
         return (
           <div

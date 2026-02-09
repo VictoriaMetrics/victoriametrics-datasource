@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 /**
  * When flash is switched on makes sure it is switched of right away, so we just flash the highlight and then fade

@@ -15,60 +15,60 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { FormEvent, useCallback, useEffect, useState } from 'react';
+import React, { FormEvent, useCallback, useEffect, useState } from "react";
 
-import { QueryEditorProps, SelectableValue } from '@grafana/data';
-import { InlineField, InlineFieldRow, Input, Select, TextArea } from '@grafana/ui';
+import { QueryEditorProps, SelectableValue } from "@grafana/data";
+import { InlineField, InlineFieldRow, Input, Select, TextArea } from "@grafana/ui";
 
-import { PrometheusDatasource } from '../datasource';
+import { PrometheusDatasource } from "../datasource";
 import {
   migrateVariableEditorBackToVariableSupport,
   migrateVariableQueryToEditor,
-} from '../migrations/variableMigration';
-import { promQueryModeller } from '../querybuilder/PromQueryModeller';
-import { MetricsLabelsSection } from '../querybuilder/components/MetricsLabelsSection';
-import { QueryBuilderLabelFilter } from '../querybuilder/shared/types';
-import { PromVisualQuery } from '../querybuilder/types';
+} from "../migrations/variableMigration";
+import { promQueryModeller } from "../querybuilder/PromQueryModeller";
+import { MetricsLabelsSection } from "../querybuilder/components/MetricsLabelsSection";
+import { QueryBuilderLabelFilter } from "../querybuilder/shared/types";
+import { PromVisualQuery } from "../querybuilder/types";
 import {
   PromOptions,
   PromQuery,
   PromVariableQuery,
   PromVariableQueryType as QueryType,
   StandardPromVariableQuery,
-} from '../types';
+} from "../types";
 
 export const variableOptions = [
-  { label: 'Label names', value: QueryType.LabelNames },
-  { label: 'Label values', value: QueryType.LabelValues },
-  { label: 'Metrics', value: QueryType.MetricNames },
-  { label: 'Query result', value: QueryType.VarQueryResult },
-  { label: 'Series query', value: QueryType.SeriesQuery },
-  { label: 'Classic query', value: QueryType.ClassicQuery },
+  { label: "Label names", value: QueryType.LabelNames },
+  { label: "Label values", value: QueryType.LabelValues },
+  { label: "Metrics", value: QueryType.MetricNames },
+  { label: "Query result", value: QueryType.VarQueryResult },
+  { label: "Series query", value: QueryType.SeriesQuery },
+  { label: "Classic query", value: QueryType.ClassicQuery },
 ];
 
 export type Props = QueryEditorProps<PrometheusDatasource, PromQuery, PromOptions, PromVariableQuery>;
 
-const refId = 'VariableQueryEditor-VariableQuery';
+const refId = "VariableQueryEditor-VariableQuery";
 
 export const VariableQueryEditor = ({ onChange, query, datasource, range }: Props) => {
   // to select the query type, i.e. label_names, label_values, etc.
   const [qryType, setQryType] = useState<number | undefined>(undefined);
   // list of variables for each function
-  const [label, setLabel] = useState('');
+  const [label, setLabel] = useState("");
 
-  const [labelNamesMatch, setLabelNamesMatch] = useState('');
+  const [labelNamesMatch, setLabelNamesMatch] = useState("");
 
   // metric is used for both label_values() and metric()
   // label_values() metric requires a whole/complete metric
   // metric() is expected to be a part of a metric string
-  const [metric, setMetric] = useState('');
+  const [metric, setMetric] = useState("");
   // varQuery is a whole query, can include math/rates/etc
-  const [varQuery, setVarQuery] = useState('');
+  const [varQuery, setVarQuery] = useState("");
   // seriesQuery is only a whole
-  const [seriesQuery, setSeriesQuery] = useState('');
+  const [seriesQuery, setSeriesQuery] = useState("");
 
   // the original variable query implementation, e.g. label_value(metric, label_name)
-  const [classicQuery, setClassicQuery] = useState('');
+  const [classicQuery, setClassicQuery] = useState("");
 
   // list of label names for label_values(), /api/v1/labels, contains the same results as label_names() function
   const [labelOptions, setLabelOptions] = useState<Array<SelectableValue<string>>>([]);
@@ -88,20 +88,20 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
 
     if (query.qryType === QueryType.ClassicQuery) {
       setQryType(query.qryType);
-      setClassicQuery(query.query ?? '');
+      setClassicQuery(query.query ?? "");
     } else {
       // 1. Changing from standard to custom variable editor changes the string attr from expr to query
       // 2. jsonnet grafana as code passes a variable as a string
       const variableQuery = variableMigration(query);
 
-      setLabelNamesMatch(variableQuery.match ?? '');
+      setLabelNamesMatch(variableQuery.match ?? "");
       setQryType(variableQuery.qryType);
-      setLabel(variableQuery.label ?? '');
-      setMetric(variableQuery.metric ?? '');
+      setLabel(variableQuery.label ?? "");
+      setMetric(variableQuery.metric ?? "");
       setLabelFilters(variableQuery.labelFilters ?? []);
-      setVarQuery(variableQuery.varQuery ?? '');
-      setSeriesQuery(variableQuery.seriesQuery ?? '');
-      setClassicQuery(variableQuery.classicQuery ?? '');
+      setVarQuery(variableQuery.varQuery ?? "");
+      setSeriesQuery(variableQuery.seriesQuery ?? "");
+      setClassicQuery(variableQuery.classicQuery ?? "");
     }
   }, [query]);
 
@@ -119,7 +119,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
       });
     } else {
       // fetch the labels filtered by the metric
-      const labelToConsider = [{ label: '__name__', op: '=', value: metric }];
+      const labelToConsider = [{ label: "__name__", op: "=", value: metric }];
       const expr = promQueryModeller.renderLabels(labelToConsider);
 
       datasource.languageProvider.fetchSeriesLabelsMatch(expr).then((labelNames: string[]) => {
@@ -185,7 +185,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
 
   /** Call onchange for label select when query type is label values */
   const onLabelChange = (newLabel: SelectableValue<string>) => {
-    const newLabelvalue = newLabel && newLabel.value ? newLabel.value : '';
+    const newLabelvalue = newLabel && newLabel.value ? newLabel.value : "";
     setLabel(newLabelvalue);
     if (qryType === QueryType.LabelValues && newLabelvalue) {
       onChangeWithVariableString({ label: newLabelvalue });
@@ -450,7 +450,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
 };
 
 export function variableMigration(query: string | PromVariableQuery | StandardPromVariableQuery): PromVariableQuery {
-  if (typeof query === 'string') {
+  if (typeof query === "string") {
     return migrateVariableQueryToEditor(query);
   } else if (query.query) {
     return migrateVariableQueryToEditor(query.query);

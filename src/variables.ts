@@ -16,21 +16,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { from, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { from, Observable, of } from "rxjs";
+import { map } from "rxjs/operators";
 
 import {
   DataQueryRequest,
   DataQueryResponse,
   rangeUtil,
   CustomVariableSupport,
-} from '@grafana/data';
-import { getTemplateSrv, TemplateSrv } from '@grafana/runtime';
+} from "@grafana/data";
+import { getTemplateSrv, TemplateSrv } from "@grafana/runtime";
 
-import { VariableQueryEditor } from './components/VariableQueryEditor';
-import { PrometheusDatasource } from './datasource';
-import PrometheusMetricFindQuery from './metric_find_query';
-import { PromVariableQuery } from './types';
+import { VariableQueryEditor } from "./components/VariableQueryEditor";
+import { PrometheusDatasource } from "./datasource";
+import PrometheusMetricFindQuery from "./metric_find_query";
+import { PromVariableQuery } from "./types";
 
 export class PrometheusVariableSupport extends CustomVariableSupport<PrometheusDatasource> {
   constructor(
@@ -52,7 +52,7 @@ export class PrometheusVariableSupport extends CustomVariableSupport<PrometheusD
     // the variable query string is coming in as it is written in jsonnet,
     // where it is just a string. Here is where we handle that.
     let query: string | undefined;
-    if (typeof request.targets[0] === 'string') {
+    if (typeof request.targets[0] === "string") {
       query = request.targets[0];
     } else {
       query = request.targets[0].query;

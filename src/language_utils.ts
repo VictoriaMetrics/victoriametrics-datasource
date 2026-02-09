@@ -16,19 +16,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { invert } from 'lodash';
-import { Token } from 'prismjs';
+import { invert } from "lodash";
+import { Token } from "prismjs";
 
-import { AbstractQuery, AbstractLabelMatcher, DateTime, dateMath } from '@grafana/data';
-import { DataQuery } from '@grafana/schema'
+import { AbstractQuery, AbstractLabelMatcher, DateTime, dateMath } from "@grafana/data";
+import { DataQuery } from "@grafana/schema"
 
-import { addLabelToQuery } from './add_label_to_query';
-import { SUGGESTIONS_LIMIT } from './language_provider';
-import { PromMetricsMetadata, PromMetricsMetadataItem } from './types';
+import { addLabelToQuery } from "./add_label_to_query";
+import { SUGGESTIONS_LIMIT } from "./language_provider";
+import { PromMetricsMetadata, PromMetricsMetadataItem } from "./types";
 
 export const processHistogramMetrics = (metrics: string[]) => {
   const resultSet: Set<string> = new Set();
-  const regexp = new RegExp('_bucket($|:)');
+  const regexp = new RegExp("_bucket($|:)");
   for (let index = 0; index < metrics.length; index++) {
     const metric = metrics[index];
     const isHistogramValue = regexp.test(metric);
@@ -46,9 +46,9 @@ export function processLabels(labels: Array<{ [key: string]: string }>, withName
   labels.forEach((label) => {
     const { __name__, ...rest } = label;
     if (withName) {
-      valueSet['__name__'] = valueSet['__name__'] || new Set();
-      if (!valueSet['__name__'].has(__name__)) {
-        valueSet['__name__'].add(__name__);
+      valueSet["__name__"] = valueSet["__name__"] || new Set();
+      if (!valueSet["__name__"].has(__name__)) {
+        valueSet["__name__"].add(__name__);
       }
     }
 
@@ -80,32 +80,32 @@ export function parseSelector(query: string, cursorOffset = 1): { labelKeys: any
     if (query.match(/^[A-Za-z:][\w:]*$/)) {
       return {
         selector: `{__name__="${query}"}`,
-        labelKeys: ['__name__'],
+        labelKeys: ["__name__"],
       };
     }
-    throw new Error('Query must contain a selector: ' + query);
+    throw new Error("Query must contain a selector: " + query);
   }
 
   // Check if inside a selector
   const prefix = query.slice(0, cursorOffset);
-  const prefixOpen = prefix.lastIndexOf('{');
-  const prefixClose = prefix.lastIndexOf('}');
+  const prefixOpen = prefix.lastIndexOf("{");
+  const prefixClose = prefix.lastIndexOf("}");
   if (prefixOpen === -1) {
-    throw new Error('Not inside selector, missing open brace: ' + prefix);
+    throw new Error("Not inside selector, missing open brace: " + prefix);
   }
   if (prefixClose > -1 && prefixClose > prefixOpen) {
-    throw new Error('Not inside selector, previous selector already closed: ' + prefix);
+    throw new Error("Not inside selector, previous selector already closed: " + prefix);
   }
   const suffix = query.slice(cursorOffset);
-  const suffixCloseIndex = suffix.indexOf('}');
+  const suffixCloseIndex = suffix.indexOf("}");
   const suffixClose = suffixCloseIndex + cursorOffset;
-  const suffixOpenIndex = suffix.indexOf('{');
+  const suffixOpenIndex = suffix.indexOf("{");
   const suffixOpen = suffixOpenIndex + cursorOffset;
   if (suffixClose === -1) {
-    throw new Error('Not inside selector, missing closing brace in suffix: ' + suffix);
+    throw new Error("Not inside selector, missing closing brace in suffix: " + suffix);
   }
   if (suffixOpenIndex > -1 && suffixOpen < suffixClose) {
-    throw new Error('Not inside selector, next selector opens before this one closed: ' + suffix);
+    throw new Error("Not inside selector, next selector opens before this one closed: " + suffix);
   }
 
   // Extract clean labels to form clean selector, incomplete labels are dropped
@@ -119,28 +119,28 @@ export function parseSelector(query: string, cursorOffset = 1): { labelKeys: any
     if (cursorOffset < valueStart || cursorOffset > valueEnd) {
       labels[key] = { value, operator };
     }
-    return '';
+    return "";
   });
 
   // Add metric if there is one before the selector
   const metricPrefix = query.slice(0, prefixOpen);
   const metricMatch = metricPrefix.match(/[A-Za-z:][\w:]*$/);
   if (metricMatch) {
-    labels['__name__'] = { value: `"${metricMatch[0]}"`, operator: '=' };
+    labels["__name__"] = { value: `"${metricMatch[0]}"`, operator: "=" };
   }
 
   // Build sorted selector
   const labelKeys = Object.keys(labels).sort();
-  const cleanSelector = labelKeys.map((key) => `${key}${labels[key].operator}${labels[key].value}`).join(',');
+  const cleanSelector = labelKeys.map((key) => `${key}${labels[key].operator}${labels[key].value}`).join(",");
 
-  const selectorString = ['{', cleanSelector, '}'].join('');
+  const selectorString = ["{", cleanSelector, "}"].join("");
 
   return { labelKeys, selector: selectorString };
 }
 
 export function expandRecordingRules(query: string, mapping: { [name: string]: string }): string {
   const ruleNames = Object.keys(mapping);
-  const rulesRegex = new RegExp(`(\\s|^)(${ruleNames.join('|')})(\\s|$|\\(|\\[|\\{)`, 'ig');
+  const rulesRegex = new RegExp(`(\\s|^)(${ruleNames.join("|")})(\\s|$|\\(|\\[|\\{)`, "ig");
   const expandedQuery = query.replace(rulesRegex, (match, pre, name, post) => `${pre}${mapping[name]}${post}`);
 
   // Split query into array, so if query uses operators, we can correctly add labels to each individual part.
@@ -152,7 +152,7 @@ export function expandRecordingRules(query: string, mapping: { [name: string]: s
     return addLabelsToExpression(query, invalidLabelsRegex);
   });
 
-  return correctlyExpandedQueryArray.join('');
+  return correctlyExpandedQueryArray.join("");
 }
 
 function addLabelsToExpression(expr: string, invalidLabelsRegexp: RegExp) {
@@ -170,7 +170,7 @@ function addLabelsToExpression(expr: string, invalidLabelsRegexp: RegExp) {
   const arrayOfLabelObjects: Array<{ key: string; operator: string; value: string }> = [];
   exprAfterRegexMatch.replace(labelRegexp, (label, key, operator, value) => {
     arrayOfLabelObjects.push({ key, operator, value });
-    return '';
+    return "";
   });
 
   // Loop through all label objects and add them to query.
@@ -207,36 +207,36 @@ export function fixSummariesMetadata(metadata: { [metric: string]: PromMetricsMe
     const item = metadata[metric][0];
     baseMetadata[metric] = item;
 
-    if (item.type === 'histogram') {
+    if (item.type === "histogram") {
       summaryMetadata[`${metric}_bucket`] = {
-        type: 'counter',
+        type: "counter",
         help: `Cumulative counters for the observation buckets (${item.help})`,
       };
       summaryMetadata[`${metric}_count`] = {
-        type: 'counter',
+        type: "counter",
         help: `Count of events that have been observed for the histogram metric (${item.help})`,
       };
       summaryMetadata[`${metric}_sum`] = {
-        type: 'counter',
+        type: "counter",
         help: `Total sum of all observed values for the histogram metric (${item.help})`,
       };
     }
-    if (item.type === 'summary') {
+    if (item.type === "summary") {
       summaryMetadata[`${metric}_count`] = {
-        type: 'counter',
+        type: "counter",
         help: `Count of events that have been observed for the base metric (${item.help})`,
       };
       summaryMetadata[`${metric}_sum`] = {
-        type: 'counter',
+        type: "counter",
         help: `Total sum of all observed values for the base metric (${item.help})`,
       };
     }
   }
   // Synthetic series
   const syntheticMetadata: PromMetricsMetadata = {};
-  syntheticMetadata['ALERTS'] = {
-    type: 'counter',
-    help: 'Time series showing pending and firing alerts. The sample value is set to 1 as long as the alert is in the indicated active (pending or firing) state.',
+  syntheticMetadata["ALERTS"] = {
+    type: "counter",
+    help: "Time series showing pending and firing alerts. The sample value is set to 1 as long as the alert is in the indicated active (pending or firing) state.",
   };
 
   return { ...baseMetadata, ...summaryMetadata, ...syntheticMetadata };
@@ -255,7 +255,7 @@ export function limitSuggestions(items: string[]) {
 }
 
 export function addLimitInfo(items: any[] | undefined): string {
-  return items && items.length >= SUGGESTIONS_LIMIT ? `, limited to the first ${SUGGESTIONS_LIMIT} received items` : '';
+  return items && items.length >= SUGGESTIONS_LIMIT ? `, limited to the first ${SUGGESTIONS_LIMIT} received items` : "";
 }
 
 // NOTE: the following 2 exported functions are very similar to the prometheus*Escape
@@ -268,7 +268,7 @@ export function addLimitInfo(items: any[] | undefined): string {
 // we make a javascript regular expression that matches those characters:
 const RE2_METACHARACTERS = /[*+?()|\\.\[\]{}^$]/g;
 function escapePrometheusRegexp(value: string): string {
-  return value.replace(RE2_METACHARACTERS, '\\$&');
+  return value.replace(RE2_METACHARACTERS, "\\$&");
 }
 
 // based on the openmetrics-documentation, the 3 symbols we have to handle are:
@@ -276,7 +276,7 @@ function escapePrometheusRegexp(value: string): string {
 // - \  ... the backslash character
 // - "  ... the double-quote character
 export function escapeLabelValueInExactSelector(labelValue: string): string {
-  return labelValue.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\"');
+  return labelValue.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/"/g, '\\"');
 }
 
 export function escapeLabelValueInRegexSelector(labelValue: string): string {
@@ -300,10 +300,10 @@ export enum AbstractLabelOperator {
 }
 
 const FromPromLikeMap: Record<string, AbstractLabelOperator> = {
-  '=': AbstractLabelOperator.Equal,
-  '!=': AbstractLabelOperator.NotEqual,
-  '=~': AbstractLabelOperator.EqualRegEx,
-  '!~': AbstractLabelOperator.NotEqualRegEx,
+  "=": AbstractLabelOperator.Equal,
+  "!=": AbstractLabelOperator.NotEqual,
+  "=~": AbstractLabelOperator.EqualRegEx,
+  "!~": AbstractLabelOperator.NotEqualRegEx,
 };
 const ToPromLikeMap: Record<AbstractLabelOperator, string> = invert(FromPromLikeMap) as Record<
   AbstractLabelOperator,
@@ -317,13 +317,13 @@ export function toPromLikeExpr(labelBasedQuery: AbstractQuery): string {
       if (operator) {
         return `${selector.name}${operator}"${selector.value}"`;
       } else {
-        return '';
+        return "";
       }
     })
-    .filter((e: string) => e !== '')
-    .join(', ');
+    .filter((e: string) => e !== "")
+    .join(", ");
 
-  return expr ? `{${expr}}` : '';
+  return expr ? `{${expr}}` : "";
 }
 
 export function toPromLikeQuery(labelBasedQuery: AbstractQuery): PromLikeQuery {
@@ -345,24 +345,24 @@ export function extractLabelMatchers(tokens: Array<string | Token>): AbstractLab
   for (let prop in tokens) {
     if (tokens[prop] instanceof Token) {
       let token: Token = tokens[prop] as Token;
-      if (token.type === 'context-labels') {
-        let labelKey = '';
-        let labelValue = '';
-        let labelOperator = '';
+      if (token.type === "context-labels") {
+        let labelKey = "";
+        let labelValue = "";
+        let labelOperator = "";
         let contentTokens: any[] = token.content as any[];
         for (let currentToken in contentTokens) {
-          if (typeof contentTokens[currentToken] === 'string') {
+          if (typeof contentTokens[currentToken] === "string") {
             let currentStr: string;
             currentStr = contentTokens[currentToken] as string;
-            if (currentStr === '=' || currentStr === '!=' || currentStr === '=~' || currentStr === '!~') {
+            if (currentStr === "=" || currentStr === "!=" || currentStr === "=~" || currentStr === "!~") {
               labelOperator = currentStr;
             }
           } else if (contentTokens[currentToken] instanceof Token) {
             switch (contentTokens[currentToken].type) {
-              case 'label-key':
+              case "label-key":
                 labelKey = contentTokens[currentToken].content as string;
                 break;
-              case 'label-value':
+              case "label-value":
                 labelValue = contentTokens[currentToken].content as string;
                 labelValue = labelValue.substring(1, labelValue.length - 1);
                 const labelComparator = FromPromLikeMap[labelOperator];
@@ -381,7 +381,7 @@ export function extractLabelMatchers(tokens: Array<string | Token>): AbstractLab
 }
 
 export function getVictoriaMetricsTime(date: string | DateTime, roundUp: boolean) {
-  if (typeof date === 'string') {
+  if (typeof date === "string") {
     date = dateMath.parse(date, roundUp)!;
   }
 
@@ -426,14 +426,14 @@ export function escapeIdentifier(input: string): string {
       if (/[A-Za-z_:]/.test(char)) {
         result += char;
       } else {
-        result += '\\' + char;
+        result += "\\" + char;
       }
     } else {
       // For subsequent characters, allowed: Latin letters, digits, '_' , ':' and '.'.
       if (/[A-Za-z0-9_:\.]/.test(char)) {
         result += char;
       } else {
-        result += '\\' + char;
+        result += "\\" + char;
       }
     }
     i += charLength;

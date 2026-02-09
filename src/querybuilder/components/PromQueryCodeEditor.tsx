@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from '@emotion/css';
-import React from 'react';
+import { css } from "@emotion/css";
+import React from "react";
 
-import { useStyles2 } from '@grafana/ui';
+import { useStyles2 } from "@grafana/ui";
 
-import PromQueryField from '../../components/PromQueryField';
-import { PromQueryEditorProps } from '../../components/types';
+import PromQueryField from "../../components/PromQueryField";
+import { PromQueryEditorProps } from "../../components/types";
 
-import { PromQueryBuilderExplained } from './PromQueryBuilderExplained';
+import { PromQueryBuilderExplained } from "./PromQueryBuilderExplained";
 
 type Props = PromQueryEditorProps & {
   showExplain: boolean;
@@ -38,7 +38,7 @@ export function PromQueryCodeEditor({ query, showExplain, ...props }: Props) {
         {...props}
         query={query}
         history={[]}
-        data-testid={'prom-editor'}
+        data-testid={"prom-editor"}
       />
 
       {showExplain && <PromQueryBuilderExplained query={query.expr} />}

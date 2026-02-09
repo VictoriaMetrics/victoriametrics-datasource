@@ -6,7 +6,7 @@ import { getBackendSrv } from "@grafana/runtime";
 interface ValidateResult {
   title: string;
   icon: "exclamation-triangle" | "check" | "fa fa-spinner";
-  color: 'blue' | 'red' | 'green' | "orange";
+  color: "blue" | "red" | "green" | "orange";
   error?: string;
 }
 
@@ -51,11 +51,11 @@ export default (datasourceUID: string) => {
 
     try {
       // replace Grafana variables with '1s' for validation
-      const val = expr.replace(/\$__interval|\$__range|\$__rate_interval/gm, '1s')
+      const val = expr.replace(/\$__interval|\$__range|\$__rate_interval/gm, "1s")
       const withTemplate = encodeURIComponent(`WITH(${val})()`)
       const response = await lastValueFrom(getBackendSrv().fetch({
         url: `api/datasources/uid/${datasourceUID}/resources/expand-with-exprs?query=${withTemplate}&format=json`,
-        method: 'GET',
+        method: "GET",
       }));
       const { status, error = "" } = response?.data as { status: "success" | "error", error?: string }
       setValidateResult({
@@ -64,7 +64,7 @@ export default (datasourceUID: string) => {
       })
       return status === "success"
     } catch (e) {
-      console.error('Error validating WITH templates:', e);
+      console.error("Error validating WITH templates:", e);
       if (e instanceof Error) {
         setValidateResult({
           ...validateStatus.serverError,

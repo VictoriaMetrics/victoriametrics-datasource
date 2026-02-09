@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react';
+import React from "react";
 
-import { Stack } from '../../components/QueryEditor';
-import { PrometheusDatasource } from '../../datasource';
-import { PromVisualQuery, PromVisualQueryBinary } from '../types';
+import { Stack } from "../../components/QueryEditor";
+import { PrometheusDatasource } from "../../datasource";
+import { PromVisualQuery, PromVisualQueryBinary } from "../types";
 
-import { NestedQuery } from './NestedQuery';
+import { NestedQuery } from "./NestedQuery";
 
 export interface Props {
   query: PromVisualQuery;

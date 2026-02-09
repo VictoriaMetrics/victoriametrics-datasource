@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { DataSourceJsonData, QueryResultMeta, ScopedVars } from '@grafana/data';
-import { DataQuery } from '@grafana/schema';
+import { DataSourceJsonData, QueryResultMeta, ScopedVars } from "@grafana/data";
+import { DataQuery } from "@grafana/schema";
 
 import { WithTemplate } from "./components/WithTemplateConfig/types";
-import { QueryEditorMode } from './querybuilder/shared/types';
+import { QueryEditorMode } from "./querybuilder/shared/types";
 
 export interface PromQuery extends DataQuery {
   expr: string;
@@ -60,7 +60,7 @@ export interface PromOptions extends DataSourceJsonData {
 }
 
 export enum PromQueryType {
-  timeSeriesQuery = 'timeSeriesQuery',
+  timeSeriesQuery = "timeSeriesQuery",
 }
 
 export type LimitMetrics = {
@@ -99,14 +99,14 @@ export interface PromMetricsMetadata {
 }
 
 export interface PromDataSuccessResponse<T = PromData> {
-  status: 'success';
+  status: "success";
   data: T;
   trace?: TracingData;
   isPartial?: boolean;
 }
 
 export interface PromDataErrorResponse<T = PromData> {
-  status: 'error';
+  status: "error";
   errorType: string;
   error: string;
   data: T;
@@ -130,7 +130,7 @@ export interface PromExemplarData {
 }
 
 export interface PromVectorData {
-  resultType: 'vector';
+  resultType: "vector";
   result: Array<{
     metric: PromMetric;
     value: PromValue;
@@ -138,7 +138,7 @@ export interface PromVectorData {
 }
 
 export interface PromMatrixData {
-  resultType: 'matrix';
+  resultType: "matrix";
   result: Array<{
     metric: PromMetric;
     values: PromValue[];
@@ -146,7 +146,7 @@ export interface PromMatrixData {
 }
 
 export interface PromScalarData {
-  resultType: 'scalar';
+  resultType: "scalar";
   result: PromValue;
 }
 
@@ -157,18 +157,18 @@ export interface PromMetric {
   [index: string]: any;
 }
 
-export function isMatrixData(result: MatrixOrVectorResult): result is PromMatrixData['result'][0] {
-  return 'values' in result;
+export function isMatrixData(result: MatrixOrVectorResult): result is PromMatrixData["result"][0] {
+  return "values" in result;
 }
 
 export function isExemplarData(result: PromData): result is PromExemplarData[] {
   if (result == null || !Array.isArray(result)) {
     return false;
   }
-  return result.length ? 'exemplars' in result[0] : false;
+  return result.length ? "exemplars" in result[0] : false;
 }
 
-export type MatrixOrVectorResult = PromMatrixData['result'][0] | PromVectorData['result'][0];
+export type MatrixOrVectorResult = PromMatrixData["result"][0] | PromVectorData["result"][0];
 
 export interface TransformOptions {
   format?: string;
@@ -190,9 +190,9 @@ export interface TransformOptions {
  * Custom query.legendFormat.length > 0 && query.legendFormat !== '__auto'
  */
 export enum LegendFormatMode {
-  Auto = '__auto',
-  Verbose = '__verbose',
-  Custom = '__custom',
+  Auto = "__auto",
+  Verbose = "__verbose",
+  Custom = "__custom",
 }
 
 export interface QueryBuilderLabelFilter {

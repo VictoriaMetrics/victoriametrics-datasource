@@ -1,4 +1,4 @@
-import { SyntaxNode } from '@lezer/common';
+import { SyntaxNode } from "@lezer/common";
 import {
   AggregateExpr,
   AggregateModifier,
@@ -25,9 +25,9 @@ import {
   StringLiteral,
   VectorSelector,
   Without,
-} from 'lezer-metricsql';
+} from "lezer-metricsql";
 
-import { binaryScalarOperatorToOperatorName } from './binaryScalarOperations';
+import { binaryScalarOperatorToOperatorName } from "./binaryScalarOperations";
 import { overTimeFunctionNames }  from "./metricsql-functions/aggregations/overTime";
 import {
   ErrorId,
@@ -38,9 +38,9 @@ import {
   makeBinOp,
   makeError,
   replaceVariables,
-} from './shared/parsingUtils';
-import { QueryBuilderLabelFilter, QueryBuilderOperation } from './shared/types';
-import { PromVisualQuery, PromVisualQueryBinary } from './types';
+} from "./shared/parsingUtils";
+import { QueryBuilderLabelFilter, QueryBuilderOperation } from "./shared/types";
+import { PromVisualQuery, PromVisualQueryBinary } from "./types";
 
 /**
  * Parses a PromQL query into a visual query model.
@@ -57,7 +57,7 @@ export function buildVisualQueryFromString(expr: string): Context {
 
   // This will be modified in the handlers.
   const visQuery: PromVisualQuery = {
-    metric: '',
+    metric: "",
     labels: [],
     operations: [],
   };
@@ -188,7 +188,7 @@ function getLabel(
 ): QueryBuilderLabelFilter {
   const label = getString(expr, node.getChild(labelType));
   const op = getString(expr, node.getChild(MatchOp));
-  const value = getString(expr, node.getChild(StringLiteral)).replace(/^["'`]|["'`]$/g, '');
+  const value = getString(expr, node.getChild(StringLiteral)).replace(/^["'`]|["'`]$/g, "");
   return {
     label,
     op,
@@ -196,7 +196,7 @@ function getLabel(
   };
 }
 
-const rangeFunctions = ['changes', 'rate', 'irate', 'increase', 'delta', ...overTimeFunctionNames];
+const rangeFunctions = ["changes", "rate", "irate", "increase", "delta", ...overTimeFunctionNames];
 
 /**
  * Handle function call which is usually and identifier and its body > arguments.
@@ -212,13 +212,13 @@ function handleFunction(expr: string, node: SyntaxNode, context: InternalContext
   const body = node.getChild(FunctionCallBody);
   const callArgs = body!.getChild(FunctionCallArgs);
   const params = [];
-  let interval = '';
+  let interval = "";
 
   // This is a bit of a shortcut to get the interval argument. Reasons are
   // - interval is not part of the function args per promQL grammar, but we model it as argument for the function in
   //   the query model.
   // - it is easier to handle template variables this way as template variable is an error for the parser
-  if (rangeFunctions.includes(funcName) || funcName.endsWith('_over_time')) {
+  if (rangeFunctions.includes(funcName) || funcName.endsWith("_over_time")) {
     let match = getString(expr, node).match(/(?<!\{[^}]*)\[(.+?)](?![^{]*})/);
     if (match?.[1]) {
       interval = match[1];
@@ -230,7 +230,7 @@ function handleFunction(expr: string, node: SyntaxNode, context: InternalContext
   // We unshift operations to keep the more natural order that we want to have in the visual query editor.
   visQuery.operations.unshift(op);
   if (body) {
-    if (getString(expr, body) === '([' + interval + '])') {
+    if (getString(expr, body) === "([" + interval + "])") {
       // This is a special case where we have a function with a single argument, and it is the interval.
       // This happens when you start adding operations in query builder and did not set a metric yet.
       return;
@@ -256,7 +256,7 @@ function handleAggregation(expr: string, node: SyntaxNode, context: InternalCont
   const labels = [];
 
   if (modifier) {
-    const byModifier = modifier.getChild(`By`);
+    const byModifier = modifier.getChild("By");
     if (byModifier && funcName) {
       funcName = `__${funcName}_by`;
     }
@@ -312,7 +312,7 @@ function updateFunctionArgs(expr: string, node: SyntaxNode | null, context: Inte
       const newBinQueryCount = context.query.binaryQueries?.length ?? 0;
       if (binQueryCount < newBinQueryCount) {
         context.errors.push({
-          text: 'Query parsing is ambiguous.',
+          text: "Query parsing is ambiguous.",
           from: node.from,
           to: node.to,
         });
@@ -326,7 +326,7 @@ function updateFunctionArgs(expr: string, node: SyntaxNode | null, context: Inte
     }
 
     case StringLiteral: {
-      op.params.push(getString(expr, node).replace(/"/g, ''));
+      op.params.push(getString(expr, node).replace(/"/g, ""));
       break;
     }
 
@@ -393,7 +393,7 @@ function handleBinary(expr: string, node: SyntaxNode, context: InternalContext) 
     const binQuery: PromVisualQueryBinary = {
       operator: op,
       query: {
-        metric: '',
+        metric: "",
         labels: [],
         operations: [],
       },
@@ -417,12 +417,12 @@ function getBinaryModifier(
   node: SyntaxNode | null
 ):
   | { isBool: true; isMatcher: false }
-  | { isBool: false; isMatcher: true; matches: string; matchType: 'ignoring' | 'on' }
+  | { isBool: false; isMatcher: true; matches: string; matchType: "ignoring" | "on" }
   | undefined {
   if (!node) {
     return undefined;
   }
-  if (node.getChild('Bool')) {
+  if (node.getChild("Bool")) {
     return { isBool: true, isMatcher: false };
   } else {
     const matcher = node.getChild(OnOrIgnoring);
@@ -435,7 +435,7 @@ function getBinaryModifier(
       isMatcher: true,
       isBool: false,
       matches: labels,
-      matchType: matcher.getChild(On) ? 'on' : 'ignoring',
+      matchType: matcher.getChild(On) ? "on" : "ignoring",
     };
   }
 }
