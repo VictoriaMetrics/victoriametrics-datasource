@@ -21,34 +21,6 @@ export const useFetchMetricsWithMetadata = (datasource: PrometheusDatasource) =>
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const mergeMetricsWithMetadata = (metricNames: string[], metadata: MetadataApiResponse): MetricMetadata[] => {
-    const result: MetricMetadata[] = [];
-    const processedMetrics = new Set<string>();
-
-    for (const [name, entries] of Object.entries(metadata)) {
-      processedMetrics.add(name);
-      for (const entry of entries) {
-        result.push({
-          name,
-          type: entry.type || '',
-          help: entry.help || '',
-        });
-      }
-    }
-
-    for (const name of metricNames) {
-      if (!processedMetrics.has(name)) {
-        result.push({
-          name,
-          type: '',
-          help: '',
-        });
-      }
-    }
-
-    return result;
-  };
-
   const fetchMetadata = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -72,4 +44,32 @@ export const useFetchMetricsWithMetadata = (datasource: PrometheusDatasource) =>
   }, [datasource]);
 
   return { metrics, isLoading, error, fetchMetadata };
+};
+
+const mergeMetricsWithMetadata = (metricNames: string[], metadata: MetadataApiResponse): MetricMetadata[] => {
+  const result: MetricMetadata[] = [];
+  const processedMetrics = new Set<string>();
+
+  for (const [name, entries] of Object.entries(metadata)) {
+    processedMetrics.add(name);
+    for (const entry of entries) {
+      result.push({
+        name,
+        type: entry.type || '',
+        help: entry.help || '',
+      });
+    }
+  }
+
+  for (const name of metricNames) {
+    if (!processedMetrics.has(name)) {
+      result.push({
+        name,
+        type: '',
+        help: '',
+      });
+    }
+  }
+
+  return result;
 };
