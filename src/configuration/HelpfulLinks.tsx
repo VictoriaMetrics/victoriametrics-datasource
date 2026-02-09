@@ -33,7 +33,7 @@ export const HelpfulLinks = () => (
           className='gf-form-label gf-form-label--dashlink'
           href={t.url}
           target='_blank'
-          rel='docs noreferrer'
+          rel='docs noopener noreferrer'
         >
           {t.title}
         </a>
