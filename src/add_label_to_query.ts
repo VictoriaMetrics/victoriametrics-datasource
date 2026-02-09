@@ -13,12 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { parser, VectorSelector } from "lezer-metricsql";
+import { parser, VectorSelector } from 'lezer-metricsql';
 
-import { PromQueryModeller } from "./querybuilder/PromQueryModeller";
-import { buildVisualQueryFromString } from "./querybuilder/parsing";
-import { QueryBuilderLabelFilter } from "./querybuilder/shared/types";
-import { PromVisualQuery } from "./querybuilder/types";
+import { PromQueryModeller } from './querybuilder/PromQueryModeller';
+import { buildVisualQueryFromString } from './querybuilder/parsing';
+import { QueryBuilderLabelFilter } from './querybuilder/shared/types';
+import { PromVisualQuery } from './querybuilder/types';
 
 /**
  * Adds label filter to existing query. Useful for query modification for example for ad hoc filters.
@@ -34,9 +34,9 @@ import { PromVisualQuery } from "./querybuilder/types";
  * @param value
  * @param operator
  */
-export function addLabelToQuery(query: string, key: string, value: string | number, operator = "="): string {
+export function addLabelToQuery(query: string, key: string, value: string | number, operator = '='): string {
   if (!key || !value) {
-    throw new Error("Need label to add to query.");
+    throw new Error('Need label to add to query.');
   }
 
   const vectorSelectorPositions = getVectorSelectorPositions(query);
@@ -72,7 +72,7 @@ function getVectorSelectorPositions(query: string): VectorSelectorPosition[] {
 
 function toLabelFilter(key: string, value: string | number, operator: string): QueryBuilderLabelFilter {
   // We need to make sure that we convert the value back to string because it may be a number
-  const transformedValue = value === Infinity ? "+Inf" : value.toString();
+  const transformedValue = value === Infinity ? '+Inf' : value.toString();
   return { label: key, op: operator, value: transformedValue };
 }
 
@@ -82,7 +82,7 @@ function addFilter(
   filter: QueryBuilderLabelFilter
 ): string {
   const modeller = new PromQueryModeller();
-  let newQuery = "";
+  let newQuery = '';
   let prev = 0;
 
   for (let i = 0; i < vectorSelectorPositions.length; i++) {
@@ -92,7 +92,7 @@ function addFilter(
     const isLast = i === vectorSelectorPositions.length - 1;
 
     const start = query.substring(prev, match.from);
-    const end = isLast ? query.substring(match.to) : "";
+    const end = isLast ? query.substring(match.to) : '';
 
     if (!labelExists(match.query.labels, filter)) {
       // We don't want to add duplicate labels.

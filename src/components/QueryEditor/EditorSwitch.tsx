@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from "@emotion/css";
-import React, { ComponentProps } from "react";
+import { css } from '@emotion/css';
+import React, { ComponentProps } from 'react';
 
-import { Switch } from "@grafana/ui";
+import { Switch } from '@grafana/ui';
 
 // Wrapper component around <Switch /> that properly aligns it in <EditorField />
 export const EditorSwitch: React.FC<ComponentProps<typeof Switch>> = (props) => {
@@ -35,8 +35,8 @@ export const EditorSwitch: React.FC<ComponentProps<typeof Switch>> = (props) => 
 const getStyles = () => {
   return {
     switch: css({
-      display: "flex",
-      alignItems: "center",
+      display: 'flex',
+      alignItems: 'center',
       minHeight: 30,
     }),
   };

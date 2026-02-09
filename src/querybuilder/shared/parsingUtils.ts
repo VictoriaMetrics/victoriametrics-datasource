@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { SyntaxNode, TreeCursor } from "@lezer/common";
+import { SyntaxNode, TreeCursor } from '@lezer/common';
 
-import { QueryBuilderOperation } from "./types";
+import { QueryBuilderOperation } from './types';
 
 // Although 0 isn't explicitly provided in the lezer-promql library as the error node ID, it does appear to be the ID of error nodes within lezer.
 export const ErrorId = 0;
 
 // This is used for error type for some reason
-export const ErrorName = "⚠";
+export const ErrorName = '⚠';
 
 export function getLeftMostChild(cur: SyntaxNode): SyntaxNode {
   return cur.firstChild ? getLeftMostChild(cur.firstChild) : cur;
@@ -60,26 +60,26 @@ export function replaceVariables(expr: string) {
   return expr.replace(variableRegex, (match, var1, var2, fmt2, var3, fieldPath, fmt3) => {
     const fmt = fmt2 || fmt3;
     let variable = var1;
-    let varType = "0";
+    let varType = '0';
 
     if (var2) {
       variable = var2;
-      varType = "1";
+      varType = '1';
     }
 
     if (var3) {
       variable = var3;
-      varType = "2";
+      varType = '2';
     }
 
-    return `__V_${varType}__` + variable + "__V__" + (fmt ? "__F__" + fmt + "__F__" : "");
+    return `__V_${varType}__` + variable + '__V__' + (fmt ? '__F__' + fmt + '__F__' : '');
   });
 }
 
 const varTypeFunc = [
   (v: string) => `\$${v}`,
-  (v: string, f?: string) => `[[${v}${f ? `:${f}` : ""}]]`,
-  (v: string, f?: string) => `\$\{${v}${f ? `:${f}` : ""}\}`,
+  (v: string, f?: string) => `[[${v}${f ? `:${f}` : ''}]]`,
+  (v: string, f?: string) => `\$\{${v}${f ? `:${f}` : ''}\}`,
 ];
 
 /**
@@ -100,7 +100,7 @@ export function returnVariables(expr: string) {
  */
 export function getString(expr: string, node: SyntaxNode | TreeCursor | null | undefined) {
   if (!node) {
-    return "";
+    return '';
   }
   return returnVariables(expr.substring(node.from, node.to));
 }
@@ -156,14 +156,14 @@ export function getAllByType(expr: string, cur: SyntaxNode, type: number | strin
 // @ts-ignore
 export function log(expr: string, cur?: SyntaxNode) {
   if (!cur) {
-    console.log("<empty>");
+    console.log('<empty>');
     return;
   }
   const json = toJson(expr, cur);
   const text = jsonToText(json);
 
   if (!text) {
-    console.log("<empty>");
+    console.log('<empty>');
     return;
   }
   console.log(text);
@@ -196,22 +196,22 @@ function jsonToText(
   node: JsonNode,
   context: { lastChild: boolean; indent: string } = {
     lastChild: true,
-    indent: "",
+    indent: '',
   }
 ) {
   const name = node.name;
   const { lastChild, indent } = context;
-  const newIndent = indent !== "" ? indent + (lastChild ? "└─" : "├─") : "";
+  const newIndent = indent !== '' ? indent + (lastChild ? '└─' : '├─') : '';
   let text = newIndent + name;
 
   const children = node.children;
   children.forEach((child: any, index: number) => {
     const isLastChild = index === children.length - 1;
     text +=
-      "\n" +
+      '\n' +
       jsonToText(child, {
         lastChild: isLastChild,
-        indent: indent + (lastChild ? "  " : "│ "),
+        indent: indent + (lastChild ? '  ' : '│ '),
       });
   });
 
@@ -219,5 +219,5 @@ function jsonToText(
 }
 
 function nodeToString(expr: string, node: SyntaxNode) {
-  return node.name + ": " + getString(expr, node);
+  return node.name + ': ' + getString(expr, node);
 }

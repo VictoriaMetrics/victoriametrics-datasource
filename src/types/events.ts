@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { BusEventBase, BusEventWithPayload } from "@grafana/data";
-import { IconName } from "@grafana/ui";
+import { BusEventBase, BusEventWithPayload } from '@grafana/data';
+import { IconName } from '@grafana/ui';
 
 
 /**
@@ -58,7 +58,7 @@ interface ZoomOutEventPayload {
 }
 
 export class ZoomOutEvent extends BusEventWithPayload<ZoomOutEventPayload> {
-  static type = "zoom-out";
+  static type = 'zoom-out';
 }
 
 export enum ShiftTimeEventDirection {
@@ -72,9 +72,9 @@ interface ShiftTimeEventPayload {
 }
 
 export class ShiftTimeEvent extends BusEventWithPayload<ShiftTimeEventPayload> {
-  static type = "shift-time";
+  static type = 'shift-time';
 }
 
 export class AbsoluteTimeEvent extends BusEventBase {
-  static type = "absolute-time";
+  static type = 'absolute-time';
 }

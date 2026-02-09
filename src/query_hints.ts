@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { size } from "lodash";
+import { size } from 'lodash';
 
-import { QueryHint, QueryFix } from "@grafana/data";
+import { QueryHint, QueryFix } from '@grafana/data';
 
-import { PrometheusDatasource } from "./datasource";
+import { PrometheusDatasource } from './datasource';
 
 /**
  * Number of time series results needed before starting to suggest sum aggregation hints
@@ -33,14 +33,14 @@ export function getQueryHints(query: string, series?: any[], datasource?: Promet
   // ..._bucket metric needs a histogram_quantile()
   const histogramMetric = query.trim().match(/^\w+_bucket$|^\w+_bucket{.*}$/);
   if (histogramMetric) {
-    const label = "Selected metric has buckets.";
+    const label = 'Selected metric has buckets.';
     hints.push({
-      type: "HISTOGRAM_QUANTILE",
+      type: 'HISTOGRAM_QUANTILE',
       label,
       fix: {
-        label: "Consider calculating aggregated quantile by adding histogram_quantile().",
+        label: 'Consider calculating aggregated quantile by adding histogram_quantile().',
         action: {
-          type: "ADD_HISTOGRAM_QUANTILE",
+          type: 'ADD_HISTOGRAM_QUANTILE',
           query,
         },
       } as QueryFix,
@@ -48,10 +48,10 @@ export function getQueryHints(query: string, series?: any[], datasource?: Promet
   }
 
   // Check for need of rate()
-  if (query.indexOf("rate(") === -1 && query.indexOf("increase(") === -1) {
+  if (query.indexOf('rate(') === -1 && query.indexOf('increase(') === -1) {
     // Use metric metadata for exact types
     const nameMatch = query.match(/\b(\w+_(total|sum|count))\b/);
-    let counterNameMetric = nameMatch ? nameMatch[1] : "";
+    let counterNameMetric = nameMatch ? nameMatch[1] : '';
     const metricsMetadata = datasource?.languageProvider?.metricsMetadata;
     let certain = false;
 
@@ -60,35 +60,35 @@ export function getQueryHints(query: string, series?: any[], datasource?: Promet
       const queryTokens = Array.from(query.matchAll(/\$?[a-zA-Z_:][a-zA-Z0-9_:]*/g))
         .map(([match]) => match)
         // Exclude variable identifiers
-        .filter((token) => !token.startsWith("$"))
+        .filter((token) => !token.startsWith('$'))
         // Split composite keys to match the tokens returned by the language provider
-        .flatMap((token) => token.split(":"));
+        .flatMap((token) => token.split(':'));
       // Determine whether any of the query identifier tokens refers to a counter metric
       counterNameMetric =
         queryTokens.find((metricName) => {
           // Only considering first type information, could be non-deterministic
           const metadata = metricsMetadata[metricName];
-          if (metadata && metadata.type.toLowerCase() === "counter") {
+          if (metadata && metadata.type.toLowerCase() === 'counter') {
             certain = true;
             return true;
           } else {
             return false;
           }
-        }) ?? "";
+        }) ?? '';
     }
 
     if (counterNameMetric) {
       // FixableQuery consists of metric name and optionally label-value pairs. We are not offering fix for complex queries yet.
       const fixableQuery = query.trim().match(/^\w+$|^\w+{.*}$/);
-      const verb = certain ? "is" : "looks like";
+      const verb = certain ? 'is' : 'looks like';
       let label = `Selected metric ${verb} a counter.`;
       let fix: QueryFix | undefined;
 
       if (fixableQuery) {
         fix = {
-          label: "Consider calculating rate of counter by adding rate().",
+          label: 'Consider calculating rate of counter by adding rate().',
           action: {
-            type: "ADD_RATE",
+            type: 'ADD_RATE',
             query,
           },
         };
@@ -97,7 +97,7 @@ export function getQueryHints(query: string, series?: any[], datasource?: Promet
       }
 
       hints.push({
-        type: "APPLY_RATE",
+        type: 'APPLY_RATE',
         label,
         fix,
       });
@@ -117,14 +117,14 @@ export function getQueryHints(query: string, series?: any[], datasource?: Promet
       return acc;
     }, {});
     if (size(mappingForQuery) > 0) {
-      const label = "Query contains recording rules.";
+      const label = 'Query contains recording rules.';
       hints.push({
-        type: "EXPAND_RULES",
+        type: 'EXPAND_RULES',
         label,
         fix: {
-          label: "Expand rules",
+          label: 'Expand rules',
           action: {
-            type: "EXPAND_RULES",
+            type: 'EXPAND_RULES',
             query,
             options: mappingForQuery,
           },
@@ -137,12 +137,12 @@ export function getQueryHints(query: string, series?: any[], datasource?: Promet
     const simpleMetric = query.trim().match(/^\w+$/);
     if (simpleMetric) {
       hints.push({
-        type: "ADD_SUM",
-        label: "Many time series results returned.",
+        type: 'ADD_SUM',
+        label: 'Many time series results returned.',
         fix: {
-          label: "Consider aggregating with sum().",
+          label: 'Consider aggregating with sum().',
           action: {
-            type: "ADD_SUM",
+            type: 'ADD_SUM',
             query: query,
             preventSubmit: true,
           },
@@ -157,18 +157,18 @@ export function getQueryHints(query: string, series?: any[], datasource?: Promet
 export function getInitHints(datasource: PrometheusDatasource): QueryHint[] {
   const hints = [];
   // Hint if using Loki as Prometheus data source
-  if (datasource.directUrl.includes("/loki") && !datasource.languageProvider.metrics.length) {
+  if (datasource.directUrl.includes('/loki') && !datasource.languageProvider.metrics.length) {
     hints.push({
-      label: "Using Loki as a Prometheus data source is no longer supported. You must use the Loki data source for your Loki instance.",
-      type: "INFO",
+      label: 'Using Loki as a Prometheus data source is no longer supported. You must use the Loki data source for your Loki instance.',
+      type: 'INFO',
     });
   }
 
   // Hint for big disabled lookups
   if (datasource.lookupsDisabled) {
     hints.push({
-      label: "Labels and metrics lookup was disabled in data source settings.",
-      type: "INFO",
+      label: 'Labels and metrics lookup was disabled in data source settings.',
+      type: 'INFO',
     });
   }
 

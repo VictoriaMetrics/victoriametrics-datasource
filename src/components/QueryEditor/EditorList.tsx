@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React from 'react';
 
-import { Button } from "@grafana/ui";
+import { Button } from '@grafana/ui';
 
-import { Stack } from "./Stack";
+import { Stack } from './Stack';
 
 interface EditorListProps<T> {
   items: Array<Partial<T>>;
@@ -61,7 +61,7 @@ export function EditorList<T>({ items, renderItem, onChange }: EditorListProps<T
           )}
         </div>
       ))}
-      <Button onClick={onAddItem} variant="secondary" size="md" icon="plus" aria-label="Add" type="button" />
+      <Button onClick={onAddItem} variant='secondary' size='md' icon='plus' aria-label='Add' type='button' />
     </Stack>
   );
 }

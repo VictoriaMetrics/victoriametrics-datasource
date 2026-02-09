@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from "@emotion/css";
-import React from "react";
+import { css } from '@emotion/css';
+import React from 'react';
 
-import { GrafanaTheme2, renderMarkdown } from "@grafana/data";
-import { useStyles2 } from "@grafana/ui";
+import { GrafanaTheme2, renderMarkdown } from '@grafana/data';
+import { useStyles2 } from '@grafana/ui';
 
 export interface Props {
   title?: React.ReactNode;
@@ -56,7 +56,7 @@ const getStyles = (theme: GrafanaTheme2) => {
       background: theme.colors.background.secondary,
       padding: theme.spacing(1),
       borderRadius: theme.shape.borderRadius(),
-      position: "relative",
+      position: 'relative',
     }),
     boxInner: css({
       marginLeft: theme.spacing(4),
@@ -64,31 +64,31 @@ const getStyles = (theme: GrafanaTheme2) => {
     stepNumber: css({
       fontWeight: theme.typography.fontWeightMedium,
       background: theme.colors.secondary.main,
-      width: "20px",
-      height: "20px",
-      borderRadius: "50%",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      position: "absolute",
-      top: "10px",
-      left: "11px",
+      width: '20px',
+      height: '20px',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'absolute',
+      top: '10px',
+      left: '11px',
       fontSize: theme.typography.bodySmall.fontSize,
     }),
     header: css({
       paddingBottom: theme.spacing(0.5),
-      display: "flex",
-      alignItems: "center",
+      display: 'flex',
+      alignItems: 'center',
       fontFamily: theme.typography.fontFamilyMonospace,
     }),
     body: css({
       color: theme.colors.text.secondary,
-      "p:last-child": {
+      'p:last-child': {
         margin: 0,
       },
       a: {
         color: theme.colors.text.link,
-        textDecoration: "underline",
+        textDecoration: 'underline',
       },
     }),
   };

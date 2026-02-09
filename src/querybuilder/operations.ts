@@ -1,5 +1,5 @@
-import { binaryScalarOperations } from "./binaryScalarOperations";
-import { LabelParamEditor } from "./components/LabelParamEditor";
+import { binaryScalarOperations } from './binaryScalarOperations';
+import { LabelParamEditor } from './components/LabelParamEditor';
 import {
   defaultAddOperationHandler,
   functionRendererLeft,
@@ -8,21 +8,21 @@ import {
   getRangeVectorParamDef,
   rangeRendererLeftWithParams,
   rangeRendererRightWithParams,
-} from "./shared/operationUtils";
+} from './shared/operationUtils';
 import {
   QueryBuilderOperation,
   QueryBuilderOperationDef,
   QueryWithOperations,
   VisualQueryModeller,
-} from "./shared/types";
-import { PromOperationId, PromVisualQuery, PromVisualQueryOperationCategory } from "./types";
+} from './shared/types';
+import { PromOperationId, PromVisualQuery, PromVisualQueryOperationCategory } from './types';
 
 export function getOperationDefinitions(): QueryBuilderOperationDef[] {
   return [
     {
       id: PromOperationId.HistogramQuantile,
-      name: "Histogram quantile",
-      params: [{ name: "Quantile", type: "number", options: [0.99, 0.95, 0.9, 0.75, 0.5, 0.25] }],
+      name: 'Histogram quantile',
+      params: [{ name: 'Quantile', type: 'number', options: [0.99, 0.95, 0.9, 0.75, 0.5, 0.25] }],
       defaultParams: [0.9],
       category: PromVisualQueryOperationCategory.Functions,
       renderer: functionRendererLeft,
@@ -30,21 +30,21 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
     },
     {
       id: PromOperationId.LabelReplace,
-      name: "Label replace",
+      name: 'Label replace',
       params: [
-        { name: "Destination label", type: "string" },
-        { name: "Replacement", type: "string" },
-        { name: "Source label", type: "string" },
-        { name: "Regex", type: "string" },
+        { name: 'Destination label', type: 'string' },
+        { name: 'Replacement', type: 'string' },
+        { name: 'Source label', type: 'string' },
+        { name: 'Regex', type: 'string' },
       ],
       category: PromVisualQueryOperationCategory.Functions,
-      defaultParams: ["", "$1", "", "(.*)"],
+      defaultParams: ['', '$1', '', '(.*)'],
       renderer: functionRendererRight,
       addOperationHandler: defaultAddOperationHandler,
     },
     {
       id: PromOperationId.Ln,
-      name: "Ln",
+      name: 'Ln',
       params: [],
       defaultParams: [],
       category: PromVisualQueryOperationCategory.Functions,
@@ -61,11 +61,11 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
       id: PromOperationId.HoltWinters,
       params: [
         getRangeVectorParamDef(),
-        { name: "Smoothing Factor", type: "number" },
-        { name: "Trend Factor", type: "number" },
+        { name: 'Smoothing Factor', type: 'number' },
+        { name: 'Trend Factor', type: 'number' },
       ],
-      defaultParams: ["$__interval", 0.5, 0.5],
-      alternativesKey: "range function",
+      defaultParams: ['$__interval', 0.5, 0.5],
+      alternativesKey: 'range function',
       category: PromVisualQueryOperationCategory.RangeFunctions,
       renderer: rangeRendererRightWithParams,
       addOperationHandler: addOperationWithRangeVector,
@@ -73,9 +73,9 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
     }),
     createFunction({
       id: PromOperationId.PredictLinear,
-      params: [getRangeVectorParamDef(), { name: "Seconds from now", type: "number" }],
-      defaultParams: ["$__interval", 60],
-      alternativesKey: "range function",
+      params: [getRangeVectorParamDef(), { name: 'Seconds from now', type: 'number' }],
+      defaultParams: ['$__interval', 60],
+      alternativesKey: 'range function',
       category: PromVisualQueryOperationCategory.RangeFunctions,
       renderer: rangeRendererRightWithParams,
       addOperationHandler: addOperationWithRangeVector,
@@ -83,9 +83,9 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
     }),
     createFunction({
       id: PromOperationId.QuantileOverTime,
-      params: [getRangeVectorParamDef(), { name: "Quantile", type: "number" }],
-      defaultParams: ["$__interval", 0.5],
-      alternativesKey: "overtime function",
+      params: [getRangeVectorParamDef(), { name: 'Quantile', type: 'number' }],
+      defaultParams: ['$__interval', 0.5],
+      alternativesKey: 'overtime function',
       category: PromVisualQueryOperationCategory.RangeFunctions,
       renderer: rangeRendererLeftWithParams,
       addOperationHandler: addOperationWithRangeVector,
@@ -94,7 +94,7 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
     ...binaryScalarOperations,
     {
       id: PromOperationId.NestedQuery,
-      name: "Binary operation with query",
+      name: 'Binary operation with query',
       params: [],
       defaultParams: [],
       category: PromVisualQueryOperationCategory.BinaryOps,
@@ -129,22 +129,22 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
     createFunction({ id: PromOperationId.Ceil }),
     createFunction({
       id: PromOperationId.Clamp,
-      name: "Clamp",
+      name: 'Clamp',
       params: [
-        { name: "Minimum Scalar", type: "number" },
-        { name: "Maximum Scalar", type: "number" },
+        { name: 'Minimum Scalar', type: 'number' },
+        { name: 'Maximum Scalar', type: 'number' },
       ],
       defaultParams: [1, 1],
     }),
 
     createFunction({
       id: PromOperationId.ClampMax,
-      params: [{ name: "Maximum Scalar", type: "number" }],
+      params: [{ name: 'Maximum Scalar', type: 'number' }],
       defaultParams: [1],
     }),
     createFunction({
       id: PromOperationId.ClampMin,
-      params: [{ name: "Minimum Scalar", type: "number" }],
+      params: [{ name: 'Minimum Scalar', type: 'number' }],
       defaultParams: [1],
     }),
     createFunction({
@@ -178,23 +178,23 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
       id: PromOperationId.LabelJoin,
       params: [
         {
-          name: "Destination Label",
-          type: "string",
+          name: 'Destination Label',
+          type: 'string',
           editor: LabelParamEditor,
         },
         {
-          name: "Separator",
-          type: "string",
+          name: 'Separator',
+          type: 'string',
         },
         {
-          name: "Source Label",
-          type: "string",
+          name: 'Source Label',
+          type: 'string',
           restParam: true,
           optional: true,
           editor: LabelParamEditor,
         },
       ],
-      defaultParams: ["", ",", ""],
+      defaultParams: ['', ',', ''],
       renderer: labelJoinRenderer,
       addOperationHandler: labelJoinAddOperationHandler,
     }),
@@ -208,7 +208,7 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
     }),
     createFunction({
       id: PromOperationId.Quantile,
-      params: [{ name: "Value", type: "number" }],
+      params: [{ name: 'Value', type: 'number' }],
       defaultParams: [1],
       renderer: functionRendererLeft,
     }),
@@ -217,7 +217,7 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
     createFunction({
       id: PromOperationId.Round,
       category: PromVisualQueryOperationCategory.Functions,
-      params: [{ name: "To Nearest", type: "number" }],
+      params: [{ name: 'To Nearest', type: 'number' }],
       defaultParams: [1],
     }),
     createFunction({ id: PromOperationId.Scalar }),
@@ -246,7 +246,7 @@ export function getOperationDefinitions(): QueryBuilderOperationDef[] {
     createFunction({ id: PromOperationId.Timestamp }),
     createFunction({
       id: PromOperationId.Vector,
-      params: [{ name: "Value", type: "number" }],
+      params: [{ name: 'Value', type: 'number' }],
       defaultParams: [1],
       renderer: (model) => `${model.id}(${model.params[0]})`,
     }),
@@ -272,8 +272,8 @@ export function createRangeFunction(name: string, withRateInterval = false): Que
     id: name,
     name: getPromAndLokiOperationDisplayName(name),
     params: [getRangeVectorParamDef(withRateInterval)],
-    defaultParams: [withRateInterval ? "$__rate_interval" : "$__interval"],
-    alternativesKey: "range function",
+    defaultParams: [withRateInterval ? '$__rate_interval' : '$__interval'],
+    alternativesKey: 'range function',
     category: PromVisualQueryOperationCategory.RangeFunctions,
     renderer: operationWithRangeVectorRenderer,
     addOperationHandler: addOperationWithRangeVector,
@@ -286,9 +286,9 @@ export function operationTypeChangedHandlerForRangeFunction(
   newDef: QueryBuilderOperationDef
 ) {
   // validate current parameter
-  if (operation.params[0] === "$__rate_interval" && newDef.defaultParams[0] !== "$__rate_interval") {
+  if (operation.params[0] === '$__rate_interval' && newDef.defaultParams[0] !== '$__rate_interval') {
     operation.params = newDef.defaultParams;
-  } else if (operation.params[0] === "$__interval" && newDef.defaultParams[0] !== "$__interval") {
+  } else if (operation.params[0] === '$__interval' && newDef.defaultParams[0] !== '$__interval') {
     operation.params = newDef.defaultParams;
   }
 
@@ -300,7 +300,7 @@ export function operationWithRangeVectorRenderer(
   def: QueryBuilderOperationDef,
   innerExpr: string
 ) {
-  let rangeVector = (model.params ?? [])[0] ?? "5m";
+  let rangeVector = (model.params ?? [])[0] ?? '5m';
   return `${def.id}(${innerExpr}[${rangeVector}])`;
 }
 
@@ -341,7 +341,7 @@ function addNestedQueryHandler(def: QueryBuilderOperationDef, query: PromVisualQ
     binaryQueries: [
       ...(query.binaryQueries ?? []),
       {
-        operator: "/",
+        operator: '/',
         query,
       },
     ],
@@ -349,11 +349,11 @@ function addNestedQueryHandler(def: QueryBuilderOperationDef, query: PromVisualQ
 }
 
 function labelJoinRenderer(model: QueryBuilderOperation, def: QueryBuilderOperationDef, innerExpr: string) {
-  if (typeof model.params[1] !== "string") {
-    throw "The separator must be a string";
+  if (typeof model.params[1] !== 'string') {
+    throw 'The separator must be a string';
   }
   const separator = `"${model.params[1]}"`;
-  return `${model.id}(${innerExpr}, "${model.params[0]}", ${separator}, "${model.params.slice(2).join("\", \"")}")`;
+  return `${model.id}(${innerExpr}, "${model.params[0]}", ${separator}, "${model.params.slice(2).join('", "')}")`;
 }
 
 function labelJoinAddOperationHandler<T extends QueryWithOperations>(def: QueryBuilderOperationDef, query: T) {

@@ -1,13 +1,13 @@
-import React, { FC, useCallback, useEffect, useState } from "react"
+import React, { FC, useCallback, useEffect, useState } from 'react'
 
-import { Badge, Button, useStyles2 } from "@grafana/ui";
+import { Badge, Button, useStyles2 } from '@grafana/ui';
 
-import TemplateEditor from "../TemplateEditor/TemplateEditor";
-import useUpdateDatasource from "../hooks/useUpdateDatasource";
-import useValidateExpr from "../hooks/useValidateExpr";
-import { WithTemplateConfigProps } from "../index";
+import TemplateEditor from '../TemplateEditor/TemplateEditor';
+import useUpdateDatasource from '../hooks/useUpdateDatasource';
+import useValidateExpr from '../hooks/useValidateExpr';
+import { WithTemplateConfigProps } from '../index';
 
-import getStyles from "./style";
+import getStyles from './style';
 
 interface Props extends WithTemplateConfigProps {
   handleClose: () => void;
@@ -22,7 +22,7 @@ const WithTemplateBody: FC<Props> = ({ datasource, dashboardUID, template, setTe
     dashboardUID
   })
 
-  const [value, setValue] = useState(template?.expr || "")
+  const [value, setValue] = useState(template?.expr || '')
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSave = useCallback(async () => {
@@ -52,7 +52,7 @@ const WithTemplateBody: FC<Props> = ({ datasource, dashboardUID, template, setTe
   }, [value, isValidExpr])
 
   useEffect(() => {
-    setValue(template?.expr || "")
+    setValue(template?.expr || '')
   }, [template])
 
   return (
@@ -63,28 +63,28 @@ const WithTemplateBody: FC<Props> = ({ datasource, dashboardUID, template, setTe
         onChange={setValue}
       />
       <Badge
-        icon={validateResult.icon || "info"}
-        color={validateResult.color || "blue"}
+        icon={validateResult.icon || 'info'}
+        color={validateResult.color || 'blue'}
         text={validateResult.error || validateResult.title}
       />
       <div className={styles.button}>
         <a
-          className="text-link"
-          target="_blank"
-          href={"https://github.com/VictoriaMetrics/grafana-datasource#how-to-use-with-templates"}
-          rel="noreferrer"
+          className='text-link'
+          target='_blank'
+          href={'https://github.com/VictoriaMetrics/grafana-datasource#how-to-use-with-templates'}
+          rel='noreferrer'
         >
           <Button
-            variant={"secondary"}
-            fill={"text"}
-            icon={"book"}
-            size={"sm"}
+            variant={'secondary'}
+            fill={'text'}
+            icon={'book'}
+            size={'sm'}
           >
             How it works?
           </Button>
         </a>
         <Button
-          variant={"success"}
+          variant={'success'}
           onClick={handleSave}
           disabled={isLoading}
         >

@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { IMarkdownString } from "monaco-editor";
+import { IMarkdownString } from 'monaco-editor';
 
-import type { Monaco, monacoTypes } from "@grafana/ui";
+import type { Monaco, monacoTypes } from '@grafana/ui';
 
-import { escapeMetricNameSpecialCharacters } from "../../../language_utils";
+import { escapeMetricNameSpecialCharacters } from '../../../language_utils';
 
-import { CompletionType, DataProvider, getCompletions } from "./completions";
-import { getSituation } from "./situation";
-import { NeverCaseError } from "./util";
+import { CompletionType, DataProvider, getCompletions } from './completions';
+import { getSituation } from './situation';
+import { NeverCaseError } from './util';
 
 export function getSuggestOptions(): monacoTypes.editor.ISuggestOptions {
   return {
@@ -105,12 +105,12 @@ export function getCompletionProvider(
         insertText: item.type === CompletionType.metricName ? escapeMetricNameSpecialCharacters(item.insertText) : item.insertText,
         detail: item.detail,
         documentation: { value: item.documentation } as IMarkdownString,
-        sortText: index.toString().padStart(maxIndexDigits, "0"), // to force the order we have
+        sortText: index.toString().padStart(maxIndexDigits, '0'), // to force the order we have
         range,
         command: item.triggerOnInsert
           ? {
-            id: "editor.action.triggerSuggest",
-            title: "",
+            id: 'editor.action.triggerSuggest',
+            title: '',
           }
           : undefined,
       }));
@@ -119,7 +119,7 @@ export function getCompletionProvider(
   };
 
   return {
-    triggerCharacters: ["{", ",", "[", "(", "=", "~", " ", '"'],
+    triggerCharacters: ['{', ',', '[', '(', '=', '~', ' ', '"'],
     provideCompletionItems,
   };
 }

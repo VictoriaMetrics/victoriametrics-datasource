@@ -1,6 +1,6 @@
-import { css } from "@emotion/css";
+import { css } from '@emotion/css';
 
-import { GrafanaTheme2 } from "@grafana/data";
+import { GrafanaTheme2 } from '@grafana/data';
 
 export default (theme: GrafanaTheme2) => ({
   wrapper: css({
@@ -8,8 +8,8 @@ export default (theme: GrafanaTheme2) => ({
     background: theme.colors.background.secondary,
     borderRadius: theme.shape.borderRadius(),
     border: `1px solid ${theme.colors.border.weak}`,
-    position: "relative",
-    cursor: "pointer",
+    position: 'relative',
+    cursor: 'pointer',
   }),
   content: css`
     display: grid;

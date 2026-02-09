@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, HTMLProps, ReactNode } from "react";
+import React, { useEffect, HTMLProps, ReactNode } from 'react';
 
-import { Input, measureText } from "@grafana/ui";
+import { Input, measureText } from '@grafana/ui';
 
-export interface Props extends Omit<HTMLProps<HTMLInputElement>, "prefix" | "size"> {
+export interface Props extends Omit<HTMLProps<HTMLInputElement>, 'prefix' | 'size'> {
   /** Sets the width to a multiple of 8px. Should only be used with inline forms. Setting width of the container is preferred in other cases.*/
   width?: number;
   /** Show an invalid state around the input */
@@ -44,7 +44,7 @@ export interface Props extends Omit<HTMLProps<HTMLInputElement>, "prefix" | "siz
 }
 
 export const AutoSizeInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
-  const { defaultValue = "", minWidth = 10, maxWidth, onCommitChange, onKeyDown, onBlur, ...restProps } = props;
+  const { defaultValue = '', minWidth = 10, maxWidth, onCommitChange, onKeyDown, onBlur, ...restProps } = props;
   const [value, setValue] = React.useState(defaultValue);
   const [inputWidth, setInputWidth] = React.useState(minWidth);
 
@@ -71,11 +71,11 @@ export const AutoSizeInput = React.forwardRef<HTMLInputElement, Props>((props, r
       onKeyDown={(event) => {
         if (onKeyDown) {
           onKeyDown(event);
-        } else if (event.key === "Enter" && onCommitChange) {
+        } else if (event.key === 'Enter' && onCommitChange) {
           onCommitChange(event);
         }
       }}
-      data-testid={"autosize-input"}
+      data-testid={'autosize-input'}
     />
   );
 });
@@ -99,4 +99,4 @@ function getWidthFor(value: string, minWidth: number, maxWidth: number | undefin
   return realWidth;
 }
 
-AutoSizeInput.displayName = "AutoSizeInput";
+AutoSizeInput.displayName = 'AutoSizeInput';

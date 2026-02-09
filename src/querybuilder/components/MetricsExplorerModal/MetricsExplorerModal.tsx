@@ -1,10 +1,10 @@
-import { css } from "@emotion/css";
-import { debounce } from "lodash";
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { CellProps, DefaultSortTypes } from "react-table";
+import { css } from '@emotion/css';
+import { debounce } from 'lodash';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { CellProps, DefaultSortTypes } from 'react-table';
 
-import { GrafanaTheme2, SelectableValue } from "@grafana/data";
-import { Input, InteractiveTable, Modal, MultiSelect, Spinner, useStyles2 } from "@grafana/ui";
+import { GrafanaTheme2, SelectableValue } from '@grafana/data';
+import { Input, InteractiveTable, Modal, MultiSelect, Spinner, useStyles2 } from '@grafana/ui';
 
 import { PrometheusDatasource } from '../../../datasource';
 
@@ -129,11 +129,11 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
   const handleTableClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       const target = e.target as HTMLElement;
-      const row = target.closest("tbody tr");
+      const row = target.closest('tbody tr');
       if (row) {
         const rowIndex = Array.from(row.parentElement?.children || []).indexOf(row);
         if (rowIndex >= 0 && rowIndex < PAGE_SIZE) {
-          const rowId = row.querySelector("td span")?.textContent;
+          const rowId = row.querySelector('td span')?.textContent;
           const metric = filteredMetrics.find((m) => m.name === rowId);
           if (metric) {
             handleRowClick(metric);
@@ -147,20 +147,20 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
   const columns = useMemo(
     (): MetricMetadataColumn[] => [
       {
-        id: "name",
-        header: "Name",
+        id: 'name',
+        header: 'Name',
         cell: ({ row }: CellProps<MetricMetadata>) => <span className={styles.nameCell}>{row.original.name}</span>,
-        sortType: "alphanumeric",
+        sortType: 'alphanumeric',
       },
       {
-        id: "type",
-        header: "Type",
+        id: 'type',
+        header: 'Type',
         cell: ({ row }: CellProps<MetricMetadata>) => <span className={styles.typeCell}>{row.original.type}</span>,
-        sortType: "alphanumeric",
+        sortType: 'alphanumeric',
       },
       {
-        id: "help",
-        header: "Description",
+        id: 'help',
+        header: 'Description',
         cell: ({ row }: CellProps<MetricMetadata>) => (
           <span className={styles.descriptionCell}>{row.original.help}</span>
         ),
@@ -175,7 +175,7 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
 
   return (
     <Modal
-      title="Metrics Explorer"
+      title='Metrics Explorer'
       isOpen={isOpen}
       onDismiss={onClose}
       className={styles.modal}
@@ -188,7 +188,7 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
             options={typeOptions}
             value={typeFilter}
             onChange={handleTypeFilterChange}
-            placeholder="Filter by type"
+            placeholder='Filter by type'
             className={styles.typeFilter}
           />
         </div>
@@ -233,39 +233,39 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
 
 const getStyles = (theme: GrafanaTheme2) => ({
   modal: css({
-    width: "90vw",
-    maxWidth: "1500px",
-    height: "85vh",
-    maxHeight: "85vh",
+    width: '90vw',
+    maxWidth: '1500px',
+    height: '85vh',
+    maxHeight: '85vh',
   }),
   modalContent: css({
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column',
     flex: 1,
-    overflow: "hidden",
+    overflow: 'hidden',
     minHeight: 0,
   }),
   content: css({
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column',
     flex: 1,
     gap: theme.spacing(2),
-    overflow: "hidden",
+    overflow: 'hidden',
     minHeight: 0,
   }),
   filters: css({
-    display: "flex",
+    display: 'flex',
     gap: theme.spacing(1),
     flexShrink: 0,
     padding: theme.spacing(1),
   }),
   nameFilter: css({
-    flex: "0 0 60%",
-    maxWidth: "calc(60% - 4px)",
+    flex: '0 0 60%',
+    maxWidth: 'calc(60% - 4px)',
   }),
   typeFilter: css({
-    flex: "0 0 40%",
-    maxWidth: "calc(40% - 4px)",
+    flex: '0 0 40%',
+    maxWidth: 'calc(40% - 4px)',
   }),
   selectedMetric: css({
     margin: theme.spacing(0, 1),
@@ -277,21 +277,21 @@ const getStyles = (theme: GrafanaTheme2) => ({
     flexShrink: 0,
   }),
   centered: css({
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: theme.spacing(4),
     flex: 1,
   }),
   error: css({
     color: theme.colors.error.text,
     padding: theme.spacing(2),
-    textAlign: "center",
+    textAlign: 'center',
     flexShrink: 0,
   }),
   tableContainer: css({
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column',
     flex: 1,
     minHeight: 0,
     overflow: 'hidden',
@@ -301,71 +301,71 @@ const getStyles = (theme: GrafanaTheme2) => ({
   tableWrapper: css({
     flex: 1,
     minHeight: 0,
-    overflow: "hidden",
-    display: "flex",
-    flexDirection: "column",
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
   }),
   table: css({
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column',
     padding: theme.spacing(0, 1),
     flex: 1,
     minHeight: 0,
     gap: 0,
-    overflow: "auto",
-    "& table": {
-      width: "100%",
-      borderCollapse: "collapse",
+    overflow: 'auto',
+    '& table': {
+      width: '100%',
+      borderCollapse: 'collapse',
     },
-    "& thead": {
-      position: "sticky",
+    '& thead': {
+      position: 'sticky',
       top: 0,
       zIndex: 1,
       backgroundColor: theme.colors.background.primary,
     },
-    "& thead tr, & tbody tr": {
-      display: "table",
-      width: "100%",
-      tableLayout: "fixed",
+    '& thead tr, & tbody tr': {
+      display: 'table',
+      width: '100%',
+      tableLayout: 'fixed',
     },
-    "& th button": {
+    '& th button': {
       paddingRight: theme.spacing(1),
     },
-    "& th:nth-child(1), & td:nth-child(1)": {
-      width: "50%",
+    '& th:nth-child(1), & td:nth-child(1)': {
+      width: '50%',
     },
-    "& th:nth-child(2), & td:nth-child(2)": {
-      width: "10%",
-      textAlign: "left",
+    '& th:nth-child(2), & td:nth-child(2)': {
+      width: '10%',
+      textAlign: 'left',
     },
-    "& th:nth-child(3), & td:nth-child(3)": {
-      width: "39%", // use 39% to account for scrollbar and align column with the type filter
-      textAlign: "left",
+    '& th:nth-child(3), & td:nth-child(3)': {
+      width: '39%', // use 39% to account for scrollbar and align column with the type filter
+      textAlign: 'left',
     },
-    "& tbody tr": {
-      cursor: "pointer",
-      "&:hover": {
+    '& tbody tr': {
+      cursor: 'pointer',
+      '&:hover': {
         backgroundColor: theme.colors.action.hover,
       },
     },
   }),
   nameCell: css({
-    display: "block",
-    wordBreak: "break-word",
-    overflowWrap: "break-word",
+    display: 'block',
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
   }),
   typeCell: css({
-    display: "block",
-    textAlign: "left",
+    display: 'block',
+    textAlign: 'left',
   }),
   descriptionCell: css({
-    display: "block",
-    wordBreak: "break-word",
-    overflowWrap: "break-word",
-    textAlign: "left",
+    display: 'block',
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
+    textAlign: 'left',
   }),
   resultsCount: css({
-    textAlign: "center",
+    textAlign: 'center',
     color: theme.colors.text.secondary,
     fontSize: theme.typography.bodySmall.fontSize,
     padding: theme.spacing(1, 0),

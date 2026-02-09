@@ -13,14 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { memo } from "react";
+import React, { memo } from 'react';
 
-import { CoreApp } from "@grafana/data";
+import { CoreApp } from '@grafana/data';
 
-import { PromQueryEditorSelector } from "../querybuilder/components/PromQueryEditorSelector";
+import { PromQueryEditorSelector } from '../querybuilder/components/PromQueryEditorSelector';
 
-import { PromQueryEditorForAlerting } from "./PromQueryEditorForAlerting";
-import { PromQueryEditorProps } from "./types";
+import { PromQueryEditorForAlerting } from './PromQueryEditorForAlerting';
+import { PromQueryEditorProps } from './types';
 
 export function PromQueryEditorByApp(props: PromQueryEditorProps) {
   const { app } = props;

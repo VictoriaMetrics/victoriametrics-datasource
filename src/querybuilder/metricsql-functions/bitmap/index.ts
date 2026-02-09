@@ -1,6 +1,6 @@
-import { createFunction } from "../../operations";
-import { QueryBuilderOperationDef } from "../../shared/types";
-import { PromOperationId } from "../../types";
+import { createFunction } from '../../operations';
+import { QueryBuilderOperationDef } from '../../shared/types';
+import { PromOperationId } from '../../types';
 
 const bitmapFunctions = [
   PromOperationId.BitmapAnd,
@@ -11,7 +11,7 @@ const bitmapFunctions = [
 export function getBitmapFunctions(): QueryBuilderOperationDef[] {
   return bitmapFunctions.map(id => createFunction({
     id,
-    params: [{ name: "mask", type: "number" }],
+    params: [{ name: 'mask', type: 'number' }],
     defaultParams: [1],
   }))
 }

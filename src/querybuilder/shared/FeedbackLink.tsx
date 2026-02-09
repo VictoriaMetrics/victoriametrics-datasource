@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from "@emotion/css";
-import React from "react";
+import { css } from '@emotion/css';
+import React from 'react';
 
 
-import { GrafanaTheme2 } from "@grafana/data";
-import { config, reportInteraction } from "@grafana/runtime";
-import { Icon, useStyles2 } from "@grafana/ui";
+import { GrafanaTheme2 } from '@grafana/data';
+import { config, reportInteraction } from '@grafana/runtime';
+import { Icon, useStyles2 } from '@grafana/ui';
 
-import { Stack } from "../../components/QueryEditor";
+import { Stack } from '../../components/QueryEditor';
 
 export interface Props {
   feedbackUrl?: string;
@@ -42,16 +42,16 @@ export function FeedbackLink({ feedbackUrl }: Props) {
       <a
         href={feedbackUrl}
         className={styles.link}
-        title="This query builder is new, please let us know how we can improve it"
-        target="_blank"
-        rel="noreferrer noopener"
+        title='This query builder is new, please let us know how we can improve it'
+        target='_blank'
+        rel='noreferrer noopener'
         onClick={() =>
-          reportInteraction("grafana_feedback_link_clicked", {
+          reportInteraction('grafana_feedback_link_clicked', {
             link: feedbackUrl,
           })
         }
       >
-        <Icon name="comment-alt-message" /> Give feedback
+        <Icon name='comment-alt-message' /> Give feedback
       </a>
     </Stack>
   );
@@ -62,7 +62,7 @@ function getStyles(theme: GrafanaTheme2) {
     link: css({
       color: theme.colors.text.secondary,
       fontSize: theme.typography.bodySmall.fontSize,
-      ":hover": {
+      ':hover': {
         color: theme.colors.text.link,
       },
     }),

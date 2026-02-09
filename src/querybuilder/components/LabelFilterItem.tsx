@@ -15,16 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import debounce from "debounce-promise";
-import React, { useState } from "react";
+import debounce from 'debounce-promise';
+import React, { useState } from 'react';
 
-import { SelectableValue, toOption } from "@grafana/data";
-import { selectors } from "@grafana/e2e-selectors";
-import { AccessoryButton, InputGroup } from "@grafana/plugin-ui";
-import { AsyncSelect, Select } from "@grafana/ui";
+import { SelectableValue, toOption } from '@grafana/data';
+import { selectors } from '@grafana/e2e-selectors';
+import { AccessoryButton, InputGroup } from '@grafana/plugin-ui';
+import { AsyncSelect, Select } from '@grafana/ui';
 
-import { truncateResult } from "../../language_utils";
-import { QueryBuilderLabelFilter } from "../shared/types";
+import { truncateResult } from '../../language_utils';
+import { QueryBuilderLabelFilter } from '../shared/types';
 
 export interface Props {
   defaultOp: string;
@@ -72,12 +72,12 @@ export function LabelFilterItem({
       const regExp = /\(([^)]+)\)/;
       const matches = item?.match(regExp);
 
-      if (matches && matches[0].indexOf("|") > 0) {
+      if (matches && matches[0].indexOf('|') > 0) {
         return [item];
       }
 
-      if (item.indexOf("|") > 0) {
-        return item.split("|");
+      if (item.indexOf('|') > 0) {
+        return item.split('|');
       }
 
       return [item];
@@ -89,17 +89,17 @@ export function LabelFilterItem({
     (query: string) => getLabelValuesAutofillSuggestions(query, item.label),
     debounceDuration);
 
-  const itemValue = item?.value ?? "";
+  const itemValue = item?.value ?? '';
 
   return (
-    <div key={itemValue} data-testid="prometheus-dimensions-filter-item">
+    <div key={itemValue} data-testid='prometheus-dimensions-filter-item'>
       <InputGroup>
         {/* Label name select, loads all values at once */}
         <Select
-          placeholder="Select label"
+          placeholder='Select label'
           data-testid={selectors.components.QueryBuilder.labelSelect}
-          inputId="prometheus-dimensions-filter-item-key"
-          width="auto"
+          inputId='prometheus-dimensions-filter-item-key'
+          width='auto'
           value={item.label ? toOption(item.label) : null}
           allowCustomValue
           onOpenMenu={async () => {
@@ -130,10 +130,10 @@ export function LabelFilterItem({
         {/* Operator select i.e.   = =~ != !~   */}
         <Select
           data-testid={selectors.components.QueryBuilder.matchOperatorSelect}
-          className="query-segment-operator"
+          className='query-segment-operator'
           value={toOption(item.op ?? defaultOp)}
           options={operators}
-          width="auto"
+          width='auto'
           onChange={(change) => {
             if (change.value != null) {
               onChange({
@@ -148,10 +148,10 @@ export function LabelFilterItem({
 
         {/* Label value async select: autocomplete calls prometheus API */}
         <AsyncSelect
-          placeholder="Select value"
+          placeholder='Select value'
           data-testid={selectors.components.QueryBuilder.valueSelect}
-          inputId="prometheus-dimensions-filter-item-value"
-          width="auto"
+          inputId='prometheus-dimensions-filter-item-value'
+          width='auto'
           value={
             isMultiSelect()
               ? getSelectOptionsFromString(itemValue).map(toOption)
@@ -190,22 +190,22 @@ export function LabelFilterItem({
                 .map((change: { label?: string }) => {
                   return change.label;
                 })
-                .join("|");
+                .join('|');
               // eslint-ignore
               onChange({ ...item, value: changes, op: item.op ?? defaultOp } as QueryBuilderLabelFilter);
             }
           }}
           invalid={invalidValue}
         />
-        <AccessoryButton aria-label={`remove-${item.label}`} icon="times" variant="secondary" onClick={onDelete} />
+        <AccessoryButton aria-label={`remove-${item.label}`} icon='times' variant='secondary' onClick={onDelete} />
       </InputGroup>
     </div>
   );
 }
 
 const operators = [
-  { label: "=", value: "=", isMultiValue: false },
-  { label: "!=", value: "!=", isMultiValue: false },
-  { label: "=~", value: "=~", isMultiValue: true },
-  { label: "!~", value: "!~", isMultiValue: true },
+  { label: '=', value: '=', isMultiValue: false },
+  { label: '!=', value: '!=', isMultiValue: false },
+  { label: '=~', value: '=~', isMultiValue: true },
+  { label: '!~', value: '!~', isMultiValue: true },
 ];

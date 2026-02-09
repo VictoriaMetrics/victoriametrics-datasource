@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { monacoTypes } from "@grafana/ui";
+import { monacoTypes } from '@grafana/ui';
 
 // this thing here is a workaround in a way.
 // what we want to achieve, is that when the autocomplete-window
@@ -44,7 +44,7 @@ function makeStorageService() {
   const strings = new Map<string, string>();
 
   // we want this to be true by default
-  strings.set("expandSuggestionDocs", true.toString());
+  strings.set('expandSuggestionDocs', true.toString());
 
   return {
     // we do not implement the on* handlers
@@ -61,7 +61,7 @@ function makeStorageService() {
       if (val !== undefined) {
         // the interface-docs say the value will be converted
         // to a boolean but do not specify how, so we improvise
-        return val === "true";
+        return val === 'true';
       } else {
         return fallbackValue;
       }
@@ -99,7 +99,7 @@ function makeStorageService() {
     },
 
     logStorage: (): void => {
-      console.log("logStorage: not implemented");
+      console.log('logStorage: not implemented');
     },
 
     migrate: (): Promise<void> => {

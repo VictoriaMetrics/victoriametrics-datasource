@@ -16,19 +16,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from "@emotion/css";
-import React from "react";
+import { css } from '@emotion/css';
+import React from 'react';
 
-import { GrafanaTheme2, toOption } from "@grafana/data";
-import { IconButton, Select, useStyles2 } from "@grafana/ui";
+import { GrafanaTheme2, toOption } from '@grafana/data';
+import { IconButton, Select, useStyles2 } from '@grafana/ui';
 
-import { EditorRows, FlexItem } from "../../components/QueryEditor";
-import { AutoSizeInput } from "../../components/QueryEditor/AutoSizeInput";
-import { PrometheusDatasource } from "../../datasource";
-import { binaryScalarDefs } from "../binaryScalarOperations";
-import { PromVisualQueryBinary } from "../types";
+import { EditorRows, FlexItem } from '../../components/QueryEditor';
+import { AutoSizeInput } from '../../components/QueryEditor/AutoSizeInput';
+import { PrometheusDatasource } from '../../datasource';
+import { binaryScalarDefs } from '../binaryScalarOperations';
+import { PromVisualQueryBinary } from '../types';
 
-import { PromQueryBuilder } from "./PromQueryBuilder";
+import { PromQueryBuilder } from './PromQueryBuilder';
 
 export interface Props {
   nestedQuery: PromVisualQueryBinary;
@@ -49,7 +49,7 @@ export const NestedQuery = React.memo<Props>((props) => {
       <div className={styles.header}>
         <div className={styles.name}>Operator</div>
         <Select
-          width="auto"
+          width='auto'
           options={operators}
           value={toOption(nestedQuery.operator)}
           onChange={(value) => {
@@ -61,13 +61,13 @@ export const NestedQuery = React.memo<Props>((props) => {
         />
         <div className={styles.name}>Vector matches</div>
         <div className={styles.vectorMatchWrapper}>
-          <Select<PromVisualQueryBinary["vectorMatchesType"]>
-            width="auto"
-            value={nestedQuery.vectorMatchesType || "on"}
+          <Select<PromVisualQueryBinary['vectorMatchesType']>
+            width='auto'
+            value={nestedQuery.vectorMatchesType || 'on'}
             allowCustomValue
             options={[
-              { value: "on", label: "on" },
-              { value: "ignoring", label: "ignoring" },
+              { value: 'on', label: 'on' },
+              { value: 'ignoring', label: 'ignoring' },
             ]}
             onChange={(val) => {
               onChange(index, {
@@ -84,13 +84,13 @@ export const NestedQuery = React.memo<Props>((props) => {
               onChange(index, {
                 ...nestedQuery,
                 vectorMatches: evt.currentTarget.value,
-                vectorMatchesType: nestedQuery.vectorMatchesType || "on",
+                vectorMatchesType: nestedQuery.vectorMatchesType || 'on',
               });
             }}
           />
         </div>
         <FlexItem grow={1} />
-        <IconButton aria-label="" name="times" size="sm" onClick={() => onRemove(index)} />
+        <IconButton aria-label='' name='times' size='sm' onClick={() => onRemove(index)} />
       </div>
       <div className={styles.body}>
         <EditorRows>
@@ -111,38 +111,38 @@ export const NestedQuery = React.memo<Props>((props) => {
 
 const operators = binaryScalarDefs.map((def) => ({ label: def.sign, value: def.sign }));
 
-NestedQuery.displayName = "NestedQuery";
+NestedQuery.displayName = 'NestedQuery';
 
 const getStyles = (theme: GrafanaTheme2) => {
   return {
     card: css({
-      label: "card",
-      display: "flex",
-      flexDirection: "column",
+      label: 'card',
+      display: 'flex',
+      flexDirection: 'column',
       gap: theme.spacing(0.5),
     }),
     header: css({
-      label: "header",
+      label: 'header',
       padding: theme.spacing(0.5, 0.5, 0.5, 1),
       gap: theme.spacing(1),
-      display: "flex",
-      alignItems: "center",
+      display: 'flex',
+      alignItems: 'center',
     }),
     name: css({
-      label: "name",
-      whiteSpace: "nowrap",
+      label: 'name',
+      whiteSpace: 'nowrap',
     }),
     body: css({
-      label: "body",
+      label: 'body',
       paddingLeft: theme.spacing(2),
     }),
     vectorMatchInput: css({
-      label: "vectorMatchInput",
+      label: 'vectorMatchInput',
       marginLeft: -1,
     }),
     vectorMatchWrapper: css({
-      label: "vectorMatchWrapper",
-      display: "flex",
+      label: 'vectorMatchWrapper',
+      display: 'flex',
     }),
   };
 };

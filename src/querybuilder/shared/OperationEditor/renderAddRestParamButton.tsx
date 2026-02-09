@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
-import { Button } from "@grafana/ui";
+import { Button } from '@grafana/ui';
 
-import { QueryBuilderOperationParamDef } from "../types";
+import { QueryBuilderOperationParamDef } from '../types';
 
-import { OperationEditorStyles } from "./OperationEditor";
+import { OperationEditorStyles } from './OperationEditor';
 
 function renderAddRestParamButton(
   paramsDef: QueryBuilderOperationParamDef[],
@@ -13,17 +13,17 @@ function renderAddRestParamButton(
   paramIndex: number,
   styles: OperationEditorStyles
 ) {
-  const title = paramsDef.map(p => p.name).join(" & ");
+  const title = paramsDef.map(p => p.name).join(' & ');
   return (
     <div
       className={styles.restParam}
       key={`${paramIndex}-2`}
     >
       <Button
-        size="sm"
-        icon="plus"
+        size='sm'
+        icon='plus'
         title={`Add ${title}`}
-        variant="secondary"
+        variant='secondary'
         onClick={onAddRestParam}
         data-testid={`operations.${operationIndex}.add-rest-param`}
       >

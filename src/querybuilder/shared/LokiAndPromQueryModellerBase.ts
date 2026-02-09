@@ -13,15 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Registry } from "@grafana/data";
+import { Registry } from '@grafana/data';
 
-import { PromVisualQueryOperationCategory } from "../types";
+import { PromVisualQueryOperationCategory } from '../types';
 
-import { QueryBuilderLabelFilter, QueryBuilderOperation, QueryBuilderOperationDef, VisualQueryModeller } from "./types";
+import { QueryBuilderLabelFilter, QueryBuilderOperation, QueryBuilderOperationDef, VisualQueryModeller } from './types';
 
 export interface VisualQueryBinary<T> {
   operator: string;
-  vectorMatchesType?: "on" | "ignoring";
+  vectorMatchesType?: 'on' | 'ignoring';
   vectorMatches?: string;
   query: T;
 }
@@ -94,23 +94,23 @@ export abstract class LokiAndPromQueryModellerBase implements VisualQueryModelle
 
   renderLabels(labels: QueryBuilderLabelFilter[]) {
     if (labels.length === 0) {
-      return "";
+      return '';
     }
 
-    let expr = "{";
+    let expr = '{';
     for (const filter of labels) {
-      if (expr !== "{") {
-        expr += ", ";
+      if (expr !== '{') {
+        expr += ', ';
       }
 
       expr += `${filter.label}${filter.op}"${filter.value}"`;
     }
 
-    return expr + "}";
+    return expr + '}';
   }
 
   renderQuery(query: PromLokiVisualQuery, nested?: boolean) {
-    let queryString = `${query.metric ?? ""}${this.renderLabels(query.labels)}`;
+    let queryString = `${query.metric ?? ''}${this.renderLabels(query.labels)}`;
     queryString = this.renderOperations(queryString, query.operations);
 
     if (!nested && this.hasBinaryOp(query) && Boolean(query.binaryQueries?.length)) {

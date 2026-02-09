@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { defaultIntervals } from "@grafana/ui";
+import { defaultIntervals } from '@grafana/ui';
 
 interface Args {
   urlRefresh: string | null;

@@ -1,15 +1,15 @@
-import { CoreApp } from "@grafana/data";
+import { CoreApp } from '@grafana/data';
 
-import store from "../store";
-import { LegendFormatMode, PromQuery } from "../types";
+import store from '../store';
+import { LegendFormatMode, PromQuery } from '../types';
 
-import { QueryEditorMode } from "./shared/types";
+import { QueryEditorMode } from './shared/types';
 
-const queryEditorModeDefaultLocalStorageKey = "PrometheusQueryEditorModeDefault";
+const queryEditorModeDefaultLocalStorageKey = 'PrometheusQueryEditorModeDefault';
 
 export function changeEditorMode(query: PromQuery, editorMode: QueryEditorMode, onChange: (query: PromQuery) => void) {
   // If empty query store new mode as default
-  if (query.expr === "") {
+  if (query.expr === '') {
     store.set(queryEditorModeDefaultLocalStorageKey, editorMode);
   }
 
@@ -18,7 +18,7 @@ export function changeEditorMode(query: PromQuery, editorMode: QueryEditorMode, 
 
 function getDefaultEditorMode(expr: string) {
   // If we already have an expression default to code view
-  if (expr != null && expr !== "") {
+  if (expr != null && expr !== '') {
     return QueryEditorMode.Code;
   }
 
@@ -43,12 +43,12 @@ export function getQueryWithDefaults(query: PromQuery, app: CoreApp | undefined)
   }
 
   if (!query.expr) {
-    result = { ...result, expr: "", legendFormat: LegendFormatMode.Auto };
+    result = { ...result, expr: '', legendFormat: LegendFormatMode.Auto };
   }
 
   // Ensure a default output format is set on startup/refresh
   if (!query.format) {
-    result = { ...result, format: "time_series" };
+    result = { ...result, format: 'time_series' };
   }
 
   if (query.range == null && query.instant == null) {

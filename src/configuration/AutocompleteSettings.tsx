@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
-import { DataSourcePluginOptionsEditorProps } from "@grafana/data";
-import { InlineField, InlineSwitch } from "@grafana/ui";
+import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
+import { InlineField, InlineSwitch } from '@grafana/ui';
 
-import { AutocompleteSettings as AutocompleteSettingsType, PromOptions } from "../types";
+import { AutocompleteSettings as AutocompleteSettingsType, PromOptions } from '../types';
 
-type Props = Pick<DataSourcePluginOptionsEditorProps<PromOptions>, "options" | "onOptionsChange">;
+type Props = Pick<DataSourcePluginOptionsEditorProps<PromOptions>, 'options' | 'onOptionsChange'>;
 
 export const AutocompleteSettings = (props: Props) => {
   const { options, onOptionsChange } = props;
@@ -25,15 +25,15 @@ export const AutocompleteSettings = (props: Props) => {
 
   return (
     <>
-      <h3 className="page-heading">Autocomplete</h3>
-      <div className="gf-form-group">
-        <div className="gf-form">
+      <h3 className='page-heading'>Autocomplete</h3>
+      <div className='gf-form-group'>
+        <div className='gf-form'>
           <InlineField
-            label="Use optimized labels API"
+            label='Use optimized labels API'
             labelWidth={28}
             tooltip={
               <>
-                When enabled, uses <code>/api/v1/labels</code> and <code>/api/v1/label/.../values</code> instead of{" "}
+                When enabled, uses <code>/api/v1/labels</code> and <code>/api/v1/label/.../values</code> instead of{' '}
                 <code>/api/v1/series</code> for autocomplete suggestions. This is more efficient for high-cardinality
                 metrics. Falls back to <code>/api/v1/series</code> if the optimized API fails.
               </>
@@ -42,7 +42,7 @@ export const AutocompleteSettings = (props: Props) => {
           >
             <InlineSwitch
               value={options.jsonData.autocompleteSettings?.useOptimizedLabelsApi ?? true}
-              onChange={onChangeHandler("useOptimizedLabelsApi")}
+              onChange={onChangeHandler('useOptimizedLabelsApi')}
             />
           </InlineField>
         </div>

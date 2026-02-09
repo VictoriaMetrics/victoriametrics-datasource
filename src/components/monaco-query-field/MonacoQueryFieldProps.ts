@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { HistoryItem } from "@grafana/data";
+import { HistoryItem } from '@grafana/data';
 
-import type PromQlLanguageProvider from "../../language_provider";
-import { PromQuery } from "../../types";
+import type PromQlLanguageProvider from '../../language_provider';
+import { PromQuery } from '../../types';
 
 // we need to store this in a separate file,
 // because we have an async-wrapper around,

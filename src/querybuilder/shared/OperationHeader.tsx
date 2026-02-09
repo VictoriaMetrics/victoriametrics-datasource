@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from "@emotion/css";
-import React, { useState } from "react";
+import { css } from '@emotion/css';
+import React, { useState } from 'react';
 
-import { GrafanaTheme2, SelectableValue } from "@grafana/data";
-import { Button, Select, useStyles2 } from "@grafana/ui";
+import { GrafanaTheme2, SelectableValue } from '@grafana/data';
+import { Button, Select, useStyles2 } from '@grafana/ui';
 
-import { FlexItem } from "../../components/QueryEditor";
+import { FlexItem } from '../../components/QueryEditor';
 
-import { OperationInfoButton } from "./OperationInfoButton";
-import { VisualQueryModeller, QueryBuilderOperation, QueryBuilderOperationDef } from "./types";
+import { OperationInfoButton } from './OperationInfoButton';
+import { VisualQueryModeller, QueryBuilderOperation, QueryBuilderOperationDef } from './types';
 
 export interface Props {
   operation: QueryBuilderOperation;
@@ -66,23 +66,23 @@ export const OperationHeader = React.memo<Props>(
             <FlexItem grow={1} />
             <div className={`${styles.operationHeaderButtons} operation-header-show-on-hover`}>
               <Button
-                icon="angle-down"
-                size="sm"
+                icon='angle-down'
+                size='sm'
                 onClick={onToggleSwitcher}
-                fill="text"
-                variant="secondary"
-                title="Click to view alternative operations"
-                aria-label="View alternative operations"
+                fill='text'
+                variant='secondary'
+                title='Click to view alternative operations'
+                aria-label='View alternative operations'
               />
               <OperationInfoButton def={def} operation={operation} />
               <Button
-                icon="times"
-                size="sm"
+                icon='times'
+                size='sm'
                 onClick={() => onRemove(index)}
-                fill="text"
-                variant="secondary"
-                title="Remove operation"
-                aria-label="Remove operation"
+                fill='text'
+                variant='secondary'
+                title='Remove operation'
+                aria-label='Remove operation'
               />
             </div>
           </>
@@ -92,7 +92,7 @@ export const OperationHeader = React.memo<Props>(
             <Select
               autoFocus
               openMenuOnFocus
-              placeholder="Replace with"
+              placeholder='Replace with'
               options={state.alternatives}
               isOpen={true}
               onCloseMenu={onToggleSwitcher}
@@ -121,22 +121,22 @@ export const OperationHeader = React.memo<Props>(
   }
 );
 
-OperationHeader.displayName = "OperationHeader";
+OperationHeader.displayName = 'OperationHeader';
 
 const getStyles = (theme: GrafanaTheme2) => {
   return {
     header: css({
       borderBottom: `1px solid ${theme.colors.border.medium}`,
       padding: theme.spacing(0.5, 0.5, 0.5, 1),
-      display: "flex",
-      alignItems: "center",
-      "&:hover .operation-header-show-on-hover": css({
+      display: 'flex',
+      alignItems: 'center',
+      '&:hover .operation-header-show-on-hover': css({
         opacity: 1,
       }),
     }),
     operationHeaderButtons: css({
       opacity: 0,
-      transition: theme.transitions.create(["opacity"], {
+      transition: theme.transitions.create(['opacity'], {
         duration: theme.transitions.duration.short,
       }),
     }),

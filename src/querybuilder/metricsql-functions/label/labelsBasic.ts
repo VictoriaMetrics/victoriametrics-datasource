@@ -1,6 +1,6 @@
-import { LabelParamEditor } from "../../components/LabelParamEditor";
-import { createFunction } from "../../operations";
-import { PromOperationId } from "../../types";
+import { LabelParamEditor } from '../../components/LabelParamEditor';
+import { createFunction } from '../../operations';
+import { PromOperationId } from '../../types';
 
 const labelFunctions = [
   PromOperationId.LabelDel,
@@ -18,16 +18,16 @@ export function getBaseLabelFunctions () {
     id: id,
     params: [
       {
-        name: "Label",
-        type: "string",
+        name: 'Label',
+        type: 'string',
         restParam: true,
         optional: true,
         editor: LabelParamEditor,
       },
     ],
-    defaultParams: [""],
+    defaultParams: [''],
     renderer: (model, def, innerExpr) => {
-      return `${model.id}(${innerExpr}, ${model.params.map(item => `"${item}"`).join(", ")})`;
+      return `${model.id}(${innerExpr}, ${model.params.map(item => `"${item}"`).join(', ')})`;
     },
     addOperationHandler: (def, query) => ({
       ...query,

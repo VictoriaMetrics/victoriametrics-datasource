@@ -16,17 +16,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { uniqBy } from "lodash";
-import React, { useState } from "react";
+import { uniqBy } from 'lodash';
+import React, { useState } from 'react';
 
-import { SelectableValue, toOption } from "@grafana/data";
-import { selectors } from "@grafana/e2e-selectors";
-import { Select } from "@grafana/ui";
+import { SelectableValue, toOption } from '@grafana/data';
+import { selectors } from '@grafana/e2e-selectors';
+import { Select } from '@grafana/ui';
 
-import { AccessoryButton, InputGroup } from "../../components/QueryEditor";
-import { escapeIdentifier } from "../../language_utils";
+import { AccessoryButton, InputGroup } from '../../components/QueryEditor';
+import { escapeIdentifier } from '../../language_utils';
 
-import { QueryBuilderLabelFilter } from "./types";
+import { QueryBuilderLabelFilter } from './types';
 
 export interface Props {
   defaultOp: string;
@@ -51,8 +51,8 @@ export function LabelFilterItem({ item, defaultOp, onChange, onDelete, onGetLabe
 
   const getSelectOptionsFromString = (item?: string): string[] => {
     if (item) {
-      if (item.indexOf("|") > 0) {
-        return item.split("|");
+      if (item.indexOf('|') > 0) {
+        return item.split('|');
       }
       return [item];
     }
@@ -64,17 +64,17 @@ export function LabelFilterItem({ item, defaultOp, onChange, onDelete, onGetLabe
     const selectedOptions = getSelectOptionsFromString(item?.value).map(toOption);
 
     // Remove possible duplicated values
-    return uniqBy([...selectedOptions, ...labelValues], "value");
+    return uniqBy([...selectedOptions, ...labelValues], 'value');
   };
 
   return (
-    <div data-testid="prometheus-dimensions-filter-item">
+    <div data-testid='prometheus-dimensions-filter-item'>
       <InputGroup>
         <Select
-          placeholder="Select label"
+          placeholder='Select label'
           aria-label={selectors.components.QueryBuilder.labelSelect}
-          inputId="prometheus-dimensions-filter-item-key"
-          width="auto"
+          inputId='prometheus-dimensions-filter-item-key'
+          width='auto'
           value={item.label ? toOption(item.label) : null}
           allowCustomValue
           onOpenMenu={async () => {
@@ -99,7 +99,7 @@ export function LabelFilterItem({ item, defaultOp, onChange, onDelete, onGetLabe
           aria-label={selectors.components.QueryBuilder.matchOperatorSelect}
           value={toOption(item.op ?? defaultOp)}
           options={operators}
-          width="auto"
+          width='auto'
           onChange={(change) => {
             if (change.value != null) {
               onChange({ ...item, op: change.value } as any as QueryBuilderLabelFilter);
@@ -108,10 +108,10 @@ export function LabelFilterItem({ item, defaultOp, onChange, onDelete, onGetLabe
         />
 
         <Select
-          placeholder="Select value"
+          placeholder='Select value'
           aria-label={selectors.components.QueryBuilder.valueSelect}
-          inputId="prometheus-dimensions-filter-item-value"
-          width="auto"
+          inputId='prometheus-dimensions-filter-item-value'
+          width='auto'
           value={
             isMultiSelect()
               ? getSelectOptionsFromString(item?.value).map(toOption)
@@ -138,20 +138,20 @@ export function LabelFilterItem({ item, defaultOp, onChange, onDelete, onGetLabe
                 .map((change: any) => {
                   return change.label;
                 })
-                .join("|");
+                .join('|');
               onChange({ ...item, value: changes, op: item.op ?? defaultOp } as any as QueryBuilderLabelFilter);
             }
           }}
         />
-        <AccessoryButton aria-label="remove" icon="times" variant="secondary" onClick={onDelete} />
+        <AccessoryButton aria-label='remove' icon='times' variant='secondary' onClick={onDelete} />
       </InputGroup>
     </div>
   );
 }
 
 const operators = [
-  { label: "=~", value: "=~", isMultiValue: true },
-  { label: "=", value: "=", isMultiValue: false },
-  { label: "!=", value: "!=", isMultiValue: false },
-  { label: "!~", value: "!~", isMultiValue: true },
+  { label: '=~', value: '=~', isMultiValue: true },
+  { label: '=', value: '=', isMultiValue: false },
+  { label: '!=', value: '!=', isMultiValue: false },
+  { label: '!~', value: '!~', isMultiValue: true },
 ];

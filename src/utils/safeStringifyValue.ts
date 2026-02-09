@@ -1,6 +1,6 @@
 export const safeStringifyValue = (value: any, space?: number) => {
   if (!value) {
-    return "";
+    return '';
   }
 
   try {
@@ -9,5 +9,5 @@ export const safeStringifyValue = (value: any, space?: number) => {
     console.error(error);
   }
 
-  return "";
+  return '';
 };

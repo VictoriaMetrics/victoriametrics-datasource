@@ -13,9 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React from 'react';
 
-import { Stack } from "./Stack";
+import { Stack } from './Stack';
 
 interface EditorRowsProps {
   children: React.ReactNode;
@@ -23,7 +23,7 @@ interface EditorRowsProps {
 
 export const EditorRows: React.FC<EditorRowsProps> = ({ children }) => {
   return (
-    <Stack gap={0.5} direction="column">
+    <Stack gap={0.5} direction='column'>
       {children}
     </Stack>
   );

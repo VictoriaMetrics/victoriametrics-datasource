@@ -16,14 +16,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useRef } from "react";
+import React, { useRef } from 'react';
 
-import { SelectableValue } from "@grafana/data";
-import { Select } from "@grafana/ui";
+import { SelectableValue } from '@grafana/data';
+import { Select } from '@grafana/ui';
 
-import { EditorField } from "../../components/QueryEditor";
-import { AutoSizeInput } from "../../components/QueryEditor/AutoSizeInput";
-import { LegendFormatMode } from "../../types";
+import { EditorField } from '../../components/QueryEditor';
+import { AutoSizeInput } from '../../components/QueryEditor/AutoSizeInput';
+import { LegendFormatMode } from '../../types';
 
 export interface Props {
   legendFormat: string | undefined;
@@ -33,12 +33,12 @@ export interface Props {
 
 const legendModeOptions = [
   {
-    label: "Auto",
+    label: 'Auto',
     value: LegendFormatMode.Auto,
-    description: "Only includes unique labels",
+    description: 'Only includes unique labels',
   },
-  { label: "Verbose", value: LegendFormatMode.Verbose, description: "All label names and values" },
-  { label: "Custom", value: LegendFormatMode.Custom, description: "Provide a naming template" },
+  { label: 'Verbose', value: LegendFormatMode.Verbose, description: 'All label names and values' },
+  { label: 'Custom', value: LegendFormatMode.Custom, description: 'Provide a naming template' },
 ];
 
 /**
@@ -66,14 +66,14 @@ export const PromQueryLegendEditor = React.memo<Props>(({ legendFormat, onChange
         onChange(LegendFormatMode.Auto);
         break;
       case LegendFormatMode.Custom:
-        onChange("{{label_name}}");
+        onChange('{{label_name}}');
         setTimeout(() => {
           inputRef.current?.focus();
-          inputRef.current?.setSelectionRange(2, 12, "forward");
+          inputRef.current?.setSelectionRange(2, 12, 'forward');
         }, 10);
         break;
       case LegendFormatMode.Verbose:
-        onChange("");
+        onChange('');
         break;
     }
     onRunQuery();
@@ -81,15 +81,15 @@ export const PromQueryLegendEditor = React.memo<Props>(({ legendFormat, onChange
 
   return (
     <EditorField
-      label="Legend"
-      tooltip="Series name override or template. Ex. {{hostname}} will be replaced with label value for hostname."
+      label='Legend'
+      tooltip='Series name override or template. Ex. {{hostname}} will be replaced with label value for hostname.'
     >
       <>
         {mode === LegendFormatMode.Custom && (
           <AutoSizeInput
-            id="legendFormat"
+            id='legendFormat'
             minWidth={22}
-            placeholder="auto"
+            placeholder='auto'
             defaultValue={legendFormat}
             onCommitChange={onLegendFormatChanged}
             ref={inputRef}
@@ -97,9 +97,9 @@ export const PromQueryLegendEditor = React.memo<Props>(({ legendFormat, onChange
         )}
         {mode !== LegendFormatMode.Custom && (
           <Select
-            inputId="legend.mode"
+            inputId='legend.mode'
             isSearchable={false}
-            placeholder="Select legend mode"
+            placeholder='Select legend mode'
             options={legendModeOptions}
             width={22}
             onChange={onLegendModeChanged}
@@ -111,7 +111,7 @@ export const PromQueryLegendEditor = React.memo<Props>(({ legendFormat, onChange
   );
 });
 
-PromQueryLegendEditor.displayName = "PromQueryLegendEditor";
+PromQueryLegendEditor.displayName = 'PromQueryLegendEditor';
 
 function getLegendMode(legendFormat: string | undefined) {
   // This special value means the new smart minimal series naming
@@ -120,7 +120,7 @@ function getLegendMode(legendFormat: string | undefined) {
   }
 
   // Missing or empty legend format is the old verbose behavior
-  if (legendFormat == null || legendFormat === "") {
+  if (legendFormat == null || legendFormat === '') {
     return LegendFormatMode.Verbose;
   }
 

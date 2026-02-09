@@ -1,4 +1,4 @@
-import { QueryBuilderOperation, QueryBuilderOperationDef } from "../types";
+import { QueryBuilderOperation, QueryBuilderOperationDef } from '../types';
 
 function callParamChangedThenOnChange(
   def: QueryBuilderOperationDef,

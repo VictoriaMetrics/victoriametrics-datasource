@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { chain, difference, once } from "lodash";
-import { LRUCache as LRU } from "lru-cache"
-import Prism from "prismjs";
-import { Value } from "slate";
+import { chain, difference, once } from 'lodash';
+import { LRUCache as LRU } from 'lru-cache'
+import Prism from 'prismjs';
+import { Value } from 'slate';
 
 import {
   AbstractLabelMatcher,
@@ -29,12 +29,12 @@ import {
   HistoryItem,
   LanguageProvider,
   TimeRange,
-} from "@grafana/data";
-import { BackendSrvRequest } from "@grafana/runtime";
-import { CompletionItem, CompletionItemGroup, SearchFunctionType, TypeaheadInput, TypeaheadOutput } from "@grafana/ui";
+} from '@grafana/data';
+import { BackendSrvRequest } from '@grafana/runtime';
+import { CompletionItem, CompletionItemGroup, SearchFunctionType, TypeaheadInput, TypeaheadOutput } from '@grafana/ui';
 
-import { Label } from "./components/monaco-query-field/monaco-completion-provider/situation";
-import { PrometheusDatasource } from "./datasource";
+import { Label } from './components/monaco-query-field/monaco-completion-provider/situation';
+import { PrometheusDatasource } from './datasource';
 import {
   AbstractLabelOperator,
   addLimitInfo,
@@ -45,12 +45,12 @@ import {
   processLabels,
   roundSecToMin,
   toPromLikeQuery,
-} from "./language_utils";
-import PromqlSyntax, { FUNCTIONS, RATE_RANGES } from "./metricsql";
-import { PromMetricsMetadata, PromQuery } from "./types";
+} from './language_utils';
+import PromqlSyntax, { FUNCTIONS, RATE_RANGES } from './metricsql';
+import { PromMetricsMetadata, PromQuery } from './types';
 
-const DEFAULT_KEYS = ["job", "instance"];
-const EMPTY_SELECTOR = "{}";
+const DEFAULT_KEYS = ['job', 'instance'];
+const EMPTY_SELECTOR = '{}';
 const HISTORY_ITEM_COUNT = 5;
 const HISTORY_COUNT_CUTOFF = 1000 * 60 * 60 * 24; // 24h
 // Max number of items (metrics, labels, values) that we display as suggestions. Prevents from running out of memory.
@@ -59,7 +59,7 @@ export const SUGGESTIONS_LIMIT = 10000;
 const wrapLabel = (label: string): CompletionItem => ({ label });
 
 const setFunctionKind = (suggestion: CompletionItem): CompletionItem => {
-  suggestion.kind = "function";
+  suggestion.kind = 'function';
   return suggestion;
 };
 
@@ -154,14 +154,14 @@ export default class PromQlLanguageProvider extends LanguageProvider {
       return [];
     }
 
-    this.metrics = (await this.fetchLabelValues("__name__")) || [];
+    this.metrics = (await this.fetchLabelValues('__name__')) || [];
     this.histogramMetrics = processHistogramMetrics(this.metrics).sort();
     return Promise.all([this.loadMetricsMetadata(), this.fetchLabels()]);
   };
 
   async loadMetricsMetadata() {
     this.metricsMetadata = fixSummariesMetadata(
-      await this.request("api/v1/metadata", {}, {}, { showErrorAlert: false })
+      await this.request('api/v1/metadata', {}, {}, { showErrorAlert: false })
     );
   }
 
@@ -192,7 +192,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     const prefixUnrecognized = prefix && !tokenRecognized;
 
     // Prevent suggestions in `function(|suffix)`
-    const noSuffix = !nextCharacter || nextCharacter === ")";
+    const noSuffix = !nextCharacter || nextCharacter === ')';
 
     // Prefix is safe if it does not immediately follow a complete expression and has no text after it
     const safePrefix = prefix && !text.match(/^[\]})\s]+$/) && noSuffix;
@@ -202,13 +202,13 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     const isNextOperand = text.match(operatorsPattern);
 
     // Determine candidates by CSS context
-    if (wrapperClasses.includes("context-range")) {
+    if (wrapperClasses.includes('context-range')) {
       // Suggestions for metric[|]
       return this.getRangeCompletionItems();
-    } else if (wrapperClasses.includes("context-labels")) {
+    } else if (wrapperClasses.includes('context-labels')) {
       // Suggestions for metric{|} and metric{foo=|}, as well as metric-independent label queries like {|}
       return this.getLabelCompletionItems({ prefix, text, value, labelKey, wrapperClasses });
-    } else if (wrapperClasses.includes("context-aggregation")) {
+    } else if (wrapperClasses.includes('context-aggregation')) {
       // Suggestions for sum(metric) by (|)
       return this.getAggregationCompletionItems(value);
     } else if (empty) {
@@ -248,7 +248,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
       suggestions.push({
         searchFunctionType: SearchFunctionType.Prefix,
         skipSort: true,
-        label: "History",
+        label: 'History',
         items: historyItems,
       });
     }
@@ -262,13 +262,13 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
     suggestions.push({
       searchFunctionType: SearchFunctionType.Prefix,
-      label: "Functions",
+      label: 'Functions',
       items: FUNCTIONS.map(setFunctionKind),
     });
 
     if (metrics && metrics.length) {
       suggestions.push({
-        label: "Metrics",
+        label: 'Metrics',
         items: metrics.map((m) => addMetricsMetadata(m, metricsMetadata)),
         searchFunctionType: SearchFunctionType.Fuzzy,
       });
@@ -279,10 +279,10 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
   getRangeCompletionItems(): TypeaheadOutput {
     return {
-      context: "context-range",
+      context: 'context-range',
       suggestions: [
         {
-          label: "Range vector",
+          label: 'Range vector',
           items: [...RATE_RANGES],
         },
       ],
@@ -296,7 +296,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     let queryOffset;
     const queryText = value.document.getBlocks().reduce((text, block) => {
       if (text === undefined) {
-        return "";
+        return '';
       }
       if (!block) {
         return text;
@@ -311,23 +311,23 @@ export default class PromQlLanguageProvider extends LanguageProvider {
       }
 
       return text + blockText;
-    }, "");
+    }, '');
 
     // Try search for selector part on the left-hand side, such as `sum (m) by (l)`
-    const openParensAggregationIndex = queryText.lastIndexOf("(", queryOffset);
-    let openParensSelectorIndex = queryText.lastIndexOf("(", openParensAggregationIndex - 1);
-    let closeParensSelectorIndex = queryText.indexOf(")", openParensSelectorIndex);
+    const openParensAggregationIndex = queryText.lastIndexOf('(', queryOffset);
+    let openParensSelectorIndex = queryText.lastIndexOf('(', openParensAggregationIndex - 1);
+    let closeParensSelectorIndex = queryText.indexOf(')', openParensSelectorIndex);
 
     // Try search for selector part of an alternate aggregation clause, such as `sum by (l) (m)`
     if (openParensSelectorIndex === -1) {
-      const closeParensAggregationIndex = queryText.indexOf(")", queryOffset);
-      closeParensSelectorIndex = queryText.indexOf(")", closeParensAggregationIndex + 1);
-      openParensSelectorIndex = queryText.lastIndexOf("(", closeParensSelectorIndex);
+      const closeParensAggregationIndex = queryText.indexOf(')', queryOffset);
+      closeParensSelectorIndex = queryText.indexOf(')', closeParensAggregationIndex + 1);
+      openParensSelectorIndex = queryText.lastIndexOf('(', closeParensSelectorIndex);
     }
 
     const result = {
       suggestions,
-      context: "context-aggregation",
+      context: 'context-aggregation',
     };
 
     // Suggestions are useless for alternative aggregation clauses without a selector in context
@@ -338,7 +338,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     // Range vector syntax not accounted for by subsequent parse so discard it if present
     const selectorString = queryText
       .slice(openParensSelectorIndex + 1, closeParensSelectorIndex)
-      .replace(/\[[^\]]+\]$/, "");
+      .replace(/\[[^\]]+\]$/, '');
 
     const selector = parseSelector(selectorString, selectorString.length - 2).selector;
 
@@ -392,7 +392,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
       selector = EMPTY_SELECTOR;
     }
 
-    const containsMetric = selector.includes("__name__=");
+    const containsMetric = selector.includes('__name__=');
     const existingKeys = parsedSelector ? parsedSelector.labelKeys : [];
 
     let series: Record<string, string[]> = {};
@@ -408,10 +408,10 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
     let context: string | undefined;
 
-    if ((text && isValueStart) || wrapperClasses.includes("attr-value")) {
+    if ((text && isValueStart) || wrapperClasses.includes('attr-value')) {
       // Label values
       if (labelKey && series[labelKey]) {
-        context = "context-label-values";
+        context = 'context-label-values';
         const limitInfo = addLimitInfo(series[labelKey]);
         suggestions.push({
           label: `Label values for "${labelKey}"${limitInfo}`,
@@ -426,7 +426,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
       if (labelKeys) {
         const possibleKeys = difference(labelKeys, existingKeys);
         if (possibleKeys.length) {
-          context = "context-labels";
+          context = 'context-labels';
           const newItems = possibleKeys.map((key) => ({ label: key }));
           const limitInfo = addLimitInfo(newItems);
           const newSuggestion: CompletionItemGroup = {
@@ -456,7 +456,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     const nameLabelValue = getNameLabelValue(promQuery, tokens);
     if (nameLabelValue && nameLabelValue.length > 0) {
       labelMatchers.push({
-        name: "__name__",
+        name: '__name__',
         operator: AbstractLabelOperator.Equal,
         value: nameLabelValue,
       });
@@ -487,7 +487,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
   getSeriesLabels = async (selector: string, otherLabels: Label[]): Promise<string[]> => {
     // Exclude __name__ from output
-    otherLabels.push({ name: "__name__", value: "", op: "!=" });
+    otherLabels.push({ name: '__name__', value: '', op: '!=' });
     const possibleLabelNames = await this.fetchSeriesLabelsMatch(selector);
     const usedLabelNames = new Set(otherLabels.map((l) => l.name)); // names used in the query
     return possibleLabelNames.filter((l) => !usedLabelNames.has(l));
@@ -498,9 +498,9 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     const range = this.datasource.getAdjustedInterval(this.timeRange);
     const urlParams = {
       ...range,
-      "match[]": interpolatedName,
+      'match[]': interpolatedName,
     };
-    const url = "/api/v1/labels";
+    const url = '/api/v1/labels';
 
     return await this.request(url, [], urlParams)
   };
@@ -515,7 +515,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     const range = this.datasource.getAdjustedInterval(timeRange);
     const urlParams = {
       ...range,
-      ...(interpolatedMatch && { "match[]": interpolatedMatch }),
+      ...(interpolatedMatch && { 'match[]': interpolatedMatch }),
     };
 
     const value = await this.request(`/api/v1/label/${interpolatedName}/values`, [], urlParams);
@@ -524,7 +524,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
   fetchLabelValues = async (key: string): Promise<string[]> => {
     const params = this.datasource.getTimeRangeParams();
-    const limit = this.datasource.getLimitMetrics("maxTagValues");
+    const limit = this.datasource.getLimitMetrics('maxTagValues');
     const url = `/api/v1/label/${this.datasource.interpolateString(key)}/values`;
     return await this.request(url, [], { ...params, limit });
   };
@@ -537,9 +537,9 @@ export default class PromQlLanguageProvider extends LanguageProvider {
    * Fetches all label keys
    */
   async fetchLabels(): Promise<string[]> {
-    const url = "/api/v1/labels";
+    const url = '/api/v1/labels';
     const params = this.datasource.getTimeRangeParams();
-    const limit = this.datasource.getLimitMetrics("maxTagKeys");
+    const limit = this.datasource.getLimitMetrics('maxTagKeys');
     this.labelFetchTs = Date.now().valueOf();
 
     const res = await this.request(url, [], { ...params, limit });
@@ -573,17 +573,17 @@ export default class PromQlLanguageProvider extends LanguageProvider {
    * This is more efficient for high-cardinality metrics
    */
   fetchSeriesLabelsOptimized = async (name: string, withName?: boolean): Promise<Record<string, string[]>> => {
-    const unescapedName = name.replace(/\\(.)/g, "$1");
+    const unescapedName = name.replace(/\\(.)/g, '$1');
     const interpolatedName = this.datasource.interpolateString(unescapedName);
     const range = this.datasource.getAdjustedInterval(this.timeRange);
 
     // Cache key for optimized API
     const cacheParams = new URLSearchParams({
-      "match[]": interpolatedName,
+      'match[]': interpolatedName,
       start: roundSecToMin(parseInt(range.start, 10)).toString(),
       end: roundSecToMin(parseInt(range.end, 10)).toString(),
-      withName: withName ? "true" : "false",
-      optimized: "true",
+      withName: withName ? 'true' : 'false',
+      optimized: 'true',
     });
     const cacheKey = `/api/v1/labels?${cacheParams.toString()}`;
 
@@ -597,7 +597,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
     // Step 2: Get values for each label using /api/v1/label/{key}/values with match[]
     const result: Record<string, string[]> = {};
-    const labelsToFetch = withName ? labelNames : labelNames.filter((l) => l !== "__name__");
+    const labelsToFetch = withName ? labelNames : labelNames.filter((l) => l !== '__name__');
 
     await Promise.all(
       labelsToFetch.map(async (labelName) => {
@@ -616,25 +616,25 @@ export default class PromQlLanguageProvider extends LanguageProvider {
    * Legacy version using /api/v1/series endpoint
    */
   fetchSeriesLabelsLegacy = async (name: string, withName?: boolean): Promise<Record<string, string[]>> => {
-    const unescapedName = name.replace(/\\(.)/g, "$1")
+    const unescapedName = name.replace(/\\(.)/g, '$1')
     const interpolatedName = this.datasource.interpolateString(unescapedName);
     const range = this.datasource.getTimeRangeParams();
-    const limit = this.datasource.getLimitMetrics("maxSeries");
+    const limit = this.datasource.getLimitMetrics('maxSeries');
     const urlParams = {
       ...range,
       limit,
-      "match[]": interpolatedName,
+      'match[]': interpolatedName,
     };
-    const url = "/api/v1/series";
+    const url = '/api/v1/series';
     // Cache key is a bit different here. We add the `withName` param and also round up to a minute the intervals.
     // The rounding may seem strange but makes relative intervals like now-1h less prone to need separate request every
     // millisecond while still actually getting all the keys for the correct interval. This still can create problems
     // when user does not the newest values for a minute if already cached.
     const cacheParams = new URLSearchParams({
-      "match[]": interpolatedName,
+      'match[]': interpolatedName,
       start: roundSecToMin(parseInt(range.start, 10)).toString(),
       end: roundSecToMin(parseInt(range.end, 10)).toString(),
-      withName: withName ? "true" : "false",
+      withName: withName ? 'true' : 'false',
     });
 
     const cacheKey = `/api/v1/series?${cacheParams.toString()}`;
@@ -653,10 +653,10 @@ export default class PromQlLanguageProvider extends LanguageProvider {
    * @param match
    */
   fetchSeries = async (match: string): Promise<Array<Record<string, string>>> => {
-    const url = "/api/v1/series";
+    const url = '/api/v1/series';
     const range = this.datasource.getTimeRangeParams();
-    const limit = this.datasource.getLimitMetrics("maxSeries");
-    const params = { ...range, "match[]": match, limit };
+    const limit = this.datasource.getLimitMetrics('maxSeries');
+    const params = { ...range, 'match[]': match, limit };
     return await this.request(url, {}, params);
   };
 
@@ -672,9 +672,9 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 }
 
 function getNameLabelValue(promQuery: string, tokens: any): string {
-  let nameLabelValue = "";
+  let nameLabelValue = '';
   for (let prop in tokens) {
-    if (typeof tokens[prop] === "string") {
+    if (typeof tokens[prop] === 'string') {
       nameLabelValue = tokens[prop] as string;
       break;
     }

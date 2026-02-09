@@ -16,21 +16,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { escapeLabelValueInExactSelector } from "../../../language_utils";
-import { FUNCTIONS } from "../../../metricsql";
+import { escapeLabelValueInExactSelector } from '../../../language_utils';
+import { FUNCTIONS } from '../../../metricsql';
 
-import type { Situation, Label } from "./situation";
-import { NeverCaseError } from "./util";
+import type { Situation, Label } from './situation';
+import { NeverCaseError } from './util';
 // FIXME: we should not load this from the "outside", but we cannot do that while we have the "old" query-field too
 
 export enum CompletionType {
-  history = "HISTORY",
-  function = "FUNCTION",
-  metricName = "METRIC_NAME",
-  withTemplate = "WITH_TEMPLATE",
-  duration = "DURATION",
-  labelName = "LABEL_NAME",
-  labelValue = "LABEL_VALUE",
+  history = 'HISTORY',
+  function = 'FUNCTION',
+  metricName = 'METRIC_NAME',
+  withTemplate = 'WITH_TEMPLATE',
+  duration = 'DURATION',
+  labelName = 'LABEL_NAME',
+  labelValue = 'LABEL_VALUE',
 }
 
 type Completion = {
@@ -90,7 +90,7 @@ async function getAllWithTemplatesCompletions(dataProvider: DataProvider): Promi
 const FUNCTION_COMPLETIONS: Completion[] = FUNCTIONS.map((f) => ({
   type: CompletionType.function,
   label: f.label,
-  insertText: f.insertText ?? "", // i don't know what to do when this is nullish. it should not be.
+  insertText: f.insertText ?? '', // i don't know what to do when this is nullish. it should not be.
   detail: f.detail,
   documentation: f.documentation,
 }));
@@ -102,15 +102,15 @@ async function getAllFunctionsAndMetricNamesCompletions(dataProvider: DataProvid
 }
 
 const DURATION_COMPLETIONS: Completion[] = [
-  "$__interval",
-  "$__range",
-  "$__rate_interval",
-  "1m",
-  "5m",
-  "10m",
-  "30m",
-  "1h",
-  "1d",
+  '$__interval',
+  '$__range',
+  '$__rate_interval',
+  '1m',
+  '5m',
+  '10m',
+  '30m',
+  '1h',
+  '1d',
 ].map((text) => ({
   type: CompletionType.duration,
   label: text,
@@ -134,14 +134,14 @@ function makeSelector(metricName: string | undefined, labels: Label[]): string {
 
   // we transform the metricName to a label, if it exists
   if (metricName !== undefined) {
-    allLabels.push({ name: "__name__", value: metricName, op: "=" });
+    allLabels.push({ name: '__name__', value: metricName, op: '=' });
   }
 
   const allLabelTexts = allLabels.map(
     (label) => `${label.name}${label.op}"${escapeLabelValueInExactSelector(label.value)}"`
   );
 
-  return `{${allLabelTexts.join(",")}}`;
+  return `{${allLabelTexts.join(',')}}`;
 }
 
 async function getLabelNames(
@@ -177,8 +177,8 @@ async function getLabelNamesForCompletions(
   }))
   const withTemplatesCompletions = await getAllWithTemplatesCompletions(dataProvider);
   const withTemplatesCompletionsLabels = withTemplatesCompletions.filter((c) => {
-    const regexp = new RegExp(`${c.label}\\s?=\\s?`, "gm")
-    return c.detail?.replace(regexp, "").charAt(0) === "{"
+    const regexp = new RegExp(`${c.label}\\s?=\\s?`, 'gm')
+    return c.detail?.replace(regexp, '').charAt(0) === '{'
   })
   return labelNamesCompletion.concat(withTemplatesCompletionsLabels)
 }
@@ -188,14 +188,14 @@ async function getLabelNamesForSelectorCompletions(
   otherLabels: Label[],
   dataProvider: DataProvider
 ): Promise<Completion[]> {
-  return getLabelNamesForCompletions(metric, "=", true, otherLabels, dataProvider);
+  return getLabelNamesForCompletions(metric, '=', true, otherLabels, dataProvider);
 }
 async function getLabelNamesForByCompletions(
   metric: string | undefined,
   otherLabels: Label[],
   dataProvider: DataProvider
 ): Promise<Completion[]> {
-  return getLabelNamesForCompletions(metric, "", false, otherLabels, dataProvider);
+  return getLabelNamesForCompletions(metric, '', false, otherLabels, dataProvider);
 }
 
 async function getLabelValues(
@@ -231,23 +231,23 @@ async function getLabelValuesForMetricCompletions(
 
 export async function getCompletions(situation: Situation, dataProvider: DataProvider): Promise<Completion[]> {
   switch (situation.type) {
-    case "IN_DURATION":
+    case 'IN_DURATION':
       return DURATION_COMPLETIONS;
-    case "IN_FUNCTION":
+    case 'IN_FUNCTION':
       return getAllFunctionsAndMetricNamesCompletions(dataProvider);
-    case "AT_ROOT": {
+    case 'AT_ROOT': {
       return getAllFunctionsAndMetricNamesCompletions(dataProvider);
     }
-    case "EMPTY": {
+    case 'EMPTY': {
       const metricNames = await getAllMetricNamesCompletions(dataProvider);
       const historyCompletions = await getAllHistoryCompletions(dataProvider);
       return [...historyCompletions, ...FUNCTION_COMPLETIONS, ...metricNames];
     }
-    case "IN_LABEL_SELECTOR_NO_LABEL_NAME":
+    case 'IN_LABEL_SELECTOR_NO_LABEL_NAME':
       return getLabelNamesForSelectorCompletions(situation.metricName, situation.otherLabels, dataProvider);
-    case "IN_GROUPING":
+    case 'IN_GROUPING':
       return getLabelNamesForByCompletions(situation.metricName, situation.otherLabels, dataProvider);
-    case "IN_LABEL_SELECTOR_WITH_LABEL_NAME":
+    case 'IN_LABEL_SELECTOR_WITH_LABEL_NAME':
       return getLabelValuesForMetricCompletions(
         situation.metricName,
         situation.labelName,

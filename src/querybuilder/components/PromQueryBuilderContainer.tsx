@@ -16,18 +16,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import React, { useEffect, useReducer } from "react";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import React, { useEffect, useReducer } from 'react';
 
-import { PanelData } from "@grafana/data";
+import { PanelData } from '@grafana/data';
 
-import { PrometheusDatasource } from "../../datasource";
-import { PromQuery } from "../../types";
-import { promQueryModeller } from "../PromQueryModeller";
-import { buildVisualQueryFromString } from "../parsing";
-import { PromVisualQuery } from "../types";
+import { PrometheusDatasource } from '../../datasource';
+import { PromQuery } from '../../types';
+import { promQueryModeller } from '../PromQueryModeller';
+import { buildVisualQueryFromString } from '../parsing';
+import { PromVisualQuery } from '../types';
 
-import { PromQueryBuilder } from "./PromQueryBuilder";
+import { PromQueryBuilder } from './PromQueryBuilder';
 
 export interface Props {
   query: PromQuery;
@@ -80,8 +80,8 @@ export function PromQueryBuilderContainer(props: Props) {
 }
 
 const stateSlice = createSlice({
-  name: "prom-builder-container",
-  initialState: { expr: "" } as State,
+  name: 'prom-builder-container',
+  initialState: { expr: '' } as State,
   reducers: {
     visualQueryChange: (state, action: PayloadAction<{ visQuery: PromVisualQuery; expr: string }>) => {
       state.expr = action.payload.expr;

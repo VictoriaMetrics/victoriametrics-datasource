@@ -16,22 +16,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from "@emotion/css";
-import { uniqueId } from "lodash";
-import React, { HTMLProps, useRef } from "react";
+import { css } from '@emotion/css';
+import { uniqueId } from 'lodash';
+import React, { HTMLProps, useRef } from 'react';
 
-import { GrafanaTheme2 } from "@grafana/data";
-import { Switch, useStyles2 } from "@grafana/ui";
+import { GrafanaTheme2 } from '@grafana/data';
+import { Switch, useStyles2 } from '@grafana/ui';
 
-import { Stack } from "../../components/QueryEditor";
+import { Stack } from '../../components/QueryEditor';
 
-export interface Props extends Omit<HTMLProps<HTMLInputElement>, "value" | "ref"> {
+export interface Props extends Omit<HTMLProps<HTMLInputElement>, 'value' | 'ref'> {
   value?: boolean;
   label: string;
 }
 
 export function QueryHeaderSwitch({ label, ...inputProps }: Props) {
-  const dashedLabel = label.replace(" ", "-");
+  const dashedLabel = label.replace(' ', '-');
   const switchIdRef = useRef(uniqueId(`switch-${dashedLabel}`));
   const styles = useStyles2(getStyles);
 
@@ -49,9 +49,9 @@ const getStyles = (theme: GrafanaTheme2) => {
   return {
     switchLabel: css({
       color: theme.colors.text.secondary,
-      cursor: "pointer",
+      cursor: 'pointer',
       fontSize: theme.typography.bodySmall.fontSize,
-      "&:hover": {
+      '&:hover': {
         color: theme.colors.text.primary,
       },
     }),

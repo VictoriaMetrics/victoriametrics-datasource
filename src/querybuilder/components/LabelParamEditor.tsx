@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { DataSourceApi, SelectableValue, toOption } from "@grafana/data";
-import { Select } from "@grafana/ui";
+import { DataSourceApi, SelectableValue, toOption } from '@grafana/data';
+import { Select } from '@grafana/ui';
 
-import { DATASOURCE_TYPE } from "../../consts";
-import { promQueryModeller } from "../PromQueryModeller";
-import { getOperationParamId } from "../shared/operationUtils";
-import { QueryBuilderLabelFilter, QueryBuilderOperationParamEditorProps } from "../shared/types";
-import { PromVisualQuery } from "../types";
+import { DATASOURCE_TYPE } from '../../consts';
+import { promQueryModeller } from '../PromQueryModeller';
+import { getOperationParamId } from '../shared/operationUtils';
+import { QueryBuilderLabelFilter, QueryBuilderOperationParamEditorProps } from '../shared/types';
+import { PromVisualQuery } from '../types';
 
 export function LabelParamEditor({
   onChange,
@@ -43,7 +43,7 @@ export function LabelParamEditor({
   return (
     <Select
       inputId={getOperationParamId(operationIndex, index)}
-      autoFocus={value === "" ? true : undefined}
+      autoFocus={value === '' ? true : undefined}
       openMenuOnFocus
       onOpenMenu={async () => {
         setState({ isLoading: true });
@@ -52,8 +52,8 @@ export function LabelParamEditor({
       }}
       isLoading={state.isLoading}
       allowCustomValue
-      noOptionsMessage="No labels found"
-      loadingMessage="Loading labels"
+      noOptionsMessage='No labels found'
+      loadingMessage='Loading labels'
       options={state.options}
       value={toOption(value as string)}
       onChange={(value) => onChange(index, value.value!)}
@@ -69,7 +69,7 @@ async function loadGroupByLabels(
 
   // This function is used by both Prometheus and Loki and this the only difference.
   if (datasource.type === DATASOURCE_TYPE) {
-    labels = [{ label: "__name__", op: "=", value: query.metric }, ...query.labels];
+    labels = [{ label: '__name__', op: '=', value: query.metric }, ...query.labels];
   }
 
   const expr = promQueryModeller.renderLabels(labels);

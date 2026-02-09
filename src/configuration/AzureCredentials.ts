@@ -16,23 +16,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { SelectableValue } from "@grafana/data";
+import { SelectableValue } from '@grafana/data';
 
 export enum AzureCloud {
-  Public = "AzureCloud",
-  China = "AzureChinaCloud",
-  USGovernment = "AzureUSGovernment",
-  Germany = "AzureGermanCloud",
+  Public = 'AzureCloud',
+  China = 'AzureChinaCloud',
+  USGovernment = 'AzureUSGovernment',
+  Germany = 'AzureGermanCloud',
 }
 
 export const KnownAzureClouds = [
-  { value: AzureCloud.Public, label: "Azure" },
-  { value: AzureCloud.China, label: "Azure China" },
-  { value: AzureCloud.USGovernment, label: "Azure US Government" },
-  { value: AzureCloud.Germany, label: "Azure Germany" },
+  { value: AzureCloud.Public, label: 'Azure' },
+  { value: AzureCloud.China, label: 'Azure China' },
+  { value: AzureCloud.USGovernment, label: 'Azure US Government' },
+  { value: AzureCloud.Germany, label: 'Azure Germany' },
 ] as SelectableValue[];
 
-export type AzureAuthType = "msi" | "clientsecret";
+export type AzureAuthType = 'msi' | 'clientsecret';
 
 export type ConcealedSecret = symbol;
 
@@ -42,11 +42,11 @@ interface AzureCredentialsBase {
 }
 
 export interface AzureManagedIdentityCredentials extends AzureCredentialsBase {
-  authType: "msi";
+  authType: 'msi';
 }
 
 export interface AzureClientSecretCredentials extends AzureCredentialsBase {
-  authType: "clientsecret";
+  authType: 'clientsecret';
   azureCloud?: string;
   tenantId?: string;
   clientId?: string;
@@ -57,9 +57,9 @@ export type AzureCredentials = AzureManagedIdentityCredentials | AzureClientSecr
 
 export function isCredentialsComplete(credentials: AzureCredentials): boolean {
   switch (credentials.authType) {
-    case "msi":
+    case 'msi':
       return true;
-    case "clientsecret":
+    case 'clientsecret':
       return !!(credentials.azureCloud && credentials.tenantId && credentials.clientId && credentials.clientSecret);
   }
 }

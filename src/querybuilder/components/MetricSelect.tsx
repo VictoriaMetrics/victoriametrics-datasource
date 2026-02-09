@@ -16,17 +16,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from "@emotion/css";
-import React, { useCallback, useState } from "react";
-import HighlighterComponent, { HighlighterProps } from "react-highlight-words";
+import { css } from '@emotion/css';
+import React, { useCallback, useState } from 'react';
+import HighlighterComponent, { HighlighterProps } from 'react-highlight-words';
 
-import { GrafanaTheme2, SelectableValue, toOption } from "@grafana/data";
-import { Button, FormatOptionLabelMeta, InlineField, InlineFieldRow, Select, useStyles2 } from "@grafana/ui";
+import { GrafanaTheme2, SelectableValue, toOption } from '@grafana/data';
+import { Button, FormatOptionLabelMeta, InlineField, InlineFieldRow, Select, useStyles2 } from '@grafana/ui';
 
-import { EditorField, EditorFieldGroup } from "../../components/QueryEditor";
-import { PrometheusDatasource } from "../../datasource";
-import { escapeMetricNameSpecialCharacters } from "../../language_utils";
-import { PromVisualQuery } from "../types";
+import { EditorField, EditorFieldGroup } from '../../components/QueryEditor';
+import { PrometheusDatasource } from '../../datasource';
+import { escapeMetricNameSpecialCharacters } from '../../language_utils';
+import { PromVisualQuery } from '../types';
 
 import { MetricsExplorerModal } from './MetricsExplorerModal/MetricsExplorerModal';
 
@@ -34,7 +34,7 @@ import { MetricsExplorerModal } from './MetricsExplorerModal/MetricsExplorerModa
 const Highlighter = HighlighterComponent as React.ComponentType<HighlighterProps>;
 
 // We are matching words split with space
-const splitSeparator = " ";
+const splitSeparator = ' ';
 
 export interface Props {
   query: PromVisualQuery;
@@ -70,14 +70,14 @@ export function MetricSelect({ query, onChange, onGetMetrics, datasource, variab
   const formatOptionLabel = useCallback(
     (option: SelectableValue<any>, meta: FormatOptionLabelMeta<any>) => {
       // For newly created custom value we don't want to add highlight
-      if (option["__isNew__"]) {
+      if (option['__isNew__']) {
         return option.label;
       }
 
       return (
         <Highlighter
           searchWords={meta.inputValue.split(splitSeparator)}
-          textToHighlight={option.label ?? ""}
+          textToHighlight={option.label ?? ''}
           highlightClassName={styles.highlight}
         />
       );
@@ -106,10 +106,10 @@ export function MetricSelect({ query, onChange, onGetMetrics, datasource, variab
   const metricSelect = () => (
     <div className={styles.selectWrapper}>
       <Select
-        inputId="vm-metric-select"
+        inputId='vm-metric-select'
         className={styles.select}
         value={query.metric ? toOption(query.metric) : undefined}
-        placeholder="Select metric"
+        placeholder='Select metric'
         allowCustomValue
         formatOptionLabel={formatOptionLabel}
         filterOption={customFilterOption}
@@ -119,10 +119,10 @@ export function MetricSelect({ query, onChange, onGetMetrics, datasource, variab
         onChange={handleChange}
       />
       <Button
-        aria-label={"Open metrics explorer"}
-        icon={"book-open"}
-        variant={"secondary"}
-        tooltip={"Open metrics explorer"}
+        aria-label={'Open metrics explorer'}
+        icon={'book-open'}
+        variant={'secondary'}
+        tooltip={'Open metrics explorer'}
         onClick={() => setShowMetricsExplorer(true)}
         className={styles.metricExplorerButton}
       />
@@ -134,7 +134,7 @@ export function MetricSelect({ query, onChange, onGetMetrics, datasource, variab
       {variableEditor ? (
         <InlineFieldRow>
           <InlineField
-            label="Metric"
+            label='Metric'
             labelWidth={20}
             tooltip={<div>Optional: returns a list of label values for the label name in the specified metric.</div>}
           >
@@ -143,7 +143,7 @@ export function MetricSelect({ query, onChange, onGetMetrics, datasource, variab
         </InlineFieldRow>
       ) : (
         <EditorFieldGroup>
-          <EditorField label="Metric">{metricSelect()}</EditorField>
+          <EditorField label='Metric'>{metricSelect()}</EditorField>
         </EditorFieldGroup>
       )}
       <MetricsExplorerModal

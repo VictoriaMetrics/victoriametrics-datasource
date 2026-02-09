@@ -1,14 +1,14 @@
-import { lastValueFrom } from "rxjs";
+import { lastValueFrom } from 'rxjs';
 
-import { getBackendSrv } from "@grafana/runtime";
+import { getBackendSrv } from '@grafana/runtime';
 
-import { DashboardResponse } from "../types";
+import { DashboardResponse } from '../types';
 
 
 const getDashboardByUID = async (uid: string) => {
   const response: {data: DashboardResponse} = await lastValueFrom(getBackendSrv().fetch({
     url: `/api/dashboards/uid/${uid}`,
-    method: "GET",
+    method: 'GET',
   }));
 
   return response?.data;

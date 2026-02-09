@@ -1,10 +1,10 @@
-import React, { FC, useState } from "react"
+import React, { FC, useState } from 'react'
 
-import { IconButton, useStyles2 } from "@grafana/ui";
+import { IconButton, useStyles2 } from '@grafana/ui';
 
-import Trace from "../Trace";
+import Trace from '../Trace';
 
-import getStyles from "./style"
+import getStyles from './style'
 
 interface RecursiveProps {
   trace: Trace;
@@ -33,7 +33,7 @@ const NestedNav: FC<RecursiveProps> = ({ trace, totalMsec }) => {
         <div className={styles.topRow}>
           <div className={styles.arrow}>
             {hasChildren && (
-              <IconButton aria-label="" name={openLevels[trace.idValue] ? "angle-up" : "angle-down"} />
+              <IconButton aria-label='' name={openLevels[trace.idValue] ? 'angle-up' : 'angle-down'} />
             )}
           </div>
           <div className={styles.progressWrapper}>

@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css, cx } from "@emotion/css";
-import React, { ChangeEvent } from "react";
-import { List } from "react-window";
+import { css, cx } from '@emotion/css';
+import React, { ChangeEvent } from 'react';
+import { List } from 'react-window';
 
-import { GrafanaTheme } from "@grafana/data";
+import { GrafanaTheme } from '@grafana/data';
 import {
   Button,
   HorizontalGroup,
@@ -30,14 +30,14 @@ import {
   stylesFactory,
   withTheme,
   BrowserLabel as PromLabel,
-} from "@grafana/ui";
+} from '@grafana/ui';
 
-import PromQlLanguageProvider from "../language_provider";
-import { escapeLabelValueInExactSelector, escapeLabelValueInRegexSelector } from "../language_utils";
+import PromQlLanguageProvider from '../language_provider';
+import { escapeLabelValueInExactSelector, escapeLabelValueInRegexSelector } from '../language_utils';
 
 // Hard limit on labels to render
-const EMPTY_SELECTOR = "{}";
-const METRIC_LABEL = "__name__";
+const EMPTY_SELECTOR = '{}';
+const METRIC_LABEL = '__name__';
 const LIST_ITEM_SIZE = 25;
 
 export interface BrowserProps {
@@ -77,13 +77,13 @@ export interface SelectableLabel {
 }
 
 export function buildSelector(labels: SelectableLabel[]): string {
-  let singleMetric = "";
+  let singleMetric = '';
   const selectedLabels = [];
   for (const label of labels) {
     if ((label.name === METRIC_LABEL || label.selected) && label.values && label.values.length > 0) {
       const selectedValues = label.values.filter((value) => value.selected).map((value) => value.name);
       if (selectedValues.length > 1) {
-        selectedLabels.push(`${label.name}=~"${selectedValues.map(escapeLabelValueInRegexSelector).join("|")}"`);
+        selectedLabels.push(`${label.name}=~"${selectedValues.map(escapeLabelValueInRegexSelector).join('|')}"`);
       } else if (selectedValues.length === 1) {
         if (label.name === METRIC_LABEL) {
           singleMetric = selectedValues[0];
@@ -93,7 +93,7 @@ export function buildSelector(labels: SelectableLabel[]): string {
       }
     }
   }
-  return [singleMetric, "{", selectedLabels.join(","), "}"].join("");
+  return [singleMetric, '{', selectedLabels.join(','), '}'].join('');
 }
 
 export function facetLabels(
@@ -210,12 +210,12 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
   valueListsRef = React.createRef<HTMLDivElement>();
   state: BrowserState = {
     labels: [] as SelectableLabel[],
-    labelSearchTerm: "",
-    metricSearchTerm: "",
-    status: "Ready",
-    error: "",
-    validationStatus: "",
-    valueSearchTerm: "",
+    labelSearchTerm: '',
+    metricSearchTerm: '',
+    status: 'Ready',
+    error: '',
+    validationStatus: '',
+    valueSearchTerm: '',
   };
 
   onChangeLabelSearch = (event: ChangeEvent<HTMLInputElement>) => {
@@ -253,12 +253,12 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
       }));
       return {
         labels,
-        labelSearchTerm: "",
-        metricSearchTerm: "",
-        status: "",
-        error: "",
-        validationStatus: "",
-        valueSearchTerm: "",
+        labelSearchTerm: '',
+        metricSearchTerm: '',
+        status: '',
+        error: '',
+        validationStatus: '',
+        valueSearchTerm: '',
       };
     });
     this.props.deleteLastUsedLabels();
@@ -280,8 +280,8 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
       nextValue = { ...nextValue, facets: 0, values };
     }
     // Resetting search to prevent empty results
-    this.setState({ labelSearchTerm: "" });
-    this.updateLabelState(name, nextValue, "", () => this.doFacettingForLabel(name));
+    this.setState({ labelSearchTerm: '' });
+    this.updateLabelState(name, nextValue, '', () => this.doFacettingForLabel(name));
   };
 
   onClickValue = (name: string, value: string | undefined) => {
@@ -290,10 +290,10 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
       return;
     }
     // Resetting search to prevent empty results
-    this.setState({ labelSearchTerm: "" });
+    this.setState({ labelSearchTerm: '' });
     // Toggling value for selected label, leaving other values intact
     const values = label.values.map((v) => ({ ...v, selected: v.name === value ? !v.selected : v.selected }));
-    this.updateLabelState(name, { values }, "", () => this.doFacetting(name));
+    this.updateLabelState(name, { values }, '', () => this.doFacetting(name));
   };
 
   onClickMetric = (name: string, value: string | undefined) => {
@@ -303,7 +303,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
       return;
     }
     // Resetting search to prevent empty results
-    this.setState({ metricSearchTerm: "" });
+    this.setState({ metricSearchTerm: '' });
     // Toggling value for selected label, leaving other values intact
     const values = label.values.map((v) => ({
       ...v,
@@ -311,7 +311,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
     }));
     // Toggle selected state of special metrics label
     const selected = values.some((v) => v.selected);
-    this.updateLabelState(name, { selected, values }, "", () => this.doFacetting(name));
+    this.updateLabelState(name, { selected, values }, '', () => this.doFacetting(name));
   };
 
   onClickValidate = () => {
@@ -319,7 +319,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
     this.validateSelector(selector);
   };
 
-  updateLabelState(name: string, updatedFields: Partial<SelectableLabel>, status = "", cb?: () => void) {
+  updateLabelState(name: string, updatedFields: Partial<SelectableLabel>, status = '', cb?: () => void) {
     this.setState((state) => {
       const labels: SelectableLabel[] = state.labels.map((label) => {
         if (label.name === name) {
@@ -328,8 +328,8 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
         return label;
       });
       // New status overrides errors
-      const error = status ? "" : state.error;
-      return { labels, status, error, validationStatus: "" };
+      const error = status ? '' : state.error;
+      return { labels, status, error, validationStatus: '' };
     }, cb);
   }
 
@@ -444,7 +444,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
         return;
       }
       const labels: SelectableLabel[] = facetLabels(this.state.labels, possibleLabels, lastFacetted);
-      this.setState({ labels, error: "" });
+      this.setState({ labels, error: '' });
       if (lastFacetted) {
         this.updateLabelState(lastFacetted, { loading: false });
       }
@@ -455,7 +455,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
 
   async validateSelector(selector: string) {
     const { languageProvider } = this.props;
-    this.setState({ validationStatus: `Validating selector ${selector}`, error: "" });
+    this.setState({ validationStatus: `Validating selector ${selector}`, error: '' });
     const streams = await languageProvider.fetchSeries(selector);
     this.setState({ validationStatus: `Selector is valid (${streams.length} series found)` });
   }
@@ -467,7 +467,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
     if (labels.length === 0) {
       return (
         <div className={styles.wrapper}>
-          <LoadingPlaceholder text="Loading labels..." />
+          <LoadingPlaceholder text='Loading labels...' />
         </div>
       );
     }
@@ -501,23 +501,23 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
 
     return (
       <div className={styles.wrapper}>
-        <HorizontalGroup align="flex-start" spacing="lg">
+        <HorizontalGroup align='flex-start' spacing='lg'>
           <div>
             <div className={styles.section}>
-              <Label description="Once a metric is selected only possible labels are shown.">1. Select a metric</Label>
+              <Label description='Once a metric is selected only possible labels are shown.'>1. Select a metric</Label>
               <div>
                 <Input
                   onChange={this.onChangeMetricSearch}
-                  aria-label="Filter expression for metric"
+                  aria-label='Filter expression for metric'
                   value={metricSearchTerm}
                 />
               </div>
-              <div role="list" className={styles.valueListWrapper}>
+              <div role='list' className={styles.valueListWrapper}>
                 <List
                   defaultHeight={Math.min(450, metricCount * LIST_ITEM_SIZE)}
                   rowCount={metricCount}
                   rowHeight={LIST_ITEM_SIZE}
-                  style={{ width: "300px" }}
+                  style={{ width: '300px' }}
                   className={styles.valueList}
                   rowProps={{}}
                   rowComponent={({ index, style }) => {
@@ -546,13 +546,13 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
 
           <div>
             <div className={styles.section}>
-              <Label description="Once label values are selected, only possible label combinations are shown.">
+              <Label description='Once label values are selected, only possible label combinations are shown.'>
                 2. Select labels to search in
               </Label>
               <div>
                 <Input
                   onChange={this.onChangeLabelSearch}
-                  aria-label="Filter expression for label"
+                  aria-label='Filter expression for label'
                   value={labelSearchTerm}
                 />
               </div>
@@ -573,20 +573,20 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
               </div>
             </div>
             <div className={styles.section}>
-              <Label description="Use the search field to find values across selected labels.">
+              <Label description='Use the search field to find values across selected labels.'>
                 3. Select (multiple) values for your labels
               </Label>
               <div>
                 <Input
                   onChange={this.onChangeValueSearch}
-                  aria-label="Filter expression for label values"
+                  aria-label='Filter expression for label values'
                   value={valueSearchTerm}
                 />
               </div>
               <div className={styles.valueListArea} ref={this.valueListsRef}>
                 {selectedLabels.map((label) => (
                   <div
-                    role="list"
+                    role='list'
                     key={label.name}
                     aria-label={`Values for ${label.name}`}
                     className={styles.valueListWrapper}
@@ -606,7 +606,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
                       defaultHeight={Math.min(200, LIST_ITEM_SIZE * (label.values?.length || 0))}
                       rowCount={label.values?.length || 0}
                       rowHeight={28}
-                      style={{ width: "200px" }}
+                      style={{ width: '200px' }}
                       className={styles.valueList}
                       rowProps={{}}
                       rowComponent={({ index, style }) => {
@@ -637,35 +637,35 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
 
         <div className={styles.section}>
           <Label>4. Resulting selector</Label>
-          <div aria-label="selector" className={styles.selector}>
+          <div aria-label='selector' className={styles.selector}>
             {selector}
           </div>
           {validationStatus && <div className={styles.validationStatus}>{validationStatus}</div>}
           <HorizontalGroup>
-            <Button aria-label="Use selector for query button" disabled={empty} onClick={this.onClickRunQuery}>
+            <Button aria-label='Use selector for query button' disabled={empty} onClick={this.onClickRunQuery}>
               Use query
             </Button>
             <Button
-              aria-label="Use selector as metrics button"
-              variant="secondary"
+              aria-label='Use selector as metrics button'
+              variant='secondary'
               disabled={empty}
               onClick={this.onClickRunRateQuery}
             >
               Use as rate query
             </Button>
             <Button
-              aria-label="Validate submit button"
-              variant="secondary"
+              aria-label='Validate submit button'
+              variant='secondary'
               disabled={empty}
               onClick={this.onClickValidate}
             >
               Validate selector
             </Button>
-            <Button aria-label="Selector clear button" variant="secondary" onClick={this.onClickClear}>
+            <Button aria-label='Selector clear button' variant='secondary' onClick={this.onClickClear}>
               Clear
             </Button>
             <div className={cx(styles.status, (status || error) && styles.statusShowing)}>
-              <span className={error ? styles.error : ""}>{error || status}</span>
+              <span className={error ? styles.error : ''}>{error || status}</span>
             </div>
           </HorizontalGroup>
         </div>

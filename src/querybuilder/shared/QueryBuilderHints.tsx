@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css } from "@emotion/css";
-import React, { useState, useEffect } from "react";
+import { css } from '@emotion/css';
+import React, { useState, useEffect } from 'react';
 
-import { GrafanaTheme2, PanelData, QueryHint } from "@grafana/data";
-import { Button, Tooltip, useStyles2 } from "@grafana/ui";
+import { GrafanaTheme2, PanelData, QueryHint } from '@grafana/data';
+import { Button, Tooltip, useStyles2 } from '@grafana/ui';
 
-import { PrometheusDatasource } from "../../datasource";
+import { PrometheusDatasource } from '../../datasource';
 
-import { LokiAndPromQueryModellerBase, PromLokiVisualQuery } from "./LokiAndPromQueryModellerBase";
+import { LokiAndPromQueryModellerBase, PromLokiVisualQuery } from './LokiAndPromQueryModellerBase';
 
 export interface Props<T extends PromLokiVisualQuery> {
   query: T;
@@ -47,7 +47,7 @@ export const QueryBuilderHints = <T extends PromLokiVisualQuery>({
   const styles = useStyles2(getStyles);
 
   useEffect(() => {
-    const query = { expr: queryModeller.renderQuery(visualQuery), refId: "" };
+    const query = { expr: queryModeller.renderQuery(visualQuery), refId: '' };
     // For now show only actionable hints
     const hints = datasource.getQueryHints(query, data?.series || []).filter((hint) => hint.fix?.action);
     setHints(hints);
@@ -63,17 +63,17 @@ export const QueryBuilderHints = <T extends PromLokiVisualQuery>({
                 <Button
                   onClick={() => {
                     if (hint?.fix?.action) {
-                      const query = { expr: queryModeller.renderQuery(visualQuery), refId: "" };
+                      const query = { expr: queryModeller.renderQuery(visualQuery), refId: '' };
                       const newQuery = datasource.modifyQuery(query, hint.fix.action);
                       const newVisualQuery = buildVisualQueryFromString(newQuery.expr);
                       return onChange(newVisualQuery.query);
                     }
                   }}
-                  fill="outline"
-                  size="sm"
+                  fill='outline'
+                  size='sm'
                   className={styles.hint}
                 >
-                  {"hint: " + hint.fix?.action?.type.toLowerCase().replace("_", " ") + "()"}
+                  {'hint: ' + hint.fix?.action?.type.toLowerCase().replace('_', ' ') + '()'}
                 </Button>
               </Tooltip>
             );
@@ -84,7 +84,7 @@ export const QueryBuilderHints = <T extends PromLokiVisualQuery>({
   );
 };
 
-QueryBuilderHints.displayName = "QueryBuilderHints";
+QueryBuilderHints.displayName = 'QueryBuilderHints';
 
 const getStyles = (theme: GrafanaTheme2) => {
   return {

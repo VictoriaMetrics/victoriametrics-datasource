@@ -26,5 +26,5 @@ export type UserPermission = Record<string, boolean>;
 
 // Permission actions
 export enum AccessControlAction {
-  DataSourcesExplore = "datasources:explore",
+  DataSourcesExplore = 'datasources:explore',
 }

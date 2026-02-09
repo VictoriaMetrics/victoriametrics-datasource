@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css, cx } from "@emotion/css";
-import React from "react";
+import { css, cx } from '@emotion/css';
+import React from 'react';
 
-import { GrafanaTheme2 } from "@grafana/data";
-import { stylesFactory, useTheme2 } from "@grafana/ui";
+import { GrafanaTheme2 } from '@grafana/data';
+import { stylesFactory, useTheme2 } from '@grafana/ui';
 
 export interface SpaceProps {
   v?: number;
   h?: number;
-  layout?: "block" | "inline";
+  layout?: 'block' | 'inline';
 }
 
 export const Space = (props: SpaceProps) => {
@@ -38,7 +38,7 @@ export const Space = (props: SpaceProps) => {
 Space.defaultProps = {
   v: 0,
   h: 0,
-  layout: "block",
+  layout: 'block',
 };
 
 const getStyles = stylesFactory((theme: GrafanaTheme2, props: SpaceProps) => ({
@@ -47,11 +47,11 @@ const getStyles = stylesFactory((theme: GrafanaTheme2, props: SpaceProps) => ({
       paddingRight: theme.spacing(props.h ?? 0),
       paddingBottom: theme.spacing(props.v ?? 0),
     },
-    props.layout === "inline" && {
-      display: "inline-block",
+    props.layout === 'inline' && {
+      display: 'inline-block',
     },
-    props.layout === "block" && {
-      display: "block",
+    props.layout === 'block' && {
+      display: 'block',
     },
   ]),
 }));

@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { cloneDeep, extend, isString } from "lodash";
+import { cloneDeep, extend, isString } from 'lodash';
 
 import {
   dateMath,
@@ -29,22 +29,22 @@ import {
   TimeRange,
   TimeZone,
   toUtc,
-} from "@grafana/data";
-import { locationService, config, getTemplateSrv } from "@grafana/runtime";
+} from '@grafana/data';
+import { locationService, config, getTemplateSrv } from '@grafana/runtime';
 
 import {
   AbsoluteTimeEvent,
   ShiftTimeEvent,
   ShiftTimeEventDirection,
   ZoomOutEvent
-} from "../types/events";
-import { getRefreshFromUrl } from "../utils/getRefreshFromUrl";
-import { getShiftedTimeRange, getZoomedTimeRange } from "../utils/timePicker";
+} from '../types/events';
+import { getRefreshFromUrl } from '../utils/getRefreshFromUrl';
+import { getShiftedTimeRange, getZoomedTimeRange } from '../utils/timePicker';
 
-import appEvents from "./app_events";
-import { contextSrv, ContextSrv } from "./context_srv";
+import appEvents from './app_events';
+import { contextSrv, ContextSrv } from './context_srv';
 
-declare module "@grafana/runtime" {
+declare module '@grafana/runtime' {
   interface TemplateSrv {
     timeRange: TimeRange;
   }
@@ -108,8 +108,8 @@ export class TimeSrv {
       this.makeAbsoluteTime();
     });
 
-    document.addEventListener("visibilitychange", () => {
-      if (this.autoRefreshBlocked && document.visibilityState === "visible") {
+    document.addEventListener('visibilitychange', () => {
+      if (this.autoRefreshBlocked && document.visibilityState === 'visible') {
         this.autoRefreshBlocked = false;
         this.refreshTimeModel();
       }
@@ -153,30 +153,30 @@ export class TimeSrv {
       return intervals;
     }
 
-    return intervals.filter((str) => str !== "").filter(this.contextSrv.isAllowedInterval);
+    return intervals.filter((str) => str !== '').filter(this.contextSrv.isAllowedInterval);
   }
 
   private parseTime() {
     // when absolute time is saved in json it is turned to a string
-    if (isString(this.time.from) && this.time.from.indexOf("Z") >= 0) {
+    if (isString(this.time.from) && this.time.from.indexOf('Z') >= 0) {
       this.time.from = dateTime(this.time.from).utc();
     }
-    if (isString(this.time.to) && this.time.to.indexOf("Z") >= 0) {
+    if (isString(this.time.to) && this.time.to.indexOf('Z') >= 0) {
       this.time.to = dateTime(this.time.to).utc();
     }
   }
 
   private parseUrlParam(value: any) {
-    if (value.indexOf("now") !== -1) {
+    if (value.indexOf('now') !== -1) {
       return value;
     }
     if (value.length === 8) {
-      const utcValue = toUtc(value, "YYYYMMDD");
+      const utcValue = toUtc(value, 'YYYYMMDD');
       if (utcValue.isValid()) {
         return utcValue;
       }
     } else if (value.length === 15) {
-      const utcValue = toUtc(value, "YYYYMMDDTHHmmss");
+      const utcValue = toUtc(value, 'YYYYMMDDTHHmmss');
       if (utcValue.isValid()) {
         return utcValue;
       }
@@ -209,26 +209,26 @@ export class TimeSrv {
 
   private initTimeFromUrl() {
     // If we are in a public dashboard ignore the time range in the url
-    if (config.publicDashboardAccessToken !== "") {
+    if (config.publicDashboardAccessToken !== '') {
       return;
     }
 
     const params = locationService.getSearch();
 
-    if (params.get("time") && params.get("time.window")) {
-      this.time = this.getTimeWindow(params.get("time")!, params.get("time.window")!);
+    if (params.get('time') && params.get('time.window')) {
+      this.time = this.getTimeWindow(params.get('time')!, params.get('time.window')!);
     }
 
-    if (params.get("from")) {
-      this.time.from = this.parseUrlParam(params.get("from")!) || this.time.from;
+    if (params.get('from')) {
+      this.time.from = this.parseUrlParam(params.get('from')!) || this.time.from;
     }
 
-    if (params.get("to")) {
-      this.time.to = this.parseUrlParam(params.get("to")!) || this.time.to;
+    if (params.get('to')) {
+      this.time.to = this.parseUrlParam(params.get('to')!) || this.time.to;
     }
 
     // if absolute ignore refresh option saved to timeModel
-    if (params.get("to") && params.get("to")!.indexOf("now") === -1) {
+    if (params.get('to') && params.get('to')!.indexOf('now') === -1) {
       this.refresh = false;
       if (this.timeModel) {
         this.timeModel.refresh = false;
@@ -237,7 +237,7 @@ export class TimeSrv {
 
     // but if refresh explicitly set then use that
     this.refresh = getRefreshFromUrl({
-      urlRefresh: params.get("refresh"),
+      urlRefresh: params.get('refresh'),
       currentRefresh: this.refresh,
       refreshIntervals: Array.isArray(this.timeModel?.timepicker?.refresh_intervals)
         ? this.timeModel?.timepicker?.refresh_intervals
@@ -250,13 +250,13 @@ export class TimeSrv {
   updateTimeRangeFromUrl() {
     const params = locationService.getSearch();
 
-    if (params.get("left")) {
+    if (params.get('left')) {
       return; // explore handles this;
     }
 
     const urlRange = this.timeRangeForUrl();
-    const from = params.get("from");
-    const to = params.get("to");
+    const from = params.get('from');
+    const to = params.get('to');
 
     // check if url has time range
     if (from && to) {
@@ -341,7 +341,7 @@ export class TimeSrv {
 
   setTime(time: RawTimeRange, updateUrl = true) {
     // If we are in a public dashboard ignore time range changes
-    if (config.publicDashboardAccessToken !== "") {
+    if (config.publicDashboardAccessToken !== '') {
       return;
     }
 
@@ -412,7 +412,7 @@ export class TimeSrv {
 
   makeAbsoluteTime() {
     const params = locationService.getSearch();
-    if (params.get("left")) {
+    if (params.get('left')) {
       return; // explore handles this;
     }
 

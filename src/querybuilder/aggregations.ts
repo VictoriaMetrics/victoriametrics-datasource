@@ -1,12 +1,12 @@
-import { addOperationWithRangeVector } from "./operations";
+import { addOperationWithRangeVector } from './operations';
 import {
   createAggregationOperation,
   createAggregationOperationWithParam,
   getPromAndLokiOperationDisplayName,
   getRangeVectorParamDef,
-} from "./shared/operationUtils";
-import { QueryBuilderOperation, QueryBuilderOperationDef } from "./shared/types";
-import { PromOperationId, PromVisualQueryOperationCategory } from "./types";
+} from './shared/operationUtils';
+import { QueryBuilderOperation, QueryBuilderOperationDef } from './shared/types';
+import { PromOperationId, PromVisualQueryOperationCategory } from './types';
 
 export function getAggregationOperations(): QueryBuilderOperationDef[] {
   return [
@@ -19,16 +19,16 @@ export function getAggregationOperations(): QueryBuilderOperationDef[] {
     ...createAggregationOperation(PromOperationId.Geomean),
     ...createAggregationOperation(PromOperationId.Histogram),
     ...createAggregationOperationWithParam(PromOperationId.TopK, {
-      params: [{ name: "K-value", type: "number" }],
+      params: [{ name: 'K-value', type: 'number' }],
       defaultParams: [5],
     }),
     ...createAggregationOperationWithParam(PromOperationId.BottomK, {
-      params: [{ name: "K-value", type: "number" }],
+      params: [{ name: 'K-value', type: 'number' }],
       defaultParams: [5],
     }),
     ...createAggregationOperationWithParam(PromOperationId.CountValues, {
-      params: [{ name: "Identifier", type: "string" }],
-      defaultParams: ["count"],
+      params: [{ name: 'Identifier', type: 'string' }],
+      defaultParams: ['count'],
     }),
     createAggregationOverTime(PromOperationId.SumOverTime),
     createAggregationOverTime(PromOperationId.AvgOverTime),
@@ -50,8 +50,8 @@ export function createAggregationOverTime(
     id: name,
     name: getPromAndLokiOperationDisplayName(name),
     params: [getRangeVectorParamDef()],
-    defaultParams: ["$__interval"],
-    alternativesKey: "overtime function",
+    defaultParams: ['$__interval'],
+    alternativesKey: 'overtime function',
     category: PromVisualQueryOperationCategory.RangeFunctions,
     renderer: operationWithRangeVectorRenderer,
     addOperationHandler: addOperationWithRangeVector,
@@ -64,6 +64,6 @@ function operationWithRangeVectorRenderer(
   def: QueryBuilderOperationDef,
   innerExpr: string
 ) {
-  let rangeVector = (model.params ?? [])[0] ?? "$__interval";
+  let rangeVector = (model.params ?? [])[0] ?? '$__interval';
   return `${def.id}(${innerExpr}[${rangeVector}])`;
 }

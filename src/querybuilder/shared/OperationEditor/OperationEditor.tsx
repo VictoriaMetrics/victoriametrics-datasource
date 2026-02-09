@@ -16,27 +16,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Draggable } from "@atlaskit/pragmatic-drag-and-drop-react-beautiful-dnd-migration";
-import { cx } from "@emotion/css";
-import React from "react";
+import { Draggable } from '@atlaskit/pragmatic-drag-and-drop-react-beautiful-dnd-migration';
+import { cx } from '@emotion/css';
+import React from 'react';
 
-import { DataSourceApi } from "@grafana/data";
-import { Button, Icon, Tooltip, useStyles2 } from "@grafana/ui";
+import { DataSourceApi } from '@grafana/data';
+import { Button, Icon, Tooltip, useStyles2 } from '@grafana/ui';
 
-import { Stack } from "../../../components/QueryEditor";
-import { OperationHeader } from "../OperationHeader";
-import { getOperationParamEditor } from "../OperationParamEditor";
-import { getOperationParamId } from "../operationUtils";
+import { Stack } from '../../../components/QueryEditor';
+import { OperationHeader } from '../OperationHeader';
+import { getOperationParamEditor } from '../OperationParamEditor';
+import { getOperationParamId } from '../operationUtils';
 import {
   QueryBuilderOperation,
   QueryBuilderOperationParamValue,
   VisualQueryModeller,
-} from "../types";
+} from '../types';
 
-import callParamChangedThenOnChange from "./callParamChangedThenOnChange";
-import renderAddRestParamButton from "./renderAddRestParamButton";
-import getStyles from "./style";
-import useFlash from "./useFlash";
+import callParamChangedThenOnChange from './callParamChangedThenOnChange';
+import renderAddRestParamButton from './renderAddRestParamButton';
+import getStyles from './style';
+import useFlash from './useFlash';
 export type OperationEditorStyles = ReturnType<typeof getStyles>;
 
 export interface Props {
@@ -79,7 +79,7 @@ export function OperationEditor({
   };
 
   const onAddRestParam = () => {
-    const restParamsToAdd = def.params.filter(param => param.restParam).map(() => "");
+    const restParamsToAdd = def.params.filter(param => param.restParam).map(() => '');
 
     const update: QueryBuilderOperation = {
       ...operation,
@@ -122,13 +122,13 @@ export function OperationEditor({
             <label htmlFor={getOperationParamId(index, paramIndex)}>{paramDef.name}</label>
             {paramDef.description && (
               <Tooltip
-                placement="top"
+                placement='top'
                 content={paramDef.description}
-                theme="info"
+                theme='info'
               >
                 <Icon
-                  name="info-circle"
-                  size="sm"
+                  name='info-circle'
+                  size='sm'
                   className={styles.infoIcon}
                 />
               </Tooltip>
@@ -138,8 +138,8 @@ export function OperationEditor({
         <div className={styles.paramValue}>
           <Stack
             gap={0.5}
-            direction="row"
-            alignItems="center"
+            direction='row'
+            alignItems='center'
             wrap={false}
           >
             {/* @ts-ignore */}
@@ -157,10 +157,10 @@ export function OperationEditor({
             {paramDef.restParam && (operation.params.length > def.params.length || paramDef.optional) && (
               <Button
                 data-testid={`operations.${index}.remove-rest-param`}
-                size="sm"
-                fill="text"
-                icon="times"
-                variant="secondary"
+                size='sm'
+                fill='text'
+                icon='times'
+                variant='secondary'
                 title={`Remove ${paramDef.name}`}
                 aria-label={`Remove ${paramDef.name}`}
                 onClick={() => onRemoveRestParam(paramIndex)}

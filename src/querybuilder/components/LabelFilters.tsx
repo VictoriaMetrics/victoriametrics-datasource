@@ -15,20 +15,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css, cx } from "@emotion/css";
-import { isEqual } from "lodash";
-import React, { useEffect, useState } from "react";
+import { css, cx } from '@emotion/css';
+import { isEqual } from 'lodash';
+import React, { useEffect, useState } from 'react';
 
-import { SelectableValue } from "@grafana/data";
-import { EditorFieldGroup, EditorField } from "@grafana/plugin-ui";
-import { InlineFieldRow, InlineLabel } from "@grafana/ui";
+import { SelectableValue } from '@grafana/data';
+import { EditorFieldGroup, EditorField } from '@grafana/plugin-ui';
+import { InlineFieldRow, InlineLabel } from '@grafana/ui';
 
-import { EditorList } from "../../components/QueryEditor";
-import { QueryBuilderLabelFilter } from "../shared/types";
+import { EditorList } from '../../components/QueryEditor';
+import { QueryBuilderLabelFilter } from '../shared/types';
 
-import { LabelFilterItem } from "./LabelFilterItem";
+import { LabelFilterItem } from './LabelFilterItem';
 
-export const MISSING_LABEL_FILTER_ERROR_MESSAGE = "Select at least 1 label filter (label and value)";
+export const MISSING_LABEL_FILTER_ERROR_MESSAGE = 'Select at least 1 label filter (label and value)';
 
 export interface Props {
   labelsFilters: QueryBuilderLabelFilter[];
@@ -52,7 +52,7 @@ export function LabelFilters({
   debounceDuration,
   variableEditor,
 }: Props) {
-  const defaultOp = "=";
+  const defaultOp = '=';
   const [items, setItems] = useState<Array<Partial<QueryBuilderLabelFilter>>>([{ op: defaultOp }]);
 
   useEffect(() => {
@@ -119,7 +119,7 @@ export function LabelFilters({
       ) : (
         <EditorFieldGroup>
           <EditorField
-            label="Label filters"
+            label='Label filters'
             error={MISSING_LABEL_FILTER_ERROR_MESSAGE}
             invalid={labelFilterRequired && !hasLabelFilter}
           >

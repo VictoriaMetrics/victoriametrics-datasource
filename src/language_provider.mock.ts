@@ -3,7 +3,7 @@ export class EmptyLanguageProviderMock {
   constructor() {}
   start() {
     return new Promise((resolve) => {
-      resolve("");
+      resolve('');
     });
   }
   getLabelKeys = jest.fn().mockReturnValue([]);

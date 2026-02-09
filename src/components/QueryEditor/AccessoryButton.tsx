@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { css, cx } from "@emotion/css";
-import React from "react";
+import { css, cx } from '@emotion/css';
+import React from 'react';
 
-import { GrafanaTheme2 } from "@grafana/data";
-import { useTheme2, stylesFactory, Button, ButtonProps } from "@grafana/ui";
+import { GrafanaTheme2 } from '@grafana/data';
+import { useTheme2, stylesFactory, Button, ButtonProps } from '@grafana/ui';
 
 type AccessoryButtonProps = ButtonProps;
 

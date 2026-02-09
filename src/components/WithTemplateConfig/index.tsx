@@ -1,14 +1,14 @@
-import React, { FC, useEffect, useMemo, useState } from "react"
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import { CoreApp } from "@grafana/data";
-import { IconButton, Modal } from "@grafana/ui";
+import { CoreApp } from '@grafana/data';
+import { IconButton, Modal } from '@grafana/ui';
 
-import { PrometheusDatasource } from "../../datasource";
+import { PrometheusDatasource } from '../../datasource';
 
-import WarningNewDashboard from "./WarningSavedDashboard/WarningSavedDashboard";
-import WithTemplateBody from "./WithTemplateBody/WithTemplateBody";
-import getDashboardByUID from "./api/getDashboardList";
-import { DashboardResponse, WithTemplate } from "./types";
+import WarningNewDashboard from './WarningSavedDashboard/WarningSavedDashboard';
+import WithTemplateBody from './WithTemplateBody/WithTemplateBody';
+import getDashboardByUID from './api/getDashboardList';
+import { DashboardResponse, WithTemplate } from './types';
 
 export interface WithTemplateConfigProps {
   template?: WithTemplate;
@@ -24,11 +24,11 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate
   const [dashboardResponse, setDashboardResponse] = useState<DashboardResponse | null>()
 
   const modalTitle = useMemo(() => {
-    const explore = app === CoreApp.Explore ? "Explore" : ""
+    const explore = app === CoreApp.Explore ? 'Explore' : ''
     const folderTitle = dashboardResponse?.meta?.folderTitle
     const dashboardTitle = dashboardResponse?.dashboard?.title
-    const templatesTitle = "WITH templates"
-    const fullTitle = [explore, folderTitle, dashboardTitle, templatesTitle].filter(Boolean).join(" / ")
+    const templatesTitle = 'WITH templates'
+    const fullTitle = [explore, folderTitle, dashboardTitle, templatesTitle].filter(Boolean).join(' / ')
     return isValidDashboard ? fullTitle : templatesTitle
   }, [isValidDashboard, dashboardResponse, app])
 
@@ -61,9 +61,9 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate
   return (
     <>
       <IconButton
-        key="with_templates"
-        name="cog"
-        tooltip="WITH templates"
+        key='with_templates'
+        name='cog'
+        tooltip='WITH templates'
         onClick={handleOpen}
       />
       <Modal
@@ -76,7 +76,7 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate
         {isValidDashboard ? (
           <WithTemplateBody
             datasource={datasource}
-            dashboardUID={dashboardUID || app || ""}
+            dashboardUID={dashboardUID || app || ''}
             handleClose={handleClose}
             template={template}
             setTemplate={setTemplate}

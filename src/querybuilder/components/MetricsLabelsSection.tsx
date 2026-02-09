@@ -15,20 +15,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback } from "react";
+import React, { useCallback } from 'react';
 
-import { SelectableValue } from "@grafana/data";
+import { SelectableValue } from '@grafana/data';
 
-import { PrometheusDatasource } from "../../datasource";
-import { getMetadataString } from "../../language_provider";
-import { truncateResult } from "../../language_utils";
-import { promQueryModeller } from "../PromQueryModeller";
-import { regexifyLabelValuesQueryString } from "../parsingUtils";
-import { QueryBuilderLabelFilter } from "../shared/types";
-import { PromVisualQuery } from "../types";
+import { PrometheusDatasource } from '../../datasource';
+import { getMetadataString } from '../../language_provider';
+import { truncateResult } from '../../language_utils';
+import { promQueryModeller } from '../PromQueryModeller';
+import { regexifyLabelValuesQueryString } from '../parsingUtils';
+import { QueryBuilderLabelFilter } from '../shared/types';
+import { PromVisualQuery } from '../types';
 
-import { LabelFilters } from "./LabelFilters";
-import { MetricSelect } from "./MetricSelect";
+import { LabelFilters } from './LabelFilters';
+import { MetricSelect } from './MetricSelect';
 
 export interface MetricsLabelsSectionProps {
   query: PromVisualQuery;
@@ -82,7 +82,7 @@ export function MetricsLabelsSection({
     }
 
     const labelsToConsider = query.labels.filter((x) => x !== forLabel);
-    labelsToConsider.push({ label: "__name__", op: "=", value: query.metric });
+    labelsToConsider.push({ label: '__name__', op: '=', value: query.metric });
     const expr = promQueryModeller.renderLabels(labelsToConsider);
 
     const labelNames = await datasource.languageProvider.fetchSeriesLabelsMatch(expr);
@@ -98,14 +98,14 @@ export function MetricsLabelsSection({
     labelName?: string
   ): Promise<SelectableValue[]> => {
     const forLabel = {
-      label: labelName ?? "__name__",
-      op: "=~",
+      label: labelName ?? '__name__',
+      op: '=~',
       value: regexifyLabelValuesQueryString(`.*${queryString}`),
     };
     const labelsToConsider = query.labels.filter((x) => x.label !== forLabel.label);
     labelsToConsider.push(forLabel);
     if (query.metric) {
-      labelsToConsider.push({ label: "__name__", op: "=", value: query.metric });
+      labelsToConsider.push({ label: '__name__', op: '=', value: query.metric });
     }
     const interpolatedLabelsToConsider = labelsToConsider.map((labelObject) => ({
       ...labelObject,
@@ -156,7 +156,7 @@ export function MetricsLabelsSection({
     }
 
     const labelsToConsider = query.labels.filter((x) => x !== forLabel);
-    labelsToConsider.push({ label: "__name__", op: "=", value: query.metric });
+    labelsToConsider.push({ label: '__name__', op: '=', value: query.metric });
 
     const interpolatedLabelsToConsider = labelsToConsider.map((labelObject) => ({
       ...labelObject,
@@ -227,9 +227,9 @@ async function getMetrics(
   let metrics: string[];
   if (query.labels.length > 0) {
     const expr = promQueryModeller.renderLabels(query.labels);
-    metrics = (await datasource.languageProvider.getSeries(expr, true))["__name__"] ?? [];
+    metrics = (await datasource.languageProvider.getSeries(expr, true))['__name__'] ?? [];
   } else {
-    metrics = (await datasource.languageProvider.getLabelValues("__name__")) ?? [];
+    metrics = (await datasource.languageProvider.getLabelValues('__name__')) ?? [];
   }
 
   return metrics.map((m) => ({
