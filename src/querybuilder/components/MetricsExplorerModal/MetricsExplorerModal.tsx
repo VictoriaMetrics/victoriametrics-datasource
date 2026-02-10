@@ -183,7 +183,7 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
     >
       <div className={styles.content}>
         <div className={styles.filters}>
-          <Input placeholder="Filter by name" onChange={handleNameFilterChange} className={styles.nameFilter} />
+          <Input placeholder='Filter by name' onChange={handleNameFilterChange} className={styles.nameFilter} />
           <MultiSelect
             options={typeOptions}
             value={typeFilter}

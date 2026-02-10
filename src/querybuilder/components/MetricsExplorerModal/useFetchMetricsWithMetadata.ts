@@ -1,6 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
-import { PrometheusDatasource } from "../../../datasource";
+import { PrometheusDatasource } from '../../../datasource';
 
 export interface MetricMetadata {
   name: string;
