@@ -36,6 +36,7 @@ packages/lezer-metricsql/src/parser.terms.js
 .vscode
 .npm
 .eslintcache
+tsconfig.tsbuildinfo
 
 # Cypress
 cypress/report.json

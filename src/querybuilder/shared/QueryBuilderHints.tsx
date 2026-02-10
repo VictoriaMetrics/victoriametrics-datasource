@@ -69,8 +69,8 @@ export const QueryBuilderHints = <T extends PromLokiVisualQuery>({
                       return onChange(newVisualQuery.query);
                     }
                   }}
-                  fill="outline"
-                  size="sm"
+                  fill='outline'
+                  size='sm'
                   className={styles.hint}
                 >
                   {'hint: ' + hint.fix?.action?.type.toLowerCase().replace('_', ' ') + '()'}

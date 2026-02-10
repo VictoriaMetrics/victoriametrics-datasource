@@ -122,13 +122,13 @@ export function OperationEditor({
             <label htmlFor={getOperationParamId(index, paramIndex)}>{paramDef.name}</label>
             {paramDef.description && (
               <Tooltip
-                placement="top"
+                placement='top'
                 content={paramDef.description}
-                theme="info"
+                theme='info'
               >
                 <Icon
-                  name="info-circle"
-                  size="sm"
+                  name='info-circle'
+                  size='sm'
                   className={styles.infoIcon}
                 />
               </Tooltip>
@@ -138,8 +138,8 @@ export function OperationEditor({
         <div className={styles.paramValue}>
           <Stack
             gap={0.5}
-            direction="row"
-            alignItems="center"
+            direction='row'
+            alignItems='center'
             wrap={false}
           >
             {/* @ts-ignore */}
@@ -157,10 +157,10 @@ export function OperationEditor({
             {paramDef.restParam && (operation.params.length > def.params.length || paramDef.optional) && (
               <Button
                 data-testid={`operations.${index}.remove-rest-param`}
-                size="sm"
-                fill="text"
-                icon="times"
-                variant="secondary"
+                size='sm'
+                fill='text'
+                icon='times'
+                variant='secondary'
                 title={`Remove ${paramDef.name}`}
                 aria-label={`Remove ${paramDef.name}`}
                 onClick={() => onRemoveRestParam(paramIndex)}

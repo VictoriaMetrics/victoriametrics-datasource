@@ -24,7 +24,7 @@ import { selectors } from '@grafana/e2e-selectors';
 import { Select } from '@grafana/ui';
 
 import { AccessoryButton, InputGroup } from '../../components/QueryEditor';
-import { escapeIdentifier } from "../../language_utils";
+import { escapeIdentifier } from '../../language_utils';
 
 import { QueryBuilderLabelFilter } from './types';
 
@@ -68,13 +68,13 @@ export function LabelFilterItem({ item, defaultOp, onChange, onDelete, onGetLabe
   };
 
   return (
-    <div data-testid="prometheus-dimensions-filter-item">
+    <div data-testid='prometheus-dimensions-filter-item'>
       <InputGroup>
         <Select
-          placeholder="Select label"
+          placeholder='Select label'
           aria-label={selectors.components.QueryBuilder.labelSelect}
-          inputId="prometheus-dimensions-filter-item-key"
-          width="auto"
+          inputId='prometheus-dimensions-filter-item-key'
+          width='auto'
           value={item.label ? toOption(item.label) : null}
           allowCustomValue
           onOpenMenu={async () => {
@@ -99,7 +99,7 @@ export function LabelFilterItem({ item, defaultOp, onChange, onDelete, onGetLabe
           aria-label={selectors.components.QueryBuilder.matchOperatorSelect}
           value={toOption(item.op ?? defaultOp)}
           options={operators}
-          width="auto"
+          width='auto'
           onChange={(change) => {
             if (change.value != null) {
               onChange({ ...item, op: change.value } as any as QueryBuilderLabelFilter);
@@ -108,10 +108,10 @@ export function LabelFilterItem({ item, defaultOp, onChange, onDelete, onGetLabe
         />
 
         <Select
-          placeholder="Select value"
+          placeholder='Select value'
           aria-label={selectors.components.QueryBuilder.valueSelect}
-          inputId="prometheus-dimensions-filter-item-value"
-          width="auto"
+          inputId='prometheus-dimensions-filter-item-value'
+          width='auto'
           value={
             isMultiSelect()
               ? getSelectOptionsFromString(item?.value).map(toOption)
@@ -143,7 +143,7 @@ export function LabelFilterItem({ item, defaultOp, onChange, onDelete, onGetLabe
             }
           }}
         />
-        <AccessoryButton aria-label="remove" icon="times" variant="secondary" onClick={onDelete} />
+        <AccessoryButton aria-label='remove' icon='times' variant='secondary' onClick={onDelete} />
       </InputGroup>
     </div>
   );

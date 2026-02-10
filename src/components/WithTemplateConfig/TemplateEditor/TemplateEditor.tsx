@@ -1,8 +1,8 @@
 import React, { FC, useEffect } from 'react';
 
-import { PrometheusDatasource } from "../../../datasource";
-import PrometheusLanguageProvider from "../../../language_provider";
-import { MonacoQueryFieldWrapper } from "../../monaco-query-field/MonacoQueryFieldWrapper";
+import { PrometheusDatasource } from '../../../datasource';
+import PrometheusLanguageProvider from '../../../language_provider';
+import { MonacoQueryFieldWrapper } from '../../monaco-query-field/MonacoQueryFieldWrapper';
 
 interface Props {
   initialValue: string;
@@ -26,7 +26,7 @@ const TemplateEditor: FC<Props> = ({ initialValue, datasource, onChange }) => {
       onChange={onChange}
       onRunQuery={() => {}}
       initialValue={initialValue}
-      placeholder="Enter a WITH expressions..."
+      placeholder='Enter a WITH expressions...'
     />
   );
 }

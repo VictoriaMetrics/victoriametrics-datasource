@@ -1,7 +1,7 @@
-import { createAggregationOverTime } from "../../aggregations";
-import { getRangeVectorParamDef } from "../../shared/operationUtils";
-import { QueryBuilderOperation, QueryBuilderOperationDef } from "../../shared/types";
-import { PromOperationId } from "../../types";
+import { createAggregationOverTime } from '../../aggregations';
+import { getRangeVectorParamDef } from '../../shared/operationUtils';
+import { QueryBuilderOperation, QueryBuilderOperationDef } from '../../shared/types';
+import { PromOperationId } from '../../types';
 
 export function getOverTimeFunctions() {
   return [

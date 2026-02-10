@@ -3,7 +3,7 @@ import { escapeForUtf8Support, utf8Support, wrapUtf8Filters } from './utf8_suppo
 describe('utf8 support', () => {
   it('should return utf8 labels wrapped in quotes', () => {
     const labels = ['valid:label', 'metric_label', 'utf8 label with space 🤘', ''];
-    const expected = ['valid:label', 'metric_label', `"utf8 label with space 🤘"`, ''];
+    const expected = ['valid:label', 'metric_label', '"utf8 label with space 🤘"', ''];
     const supportedLabels = labels.map(utf8Support);
     expect(supportedLabels).toEqual(expected);
   });
@@ -54,8 +54,8 @@ describe('wrapUtf8Filters', () => {
   });
 
   it('should correctly handle escaped quotes within values', () => {
-    const result = wrapUtf8Filters(`label.with.spaß="this_is_\\"fun\\"",instance="localhost:9112"`);
-    const expected = `"label.with.spaß"="this_is_\\"fun\\"",instance="localhost:9112"`;
+    const result = wrapUtf8Filters('label.with.spaß="this_is_\\"fun\\"",instance="localhost:9112"');
+    const expected = '"label.with.spaß"="this_is_\\"fun\\"",instance="localhost:9112"';
     expect(result).toEqual(expected);
   });
 

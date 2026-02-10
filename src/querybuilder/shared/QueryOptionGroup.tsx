@@ -36,8 +36,8 @@ export function QueryOptionGroup({ title, children, collapsedInfo }: Props) {
   const styles = useStyles2(getStyles);
 
   return (
-    <Stack gap={0} direction="column">
-      <div className={styles.header} onClick={toggleOpen} title="Click to edit options">
+    <Stack gap={0} direction='column'>
+      <div className={styles.header} onClick={toggleOpen} title='Click to edit options'>
         <div className={styles.toggle}>
           <Icon name={isOpen ? 'angle-down' : 'angle-right'} />
         </div>

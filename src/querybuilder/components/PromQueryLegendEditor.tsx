@@ -22,7 +22,7 @@ import { SelectableValue } from '@grafana/data';
 import { Select } from '@grafana/ui';
 
 import { EditorField } from '../../components/QueryEditor';
-import { AutoSizeInput } from "../../components/QueryEditor/AutoSizeInput";
+import { AutoSizeInput } from '../../components/QueryEditor/AutoSizeInput';
 import { LegendFormatMode } from '../../types';
 
 export interface Props {
@@ -81,15 +81,15 @@ export const PromQueryLegendEditor = React.memo<Props>(({ legendFormat, onChange
 
   return (
     <EditorField
-      label="Legend"
-      tooltip="Series name override or template. Ex. {{hostname}} will be replaced with label value for hostname."
+      label='Legend'
+      tooltip='Series name override or template. Ex. {{hostname}} will be replaced with label value for hostname.'
     >
       <>
         {mode === LegendFormatMode.Custom && (
           <AutoSizeInput
-            id="legendFormat"
+            id='legendFormat'
             minWidth={22}
-            placeholder="auto"
+            placeholder='auto'
             defaultValue={legendFormat}
             onCommitChange={onLegendFormatChanged}
             ref={inputRef}
@@ -97,9 +97,9 @@ export const PromQueryLegendEditor = React.memo<Props>(({ legendFormat, onChange
         )}
         {mode !== LegendFormatMode.Custom && (
           <Select
-            inputId="legend.mode"
+            inputId='legend.mode'
             isSearchable={false}
-            placeholder="Select legend mode"
+            placeholder='Select legend mode'
             options={legendModeOptions}
             width={22}
             onChange={onLegendModeChanged}

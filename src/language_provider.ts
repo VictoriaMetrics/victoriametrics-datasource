@@ -19,7 +19,7 @@
 import { chain, difference, once } from 'lodash';
 import { LRUCache as LRU } from 'lru-cache'
 import Prism from 'prismjs';
-import { Value } from "slate";
+import { Value } from 'slate';
 
 import {
   AbstractLabelMatcher,
@@ -33,7 +33,7 @@ import {
 import { BackendSrvRequest } from '@grafana/runtime';
 import { CompletionItem, CompletionItemGroup, SearchFunctionType, TypeaheadInput, TypeaheadOutput } from '@grafana/ui';
 
-import { Label } from "./components/monaco-query-field/monaco-completion-provider/situation";
+import { Label } from './components/monaco-query-field/monaco-completion-provider/situation';
 import { PrometheusDatasource } from './datasource';
 import {
   AbstractLabelOperator,
@@ -500,7 +500,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
       ...range,
       'match[]': interpolatedName,
     };
-    const url = `/api/v1/labels`;
+    const url = '/api/v1/labels';
 
     return await this.request(url, [], urlParams)
   };
@@ -625,7 +625,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
       limit,
       'match[]': interpolatedName,
     };
-    const url = `/api/v1/series`;
+    const url = '/api/v1/series';
     // Cache key is a bit different here. We add the `withName` param and also round up to a minute the intervals.
     // The rounding may seem strange but makes relative intervals like now-1h less prone to need separate request every
     // millisecond while still actually getting all the keys for the correct interval. This still can create problems

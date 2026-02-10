@@ -22,14 +22,14 @@ import { CoreApp, DataQueryRequest, LoadingState } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
 import { ConfirmModal, IconButton } from '@grafana/ui';
 
-import PrettifyQuery from "../../components/PrettifyQuery";
+import PrettifyQuery from '../../components/PrettifyQuery';
 import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../components/QueryEditor';
-import VmuiLink from "../../components/VmuiLink";
-import WithTemplateConfig from "../../components/WithTemplateConfig";
-import { WithTemplate } from "../../components/WithTemplateConfig/types";
-import { getArrayFromTemplate } from "../../components/WithTemplateConfig/utils/getArrayFromTemplate";
+import VmuiLink from '../../components/VmuiLink';
+import WithTemplateConfig from '../../components/WithTemplateConfig';
+import { WithTemplate } from '../../components/WithTemplateConfig/types';
+import { getArrayFromTemplate } from '../../components/WithTemplateConfig/utils/getArrayFromTemplate';
 import { PromQueryEditorProps } from '../../components/types';
-import PrometheusLanguageProvider from "../../language_provider";
+import PrometheusLanguageProvider from '../../language_provider';
 import { PromQuery } from '../../types';
 import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';
@@ -42,8 +42,8 @@ import { changeEditorMode, getQueryWithDefaults } from '../state';
 import { PromQueryBuilderContainer } from './PromQueryBuilderContainer';
 import { PromQueryBuilderOptions } from './PromQueryBuilderOptions';
 import { PromQueryCodeEditor } from './PromQueryCodeEditor';
-import { QueryPreview } from "./QueryPreview";
-import { TraceView } from "./Trace";
+import { QueryPreview } from './QueryPreview';
+import { TraceView } from './Trace';
 
 type Props = PromQueryEditorProps;
 
@@ -56,7 +56,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   const [rawQuery, setRawQuery] = useState(false)
   const { flag: explain, setFlag: setExplain } = useFlag(queryEditorExplainKey);
 
-  const dashboardUID: string = (data?.request as DataQueryRequest<PromQuery>)?.dashboardUID || ""
+  const dashboardUID: string = (data?.request as DataQueryRequest<PromQuery>)?.dashboardUID || ''
   const [templateByDashboard, setTemplateByDashboard] = useState<WithTemplate>()
 
   const query = getQueryWithDefaults(props.query, app);
@@ -122,9 +122,9 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
     <>
       <ConfirmModal
         isOpen={parseModalOpen}
-        title="Query parsing"
-        body="There were errors while trying to parse the query. Continuing to visual builder may lose some parts of the query."
-        confirmText="Continue"
+        title='Query parsing'
+        body='There were errors while trying to parse the query. Continuing to visual builder may lose some parts of the query.'
+        confirmText='Continue'
         onConfirm={() => {
           changeEditorMode(query, QueryEditorMode.Builder, onChange);
           setParseModalOpen(false);
@@ -134,7 +134,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
       <EditorHeader>
         <InlineSelect
           value={null}
-          placeholder="Query patterns"
+          placeholder='Query patterns'
           allowCustomValue
           onChange={({ value }) => {
             // TODO: Bit convoluted as we don't have access to visualQuery model here. Maybe would make sense to
@@ -148,10 +148,10 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
           }}
           options={promQueryModeller.getQueryPatterns().map((x) => ({ label: x.name, value: x }))}
         />
-        <QueryHeaderSwitch label="Explain" value={explain} onChange={onShowExplainChange}/>
-        <QueryHeaderSwitch label="Trace" value={trace} onChange={onShowTracingChange}/>
-        <QueryHeaderSwitch label="Raw" value={rawQuery} onChange={onShowRawChange}/>
-        <FlexItem grow={1}/>
+        <QueryHeaderSwitch label='Explain' value={explain} onChange={onShowExplainChange} />
+        <QueryHeaderSwitch label='Trace' value={trace} onChange={onShowTracingChange} />
+        <QueryHeaderSwitch label='Raw' value={rawQuery} onChange={onShowRawChange} />
+        <FlexItem grow={1} />
         <WithTemplateConfig
           app={app}
           template={templateByDashboard}
@@ -159,19 +159,19 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
           dashboardUID={dashboardUID}
           datasource={datasource}
         />
-        <PrettifyQuery query={query} datasource={datasource} onChange={onChange}/>
-        <VmuiLink query={query} datasource={datasource} panelData={data} dashboardUID={dashboardUID}/>
+        <PrettifyQuery query={query} datasource={datasource} onChange={onChange} />
+        <VmuiLink query={query} datasource={datasource} panelData={data} dashboardUID={dashboardUID} />
         {app !== CoreApp.Explore && (
           <IconButton
-            key="run"
-            name={data?.state === LoadingState.Loading ? 'fa fa-spinner' : "play"}
-            tooltip="Run queries"
+            key='run'
+            name={data?.state === LoadingState.Loading ? 'fa fa-spinner' : 'play'}
+            tooltip='Run queries'
             onClick={onRunQuery}
           />
         )}
-        <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange}/>
+        <QueryEditorModeToggle mode={editorMode} onChange={onEditorModeChange} />
       </EditorHeader>
-      <Space v={0.5}/>
+      <Space v={0.5} />
       <EditorRows>
         {editorMode === QueryEditorMode.Code && (
           <>
@@ -181,7 +181,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
               query={query}
               showExplain={explain}
             />
-            {rawQuery && <QueryPreview query={query.expr} withTemplate={templateByDashboard}/>}
+            {rawQuery && <QueryPreview query={query.expr} withTemplate={templateByDashboard} />}
           </>
         )}
         {editorMode === QueryEditorMode.Builder && (
@@ -194,8 +194,8 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
             showExplain={explain}
           />
         )}
-        {trace && <TraceView query={query} datasource={datasource} data={data}/>}
-        <PromQueryBuilderOptions query={query} app={props.app} onChange={onChange} onRunQuery={onRunQuery}/>
+        {trace && <TraceView query={query} datasource={datasource} data={data} />}
+        <PromQueryBuilderOptions query={query} app={props.app} onChange={onChange} onRunQuery={onRunQuery} />
       </EditorRows>
     </>
   );

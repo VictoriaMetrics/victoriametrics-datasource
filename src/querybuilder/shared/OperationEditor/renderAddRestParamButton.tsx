@@ -20,10 +20,10 @@ function renderAddRestParamButton(
       key={`${paramIndex}-2`}
     >
       <Button
-        size="sm"
-        icon="plus"
+        size='sm'
+        icon='plus'
         title={`Add ${title}`}
-        variant="secondary"
+        variant='secondary'
         onClick={onAddRestParam}
         data-testid={`operations.${operationIndex}.add-rest-param`}
       >

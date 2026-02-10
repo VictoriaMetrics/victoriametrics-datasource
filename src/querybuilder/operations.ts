@@ -353,7 +353,7 @@ function labelJoinRenderer(model: QueryBuilderOperation, def: QueryBuilderOperat
     throw 'The separator must be a string';
   }
   const separator = `"${model.params[1]}"`;
-  return `${model.id}(${innerExpr}, "${model.params[0]}", ${separator}, "${model.params.slice(2).join(`", "`)}")`;
+  return `${model.id}(${innerExpr}, "${model.params[0]}", ${separator}, "${model.params.slice(2).join('", "')}")`;
 }
 
 function labelJoinAddOperationHandler<T extends QueryWithOperations>(def: QueryBuilderOperationDef, query: T) {

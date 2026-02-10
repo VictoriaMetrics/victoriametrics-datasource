@@ -100,7 +100,7 @@ describe('PrometheusDatasource', () => {
       const postSettings = cloneDeep(instanceSettings);
       const promDs = new PrometheusDatasource({
         ...postSettings,
-        jsonData: { customQueryParameters: "extra_filter[]={foo: \"bar\"}" }
+        jsonData: { customQueryParameters: 'extra_filter[]={foo: "bar"}' }
       }, templateSrvStub, timeSrvStub);
       promDs.getRequest('api/v1/label/id/values', { bar: 'baz baz', foo: 'foo' });
       expect(fetchMock.mock.calls.length).toBe(1);
@@ -108,7 +108,7 @@ describe('PrometheusDatasource', () => {
       expect(fetchMock.mock.calls[0][0].params).toEqual({
         bar: 'baz baz',
         foo: 'foo',
-        "extra_filter[]": "{foo: \"bar\"}",
+        'extra_filter[]': '{foo: "bar"}',
       });
     });
   });
@@ -591,7 +591,7 @@ describe('PrometheusDatasource for POST', () => {
 
       const graphFrame = toDataFrame(results.data[0]);
       expect(graphFrame.meta?.preferredVisualisationType).toBe('graph');
-      expect(getFieldDisplayName(graphFrame.fields[1], graphFrame)).toEqual("{__name__=\"test\", job=\"testjob\"}");
+      expect(getFieldDisplayName(graphFrame.fields[1], graphFrame)).toEqual('{__name__="test", job="testjob"}');
     });
 
   });
@@ -1045,13 +1045,13 @@ describe('processTargetV2', () => {
     const result = datasource.processTargetV2(target, request);
 
     expect(result).toEqual({
-      "expr": "WITH(\n  sr = sum(rate(request_total[5m]))\n)\nsr",
-      "instant": false,
-      "queryType": "timeSeriesQuery",
-      "range": false,
-      "refId": "A",
-      "requestId": "2A",
-      "utcOffsetSec": 0
+      'expr': 'WITH(\n  sr = sum(rate(request_total[5m]))\n)\nsr',
+      'instant': false,
+      'queryType': 'timeSeriesQuery',
+      'range': false,
+      'refId': 'A',
+      'requestId': '2A',
+      'utcOffsetSec': 0
     });
   });
 

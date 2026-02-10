@@ -1,7 +1,7 @@
-import { QueryBuilderOperationDef } from "../../shared/types";
+import { QueryBuilderOperationDef } from '../../shared/types';
 
-import { getOperationFunctions } from "./operations";
-import { getOverTimeFunctions } from "./overTime";
+import { getOperationFunctions } from './operations';
+import { getOverTimeFunctions } from './overTime';
 
 export function getAggregations(): QueryBuilderOperationDef[] {
   return [

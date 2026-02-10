@@ -23,8 +23,8 @@ import { RadioButtonGroup, Select } from '@grafana/ui';
 
 import { getQueryTypeChangeHandler, getQueryTypeOptions } from '../../components/PromExploreExtraField';
 import { EditorField, EditorRow } from '../../components/QueryEditor';
-import { AutoSizeInput } from "../../components/QueryEditor/AutoSizeInput";
-import { FORMAT_OPTIONS, INTERVAL_FACTOR_OPTIONS } from "../../consts";
+import { AutoSizeInput } from '../../components/QueryEditor/AutoSizeInput';
+import { FORMAT_OPTIONS, INTERVAL_FACTOR_OPTIONS } from '../../consts';
 import { PromQuery } from '../../types';
 import { QueryOptionGroup } from '../shared/QueryOptionGroup';
 
@@ -63,7 +63,7 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
   return (
     <EditorRow>
       <QueryOptionGroup
-        title="Options"
+        title='Options'
         collapsedInfo={getCollapsedInfo(query, formatOption.label!, queryType.label)}
       >
         <PromQueryLegendEditor
@@ -72,7 +72,7 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
           onRunQuery={onRunQuery}
         />
         <EditorField
-          label="Min step"
+          label='Min step'
           tooltip={
             <>
               An additional lower limit for the step parameter of the Prometheus query and for the{' '}
@@ -81,24 +81,24 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
           }
         >
           <AutoSizeInput
-            type="text"
-            aria-label="Set lower limit for the step parameter"
+            type='text'
+            aria-label='Set lower limit for the step parameter'
             placeholder={'auto'}
             minWidth={10}
             onCommitChange={onChangeStep}
             defaultValue={query.interval}
           />
         </EditorField>
-        <EditorField label="Format">
+        <EditorField label='Format'>
           <Select value={formatOption} allowCustomValue onChange={onChangeFormat} options={FORMAT_OPTIONS} />
         </EditorField>
-        <EditorField label="Type">
+        <EditorField label='Type'>
           <RadioButtonGroup options={queryTypeOptions} value={queryTypeValue} onChange={onQueryTypeChange} />
         </EditorField>
         {query.intervalFactor && query.intervalFactor > 1 && (
-          <EditorField label="Resolution">
+          <EditorField label='Resolution'>
             <Select
-              aria-label="Select resolution"
+              aria-label='Select resolution'
               isSearchable={false}
               options={INTERVAL_FACTOR_OPTIONS}
               onChange={onIntervalFactorChange}

@@ -28,7 +28,7 @@ import { useTheme2, ReactMonacoEditor, Monaco, monacoTypes } from '@grafana/ui';
 import { Props } from './MonacoQueryFieldProps';
 import { getOverrideServices } from './getOverrideServices';
 import { getCompletionProvider, getSuggestOptions } from './monaco-completion-provider';
-import { language, languageConfiguration } from "./promql";
+import { language, languageConfiguration } from './promql';
 
 const options: monacoTypes.editor.IStandaloneEditorConstructionOptions = {
   codeLens: false,
@@ -141,7 +141,7 @@ const MonacoQueryField = (props: Props) => {
           ...options,
           readOnly
         }}
-        language="promql"
+        language='promql'
         value={initialValue}
         beforeMount={(monaco) => {
           ensurePromQL(monaco);
@@ -176,7 +176,7 @@ const MonacoQueryField = (props: Props) => {
             const { withTemplates } = lpRef.current;
             const result = withTemplates.map(t => ({
               name: t.label,
-              help: t.comment || "",
+              help: t.comment || '',
               value: t.value
             }))
 
@@ -243,10 +243,10 @@ const MonacoQueryField = (props: Props) => {
 
           // handle: shift + enter
           editor.addAction({
-            id: "execute-shift-enter",
-            label: "Execute",
+            id: 'execute-shift-enter',
+            label: 'Execute',
             keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.Enter],
-            run: () => onRunQueryRef.current(editor.getValue() || "")
+            run: () => onRunQueryRef.current(editor.getValue() || '')
           });
 
           /* Something in this configuration of monaco doesn't bubble up [mod]+K, which the
@@ -261,7 +261,7 @@ const MonacoQueryField = (props: Props) => {
               {
                 range: new monaco.Range(1, 1, 1, 1),
                 contents: [
-                  { value: "**bold** _italics_ regular `code`" }
+                  { value: '**bold** _italics_ regular `code`' }
                 ],
                 options: {
                   className: styles.placeholder,

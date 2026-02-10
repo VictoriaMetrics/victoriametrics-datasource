@@ -1,4 +1,4 @@
-import { TracingData } from "../../../types";
+import { TracingData } from '../../../types';
 
 let traceId = 0;
 

@@ -1,6 +1,6 @@
-import { LabelParamEditor } from "../../components/LabelParamEditor";
-import { createFunction } from "../../operations";
-import { PromOperationId } from "../../types";
+import { LabelParamEditor } from '../../components/LabelParamEditor';
+import { createFunction } from '../../operations';
+import { PromOperationId } from '../../types';
 
 export function getLabelSet() {
   return createFunction({

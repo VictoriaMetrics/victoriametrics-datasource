@@ -18,7 +18,7 @@
 
 import React, { useEffect, HTMLProps, ReactNode } from 'react';
 
-import { Input, measureText } from "@grafana/ui";
+import { Input, measureText } from '@grafana/ui';
 
 export interface Props extends Omit<HTMLProps<HTMLInputElement>, 'prefix' | 'size'> {
   /** Sets the width to a multiple of 8px. Should only be used with inline forms. Setting width of the container is preferred in other cases.*/

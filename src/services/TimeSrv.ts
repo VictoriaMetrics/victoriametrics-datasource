@@ -41,8 +41,8 @@ import {
 import { getRefreshFromUrl } from '../utils/getRefreshFromUrl';
 import { getShiftedTimeRange, getZoomedTimeRange } from '../utils/timePicker';
 
-import appEvents from "./app_events";
-import { contextSrv, ContextSrv } from "./context_srv";
+import appEvents from './app_events';
+import { contextSrv, ContextSrv } from './context_srv';
 
 declare module '@grafana/runtime' {
   interface TemplateSrv {
@@ -209,7 +209,7 @@ export class TimeSrv {
 
   private initTimeFromUrl() {
     // If we are in a public dashboard ignore the time range in the url
-    if (config.publicDashboardAccessToken !== "") {
+    if (config.publicDashboardAccessToken !== '') {
       return;
     }
 
@@ -341,7 +341,7 @@ export class TimeSrv {
 
   setTime(time: RawTimeRange, updateUrl = true) {
     // If we are in a public dashboard ignore time range changes
-    if (config.publicDashboardAccessToken !== "") {
+    if (config.publicDashboardAccessToken !== '') {
       return;
     }
 

@@ -255,13 +255,13 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
     <>
       <InlineFieldRow>
         <InlineField
-          label="Query type"
+          label='Query type'
           labelWidth={20}
           tooltip={<div>The data source plugin provides the following query types for template variables.</div>}
         >
           <Select
-            placeholder="Select query type"
-            aria-label="Query type"
+            placeholder='Select query type'
+            aria-label='Query type'
             onChange={onQueryTypeChange}
             value={qryType}
             options={variableOptions}
@@ -274,10 +274,10 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
         <>
           <InlineFieldRow>
             <InlineField
-              label="Label"
+              label='Label'
               labelWidth={20}
               required
-              aria-labelledby="label-select"
+              aria-labelledby='label-select'
               tooltip={
                 <div>
                   Returns a list of label values for the label name in all metrics unless the metric is specified.
@@ -285,7 +285,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
               }
             >
               <Select
-                aria-label="label-select"
+                aria-label='label-select'
                 onChange={onLabelChange}
                 value={label}
                 options={labelOptions}
@@ -308,15 +308,15 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
       {qryType === QueryType.LabelNames && (
         <InlineFieldRow>
           <InlineField
-            label="Metric regex"
+            label='Metric regex'
             labelWidth={20}
-            aria-labelledby="Metric regex"
+            aria-labelledby='Metric regex'
             tooltip={<div>Returns a list of label names, optionally filtering by specified metric regex.</div>}
           >
             <Input
-              type="text"
-              aria-label="Metric regex"
-              placeholder="Metric regex"
+              type='text'
+              aria-label='Metric regex'
+              placeholder='Metric regex'
               value={labelNamesMatch}
               onBlur={(event) => {
                 setLabelNamesMatch(event.currentTarget.value);
@@ -334,15 +334,15 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
       {qryType === QueryType.MetricNames && (
         <InlineFieldRow>
           <InlineField
-            label="Metric regex"
+            label='Metric regex'
             labelWidth={20}
-            aria-labelledby="Metric selector"
+            aria-labelledby='Metric selector'
             tooltip={<div>Returns a list of metrics matching the specified metric regex.</div>}
           >
             <Input
-              type="text"
-              aria-label="Metric selector"
-              placeholder="Metric regex"
+              type='text'
+              aria-label='Metric selector'
+              placeholder='Metric regex'
               value={metric}
               onChange={(e) => {
                 setMetric(e.currentTarget.value);
@@ -360,7 +360,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
       {qryType === QueryType.VarQueryResult && (
         <InlineFieldRow>
           <InlineField
-            label="Query"
+            label='Query'
             labelWidth={20}
             tooltip={
               <div>
@@ -370,9 +370,9 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
             }
           >
             <TextArea
-              type="text"
-              aria-label="Prometheus Query"
-              placeholder="Prometheus Query"
+              type='text'
+              aria-label='Prometheus Query'
+              placeholder='Prometheus Query'
               value={varQuery}
               onChange={onVarQueryChange}
               onBlur={() => {
@@ -389,7 +389,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
       {qryType === QueryType.SeriesQuery && (
         <InlineFieldRow>
           <InlineField
-            label="Series Query"
+            label='Series Query'
             labelWidth={20}
             tooltip={
               <div>
@@ -401,9 +401,9 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
             }
           >
             <Input
-              type="text"
-              aria-label="Series Query"
-              placeholder="Series Query"
+              type='text'
+              aria-label='Series Query'
+              placeholder='Series Query'
               value={seriesQuery}
               onChange={onSeriesQueryChange}
               onBlur={() => {
@@ -420,7 +420,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
       {qryType === QueryType.ClassicQuery && (
         <InlineFieldRow>
           <InlineField
-            label="Classic Query"
+            label='Classic Query'
             labelWidth={20}
             tooltip={
               <div>
@@ -430,9 +430,9 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
             }
           >
             <Input
-              type="text"
-              aria-label="Classic Query"
-              placeholder="Classic Query"
+              type='text'
+              aria-label='Classic Query'
+              placeholder='Classic Query'
               value={classicQuery}
               onChange={onClassicQueryChange}
               onBlur={() => {

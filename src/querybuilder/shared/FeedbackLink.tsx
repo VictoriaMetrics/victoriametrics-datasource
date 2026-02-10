@@ -42,16 +42,16 @@ export function FeedbackLink({ feedbackUrl }: Props) {
       <a
         href={feedbackUrl}
         className={styles.link}
-        title="This query builder is new, please let us know how we can improve it"
-        target="_blank"
-        rel="noreferrer noopener"
+        title='This query builder is new, please let us know how we can improve it'
+        target='_blank'
+        rel='noreferrer noopener'
         onClick={() =>
           reportInteraction('grafana_feedback_link_clicked', {
             link: feedbackUrl,
           })
         }
       >
-        <Icon name="comment-alt-message" /> Give feedback
+        <Icon name='comment-alt-message' /> Give feedback
       </a>
     </Stack>
   );

@@ -24,7 +24,7 @@ const ROLLUP_FUNCTIONS: CompletionItem[] = [
     label: 'absent_over_time',
     insertText: 'absent_over_time',
     detail: 'absent_over_time(series_selector[d])',
-    documentation: 'returns 1 if the given lookbehind window `d` doesn\'t contain raw samples. Otherwise it returns an empty result. See also `present_over_time`.'
+    documentation: "returns 1 if the given lookbehind window `d` doesn't contain raw samples. Otherwise it returns an empty result. See also `present_over_time`."
   },
   {
     label: 'aggr_over_time',
@@ -54,7 +54,7 @@ const ROLLUP_FUNCTIONS: CompletionItem[] = [
     label: 'changes_prometheus',
     insertText: 'changes_prometheus',
     detail: 'changes_prometheus(series_selector[d])',
-    documentation: 'calculates the number of times the raw samples changed on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). It doesn\'t take into account the change from the last sample before the given lookbehind window `d` in the same way as Prometheus does. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: "calculates the number of times the raw samples changed on the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). It doesn't take into account the change from the last sample before the given lookbehind window `d` in the same way as Prometheus does. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`."
   },
   {
     label: 'count_eq_over_time',
@@ -72,13 +72,13 @@ const ROLLUP_FUNCTIONS: CompletionItem[] = [
     label: 'count_le_over_time',
     insertText: 'count_le_over_time',
     detail: 'count_le_over_time(series_selector[d], le)',
-    documentation: 'calculates the number of raw samples on the given lookbehind window `d`, which don\'t exceed `le`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: "calculates the number of raw samples on the given lookbehind window `d`, which don't exceed `le`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`."
   },
   {
     label: 'count_ne_over_time',
     insertText: 'count_ne_over_time',
     detail: 'count_ne_over_time(series_selector[d], ne)',
-    documentation: 'calculates the number of raw samples on the given lookbehind window `d`, which aren\'t equal to `ne`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: "calculates the number of raw samples on the given lookbehind window `d`, which aren't equal to `ne`. It is calculated independently per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). Metric names are stripped from the resulting rollups. Add `keep_metric_names`."
   },
   {
     label: 'count_over_time',
@@ -138,7 +138,7 @@ const ROLLUP_FUNCTIONS: CompletionItem[] = [
     label: 'duration_over_time',
     insertText: 'duration_over_time',
     detail: 'duration_over_time(series_selector[d], max_interval)',
-    documentation: 'returns the duration in seconds when time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering) were present over the given lookbehind window `d`. It is expected that intervals between adjacent samples per each series don\'t exceed the `max_interval`. Otherwise such intervals are considered as gaps and aren\'t counted. See also `lifetime`.'
+    documentation: "returns the duration in seconds when time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering) were present over the given lookbehind window `d`. It is expected that intervals between adjacent samples per each series don't exceed the `max_interval`. Otherwise such intervals are considered as gaps and aren't counted. See also `lifetime`."
   },
   {
     label: 'first_over_time',
@@ -198,7 +198,7 @@ const ROLLUP_FUNCTIONS: CompletionItem[] = [
     label: 'increase_prometheus',
     insertText: 'increase_prometheus',
     detail: 'increase_prometheus(series_selector[d])',
-    documentation: 'calculates the increase over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#counter). It doesn\'t take into account the last sample before the given lookbehind window `d` when calculating the result in the same way as Prometheus does. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`.'
+    documentation: "calculates the increase over the given lookbehind window `d` per each time series returned from the given [series_selector](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#filtering). It is expected that the `series_selector` returns time series of [counter type](https://docs.victoriametrics.com/victoriametrics/keyconcepts/#counter). It doesn't take into account the last sample before the given lookbehind window `d` when calculating the result in the same way as Prometheus does. See [this article](https://medium.com/@romanhavronenko/victoriametrics-promql-compliance-d4318203f51e) for details. Metric names are stripped from the resulting rollups. Add `keep_metric_names`."
   },
   {
     label: 'increase_pure',

@@ -61,7 +61,7 @@ export function EditorList<T>({ items, renderItem, onChange }: EditorListProps<T
           )}
         </div>
       ))}
-      <Button onClick={onAddItem} variant="secondary" size="md" icon="plus" aria-label="Add" type="button" />
+      <Button onClick={onAddItem} variant='secondary' size='md' icon='plus' aria-label='Add' type='button' />
     </Stack>
   );
 }

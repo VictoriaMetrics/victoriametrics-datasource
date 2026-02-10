@@ -106,7 +106,7 @@ export abstract class LokiAndPromQueryModellerBase implements VisualQueryModelle
       expr += `${filter.label}${filter.op}"${filter.value}"`;
     }
 
-    return expr + `}`;
+    return expr + '}';
   }
 
   renderQuery(query: PromLokiVisualQuery, nested?: boolean) {

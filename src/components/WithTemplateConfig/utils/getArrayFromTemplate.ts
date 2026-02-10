@@ -1,6 +1,6 @@
-import { WithTemplate } from "../types";
+import { WithTemplate } from '../types';
 
-import splitByCommaOutsideBrackets from "./splitByCommaOutsideBrackets";
+import splitByCommaOutsideBrackets from './splitByCommaOutsideBrackets';
 
 export const getArrayFromTemplate = (template?: WithTemplate) => {
   if (!template) {return []}
@@ -28,7 +28,7 @@ export const formatTemplateString = (expr: string) => {
   return values.join(',\n')
 }
 
-export const mergeTemplateWithQuery = (query = "", template?: WithTemplate) => {
+export const mergeTemplateWithQuery = (query = '', template?: WithTemplate) => {
   const templateExpr = template?.expr
   if (!templateExpr) {return query}
   const labels = getArrayFromTemplate(template).map(a => a.label)

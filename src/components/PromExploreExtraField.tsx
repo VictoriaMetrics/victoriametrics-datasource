@@ -54,7 +54,7 @@ export const PromExploreExtraField: React.FC<PromExploreExtraFieldProps> = memo(
     const onQueryTypeChange = getQueryTypeChangeHandler(query, onChange);
 
     return (
-      <div aria-label="Prometheus extra field" className="gf-form-inline" data-testid={testIds.extraFieldEditor}>
+      <div aria-label='Prometheus extra field' className='gf-form-inline' data-testid={testIds.extraFieldEditor}>
         {/*Query type field*/}
         <div
           data-testid={testIds.queryTypeField}
@@ -64,9 +64,9 @@ export const PromExploreExtraField: React.FC<PromExploreExtraFieldProps> = memo(
               flex-wrap: nowrap;
             `
           )}
-          aria-label="Query type field"
+          aria-label='Query type field'
         >
-          <InlineFormLabel width="auto">Query type</InlineFormLabel>
+          <InlineFormLabel width='auto'>Query type</InlineFormLabel>
 
           <RadioButtonGroup
             options={rangeOptions}
@@ -83,7 +83,7 @@ export const PromExploreExtraField: React.FC<PromExploreExtraFieldProps> = memo(
               flex-wrap: nowrap;
             `
           )}
-          aria-label="Step field"
+          aria-label='Step field'
         >
           <InlineFormLabel
             width={6}
@@ -95,7 +95,7 @@ export const PromExploreExtraField: React.FC<PromExploreExtraFieldProps> = memo(
           </InlineFormLabel>
           <input
             type={'text'}
-            className="gf-form-input width-4"
+            className='gf-form-input width-4'
             placeholder={'auto'}
             onChange={onStepChange}
             onKeyDown={onReturnKeyDown}

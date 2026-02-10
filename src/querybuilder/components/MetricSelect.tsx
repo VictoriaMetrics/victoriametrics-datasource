@@ -106,10 +106,10 @@ export function MetricSelect({ query, onChange, onGetMetrics, datasource, variab
   const metricSelect = () => (
     <div className={styles.selectWrapper}>
       <Select
-        inputId="vm-metric-select"
+        inputId='vm-metric-select'
         className={styles.select}
         value={query.metric ? toOption(query.metric) : undefined}
-        placeholder="Select metric"
+        placeholder='Select metric'
         allowCustomValue
         formatOptionLabel={formatOptionLabel}
         filterOption={customFilterOption}
@@ -119,10 +119,10 @@ export function MetricSelect({ query, onChange, onGetMetrics, datasource, variab
         onChange={handleChange}
       />
       <Button
-        aria-label={"Open metrics explorer"}
-        icon={"book-open"}
-        variant={"secondary"}
-        tooltip={"Open metrics explorer"}
+        aria-label={'Open metrics explorer'}
+        icon={'book-open'}
+        variant={'secondary'}
+        tooltip={'Open metrics explorer'}
         onClick={() => setShowMetricsExplorer(true)}
         className={styles.metricExplorerButton}
       />
@@ -134,7 +134,7 @@ export function MetricSelect({ query, onChange, onGetMetrics, datasource, variab
       {variableEditor ? (
         <InlineFieldRow>
           <InlineField
-            label="Metric"
+            label='Metric'
             labelWidth={20}
             tooltip={<div>Optional: returns a list of label values for the label name in the specified metric.</div>}
           >
@@ -143,7 +143,7 @@ export function MetricSelect({ query, onChange, onGetMetrics, datasource, variab
         </InlineFieldRow>
       ) : (
         <EditorFieldGroup>
-          <EditorField label="Metric">{metricSelect()}</EditorField>
+          <EditorField label='Metric'>{metricSelect()}</EditorField>
         </EditorFieldGroup>
       )}
       <MetricsExplorerModal

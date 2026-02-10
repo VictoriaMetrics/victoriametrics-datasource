@@ -38,7 +38,7 @@ export const PromQueryBuilderExplained = React.memo<Props>(({ query }) => {
   const lang = { grammar: metricsqlGrammar, name: 'promql' };
 
   return (
-    <Stack gap={0.5} direction="column">
+    <Stack gap={0.5} direction='column'>
       <OperationExplainedBox
         stepNumber={1}
         title={<RawQuery query={`${visQuery.metric} ${promQueryModeller.renderLabels(visQuery.labels)}`} lang={lang} />}

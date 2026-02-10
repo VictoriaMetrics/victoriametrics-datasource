@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import { Button, Icon, Modal, useStyles2 } from "@grafana/ui";
+import { Button, Icon, Modal, useStyles2 } from '@grafana/ui';
 
-import { Stack } from "../../../components/QueryEditor";
+import { Stack } from '../../../components/QueryEditor';
 
-import NestedNav from "./NestedNav/NestedNav";
-import Trace from "./Trace";
+import NestedNav from './NestedNav/NestedNav';
+import Trace from './Trace';
 import getStyles from './style'
 
 
@@ -13,7 +13,7 @@ export const TraceItem = ({ trace, id, queryExpr }: { trace: Trace, id: number, 
   const styles = useStyles2(getStyles);
   const [openModal, setOpenModal] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [copyError, setCopyError] = useState("")
+  const [copyError, setCopyError] = useState('')
 
   const handleOpenModal = () => {
     setOpenModal(true)
@@ -54,12 +54,12 @@ export const TraceItem = ({ trace, id, queryExpr }: { trace: Trace, id: number, 
   }
 
   return (
-    <Stack gap={0} direction="column" key={id}>
+    <Stack gap={0} direction='column' key={id}>
       <div className={styles.header}>
         <span>Trace for <b>{queryExpr}</b></span>
         <Button
-          variant="secondary"
-          size="sm"
+          variant='secondary'
+          size='sm'
           onClick={handleOpenModal}
         >
           Show JSON
@@ -79,16 +79,16 @@ export const TraceItem = ({ trace, id, queryExpr }: { trace: Trace, id: number, 
       >
         <div>
           <pre className={styles.json}>
-            <code lang="json">{trace.JSON}</code>
+            <code lang='json'>{trace.JSON}</code>
           </pre>
           <Modal.ButtonRow>
             {copyError && (<div className={styles.error}>
-              <Icon name={"exclamation-triangle"} size="sm"/>
+              <Icon name={'exclamation-triangle'} size='sm' />
               <span>{copyError}</span>
             </div>)}
             <Button
-              variant={copied ? "success" : "primary"}
-              size="sm"
+              variant={copied ? 'success' : 'primary'}
+              size='sm'
               onClick={handleCopyToClipboard}
               icon={copied ? 'check' : 'copy'}
             >

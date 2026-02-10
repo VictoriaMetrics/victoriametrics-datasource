@@ -38,7 +38,7 @@ export function RawQuery({ query, lang }: Props) {
   return (
     <div
       className={cx(styles.editorField, 'prism-syntax-highlight')}
-      aria-label="selector"
+      aria-label='selector'
       dangerouslySetInnerHTML={{ __html: highlighted }}
     />
   );

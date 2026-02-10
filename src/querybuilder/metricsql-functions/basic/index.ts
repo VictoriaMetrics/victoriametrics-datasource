@@ -1,6 +1,6 @@
-import { createFunction } from "../../operations";
-import { QueryBuilderOperationDef } from "../../shared/types";
-import { PromOperationId } from "../../types";
+import { createFunction } from '../../operations';
+import { QueryBuilderOperationDef } from '../../shared/types';
+import { PromOperationId } from '../../types';
 
 const basicFunctions = [
   PromOperationId.Abs,

@@ -166,15 +166,15 @@ export const AzureCredentialsForm: FunctionComponent<Props> = (props: Props) => 
   };
 
   return (
-    <div className="gf-form-group">
+    <div className='gf-form-group'>
       {props.managedIdentityEnabled && (
-        <div className="gf-form-inline">
-          <div className="gf-form">
-            <InlineFormLabel className="width-12" tooltip="Choose the type of authentication to Azure services">
+        <div className='gf-form-inline'>
+          <div className='gf-form'>
+            <InlineFormLabel className='width-12' tooltip='Choose the type of authentication to Azure services'>
               Authentication
             </InlineFormLabel>
             <Select
-              className="width-15"
+              className='width-15'
               value={authTypeOptions.find((opt) => opt.value === credentials.authType)}
               options={authTypeOptions}
               onChange={onAuthTypeChange}
@@ -186,13 +186,13 @@ export const AzureCredentialsForm: FunctionComponent<Props> = (props: Props) => 
       {credentials.authType === 'clientsecret' && (
         <>
           {azureCloudOptions && (
-            <div className="gf-form-inline">
-              <div className="gf-form">
-                <InlineFormLabel className="width-12" tooltip="Choose an Azure Cloud">
+            <div className='gf-form-inline'>
+              <div className='gf-form'>
+                <InlineFormLabel className='width-12' tooltip='Choose an Azure Cloud'>
                   Azure Cloud
                 </InlineFormLabel>
                 <Select
-                  className="width-15"
+                  className='width-15'
                   value={azureCloudOptions.find((opt) => opt.value === credentials.azureCloud)}
                   options={azureCloudOptions}
                   onChange={onAzureCloudChange}
@@ -201,13 +201,13 @@ export const AzureCredentialsForm: FunctionComponent<Props> = (props: Props) => 
               </div>
             </div>
           )}
-          <div className="gf-form-inline">
-            <div className="gf-form">
-              <InlineFormLabel className="width-12">Directory (tenant) ID</InlineFormLabel>
-              <div className="width-15">
+          <div className='gf-form-inline'>
+            <div className='gf-form'>
+              <InlineFormLabel className='width-12'>Directory (tenant) ID</InlineFormLabel>
+              <div className='width-15'>
                 <Input
-                  className="width-30"
-                  placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+                  className='width-30'
+                  placeholder='XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
                   value={credentials.tenantId || ''}
                   onChange={onTenantIdChange}
                   disabled={disabled}
@@ -215,13 +215,13 @@ export const AzureCredentialsForm: FunctionComponent<Props> = (props: Props) => 
               </div>
             </div>
           </div>
-          <div className="gf-form-inline">
-            <div className="gf-form">
-              <InlineFormLabel className="width-12">Application (client) ID</InlineFormLabel>
-              <div className="width-15">
+          <div className='gf-form-inline'>
+            <div className='gf-form'>
+              <InlineFormLabel className='width-12'>Application (client) ID</InlineFormLabel>
+              <div className='width-15'>
                 <Input
-                  className="width-30"
-                  placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+                  className='width-30'
+                  placeholder='XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
                   value={credentials.clientId || ''}
                   onChange={onClientIdChange}
                   disabled={disabled}
@@ -230,17 +230,17 @@ export const AzureCredentialsForm: FunctionComponent<Props> = (props: Props) => 
             </div>
           </div>
           {typeof credentials.clientSecret === 'symbol' ? (
-            <div className="gf-form-inline">
-              <div className="gf-form">
-                <InlineFormLabel htmlFor="azure-client-secret" className="width-12">
+            <div className='gf-form-inline'>
+              <div className='gf-form'>
+                <InlineFormLabel htmlFor='azure-client-secret' className='width-12'>
                   Client Secret
                 </InlineFormLabel>
-                <Input id="azure-client-secret" className="width-25" placeholder="configured" disabled={true} />
+                <Input id='azure-client-secret' className='width-25' placeholder='configured' disabled={true} />
               </div>
               {!disabled && (
-                <div className="gf-form">
-                  <div className="max-width-30 gf-form-inline">
-                    <Button variant="secondary" type="button" onClick={onClientSecretReset}>
+                <div className='gf-form'>
+                  <div className='max-width-30 gf-form-inline'>
+                    <Button variant='secondary' type='button' onClick={onClientSecretReset}>
                       reset
                     </Button>
                   </div>
@@ -248,13 +248,13 @@ export const AzureCredentialsForm: FunctionComponent<Props> = (props: Props) => 
               )}
             </div>
           ) : (
-            <div className="gf-form-inline">
-              <div className="gf-form">
-                <InlineFormLabel className="width-12">Client Secret</InlineFormLabel>
-                <div className="width-15">
+            <div className='gf-form-inline'>
+              <div className='gf-form'>
+                <InlineFormLabel className='width-12'>Client Secret</InlineFormLabel>
+                <div className='width-15'>
                   <Input
-                    className="width-30"
-                    placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+                    className='width-30'
+                    placeholder='XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
                     value={credentials.clientSecret || ''}
                     onChange={onClientSecretChange}
                     disabled={disabled}
@@ -267,10 +267,10 @@ export const AzureCredentialsForm: FunctionComponent<Props> = (props: Props) => 
       )}
       {getSubscriptions && (
         <>
-          <div className="gf-form-inline">
-            <div className="gf-form">
-              <InlineFormLabel className="width-12">Default Subscription</InlineFormLabel>
-              <div className="width-25">
+          <div className='gf-form-inline'>
+            <div className='gf-form'>
+              <InlineFormLabel className='width-12'>Default Subscription</InlineFormLabel>
+              <div className='width-25'>
                 <Select
                   value={
                     credentials.defaultSubscriptionId
@@ -284,13 +284,13 @@ export const AzureCredentialsForm: FunctionComponent<Props> = (props: Props) => 
               </div>
             </div>
           </div>
-          <div className="gf-form-inline">
-            <div className="gf-form">
-              <div className="max-width-30 gf-form-inline">
+          <div className='gf-form-inline'>
+            <div className='gf-form'>
+              <div className='max-width-30 gf-form-inline'>
                 <Button
-                  variant="secondary"
-                  size="sm"
-                  type="button"
+                  variant='secondary'
+                  size='sm'
+                  type='button'
                   onClick={onLoadSubscriptions}
                   disabled={!hasRequiredFields}
                 >

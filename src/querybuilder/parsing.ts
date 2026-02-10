@@ -28,7 +28,7 @@ import {
 } from 'lezer-metricsql';
 
 import { binaryScalarOperatorToOperatorName } from './binaryScalarOperations';
-import { overTimeFunctionNames }  from "./metricsql-functions/aggregations/overTime";
+import { overTimeFunctionNames }  from './metricsql-functions/aggregations/overTime';
 import {
   ErrorId,
   ErrorName,
@@ -256,7 +256,7 @@ function handleAggregation(expr: string, node: SyntaxNode, context: InternalCont
   const labels = [];
 
   if (modifier) {
-    const byModifier = modifier.getChild(`By`);
+    const byModifier = modifier.getChild('By');
     if (byModifier && funcName) {
       funcName = `__${funcName}_by`;
     }

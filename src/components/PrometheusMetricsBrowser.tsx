@@ -467,7 +467,7 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
     if (labels.length === 0) {
       return (
         <div className={styles.wrapper}>
-          <LoadingPlaceholder text="Loading labels..." />
+          <LoadingPlaceholder text='Loading labels...' />
         </div>
       );
     }
@@ -501,18 +501,18 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
 
     return (
       <div className={styles.wrapper}>
-        <HorizontalGroup align="flex-start" spacing="lg">
+        <HorizontalGroup align='flex-start' spacing='lg'>
           <div>
             <div className={styles.section}>
-              <Label description="Once a metric is selected only possible labels are shown.">1. Select a metric</Label>
+              <Label description='Once a metric is selected only possible labels are shown.'>1. Select a metric</Label>
               <div>
                 <Input
                   onChange={this.onChangeMetricSearch}
-                  aria-label="Filter expression for metric"
+                  aria-label='Filter expression for metric'
                   value={metricSearchTerm}
                 />
               </div>
-              <div role="list" className={styles.valueListWrapper}>
+              <div role='list' className={styles.valueListWrapper}>
                 <List
                   defaultHeight={Math.min(450, metricCount * LIST_ITEM_SIZE)}
                   rowCount={metricCount}
@@ -546,13 +546,13 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
 
           <div>
             <div className={styles.section}>
-              <Label description="Once label values are selected, only possible label combinations are shown.">
+              <Label description='Once label values are selected, only possible label combinations are shown.'>
                 2. Select labels to search in
               </Label>
               <div>
                 <Input
                   onChange={this.onChangeLabelSearch}
-                  aria-label="Filter expression for label"
+                  aria-label='Filter expression for label'
                   value={labelSearchTerm}
                 />
               </div>
@@ -573,20 +573,20 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
               </div>
             </div>
             <div className={styles.section}>
-              <Label description="Use the search field to find values across selected labels.">
+              <Label description='Use the search field to find values across selected labels.'>
                 3. Select (multiple) values for your labels
               </Label>
               <div>
                 <Input
                   onChange={this.onChangeValueSearch}
-                  aria-label="Filter expression for label values"
+                  aria-label='Filter expression for label values'
                   value={valueSearchTerm}
                 />
               </div>
               <div className={styles.valueListArea} ref={this.valueListsRef}>
                 {selectedLabels.map((label) => (
                   <div
-                    role="list"
+                    role='list'
                     key={label.name}
                     aria-label={`Values for ${label.name}`}
                     className={styles.valueListWrapper}
@@ -637,31 +637,31 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
 
         <div className={styles.section}>
           <Label>4. Resulting selector</Label>
-          <div aria-label="selector" className={styles.selector}>
+          <div aria-label='selector' className={styles.selector}>
             {selector}
           </div>
           {validationStatus && <div className={styles.validationStatus}>{validationStatus}</div>}
           <HorizontalGroup>
-            <Button aria-label="Use selector for query button" disabled={empty} onClick={this.onClickRunQuery}>
+            <Button aria-label='Use selector for query button' disabled={empty} onClick={this.onClickRunQuery}>
               Use query
             </Button>
             <Button
-              aria-label="Use selector as metrics button"
-              variant="secondary"
+              aria-label='Use selector as metrics button'
+              variant='secondary'
               disabled={empty}
               onClick={this.onClickRunRateQuery}
             >
               Use as rate query
             </Button>
             <Button
-              aria-label="Validate submit button"
-              variant="secondary"
+              aria-label='Validate submit button'
+              variant='secondary'
               disabled={empty}
               onClick={this.onClickValidate}
             >
               Validate selector
             </Button>
-            <Button aria-label="Selector clear button" variant="secondary" onClick={this.onClickClear}>
+            <Button aria-label='Selector clear button' variant='secondary' onClick={this.onClickClear}>
               Clear
             </Button>
             <div className={cx(styles.status, (status || error) && styles.statusShowing)}>

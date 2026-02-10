@@ -21,7 +21,7 @@ import React, { useState } from 'react';
 import { DataSourceApi, SelectableValue, toOption } from '@grafana/data';
 import { Select } from '@grafana/ui';
 
-import { DATASOURCE_TYPE } from "../../consts";
+import { DATASOURCE_TYPE } from '../../consts';
 import { promQueryModeller } from '../PromQueryModeller';
 import { getOperationParamId } from '../shared/operationUtils';
 import { QueryBuilderLabelFilter, QueryBuilderOperationParamEditorProps } from '../shared/types';
@@ -52,8 +52,8 @@ export function LabelParamEditor({
       }}
       isLoading={state.isLoading}
       allowCustomValue
-      noOptionsMessage="No labels found"
-      loadingMessage="Loading labels"
+      noOptionsMessage='No labels found'
+      loadingMessage='Loading labels'
       options={state.options}
       value={toOption(value as string)}
       onChange={(value) => onChange(index, value.value!)}

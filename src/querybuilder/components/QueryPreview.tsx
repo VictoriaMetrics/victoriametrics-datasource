@@ -19,8 +19,8 @@
 import React from 'react';
 
 import { EditorRow, EditorFieldGroup, EditorField } from '../../components/QueryEditor';
-import { WithTemplate } from "../../components/WithTemplateConfig/types";
-import { mergeTemplateWithQuery } from "../../components/WithTemplateConfig/utils/getArrayFromTemplate";
+import { WithTemplate } from '../../components/WithTemplateConfig/types';
+import { mergeTemplateWithQuery } from '../../components/WithTemplateConfig/utils/getArrayFromTemplate';
 import metricsqlGrammar from '../../metricsql';
 import { RawQuery } from '../shared/RawQuery';
 
@@ -33,7 +33,7 @@ export function QueryPreview({ query, withTemplate }: Props) {
   return (
     <EditorRow>
       <EditorFieldGroup>
-        <EditorField label="Raw query">
+        <EditorField label='Raw query'>
           <RawQuery
             query={mergeTemplateWithQuery(query, withTemplate)}
             lang={{ grammar: metricsqlGrammar, name: 'promql' }}

@@ -1,9 +1,9 @@
 import React, { FC, useState, memo } from 'react';
 
-import { IconButton } from "@grafana/ui";
+import { IconButton } from '@grafana/ui';
 
 import { PrometheusDatasource } from '../datasource';
-import { PromQuery } from "../types";
+import { PromQuery } from '../types';
 
 interface Props {
   datasource: PrometheusDatasource;
@@ -19,12 +19,12 @@ enum ResponseStatus {
 const TMP_ID = 'tmp_victoriametrics_prettify_query';
 
 const GRAFANA_VARIABLES = [
-  "$__interval",
-  "$__interval_ms",
-  "$__range",
-  "$__range_s",
-  "$__range_ms",
-  "$__rate_interval",
+  '$__interval',
+  '$__interval_ms',
+  '$__range',
+  '$__range_s',
+  '$__range_ms',
+  '$__rate_interval',
 ];
 
 const GRAFANA_VARIABLES_TPM = new Map(
@@ -84,9 +84,9 @@ const PrettifyQuery: FC<Props> = ({
 
   return (
     <IconButton
-      key="prettify"
+      key='prettify'
       name={loading ? 'fa fa-spinner' : 'brackets-curly'}
-      tooltip="Prettify query"
+      tooltip='Prettify query'
       disabled={loading}
       onClick={handleClickPrettify}
     />

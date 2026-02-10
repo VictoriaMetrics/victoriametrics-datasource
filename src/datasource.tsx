@@ -44,10 +44,10 @@ import {
 import { BackendSrvRequest, DataSourceWithBackend, getTemplateSrv, TemplateSrv } from '@grafana/runtime';
 
 import { addLabelToQuery } from './add_label_to_query';
-import { AnnotationQueryEditor } from "./components/Annotations/AnnotationQueryEditor";
-import { WithTemplate } from "./components/WithTemplateConfig/types";
-import { mergeTemplateWithQuery } from "./components/WithTemplateConfig/utils/getArrayFromTemplate";
-import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from "./consts";
+import { AnnotationQueryEditor } from './components/Annotations/AnnotationQueryEditor';
+import { WithTemplate } from './components/WithTemplateConfig/types';
+import { mergeTemplateWithQuery } from './components/WithTemplateConfig/utils/getArrayFromTemplate';
+import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from './consts';
 import PrometheusLanguageProvider from './language_provider';
 import { expandRecordingRules, getVictoriaMetricsTime } from './language_utils';
 import { renderLegendFormat } from './legend';
@@ -144,7 +144,7 @@ export class PrometheusDatasource
   }
 
   // Use this for tab completion features, won't publish response to other components
-  async getRequest(url: string, params: BackendSrvRequest["params"] = {}, options?: Partial<BackendSrvRequest>) {
+  async getRequest(url: string, params: BackendSrvRequest['params'] = {}, options?: Partial<BackendSrvRequest>) {
     for (const [key, value] of this.customQueryParameters) {
       if (params[key] === undefined) {
         params[key] = value;
@@ -182,7 +182,7 @@ export class PrometheusDatasource
 
   processTargetV2(target: PromQuery, request: DataQueryRequest<PromQuery>) {
     // Apply WITH templates
-    const dashboardUID = request.dashboardUID || request.app || "";
+    const dashboardUID = request.dashboardUID || request.app || '';
     const template = this.withTemplates.find(t => t.uid === dashboardUID);
     const expr = mergeTemplateWithQuery(target.expr, template)
 
@@ -292,7 +292,7 @@ export class PrometheusDatasource
       interval: step || ANNOTATION_QUERY_STEP_DEFAULT,
       refId: 'X',
       datasource,
-      legendFormat: legendFormat ?? ""
+      legendFormat: legendFormat ?? ''
     };
   };
 

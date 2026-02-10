@@ -16,12 +16,12 @@
 import React, { FC, memo, useEffect, useState } from 'react';
 
 import { getDefaultTimeRange, PanelData, rangeUtil, textUtil } from '@grafana/data';
-import { IconButton } from "@grafana/ui";
+import { IconButton } from '@grafana/ui';
 
-import { mergeTemplateWithQuery } from "../components/WithTemplateConfig/utils/getArrayFromTemplate";
+import { mergeTemplateWithQuery } from '../components/WithTemplateConfig/utils/getArrayFromTemplate';
 import { PrometheusDatasource } from '../datasource';
 import { PromQuery } from '../types';
-import { getDurationFromMilliseconds } from "../utils/time";
+import { getDurationFromMilliseconds } from '../utils/time';
 
 interface Props {
   datasource: PrometheusDatasource;
@@ -31,24 +31,24 @@ interface Props {
 }
 
 export const relativeTimeOptionsVMUI = [
-  { title: "Last 5 minutes", duration: "5m" },
-  { title: "Last 15 minutes", duration: "15m" },
-  { title: "Last 30 minutes", duration: "30m" },
-  { title: "Last 1 hour", duration: "1h" },
-  { title: "Last 3 hours", duration: "3h" },
-  { title: "Last 6 hours", duration: "6h" },
-  { title: "Last 12 hours", duration: "12h" },
-  { title: "Last 24 hours", duration: "24h" },
-  { title: "Last 2 days", duration: "2d" },
-  { title: "Last 7 days", duration: "7d" },
-  { title: "Last 30 days", duration: "30d" },
-  { title: "Last 90 days", duration: "90d" },
-  { title: "Last 180 days", duration: "180d" },
-  { title: "Last 1 year", duration: "1y" },
-  { title: "Yesterday", duration: "1d" },
-  { title: "Today", duration: "1d" },
+  { title: 'Last 5 minutes', duration: '5m' },
+  { title: 'Last 15 minutes', duration: '15m' },
+  { title: 'Last 30 minutes', duration: '30m' },
+  { title: 'Last 1 hour', duration: '1h' },
+  { title: 'Last 3 hours', duration: '3h' },
+  { title: 'Last 6 hours', duration: '6h' },
+  { title: 'Last 12 hours', duration: '12h' },
+  { title: 'Last 24 hours', duration: '24h' },
+  { title: 'Last 2 days', duration: '2d' },
+  { title: 'Last 7 days', duration: '7d' },
+  { title: 'Last 30 days', duration: '30d' },
+  { title: 'Last 90 days', duration: '90d' },
+  { title: 'Last 180 days', duration: '180d' },
+  { title: 'Last 1 year', duration: '1y' },
+  { title: 'Yesterday', duration: '1d' },
+  { title: 'Today', duration: '1d' },
 ].map(o => ({
-  id: o.title.replace(/\s/g, "_").toLocaleLowerCase(),
+  id: o.title.replace(/\s/g, '_').toLocaleLowerCase(),
   ...o
 }))
 
@@ -130,14 +130,14 @@ const VmuiLink: FC<Props> = ({
   return (
     <a
       href={textUtil.sanitizeUrl(href)}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      target='_blank'
+      rel='noopener noreferrer'
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
     >
       <IconButton
-        key="vmui"
-        name="external-link-alt"
-        tooltip="Run in vmui"
+        key='vmui'
+        name='external-link-alt'
+        tooltip='Run in vmui'
       />
     </a>
   );

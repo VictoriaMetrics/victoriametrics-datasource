@@ -29,7 +29,7 @@ import {
 } from '@grafana/ui';
 
 import { PrometheusDatasource } from '../datasource';
-import PromQlLanguageProvider from "../language_provider";
+import PromQlLanguageProvider from '../language_provider';
 import { roundMsToMin } from '../language_utils';
 import { PromOptions, PromQuery } from '../types';
 import {
@@ -38,7 +38,7 @@ import {
   makePromiseCancelable,
 } from '../utils/CancelablePromise';
 
-import { LocalStorageValueProvider } from "./LocalStorageValueProvider";
+import { LocalStorageValueProvider } from './LocalStorageValueProvider';
 import { PrometheusMetricsBrowser } from './PrometheusMetricsBrowser';
 import { MonacoQueryFieldWrapper } from './monaco-query-field/MonacoQueryFieldWrapper';
 
@@ -248,20 +248,20 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
           return (
             <>
               <div
-                className="gf-form-inline gf-form-inline--xs-view-flex-column flex-grow-1"
+                className='gf-form-inline gf-form-inline--xs-view-flex-column flex-grow-1'
                 data-testid={this.props['data-testid']}
               >
                 <button
-                  className="gf-form-label query-keyword pointer"
+                  className='gf-form-label query-keyword pointer'
                   onClick={this.onClickChooserButton}
                   disabled={buttonDisabled}
-                  type="button"
+                  type='button'
                 >
                   {chooserText}
                   <Icon name={labelBrowserVisible ? 'angle-down' : 'angle-right'} />
                 </button>
 
-                <div className="gf-form gf-form--grow flex-shrink-1 min-width-15">
+                <div className='gf-form gf-form--grow flex-shrink-1 min-width-15'>
                   <MonacoQueryFieldWrapper
                     runQueryOnBlur={false}
                     languageProvider={datasource.languageProvider}
@@ -269,12 +269,12 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
                     onChange={this.onChangeQuery}
                     onRunQuery={this.props.onRunQuery}
                     initialValue={query.expr ?? ''}
-                    placeholder="Enter a MetricsQL query…"
+                    placeholder='Enter a MetricsQL query…'
                   />
                 </div>
               </div>
               {labelBrowserVisible && (
-                <div className="gf-form">
+                <div className='gf-form'>
                   <PrometheusMetricsBrowser
                     languageProvider={datasource.languageProvider}
                     onChange={this.onChangeLabelBrowser}
@@ -287,11 +287,11 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
 
               {ExtraFieldElement}
               {hint ? (
-                <div className="query-row-break">
-                  <div className="prom-query-field-info text-warning">
+                <div className='query-row-break'>
+                  <div className='prom-query-field-info text-warning'>
                     {hint.label}{' '}
                     {hint.fix ? (
-                      <a className="text-link muted" onClick={this.onClickHintFix}>
+                      <a className='text-link muted' onClick={this.onClickHintFix}>
                         {hint.fix.label}
                       </a>
                     ) : null}

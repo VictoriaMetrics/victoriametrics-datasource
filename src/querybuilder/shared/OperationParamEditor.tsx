@@ -23,7 +23,7 @@ import { GrafanaTheme2, SelectableValue, toOption } from '@grafana/data';
 import { Button, Checkbox, Select, useStyles2 } from '@grafana/ui';
 
 import { Stack } from '../../components/QueryEditor';
-import { AutoSizeInput } from "../../components/QueryEditor/AutoSizeInput";
+import { AutoSizeInput } from '../../components/QueryEditor/AutoSizeInput';
 
 import { getOperationParamId } from './operationUtils';
 import { QueryBuilderOperationParamDef, QueryBuilderOperationParamEditorProps } from './types';
@@ -102,10 +102,10 @@ function SelectInputParamEditor({
     return (
       <div className={styles.optionalParam}>
         <Button
-          size="sm"
-          variant="secondary"
+          size='sm'
+          variant='secondary'
           title={`Add ${paramDef.name}`}
-          icon="plus"
+          icon='plus'
           onClick={() => onChange(index, selectOptions[0].value)}
         >
           {paramDef.name}
@@ -115,7 +115,7 @@ function SelectInputParamEditor({
   }
 
   return (
-    <Stack gap={0.5} direction="row" alignItems="center" wrap={false}>
+    <Stack gap={0.5} direction='row' alignItems='center' wrap={false}>
       <Select
         id={getOperationParamId(operationIndex, index)}
         value={valueOption}
@@ -127,10 +127,10 @@ function SelectInputParamEditor({
       {paramDef.optional && (
         <Button
           data-testid={`operations.${index}.remove-param`}
-          size="sm"
-          fill="text"
-          icon="times"
-          variant="secondary"
+          size='sm'
+          fill='text'
+          icon='times'
+          variant='secondary'
           title={`Remove ${paramDef.name}`}
           aria-label={`Remove ${paramDef.name}`}
           onClick={() => onChange(index, '')}

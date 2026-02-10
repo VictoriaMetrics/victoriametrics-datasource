@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { IMarkdownString } from "monaco-editor";
+import { IMarkdownString } from 'monaco-editor';
 
 import type { Monaco, monacoTypes } from '@grafana/ui';
 
-import { escapeMetricNameSpecialCharacters } from "../../../language_utils";
+import { escapeMetricNameSpecialCharacters } from '../../../language_utils';
 
 import { CompletionType, DataProvider, getCompletions } from './completions';
 import { getSituation } from './situation';

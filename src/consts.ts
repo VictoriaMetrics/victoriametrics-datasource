@@ -1,6 +1,6 @@
-import { map } from "lodash";
+import { map } from 'lodash';
 
-import { SelectableValue } from "@grafana/data";
+import { SelectableValue } from '@grafana/data';
 
 export const DATASOURCE_TYPE = 'victoriametrics-metrics-datasource'
 export const ANNOTATION_QUERY_STEP_DEFAULT = '60s';

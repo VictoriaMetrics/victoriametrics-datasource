@@ -23,7 +23,7 @@ import { GrafanaTheme2, toOption } from '@grafana/data';
 import { IconButton, Select, useStyles2 } from '@grafana/ui';
 
 import { EditorRows, FlexItem } from '../../components/QueryEditor';
-import { AutoSizeInput } from "../../components/QueryEditor/AutoSizeInput";
+import { AutoSizeInput } from '../../components/QueryEditor/AutoSizeInput';
 import { PrometheusDatasource } from '../../datasource';
 import { binaryScalarDefs } from '../binaryScalarOperations';
 import { PromVisualQueryBinary } from '../types';
@@ -49,7 +49,7 @@ export const NestedQuery = React.memo<Props>((props) => {
       <div className={styles.header}>
         <div className={styles.name}>Operator</div>
         <Select
-          width="auto"
+          width='auto'
           options={operators}
           value={toOption(nestedQuery.operator)}
           onChange={(value) => {
@@ -62,7 +62,7 @@ export const NestedQuery = React.memo<Props>((props) => {
         <div className={styles.name}>Vector matches</div>
         <div className={styles.vectorMatchWrapper}>
           <Select<PromVisualQueryBinary['vectorMatchesType']>
-            width="auto"
+            width='auto'
             value={nestedQuery.vectorMatchesType || 'on'}
             allowCustomValue
             options={[
@@ -90,7 +90,7 @@ export const NestedQuery = React.memo<Props>((props) => {
           />
         </div>
         <FlexItem grow={1} />
-        <IconButton aria-label="" name="times" size="sm" onClick={() => onRemove(index)} />
+        <IconButton aria-label='' name='times' size='sm' onClick={() => onRemove(index)} />
       </div>
       <div className={styles.body}>
         <EditorRows>

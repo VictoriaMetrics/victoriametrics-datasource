@@ -25,11 +25,11 @@ export const AutocompleteSettings = (props: Props) => {
 
   return (
     <>
-      <h3 className="page-heading">Autocomplete</h3>
-      <div className="gf-form-group">
-        <div className="gf-form">
+      <h3 className='page-heading'>Autocomplete</h3>
+      <div className='gf-form-group'>
+        <div className='gf-form'>
           <InlineField
-            label="Use optimized labels API"
+            label='Use optimized labels API'
             labelWidth={28}
             tooltip={
               <>

@@ -66,23 +66,23 @@ export const OperationHeader = React.memo<Props>(
             <FlexItem grow={1} />
             <div className={`${styles.operationHeaderButtons} operation-header-show-on-hover`}>
               <Button
-                icon="angle-down"
-                size="sm"
+                icon='angle-down'
+                size='sm'
                 onClick={onToggleSwitcher}
-                fill="text"
-                variant="secondary"
-                title="Click to view alternative operations"
-                aria-label="View alternative operations"
+                fill='text'
+                variant='secondary'
+                title='Click to view alternative operations'
+                aria-label='View alternative operations'
               />
               <OperationInfoButton def={def} operation={operation} />
               <Button
-                icon="times"
-                size="sm"
+                icon='times'
+                size='sm'
                 onClick={() => onRemove(index)}
-                fill="text"
-                variant="secondary"
-                title="Remove operation"
-                aria-label="Remove operation"
+                fill='text'
+                variant='secondary'
+                title='Remove operation'
+                aria-label='Remove operation'
               />
             </div>
           </>
@@ -92,7 +92,7 @@ export const OperationHeader = React.memo<Props>(
             <Select
               autoFocus
               openMenuOnFocus
-              placeholder="Replace with"
+              placeholder='Replace with'
               options={state.alternatives}
               isOpen={true}
               onCloseMenu={onToggleSwitcher}

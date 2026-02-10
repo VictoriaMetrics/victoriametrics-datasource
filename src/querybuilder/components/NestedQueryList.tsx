@@ -48,7 +48,7 @@ export function NestedQueryList(props: Props) {
   };
 
   return (
-    <Stack direction="column" gap={1}>
+    <Stack direction='column' gap={1}>
       {nestedQueries.map((nestedQuery, index) => (
         <NestedQuery
           key={index.toString()}

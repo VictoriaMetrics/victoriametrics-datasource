@@ -1,10 +1,10 @@
-import { useCallback } from "react";
-import { lastValueFrom } from "rxjs";
+import { useCallback } from 'react';
+import { lastValueFrom } from 'rxjs';
 
-import { DataSourceInstanceSettings } from "@grafana/data";
-import { getBackendSrv } from "@grafana/runtime";
+import { DataSourceInstanceSettings } from '@grafana/data';
+import { getBackendSrv } from '@grafana/runtime';
 
-import { PromOptions } from "../../../types";
+import { PromOptions } from '../../../types';
 
 interface UpdateDatasourceArgs {
   datasourceUID: string;

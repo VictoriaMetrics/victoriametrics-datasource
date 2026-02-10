@@ -47,13 +47,13 @@ export const OperationInfoButton = React.memo<Props>(({ def, operation }) => {
   return (
     <>
       <Button
-        title="Click to show description"
+        title='Click to show description'
         ref={setTriggerRef}
-        icon="info-circle"
-        size="sm"
-        variant="secondary"
-        fill="text"
-        aria-label="Show operation description"
+        icon='info-circle'
+        size='sm'
+        variant='secondary'
+        fill='text'
+        aria-label='Show operation description'
       />
       {visible && (
         <Portal>
@@ -62,12 +62,12 @@ export const OperationInfoButton = React.memo<Props>(({ def, operation }) => {
               <span>{def.renderer(operation, def, '<expr>')}</span>
               <FlexItem grow={1} />
               <Button
-                icon="times"
+                icon='times'
                 onClick={() => setShow(false)}
-                fill="text"
-                variant="secondary"
-                title="Remove operation"
-                aria-label="Remove operation"
+                fill='text'
+                variant='secondary'
+                title='Remove operation'
+                aria-label='Remove operation'
               />
             </div>
             <div

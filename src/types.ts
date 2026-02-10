@@ -19,7 +19,7 @@
 import { DataSourceJsonData, QueryResultMeta, ScopedVars } from '@grafana/data';
 import { DataQuery } from '@grafana/schema';
 
-import { WithTemplate } from "./components/WithTemplateConfig/types";
+import { WithTemplate } from './components/WithTemplateConfig/types';
 import { QueryEditorMode } from './querybuilder/shared/types';
 
 export interface PromQuery extends DataQuery {

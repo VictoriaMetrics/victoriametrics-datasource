@@ -159,7 +159,7 @@ export function getInitHints(datasource: PrometheusDatasource): QueryHint[] {
   // Hint if using Loki as Prometheus data source
   if (datasource.directUrl.includes('/loki') && !datasource.languageProvider.metrics.length) {
     hints.push({
-      label: `Using Loki as a Prometheus data source is no longer supported. You must use the Loki data source for your Loki instance.`,
+      label: 'Using Loki as a Prometheus data source is no longer supported. You must use the Loki data source for your Loki instance.',
       type: 'INFO',
     });
   }
@@ -167,7 +167,7 @@ export function getInitHints(datasource: PrometheusDatasource): QueryHint[] {
   // Hint for big disabled lookups
   if (datasource.lookupsDisabled) {
     hints.push({
-      label: `Labels and metrics lookup was disabled in data source settings.`,
+      label: 'Labels and metrics lookup was disabled in data source settings.',
       type: 'INFO',
     });
   }

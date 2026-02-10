@@ -23,7 +23,7 @@ import { SelectableValue } from '@grafana/data';
 import { EditorFieldGroup, EditorField } from '@grafana/plugin-ui';
 import { InlineFieldRow, InlineLabel } from '@grafana/ui';
 
-import { EditorList } from "../../components/QueryEditor";
+import { EditorList } from '../../components/QueryEditor';
 import { QueryBuilderLabelFilter } from '../shared/types';
 
 import { LabelFilterItem } from './LabelFilterItem';
@@ -119,7 +119,7 @@ export function LabelFilters({
       ) : (
         <EditorFieldGroup>
           <EditorField
-            label="Label filters"
+            label='Label filters'
             error={MISSING_LABEL_FILTER_ERROR_MESSAGE}
             invalid={labelFilterRequired && !hasLabelFilter}
           >

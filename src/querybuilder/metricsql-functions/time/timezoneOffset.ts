@@ -1,5 +1,5 @@
-import { createFunction } from "../../operations";
-import { PromOperationId } from "../../types";
+import { createFunction } from '../../operations';
+import { PromOperationId } from '../../types';
 
 // @ts-ignore
 const timezones = Intl?.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : [];

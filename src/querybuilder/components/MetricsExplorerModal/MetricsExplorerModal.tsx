@@ -156,6 +156,7 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
         id: 'type',
         header: 'Type',
         cell: ({ row }: CellProps<MetricMetadata>) => <span className={styles.typeCell}>{row.original.type}</span>,
+        sortType: 'alphanumeric',
       },
       {
         id: 'help',
@@ -174,7 +175,7 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
 
   return (
     <Modal
-      title="Metrics Explorer"
+      title='Metrics Explorer'
       isOpen={isOpen}
       onDismiss={onClose}
       className={styles.modal}
@@ -182,12 +183,12 @@ export const MetricsExplorerModal: React.FC<MetricsExplorerModalProps> = ({
     >
       <div className={styles.content}>
         <div className={styles.filters}>
-          <Input placeholder="Filter by name" onChange={handleNameFilterChange} className={styles.nameFilter} />
+          <Input placeholder='Filter by name' onChange={handleNameFilterChange} className={styles.nameFilter} />
           <MultiSelect
             options={typeOptions}
             value={typeFilter}
             onChange={handleTypeFilterChange}
-            placeholder="Filter by type"
+            placeholder='Filter by type'
             className={styles.typeFilter}
           />
         </div>

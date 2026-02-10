@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 
-import { PanelData } from "@grafana/data";
+import { PanelData } from '@grafana/data';
 
-import { Stack } from "../../../components/QueryEditor";
-import { PrometheusDatasource } from "../../../datasource";
-import { PromQuery, TracingData } from "../../../types";
+import { Stack } from '../../../components/QueryEditor';
+import { PrometheusDatasource } from '../../../datasource';
+import { PromQuery, TracingData } from '../../../types';
 
-import Trace from "./Trace";
-import { TraceItem } from "./TraceItem";
+import Trace from './Trace';
+import { TraceItem } from './TraceItem';
 
 interface Props {
   query: PromQuery;
@@ -34,8 +34,8 @@ export const TraceView = React.memo<Props>(({ query, data, datasource }) => {
   }
 
   return (
-    <Stack gap={0} direction={"column"}>
-      {traces.map((trace, idx) => <TraceItem key={idx} trace={trace} id={idx} queryExpr={query.expr}/>)}
+    <Stack gap={0} direction={'column'}>
+      {traces.map((trace, idx) => <TraceItem key={idx} trace={trace} id={idx} queryExpr={query.expr} />)}
     </Stack>
   );
 });

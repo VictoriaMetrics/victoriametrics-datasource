@@ -105,14 +105,14 @@ export function OperationList<T extends QueryWithOperations>({
   return (
     <Stack
       gap={1}
-      direction="column"
+      direction='column'
     >
       <Stack gap={1}>
         {operations.length > 0 && (
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable
-              droppableId="sortable-field-mappings"
-              direction="horizontal"
+              droppableId='sortable-field-mappings'
+              direction='horizontal'
             >
               {(provided: DroppableProvided) => (
                 <div

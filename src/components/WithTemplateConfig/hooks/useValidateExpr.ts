@@ -1,40 +1,40 @@
-import { useCallback, useState } from "react";
-import { lastValueFrom } from "rxjs";
+import { useCallback, useState } from 'react';
+import { lastValueFrom } from 'rxjs';
 
-import { getBackendSrv } from "@grafana/runtime";
+import { getBackendSrv } from '@grafana/runtime';
 
 interface ValidateResult {
   title: string;
-  icon: "exclamation-triangle" | "check" | "fa fa-spinner";
-  color: 'blue' | 'red' | 'green' | "orange";
+  icon: 'exclamation-triangle' | 'check' | 'fa fa-spinner';
+  color: 'blue' | 'red' | 'green' | 'orange';
   error?: string;
 }
 
 const validateStatus: {[key: string]: ValidateResult} = {
   noValidate: {
-    title: "No validation",
-    icon: "exclamation-triangle",
-    color: "orange"
+    title: 'No validation',
+    icon: 'exclamation-triangle',
+    color: 'orange'
   },
   success: {
-    title: "Valid WITH Expression",
-    icon: "check",
-    color: "green"
+    title: 'Valid WITH Expression',
+    icon: 'check',
+    color: 'green'
   },
   await: {
-    title: "Validating WITH Expressions...",
-    icon: "fa fa-spinner",
-    color: "blue"
+    title: 'Validating WITH Expressions...',
+    icon: 'fa fa-spinner',
+    color: 'blue'
   },
   invalid: {
-    title: "Invalid WITH Expression",
-    icon:"exclamation-triangle",
-    color: "red"
+    title: 'Invalid WITH Expression',
+    icon:'exclamation-triangle',
+    color: 'red'
   },
   serverError: {
-    title: "Unable to Validate WITH Expressions",
-    icon: "exclamation-triangle",
-    color: "red"
+    title: 'Unable to Validate WITH Expressions',
+    icon: 'exclamation-triangle',
+    color: 'red'
   }
 }
 
@@ -57,12 +57,12 @@ export default (datasourceUID: string) => {
         url: `api/datasources/uid/${datasourceUID}/resources/expand-with-exprs?query=${withTemplate}&format=json`,
         method: 'GET',
       }));
-      const { status, error = "" } = response?.data as { status: "success" | "error", error?: string }
+      const { status, error = '' } = response?.data as { status: 'success' | 'error', error?: string }
       setValidateResult({
-        ...(status === "success" ? validateStatus.success : validateStatus.invalid),
+        ...(status === 'success' ? validateStatus.success : validateStatus.invalid),
         error
       })
-      return status === "success"
+      return status === 'success'
     } catch (e) {
       console.error('Error validating WITH templates:', e);
       if (e instanceof Error) {

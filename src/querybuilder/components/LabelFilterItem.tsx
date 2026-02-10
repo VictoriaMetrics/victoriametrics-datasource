@@ -92,14 +92,14 @@ export function LabelFilterItem({
   const itemValue = item?.value ?? '';
 
   return (
-    <div key={itemValue} data-testid="prometheus-dimensions-filter-item">
+    <div key={itemValue} data-testid='prometheus-dimensions-filter-item'>
       <InputGroup>
         {/* Label name select, loads all values at once */}
         <Select
-          placeholder="Select label"
+          placeholder='Select label'
           data-testid={selectors.components.QueryBuilder.labelSelect}
-          inputId="prometheus-dimensions-filter-item-key"
-          width="auto"
+          inputId='prometheus-dimensions-filter-item-key'
+          width='auto'
           value={item.label ? toOption(item.label) : null}
           allowCustomValue
           onOpenMenu={async () => {
@@ -130,10 +130,10 @@ export function LabelFilterItem({
         {/* Operator select i.e.   = =~ != !~   */}
         <Select
           data-testid={selectors.components.QueryBuilder.matchOperatorSelect}
-          className="query-segment-operator"
+          className='query-segment-operator'
           value={toOption(item.op ?? defaultOp)}
           options={operators}
-          width="auto"
+          width='auto'
           onChange={(change) => {
             if (change.value != null) {
               onChange({
@@ -148,10 +148,10 @@ export function LabelFilterItem({
 
         {/* Label value async select: autocomplete calls prometheus API */}
         <AsyncSelect
-          placeholder="Select value"
+          placeholder='Select value'
           data-testid={selectors.components.QueryBuilder.valueSelect}
-          inputId="prometheus-dimensions-filter-item-value"
-          width="auto"
+          inputId='prometheus-dimensions-filter-item-value'
+          width='auto'
           value={
             isMultiSelect()
               ? getSelectOptionsFromString(itemValue).map(toOption)
@@ -197,7 +197,7 @@ export function LabelFilterItem({
           }}
           invalid={invalidValue}
         />
-        <AccessoryButton aria-label={`remove-${item.label}`} icon="times" variant="secondary" onClick={onDelete} />
+        <AccessoryButton aria-label={`remove-${item.label}`} icon='times' variant='secondary' onClick={onDelete} />
       </InputGroup>
     </div>
   );

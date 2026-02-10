@@ -26,11 +26,11 @@ import { InlineField, InlineSwitch, AlertingSettings, DataSourceHttpSettings } f
 
 import { PromOptions } from '../types';
 
-import { AutocompleteSettings } from "./AutocompleteSettings";
+import { AutocompleteSettings } from './AutocompleteSettings';
 import { AzureAuthSettings } from './AzureAuthSettings';
 import { hasCredentials, setDefaultCredentials, resetCredentials } from './AzureCredentialsConfig';
-import { HelpfulLinks } from "./HelpfulLinks";
-import { LimitsSettings } from "./LimitsSettings";
+import { HelpfulLinks } from './HelpfulLinks';
+import { LimitsSettings } from './LimitsSettings';
 import { PromSettings } from './PromSettings';
 
 export enum DataSourceType {
@@ -55,10 +55,10 @@ export const ConfigEditor = (props: Props) => {
 
   return (
     <>
-      <HelpfulLinks/>
+      <HelpfulLinks />
 
       <DataSourceHttpSettings
-        defaultUrl="http://localhost:8428"
+        defaultUrl='http://localhost:8428'
         dataSourceConfig={options}
         showAccessOptions={showAccessOptions.current}
         onChange={onOptionsChange}
@@ -68,18 +68,18 @@ export const ConfigEditor = (props: Props) => {
       />
 
       {/*// @ts-ignore The prop `alertmanagerDataSources` is absent in Grafana > 10.0.0. */}
-      <AlertingSettings<PromOptions> {...props} alertmanagerDataSources={alertmanagers}/>
+      <AlertingSettings<PromOptions> {...props} alertmanagerDataSources={alertmanagers} />
 
-      <PromSettings {...props}/>
+      <PromSettings {...props} />
 
-      <LimitsSettings {...props}/>
+      <LimitsSettings {...props} />
 
-      <AutocompleteSettings {...props}/>
+      <AutocompleteSettings {...props} />
 
       {config.featureToggles['secureSocksDSProxyEnabled' as keyof FeatureToggles] && gte(config.buildInfo.version, '10.0.0') && (
         <>
           <InlineField
-            label="Secure Socks Proxy"
+            label='Secure Socks Proxy'
             tooltip={
               <>
                 Enable proxying the data source connection through the
@@ -87,9 +87,9 @@ export const ConfigEditor = (props: Props) => {
                 different network.
                 See{' '}
                 <a
-                  href="https://grafana.com/docs/grafana/next/setup-grafana/configure-grafana/proxy/"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href='https://grafana.com/docs/grafana/next/setup-grafana/configure-grafana/proxy/'
+                  target='_blank'
+                  rel='noopener noreferrer'
                 >
                   Configure a data source connection proxy.
                 </a>

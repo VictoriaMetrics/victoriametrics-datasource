@@ -227,49 +227,49 @@ describe('escapeLabelValueInRegexSelector()', () => {
 describe('escapeMetricNameSpecialCharacters()', () => {
   it('should escape a metric name starting with a digit', () => {
     // "3foo" should become "\3foo"
-    expect(escapeMetricNameSpecialCharacters("3foo")).toBe("\\3foo");
+    expect(escapeMetricNameSpecialCharacters('3foo')).toBe('\\3foo');
   });
 
   it('should escape special characters in metric names', () => {
     // For example, "3foo(b)ar" becomes "\3foo\(b\)ar"
-    expect(escapeMetricNameSpecialCharacters("3foo(b)ar")).toBe("\\3foo\\(b\\)ar");
+    expect(escapeMetricNameSpecialCharacters('3foo(b)ar')).toBe('\\3foo\\(b\\)ar');
     // And "metric+test" becomes "metric\+test"
-    expect(escapeMetricNameSpecialCharacters("metric+test")).toBe("metric\\+test");
+    expect(escapeMetricNameSpecialCharacters('metric+test')).toBe('metric\\+test');
   });
 
   it('should not modify valid metric names', () => {
-    expect(escapeMetricNameSpecialCharacters("foo_bar:metric")).toBe("foo_bar:metric");
-    expect(escapeMetricNameSpecialCharacters("metric.name")).toBe("metric.name");
+    expect(escapeMetricNameSpecialCharacters('foo_bar:metric')).toBe('foo_bar:metric');
+    expect(escapeMetricNameSpecialCharacters('metric.name')).toBe('metric.name');
   });
 
   it('should escape UTF-8 metric names', () => {
     // For example, "3fooµ¥" should become "\3foo\µ\¥"
-    expect(escapeMetricNameSpecialCharacters("3fooµ¥")).toBe("\\3foo\\µ\\¥");
+    expect(escapeMetricNameSpecialCharacters('3fooµ¥')).toBe('\\3foo\\µ\\¥');
   });
 });
 
 describe('escapeIdentifier() used for label names', () => {
   it('should escape a label name starting with a digit', () => {
     // "3label" should become "\3label"
-    expect(escapeIdentifier("3label")).toBe("\\3label");
+    expect(escapeIdentifier('3label')).toBe('\\3label');
   });
 
   it('should escape special characters in label names', () => {
     // For example, "3label(b)name" should become "\3label\(b\)name"
-    expect(escapeIdentifier("3label(b)name")).toBe("\\3label\\(b\\)name");
+    expect(escapeIdentifier('3label(b)name')).toBe('\\3label\\(b\\)name');
     // And "label+test" should become "label\+test"
-    expect(escapeIdentifier("label+test")).toBe("label\\+test");
+    expect(escapeIdentifier('label+test')).toBe('label\\+test');
   });
 
   it('should not modify valid label names', () => {
-    expect(escapeIdentifier("label_name")).toBe("label_name");
-    expect(escapeIdentifier("label:name")).toBe("label:name");
+    expect(escapeIdentifier('label_name')).toBe('label_name');
+    expect(escapeIdentifier('label:name')).toBe('label:name');
   });
 
   it('should escape UTF-8 label names', () => {
     // For example, "3👋tfにちは" should become "\3\👋tf\に\ち\は"
     // (All non-ASCII characters are escaped by our logic.)
-    expect(escapeIdentifier("3👋tfにちは")).toBe("\\3\\👋tf\\に\\ち\\は");
+    expect(escapeIdentifier('3👋tfにちは')).toBe('\\3\\👋tf\\に\\ち\\は');
   });
 });
 

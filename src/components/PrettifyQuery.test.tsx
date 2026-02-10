@@ -1,9 +1,9 @@
 import { render, screen, act } from '@testing-library/react';
 import React from 'react';
 
-import { BackendSrvRequest } from "@grafana/runtime";
+import { BackendSrvRequest } from '@grafana/runtime';
 
-import { PrometheusDatasource } from "../datasource";
+import { PrometheusDatasource } from '../datasource';
 
 import PrettifyQuery from './PrettifyQuery';
 
@@ -80,7 +80,7 @@ const datasource = {
   }
 } as unknown as PrometheusDatasource;
 
-describe("Prettyfied Query", () => {
+describe('Prettyfied Query', () => {
   testQueries.forEach(async ({ name, got, want }) => {
     it(`should prettify the query ${name}`, async () => {
 

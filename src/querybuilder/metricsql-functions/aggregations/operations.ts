@@ -1,5 +1,5 @@
-import { createAggregationOperation } from "../../shared/operationUtils";
-import { PromOperationId } from "../../types";
+import { createAggregationOperation } from '../../shared/operationUtils';
+import { PromOperationId } from '../../types';
 
 const operationFunctions = [
   PromOperationId.Any,

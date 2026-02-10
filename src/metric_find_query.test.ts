@@ -4,8 +4,8 @@ import { DataSourceInstanceSettings, TimeRange, toUtc } from '@grafana/data';
 import { BackendSrvRequest, FetchResponse, TemplateSrv, getBackendSrv, setBackendSrv } from '@grafana/runtime';
 
 import { PrometheusDatasource } from './datasource';
-import PrometheusMetricFindQuery from "./metric_find_query";
-import { PromOptions } from "./types";
+import PrometheusMetricFindQuery from './metric_find_query';
+import { PromOptions } from './types';
 
 const fetchMock = jest.fn((_options: BackendSrvRequest) => {
   return of({} as unknown as FetchResponse);

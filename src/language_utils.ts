@@ -293,10 +293,10 @@ export function unescapeMetricNameSpecialCharacters(escapedMetricName: string) {
 }
 
 export enum AbstractLabelOperator {
-  Equal = "Equal",
-  NotEqual = "NotEqual",
-  EqualRegEx = "EqualRegEx",
-  NotEqualRegEx = "NotEqualRegEx"
+  Equal = 'Equal',
+  NotEqual = 'NotEqual',
+  EqualRegEx = 'EqualRegEx',
+  NotEqualRegEx = 'NotEqualRegEx'
 }
 
 const FromPromLikeMap: Record<string, AbstractLabelOperator> = {
@@ -415,7 +415,7 @@ export function truncateResult<T>(array: T[], limit?: number): T[] {
  *   "3foo(b)ar" -> "\3foo\(b\)ar"
  */
 export function escapeIdentifier(input: string): string {
-  let result = "";
+  let result = '';
   for (let i = 0; i < input.length; ) {
     const codePoint = input.codePointAt(i)!;
     const char = String.fromCodePoint(codePoint);

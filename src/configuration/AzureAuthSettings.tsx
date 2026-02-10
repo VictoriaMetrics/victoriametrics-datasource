@@ -21,7 +21,7 @@ import React, { FormEvent, useMemo, useState } from 'react';
 import { config } from '@grafana/runtime';
 import { InlineField, InlineFieldRow, InlineSwitch, Input } from '@grafana/ui';
 
-import { HttpSettingsBaseProps } from "../components/types";
+import { HttpSettingsBaseProps } from '../components/types';
 
 import { KnownAzureClouds, AzureCredentials } from './AzureCredentials';
 import { getCredentials, updateCredentials } from './AzureCredentialsConfig';
@@ -72,15 +72,15 @@ export const AzureAuthSettings = (props: HttpSettingsBaseProps) => {
         disabled={dataSourceConfig.readOnly}
       />
       <h6>Azure configuration</h6>
-      <div className="gf-form-group">
+      <div className='gf-form-group'>
         <InlineFieldRow>
-          <InlineField labelWidth={labelWidth} label="Override AAD audience" disabled={dataSourceConfig.readOnly}>
+          <InlineField labelWidth={labelWidth} label='Override AAD audience' disabled={dataSourceConfig.readOnly}>
             <InlineSwitch value={overrideAudienceChecked} onChange={onOverrideAudienceChange} />
           </InlineField>
         </InlineFieldRow>
         {overrideAudienceChecked && (
           <InlineFieldRow>
-            <InlineField labelWidth={labelWidth} label="Resource ID" disabled={dataSourceConfig.readOnly}>
+            <InlineField labelWidth={labelWidth} label='Resource ID' disabled={dataSourceConfig.readOnly}>
               <Input
                 className={cx('width-30')}
                 value={dataSourceConfig.jsonData.azureEndpointResourceId || ''}

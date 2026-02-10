@@ -1,6 +1,6 @@
-import { LabelParamEditor } from "../../components/LabelParamEditor";
-import { createFunction } from "../../operations";
-import { PromOperationId } from "../../types";
+import { LabelParamEditor } from '../../components/LabelParamEditor';
+import { createFunction } from '../../operations';
+import { PromOperationId } from '../../types';
 
 const labelFunctions = [
   PromOperationId.LabelDel,

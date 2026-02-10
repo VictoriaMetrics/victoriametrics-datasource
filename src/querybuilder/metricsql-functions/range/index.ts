@@ -2,10 +2,10 @@ import {
   addOperationWithRangeVector,
   createFunction,
   operationTypeChangedHandlerForRangeFunction
-} from "../../operations";
-import { getRangeVectorParamDef, rangeRendererRightWithParams } from "../../shared/operationUtils";
-import { QueryBuilderOperationDef } from "../../shared/types";
-import { PromOperationId, PromVisualQueryOperationCategory } from "../../types";
+} from '../../operations';
+import { getRangeVectorParamDef, rangeRendererRightWithParams } from '../../shared/operationUtils';
+import { QueryBuilderOperationDef } from '../../shared/types';
+import { PromOperationId, PromVisualQueryOperationCategory } from '../../types';
 
 const rangeFunctions = [
   // [id, param_name]

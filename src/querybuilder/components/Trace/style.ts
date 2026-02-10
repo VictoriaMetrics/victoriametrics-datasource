@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 
-import { GrafanaTheme2 } from "@grafana/data";
+import { GrafanaTheme2 } from '@grafana/data';
 export default (theme: GrafanaTheme2) => ({
   header: css({
     display: 'grid',
-    gridTemplateColumns: "1fr auto",
-    alignItems: "center",
+    gridTemplateColumns: '1fr auto',
+    alignItems: 'center',
     background: theme.colors.background.secondary,
     borderRadius: theme.shape.borderRadius(),
     marginTop: theme.spacing(2),
