@@ -4,6 +4,8 @@
 
 * FEATURE: merge metadata with all available metrics in the query builder. This ensures users can see all available metrics in the metrics explorer, with proper type information when available, while still being able to select metrics that don't yet have metadata defined. See [#442](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/442).
 
+* BUGFIX: add FreeBSD (amd64) build target for datasource backend. See [#446](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/446).
+
 ## v0.21.0
 
 * FEATURE: add metrics metadata exploration to the query builder. The button with the book-open icon opens the metrics explorer modal, where the user can explore the metrics metadata. See [#417](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/417).
