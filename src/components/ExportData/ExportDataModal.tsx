@@ -4,8 +4,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getDefaultTimeRange, GrafanaTheme2 } from '@grafana/data';
 import { Alert, Button, Field, Icon, Input, Modal, RadioButtonGroup, Select, Tooltip, useStyles2 } from '@grafana/ui';
 
-import { convertLDMLLayoutToGoTimeLayout, formatDescriptions } from "../../utils/convertLDMLLayoutToGoTimeLayout";
-import { downloadFile } from "../../utils/downloadFile";
+import { convertLDMLLayoutToGoTimeLayout, formatDescriptions } from '../../utils/convertLDMLLayoutToGoTimeLayout';
+import { downloadFile } from '../../utils/downloadFile';
 
 import { ExportDataModalProps, ExportFormat, ExportOptions, TimestampFormat } from './types';
 
@@ -40,8 +40,8 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
     return (
       <span>
         Custom layout format
-        <Tooltip placement="top" content={helpTooltipContent} theme="info">
-          <Icon title={"Format"} name="info-circle" size="sm" width={16} height={16} />
+        <Tooltip placement='top' content={helpTooltipContent} theme='info'>
+          <Icon title={'Format'} name='info-circle' size='sm' width={16} height={16} />
         </Tooltip>
       </span>
     );
@@ -99,15 +99,15 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
   }, [datasource, query.expr, panelData, start, end, options, onClose]);
 
   return (
-    <Modal title="Export Data" isOpen={isOpen} onDismiss={onClose}>
+    <Modal title='Export Data' isOpen={isOpen} onDismiss={onClose}>
       <div className={styles.content}>
         {error && (
-          <Alert title="Export failed" severity="error" onRemove={() => setError(null)}>
+          <Alert title='Export failed' severity='error' onRemove={() => setError(null)}>
             {error}
           </Alert>
         )}
 
-        <Field label="Format">
+        <Field label='Format'>
           <RadioButtonGroup
             options={formatOptions}
             value={options.format}
@@ -117,7 +117,7 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
 
         {options.format === 'csv' && (
           <>
-            <Field label="Timestamp format">
+            <Field label='Timestamp format'>
               <Select
                 options={timestampOptions}
                 value={options.timestampFormat}
@@ -126,32 +126,32 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
             </Field>
 
             {options.timestampFormat === 'custom' && (
-              <Field label="Custom layout" description={customLayoutDescription}>
+              <Field label='Custom layout' description={customLayoutDescription}>
                 <Input
                   value={options.customLayout}
                   onChange={(e) => setOptions({ ...options, customLayout: e.currentTarget.value })}
-                  placeholder="YYYY-MM-DDThh:mm:ss.SSSSSSSSSZ"
+                  placeholder='YYYY-MM-DDThh:mm:ss.SSSSSSSSSZ'
                 />
               </Field>
             )}
           </>
         )}
 
-        <Field label="Time range">
+        <Field label='Time range'>
           <div className={styles.timeRange}>
             {timeRange.from.format('YYYY-MM-DD HH:mm:ss')} — {timeRange.to.format('YYYY-MM-DD HH:mm:ss')}
           </div>
         </Field>
 
-        <Field label="Query">
+        <Field label='Query'>
           <div className={styles.query}>{query.expr}</div>
         </Field>
 
         <div className={styles.actions}>
-          <Button variant="secondary" onClick={onClose} disabled={isLoading}>
+          <Button variant='secondary' onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleExport} disabled={isLoading}>
+          <Button variant='primary' onClick={handleExport} disabled={isLoading}>
             {isLoading ? 'Exporting...' : 'Export'}
           </Button>
         </div>

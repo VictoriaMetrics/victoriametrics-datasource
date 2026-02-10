@@ -13,8 +13,8 @@ export const ExportDataButton: React.FC<ExportDataButtonProps> = memo(({ datasou
   return (
     <>
       <IconButton
-        name="download-alt"
-        tooltip="Export data"
+        name='download-alt'
+        tooltip='Export data'
         disabled={isDisabled}
         onClick={() => setIsModalOpen(true)}
       />
