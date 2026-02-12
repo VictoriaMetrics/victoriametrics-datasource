@@ -30,42 +30,42 @@ func TestDatasourceQueryRequest(t *testing.T) {
 		case 1:
 			_, err := w.Write([]byte("[]"))
 			if err != nil {
-				t.Fatalf("error write reposne: %s", err)
+				t.Fatalf("error write response: %s", err)
 			}
 		case 2:
 			_, err := w.Write([]byte(`{"status":"error", "errorType":"type:", "error":"some error msg"}`))
 			if err != nil {
-				t.Fatalf("error write reposne: %s", err)
+				t.Fatalf("error write response: %s", err)
 			}
 		case 3:
 			_, err := w.Write([]byte(`{"status":"unknown"}`))
 			if err != nil {
-				t.Fatalf("error write reposne: %s", err)
+				t.Fatalf("error write response: %s", err)
 			}
 		case 4:
 			_, err := w.Write([]byte(`{"status":"success","data":{"resultType":"matrix"}}`))
 			if err != nil {
-				t.Fatalf("error write reposne: %s", err)
+				t.Fatalf("error write response: %s", err)
 			}
 		case 5:
 			_, err := w.Write([]byte(`{"status":"success","data":{"resultType":"matrix","result":[{"metric":{"__name__":"ingress_nginx_request_qps","status":"100"},"values":[[1670324477.542,"1"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"500"},"values":[[1670324477.542,"2"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"200"},"values":[[1670324477.542,"3"]]}]}}`))
 			if err != nil {
-				t.Fatalf("error write reposne: %s", err)
+				t.Fatalf("error write response: %s", err)
 			}
 		case 6:
 			_, err := w.Write([]byte(`{"status":"success","data":{"resultType":"scalar","result":[1583786142, "1"]}}`))
 			if err != nil {
-				t.Fatalf("error write reposne: %s", err)
+				t.Fatalf("error write response: %s", err)
 			}
 		case 7:
 			_, err := w.Write([]byte(`{"status":"success","data":{"resultType":"matrix","result":[{"metric":{"__name__":"ingress_nginx_request_qps","status":"100"},"values":[[1670324477.542,"1"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"500"},"values":[[1670324477.542,"2"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"200"},"values":[[1670324477.542,"3"]]}]}}`))
 			if err != nil {
-				t.Fatalf("error write reposne: %s", err)
+				t.Fatalf("error write response: %s", err)
 			}
 		case 8:
 			_, err := w.Write([]byte(`{"status":"success","data":{"resultType":"matrix","result":[{"metric":{"__name__":"ingress_nginx_request_qps","status":"100"},"values":[[1670324477.542,"1"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"500"},"values":[[1670324477.542,"2"]]}, {"metric":{"__name__":"ingress_nginx_request_qps","status":"200"},"values":[[1670324477.542,"3"]]}]}}`))
 			if err != nil {
-				t.Fatalf("error write reposne: %s", err)
+				t.Fatalf("error write response: %s", err)
 			}
 		}
 	})
@@ -406,7 +406,7 @@ func TestDatasourceQueryRequestWithRetry(t *testing.T) {
 		case 0:
 			_, err := w.Write([]byte(`{"status":"success","data":{"resultType":"scalar","result":[1583786142, "1"]}}`))
 			if err != nil {
-				t.Fatalf("error write reposne: %s", err)
+				t.Fatalf("error write response: %s", err)
 			}
 		case 1:
 			conn, _, _ := w.(http.Hijacker).Hijack()
@@ -414,7 +414,7 @@ func TestDatasourceQueryRequestWithRetry(t *testing.T) {
 		case 2:
 			_, err := w.Write([]byte(`{"status":"success","data":{"resultType":"scalar","result":[1583786142, "2"]}}`))
 			if err != nil {
-				t.Fatalf("error write reposne: %s", err)
+				t.Fatalf("error write response: %s", err)
 			}
 		case 3:
 			conn, _, _ := w.(http.Hijacker).Hijack()

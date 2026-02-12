@@ -440,12 +440,12 @@ func writeError(rw http.ResponseWriter, statusCode int, err error) {
 
 	var b []byte
 	if b, err = json.Marshal(data); err != nil {
-		rw.WriteHeader(statusCode)
+		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	rw.Header().Add("Content-Type", "application/json")
-	rw.WriteHeader(http.StatusInternalServerError)
+	rw.WriteHeader(statusCode)
 
 	_, err = rw.Write(b)
 	if err != nil {
