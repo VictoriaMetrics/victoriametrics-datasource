@@ -477,16 +477,16 @@ func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 		writeError(rw, http.StatusBadRequest, fmt.Errorf("query parameter is required"))
 		return
 	}
+	if startStr == "" || endStr == "" {
+		writeError(rw, http.StatusBadRequest, fmt.Errorf("start and end parameters are required"))
+		return
+	}
 
 	var exportPath string
 	params := url.Values{}
 	params.Add("match[]", query)
-	if startStr != "" {
-		params.Add("start", startStr)
-	}
-	if endStr != "" {
-		params.Add("end", endStr)
-	}
+	params.Add("start", startStr)
+	params.Add("end", endStr)
 
 	if format == "csv" {
 		exportPath = "/api/v1/export/csv"
