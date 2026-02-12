@@ -22,6 +22,7 @@ import { CoreApp, DataQueryRequest, LoadingState } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
 import { ConfirmModal, IconButton } from '@grafana/ui';
 
+import { ExportDataButton } from '../../components/ExportData';
 import PrettifyQuery from '../../components/PrettifyQuery';
 import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../components/QueryEditor';
 import VmuiLink from '../../components/VmuiLink';
@@ -161,6 +162,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
         />
         <PrettifyQuery query={query} datasource={datasource} onChange={onChange} />
         <VmuiLink query={query} datasource={datasource} panelData={data} dashboardUID={dashboardUID} />
+        <ExportDataButton query={query} datasource={datasource} panelData={data} />
         {app !== CoreApp.Explore && (
           <IconButton
             key='run'
