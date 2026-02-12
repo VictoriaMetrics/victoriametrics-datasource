@@ -472,6 +472,7 @@ func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 	format := queryParams.Get("format")                   // "json" or "csv"
 	timestampFormat := queryParams.Get("timestampFormat") // unix_s, unix_ms, unix_ns, rfc3339, custom
 	customLayout := queryParams.Get("customLayout")       // custom timestamp format
+	labels := queryParams.Get("labels")                   // comma-separated label names for CSV columns
 
 	if query == "" {
 		writeError(rw, http.StatusBadRequest, fmt.Errorf("query parameter is required"))
@@ -497,8 +498,13 @@ func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 		if tsFormat == "custom" && customLayout != "" {
 			tsFormat = "custom:" + customLayout
 		}
-		// CSV format: metric_name, value, timestamp
-		params.Add("format", "__name__,__value__,__timestamp__:"+tsFormat)
+		// CSV format: metric_name, [labels], value, timestamp
+		csvFormat := "__name__,"
+		if labels != "" {
+			csvFormat += labels + ","
+		}
+		csvFormat += "__value__,__timestamp__:" + tsFormat
+		params.Add("format", csvFormat)
 	} else {
 		exportPath = "/api/v1/export"
 	}
@@ -527,7 +533,12 @@ func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			d.logger.Error("Failed to read response body", "error", err)
+			writeError(rw, http.StatusInternalServerError, fmt.Errorf("failed to read response: %w", err))
+			return
+		}
 		d.logger.Error("VM returned error", "status", resp.StatusCode, "body", string(body))
 		writeError(rw, resp.StatusCode, fmt.Errorf("VictoriaMetrics returned status %d: %s", resp.StatusCode, string(body)))
 		return
