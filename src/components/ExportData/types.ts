@@ -11,6 +11,7 @@ export interface ExportOptions {
   format: ExportFormat;
   timestampFormat: TimestampFormat;
   customLayout: string;
+  selectedLabels: string[];
 }
 
 export interface ExportDataButtonProps {

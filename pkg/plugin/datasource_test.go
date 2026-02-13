@@ -698,3 +698,118 @@ func TestNewURL(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateLabels(t *testing.T) {
+	tests := []struct {
+		name      string
+		input     string
+		expected  []string
+		expectErr bool
+	}{
+		{
+			name:     "valid labels",
+			input:    "instance,job",
+			expected: []string{"instance", "job"},
+		},
+		{
+			name:     "valid labels with whitespace",
+			input:    " instance , job ",
+			expected: []string{"instance", "job"},
+		},
+		{
+			name:     "empty entries are skipped",
+			input:    "instance,,job",
+			expected: []string{"instance", "job"},
+		},
+		{
+			name:     "single valid label",
+			input:    "instance",
+			expected: []string{"instance"},
+		},
+		{
+			name:     "label with underscores and digits",
+			input:    "label_1,my_label_2",
+			expected: []string{"label_1", "my_label_2"},
+		},
+		{
+			name:     "label starting with underscore (single)",
+			input:    "_private",
+			expected: []string{"_private"},
+		},
+		{
+			name:      "reserved label __name__",
+			input:     "__name__",
+			expectErr: true,
+		},
+		{
+			name:      "reserved label __timestamp__",
+			input:     "__timestamp__",
+			expectErr: true,
+		},
+		{
+			name:      "reserved label __value__",
+			input:     "__value__",
+			expectErr: true,
+		},
+		{
+			name:      "injection attempt with colon",
+			input:     "__timestamp__:unix_s",
+			expectErr: true,
+		},
+		{
+			name:      "label starting with digit",
+			input:     "123invalid",
+			expectErr: true,
+		},
+		{
+			name:      "label with spaces inside",
+			input:     "label with spaces",
+			expectErr: true,
+		},
+		{
+			name:      "label with special characters",
+			input:     "label-name",
+			expectErr: true,
+		},
+		{
+			name:      "one valid and one reserved label",
+			input:     "valid,__bad__",
+			expectErr: true,
+		},
+		{
+			name:      "one valid and one invalid label",
+			input:     "valid,bad!label",
+			expectErr: true,
+		},
+		{
+			name:     "only commas and spaces",
+			input:    " , , ",
+			expected: []string{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := validateLabels(tt.input)
+			if tt.expectErr {
+				if err == nil {
+					t.Errorf("validateLabels(%q) expected error, got nil", tt.input)
+				}
+				return
+			}
+			if err != nil {
+				t.Errorf("validateLabels(%q) unexpected error: %v", tt.input, err)
+				return
+			}
+			if len(got) != len(tt.expected) {
+				t.Errorf("validateLabels(%q) got %v, expected %v", tt.input, got, tt.expected)
+				return
+			}
+			for i := range got {
+				if got[i] != tt.expected[i] {
+					t.Errorf("validateLabels(%q) got[%d]=%q, expected %q", tt.input, i, got[i], tt.expected[i])
+				}
+			}
+		})
+	}
+}

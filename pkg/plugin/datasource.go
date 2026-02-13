@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -453,6 +454,32 @@ func writeError(rw http.ResponseWriter, statusCode int, err error) {
 	}
 }
 
+// labelNameRegex is the Prometheus label name format: starts with a letter or underscore,
+// followed by letters, digits, or underscores.
+var labelNameRegex = regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
+
+// validateLabels parses a comma-separated labels string, trims whitespace,
+// removes empty entries, and validates each label name against the Prometheus
+// label name regex. Labels starting with "__" are rejected as reserved.
+func validateLabels(labels string) ([]string, error) {
+	parts := strings.Split(labels, ",")
+	result := make([]string, 0, len(parts))
+	for _, part := range parts {
+		l := strings.TrimSpace(part)
+		if l == "" {
+			continue
+		}
+		if !labelNameRegex.MatchString(l) {
+			return nil, fmt.Errorf("invalid label name %q: must match [a-zA-Z_][a-zA-Z0-9_]*", l)
+		}
+		if strings.HasPrefix(l, "__") {
+			return nil, fmt.Errorf("label name %q is reserved: names starting with \"__\" are not allowed", l)
+		}
+		result = append(result, l)
+	}
+	return result, nil
+}
+
 // ExportData proxies export request to VictoriaMetrics and streams response to client
 func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
@@ -472,6 +499,7 @@ func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 	format := queryParams.Get("format")                   // "json" or "csv"
 	timestampFormat := queryParams.Get("timestampFormat") // unix_s, unix_ms, unix_ns, rfc3339, custom
 	customLayout := queryParams.Get("customLayout")       // custom timestamp format
+	labels := queryParams.Get("labels")                   // comma-separated label names for CSV columns
 
 	if query == "" {
 		writeError(rw, http.StatusBadRequest, fmt.Errorf("query parameter is required"))
@@ -480,6 +508,15 @@ func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 	if startStr == "" || endStr == "" {
 		writeError(rw, http.StatusBadRequest, fmt.Errorf("start and end parameters are required"))
 		return
+	}
+
+	var validatedLabels []string
+	if labels != "" {
+		validatedLabels, err = validateLabels(labels)
+		if err != nil {
+			writeError(rw, http.StatusBadRequest, fmt.Errorf("invalid labels parameter: %w", err))
+			return
+		}
 	}
 
 	var exportPath string
@@ -497,8 +534,13 @@ func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 		if tsFormat == "custom" && customLayout != "" {
 			tsFormat = "custom:" + customLayout
 		}
-		// CSV format: metric_name, value, timestamp
-		params.Add("format", "__name__,__value__,__timestamp__:"+tsFormat)
+		// CSV format: metric_name, [labels], value, timestamp
+		csvFormat := "__name__,"
+		if len(validatedLabels) > 0 {
+			csvFormat += strings.Join(validatedLabels, ",") + ","
+		}
+		csvFormat += "__value__,__timestamp__:" + tsFormat
+		params.Add("format", csvFormat)
 	} else {
 		exportPath = "/api/v1/export"
 	}
@@ -527,7 +569,12 @@ func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			d.logger.Error("Failed to read response body", "error", err)
+			writeError(rw, http.StatusInternalServerError, fmt.Errorf("failed to read response: %w", err))
+			return
+		}
 		d.logger.Error("VM returned error", "status", resp.StatusCode, "body", string(body))
 		writeError(rw, resp.StatusCode, fmt.Errorf("VictoriaMetrics returned status %d: %s", resp.StatusCode, string(body)))
 		return

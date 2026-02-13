@@ -1,8 +1,20 @@
 import { css } from '@emotion/css';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getDefaultTimeRange, GrafanaTheme2 } from '@grafana/data';
-import { Alert, Button, Field, Icon, Input, Modal, RadioButtonGroup, Select, Tooltip, useStyles2 } from '@grafana/ui';
+import { getDefaultTimeRange, GrafanaTheme2, SelectableValue } from '@grafana/data';
+import {
+  Alert,
+  Button,
+  Field,
+  Icon,
+  Input,
+  Modal,
+  MultiSelect,
+  RadioButtonGroup,
+  Select,
+  Tooltip,
+  useStyles2,
+} from '@grafana/ui';
 
 import { convertLDMLLayoutToGoTimeLayout, formatDescriptions } from '../../utils/convertLDMLLayoutToGoTimeLayout';
 import { downloadFile } from '../../utils/downloadFile';
@@ -30,13 +42,14 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
     format: 'json',
     timestampFormat: 'unix_s',
     customLayout: 'YYYY-MM-DDThh:mm:ss.SSSZ',
+    selectedLabels: [],
   });
   const customLayoutDescription = useMemo(() => {
     const helpText = Object.entries(formatDescriptions).reduce((acc, [key, value]) => {
       acc += `${key}: ${value}\n`;
       return acc;
     }, '');
-    const helpTooltipContent = <pre>{helpText}</pre>
+    const helpTooltipContent = <pre>{helpText}</pre>;
     return (
       <span>
         Custom layout format
@@ -44,8 +57,26 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
           <Icon title={'Format'} name='info-circle' size='sm' width={16} height={16} />
         </Tooltip>
       </span>
-    );
-  }, [])
+    ); 
+  }, []);
+
+  const availableLabels = useMemo((): Array<SelectableValue<string>> => {
+    const labelSet = new Set<string>();
+    panelData?.series?.forEach((frame) => {
+      frame.fields.forEach((field) => {
+        if (field.labels) {
+          Object.keys(field.labels).forEach((key) => {
+            if (key !== '__name__') {
+              labelSet.add(key);
+            }
+          });
+        }
+      });
+    });
+    return Array.from(labelSet)
+      .sort()
+      .map((label) => ({ label, value: label }));
+  }, [panelData?.series]);
 
   const timeRange = panelData?.timeRange || getDefaultTimeRange();
   const start = timeRange.from.valueOf();
@@ -70,7 +101,7 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
         customLayout = convertLDMLLayoutToGoTimeLayout(options.customLayout);
       }
 
-      const blob = await datasource.getResource(
+      const data = await datasource.getResource(
         'export-data',
         {
           query: expr,
@@ -79,17 +110,21 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
           format: options.format,
           timestampFormat: options.timestampFormat,
           customLayout: customLayout,
+          labels: options.selectedLabels.length > 0 ? options.selectedLabels.join(',') : '',
         },
-        { responseType: 'blob' }
       );
 
-      const url = window.URL.createObjectURL(blob);
       const fileName = `export-${Date.now()}.${options.format === 'json' ? 'jsonl' : 'csv'}`;
-      downloadFile(url, fileName);
-      window.URL.revokeObjectURL(url);
-
+      const blobType = options.format === 'csv' ? 'text/csv' : 'application/x-ndjson';
+      const blob = new Blob([data], { type: blobType });
+      downloadFile(blob, fileName);
       onClose();
     } catch (err) {
+      if (err instanceof Object && 'data' in err && err.data instanceof Object && 'message' in err.data) {
+        const message = String(err.data.message) || 'Export failed';
+        setError(message);
+        return;
+      }
       const message = err instanceof Error ? err.message : 'Export failed';
       setError(message);
       console.error('Export failed:', err);
@@ -131,6 +166,18 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
                   value={options.customLayout}
                   onChange={(e) => setOptions({ ...options, customLayout: e.currentTarget.value })}
                   placeholder='YYYY-MM-DDThh:mm:ss.SSSSSSSSSZ'
+                />
+              </Field>
+            )}
+
+            {availableLabels.length > 0 && (
+              <Field label='Labels' description='Select labels to include as additional CSV columns'>
+                <MultiSelect
+                  options={availableLabels}
+                  value={options.selectedLabels}
+                  onChange={(selected) => setOptions({ ...options, selectedLabels: selected.map((s) => s.value!) })}
+                  placeholder='Select labels...'
+                  isClearable
                 />
               </Field>
             )}
