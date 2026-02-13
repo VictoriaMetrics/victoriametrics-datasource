@@ -78,7 +78,7 @@
     "terser-webpack-plugin": "^5.3.10",
     "typescript": "5.5.4",
     "typescript-eslint": "^8.53.0",
-    "webpack": "5.97.1",
+    "webpack": "5.104.1",
     "webpack-cli": "^5.1.4",
     "webpack-livereload-plugin": "^3.0.2",
     "webpack-merge": "5.9.0",
