@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -453,6 +454,32 @@ func writeError(rw http.ResponseWriter, statusCode int, err error) {
 	}
 }
 
+// labelNameRegex is the Prometheus label name format: starts with a letter or underscore,
+// followed by letters, digits, or underscores.
+var labelNameRegex = regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
+
+// validateLabels parses a comma-separated labels string, trims whitespace,
+// removes empty entries, and validates each label name against the Prometheus
+// label name regex. Labels starting with "__" are rejected as reserved.
+func validateLabels(labels string) ([]string, error) {
+	parts := strings.Split(labels, ",")
+	result := make([]string, 0, len(parts))
+	for _, part := range parts {
+		l := strings.TrimSpace(part)
+		if l == "" {
+			continue
+		}
+		if !labelNameRegex.MatchString(l) {
+			return nil, fmt.Errorf("invalid label name %q: must match [a-zA-Z_][a-zA-Z0-9_]*", l)
+		}
+		if strings.HasPrefix(l, "__") {
+			return nil, fmt.Errorf("label name %q is reserved: names starting with \"__\" are not allowed", l)
+		}
+		result = append(result, l)
+	}
+	return result, nil
+}
+
 // ExportData proxies export request to VictoriaMetrics and streams response to client
 func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
@@ -483,6 +510,15 @@ func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	var validatedLabels []string
+	if labels != "" {
+		validatedLabels, err = validateLabels(labels)
+		if err != nil {
+			writeError(rw, http.StatusBadRequest, fmt.Errorf("invalid labels parameter: %w", err))
+			return
+		}
+	}
+
 	var exportPath string
 	params := url.Values{}
 	params.Add("match[]", query)
@@ -500,8 +536,8 @@ func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
 		}
 		// CSV format: metric_name, [labels], value, timestamp
 		csvFormat := "__name__,"
-		if labels != "" {
-			csvFormat += labels + ","
+		if len(validatedLabels) > 0 {
+			csvFormat += strings.Join(validatedLabels, ",") + ","
 		}
 		csvFormat += "__value__,__timestamp__:" + tsFormat
 		params.Add("format", csvFormat)
