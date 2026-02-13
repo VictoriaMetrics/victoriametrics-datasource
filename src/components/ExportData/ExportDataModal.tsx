@@ -101,7 +101,7 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
         customLayout = convertLDMLLayoutToGoTimeLayout(options.customLayout);
       }
 
-      const blob = await datasource.getResource(
+      const data = await datasource.getResource(
         'export-data',
         {
           query: expr,
@@ -112,16 +112,19 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
           customLayout: customLayout,
           labels: options.selectedLabels.length > 0 ? options.selectedLabels.join(',') : '',
         },
-        { responseType: 'blob' }
       );
 
-      const url = window.URL.createObjectURL(blob);
       const fileName = `export-${Date.now()}.${options.format === 'json' ? 'jsonl' : 'csv'}`;
-      downloadFile(url, fileName);
-      window.URL.revokeObjectURL(url);
-
+      const blobType = options.format === 'csv' ? 'text/csv' : 'application/x-ndjson';
+      const blob = new Blob([data], { type: blobType });
+      downloadFile(blob, fileName);
       onClose();
     } catch (err) {
+      if (err instanceof Object && 'data' in err && err.data instanceof Object && 'message' in err.data) {
+        const message = String(err.data.message) || 'Export failed';
+        setError(message);
+        return;
+      }
       const message = err instanceof Error ? err.message : 'Export failed';
       setError(message);
       console.error('Export failed:', err);
