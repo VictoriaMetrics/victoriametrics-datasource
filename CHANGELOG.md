@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.22.0
+
 * FEATURE: merge metadata with all available metrics in the query builder. This ensures users can see all available metrics in the metrics explorer, with proper type information when available, while still being able to select metrics that don't yet have metadata defined. See [#442](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/442).
 * FEATURE: add export button that allows export data in JSON line and CSV formats via [API](https://docs.victoriametrics.com/victoriametrics/single-server-victoriametrics/#how-to-export-time-series). See [#441](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/441).
 
