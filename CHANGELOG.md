@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix an issue where requests failed with compression formats other than gzip, resulting in "No metrics found" errors. See [#455](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/455).
+
 ## v0.22.0
 
 * FEATURE: merge metadata with all available metrics in the query builder. This ensures users can see all available metrics in the metrics explorer, with proper type information when available, while still being able to select metrics that don't yet have metadata defined. See [#442](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/442).
