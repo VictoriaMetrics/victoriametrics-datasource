@@ -17,12 +17,7 @@
       "name": "VictoriaMetrics",
       "url": "https://victoriametrics.com/"
     },
-    "keywords": [
-      "victoriametrics",
-      "datasource",
-      "observability",
-      "monitoring"
-    ],
+    "keywords": ["victoriametrics", "datasource", "observability", "monitoring"],
     "logos": {
       "small": "img/vm_logo.svg",
       "large": "img/vm_logo.svg"
@@ -55,7 +50,7 @@
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": ">=10.4.0",
+    "grafanaDependency": ">=11.6.11 <12 || >=12.0.10 <12.1 || >=12.1.7 <12.2 || >=12.2.5",
     "plugins": []
   }
 }
