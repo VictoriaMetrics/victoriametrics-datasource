@@ -28,17 +28,12 @@ export interface SpaceProps {
   layout?: 'block' | 'inline';
 }
 
-export const Space = (props: SpaceProps) => {
+export const Space = ({ v = 0, h = 0, layout = 'block' }: SpaceProps) => {
+  const props = { v, h, layout };
   const theme = useTheme2();
   const styles = getStyles(theme, props);
 
   return <span className={cx(styles.wrapper)} />;
-};
-
-Space.defaultProps = {
-  v: 0,
-  h: 0,
-  layout: 'block',
 };
 
 const getStyles = stylesFactory((theme: GrafanaTheme2, props: SpaceProps) => ({
