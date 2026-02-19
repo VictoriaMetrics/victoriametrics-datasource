@@ -3319,10 +3319,10 @@
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.3.5.tgz#45f9f87398c5dcea085b715c58ddcf1faf65f716"
   integrity sha512-P4t6saawp+b/dFrUr2cvkVsfvPguwsxtH6dNIYRllMsefqFzkZk5UIjzyDOv5g1dXIPdG4Sp1yCR4Z6RCUsG/Q==
 
-"@types/react-highlight-words@^0.20.0":
-  version "0.20.0"
-  resolved "https://registry.yarnpkg.com/@types/react-highlight-words/-/react-highlight-words-0.20.0.tgz#c7e3e8302acb5082980e611ce2d93c6e6d3b4022"
-  integrity sha512-Qm512TiOakvtNzHJ2+TNVHnLn5cJ2wLQV0+LrhuispVth6dRf5b8ydjq3Kc0thpZ7bz4s6RnG6meboAXHWRK+Q==
+"@types/react-highlight-words@^0.20.1":
+  version "0.20.1"
+  resolved "https://registry.yarnpkg.com/@types/react-highlight-words/-/react-highlight-words-0.20.1.tgz#f84a47b36d5e571afc7da47f273aaabf366b71a0"
+  integrity sha512-EgF6RaoibBurIhxk3X3d5xL0uMqjD7KtShvZ8S+d7/o6xZ+mQ4rct1a2E49vWA9r63OzrHCIyghqvQHASb/ERw==
   dependencies:
     "@types/react" "*"
 
@@ -8563,16 +8563,7 @@ react-from-dom@^0.7.5:
   resolved "https://registry.yarnpkg.com/react-from-dom/-/react-from-dom-0.7.5.tgz#2d2d2bf6d80149c053bcf71bb6615e5e7f6d23db"
   integrity sha512-CO92PmMKo/23uYPm6OFvh5CtZbMgHs/Xn+o095Lz/TZj9t8DSDhGdSOMLxBxwWI4sr0MF17KUn9yJWc5Q00R/w==
 
-react-highlight-words@0.18.0:
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/react-highlight-words/-/react-highlight-words-0.18.0.tgz#ff3b3ef7cb497fa2e8fa4d54c1a1a98ac6390d0e"
-  integrity sha512-5z+46eLPjB4JWgOhuQ0E+6iUPTD1U3amiy5KKjzZmeJ5zyvHr91hnzBT3UHya/KlySm5KRTKpYpba9vs67oO2A==
-  dependencies:
-    highlight-words-core "^1.2.0"
-    memoize-one "^4.0.0"
-    prop-types "^15.5.8"
-
-react-highlight-words@0.21.0:
+react-highlight-words@0.21.0, react-highlight-words@^0.21.0:
   version "0.21.0"
   resolved "https://registry.yarnpkg.com/react-highlight-words/-/react-highlight-words-0.21.0.tgz#a109acdf7dc6fac3ed7db82e9cba94e8d65c281c"
   integrity sha512-SdWEeU9fIINArEPO1rO5OxPyuhdEKZQhHzZZP1ie6UeXQf+CjycT1kWaB+9bwGcVbR0NowuHK3RqgqNg6bgBDQ==
