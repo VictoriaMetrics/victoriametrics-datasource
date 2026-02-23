@@ -126,12 +126,14 @@ feature for navigating from a span in a trace directly to metrics relevant for a
 Metric to logs correlation can be configured using [correlations](https://grafana.com/docs/grafana/latest/administration/correlations/)
 interface:
 
-<img alt="Metric to logs correlation 1" width="100%" src="https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/img/correlation-metric-to-logs-1.png?raw=true">
-<img alt="Metric to logs correlation 2" width="100%" src="https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/img/correlation-metric-to-logs-2.png?raw=true">
-<img alt="Metric to logs correlation 3" width="100%" src="https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/img/correlation-metric-to-logs-3.png?raw=true">
+<img alt="Metric to logs correlation 1" width="50%" src="https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/img/correlation-metric-to-logs-1.png?raw=true">
+---
+<img alt="Metric to logs correlation 2" width="50%" src="https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/img/correlation-metric-to-logs-2.png?raw=true">
+---
+<img alt="Metric to logs correlation 3" width="50%" src="https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/img/correlation-metric-to-logs-3.png?raw=true">
 
-Then, in Grafana's Explore mode click on specified field will open a split view of Logs datasource already filtered 
-by configured fields:
+Then, in Grafana's Explore mode click on the specified field will open a split view of Logs datasource already filtered 
+by the configured fields:
 <img alt="Metric to logs correlation 4" width="100%" src="https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/img/correlation-metric-to-logs-4.png?raw=true">
 
 ### Metric to traces
