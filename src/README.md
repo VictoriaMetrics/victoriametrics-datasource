@@ -127,9 +127,7 @@ Metric to logs correlation can be configured using [correlations](https://grafan
 interface:
 
 <img alt="Metric to logs correlation 1" width="50%" src="https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/img/correlation-metric-to-logs-1.png?raw=true">
----
 <img alt="Metric to logs correlation 2" width="50%" src="https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/img/correlation-metric-to-logs-2.png?raw=true">
----
 <img alt="Metric to logs correlation 3" width="50%" src="https://github.com/VictoriaMetrics/victoriametrics-datasource/blob/main/src/img/correlation-metric-to-logs-3.png?raw=true">
 
 Then, in Grafana's Explore mode click on the specified field will open a split view of Logs datasource already filtered 
