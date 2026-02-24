@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.23.0
+
 * BREAKING: change the supported Grafana version to `>=11.6.11 <12` || `>=12.0.10 <12.1` || `>=12.1.7 <12.2` || `>=12.2.5` to ensure compatibility with [`@grafana/plugin-ui`](https://github.com/grafana/plugin-ui) and React 19. This drops support for other versions of Grafana.
 
 * BUGFIX: fix an issue where requests failed with compression formats other than gzip, resulting in "No metrics found" errors. See [#455](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/455).
