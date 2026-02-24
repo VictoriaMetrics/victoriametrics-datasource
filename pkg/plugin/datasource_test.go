@@ -14,9 +14,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/snappy"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
+	"github.com/klauspost/compress/snappy"
 	"github.com/klauspost/compress/zstd"
 )
 

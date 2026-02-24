@@ -3,7 +3,6 @@ module github.com/VictoriaMetrics/victoriametrics-datasource
 go 1.25.7
 
 require (
-	github.com/golang/snappy v1.0.0
 	github.com/grafana/grafana-plugin-sdk-go v0.285.0
 	github.com/klauspost/compress v1.18.2
 	github.com/magefile/mage v1.15.0
