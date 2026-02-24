@@ -1,6 +1,6 @@
 {
   "name": "victoriametrics-metrics-datasource",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "description": "Showcase how to build a basic datasource plugin",
   "scripts": {
     "build": "webpack -c ./webpack.config.ts --env production",
@@ -96,7 +96,8 @@
     "rxjs": "7.8.2",
     "cliui": "^7.0.4",
     "string-width": "^4.2.3",
-    "@remix-run/router": "^1.23.2"
+    "@remix-run/router": "^1.23.2",
+    "minimatch": "10.2.1"
   },
   "engines": {
     "node": ">=14"
