@@ -22,6 +22,13 @@ import { downloadFile } from '../../utils/downloadFile';
 import { ExportDataModalProps, ExportFormat, ExportOptions, TimestampFormat } from './types';
 import { extractMetricSelectors } from './utils';
 
+const FILE_FORMATS = {
+  json: { ext: 'jsonl', mimeType: 'application/x-ndjson', apiPath: 'api/v1/export' },
+  csv: { ext: 'csv', mimeType: 'text/csv', apiPath: 'api/v1/export/csv' }
+} as const;
+
+const toUnixSeconds = (milliseconds: number): number => Math.floor(milliseconds / 1000);
+
 const formatOptions = [
   { label: 'JSON Line', value: 'json' as ExportFormat },
   { label: 'CSV', value: 'csv' as ExportFormat },
@@ -132,41 +139,28 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
   const handleExport = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-
     try {
-      const fileExt = options.format === 'json' ? 'jsonl' : 'csv';
-      const blobType = options.format === 'csv' ? 'text/csv' : 'application/x-ndjson';
+      const formatConfig = FILE_FORMATS[options.format];
       const timestamp = Date.now();
-      // VM API expects Unix seconds; Grafana timeRange uses milliseconds
-      const startSec = Math.floor(start / 1000);
-      const endSec = Math.floor(end / 1000);
+      const startSec = toUnixSeconds(start);
+      const endSec = toUnixSeconds(end);
 
-      const apiPath = options.format === 'csv' ? 'api/v1/export/csv' : 'api/v1/export';
-      const params = new URLSearchParams();
-      selectedSelectors.forEach((selector) => params.append('match[]', selector));
-      params.append('start', startSec.toString());
-      params.append('end', endSec.toString());
-      const selectorStr = encodeURI('match[]=' + selectedSelectors.join('&match[]='));
-      if (options.format === 'csv') {
-        params.append('format', buildCsvFormatString());
-      }
+      const params = buildExportParams(
+        selectedSelectors,
+        startSec,
+        endSec,
+        options.format,
+        options.format === 'csv' ? buildCsvFormatString() : undefined
+      );
 
-      const data = await datasource.getResource(apiPath + '?' + params.toString());
+      const data = await datasource.getResource(`${formatConfig.apiPath}?${params.toString()}`);
+      const fileName = generateFileName(selectedSelectors, timestamp, formatConfig.ext);
+      const blob = new Blob([data], { type: formatConfig.mimeType });
 
-      const fileName =
-        selectedSelectors.length === 1
-          ? `export-${timestamp}.${fileExt}`
-          : `export-${selectorStr}-${timestamp}.${fileExt}`;
-      const blob = new Blob([data], { type: blobType });
       downloadFile(blob, fileName);
       onClose();
     } catch (err) {
-      if (err instanceof Object && 'data' in err && err.data instanceof Object && 'message' in err.data) {
-        const message = String(err.data.message) || 'Export failed';
-        setError(message);
-        return;
-      }
-      const message = err instanceof Error ? err.message : 'Export failed';
+      const message = extractErrorMessage(err);
       setError(message);
       console.error('Export failed:', err);
     } finally {
@@ -321,4 +315,36 @@ const getStyles = (theme: GrafanaTheme2) => {
       marginTop: theme.spacing(2),
     }),
   };
+};
+
+const buildExportParams = (
+  selectors: string[],
+  startSec: number,
+  endSec: number,
+  format: string,
+  csvFormat?: string
+): URLSearchParams => {
+  const params = new URLSearchParams();
+  selectors.forEach((selector) => params.append('match[]', selector));
+  params.append('start', startSec.toString());
+  params.append('end', endSec.toString());
+  if (format === 'csv' && csvFormat) {
+    params.append('format', csvFormat);
+  }
+  return params;
+};
+
+const generateFileName = (selectors: string[], timestamp: number, ext: string): string => {
+  if (selectors.length === 1) {
+    return `export-${timestamp}.${ext}`;
+  }
+  const selectorStr = encodeURI('match[]=' + selectors.join('&match[]='));
+  return `export-${selectorStr}-${timestamp}.${ext}`;
+};
+
+const extractErrorMessage = (err: unknown): string => {
+  if (err instanceof Object && 'data' in err && err.data instanceof Object && 'message' in err.data) {
+    return String(err.data.message) || 'Export failed';
+  }
+  return err instanceof Error ? err.message : 'Export failed';
 };
