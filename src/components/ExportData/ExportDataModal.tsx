@@ -338,7 +338,7 @@ const generateFileName = (selectors: string[], timestamp: number, ext: string): 
   if (selectors.length === 1) {
     return `export-${timestamp}.${ext}`;
   }
-  const selectorStr = encodeURI('match[]=' + selectors.join('&match[]='));
+  const selectorStr = selectors.map((selector) => encodeURIComponent(selector)).join('_');
   return `export-${selectorStr}-${timestamp}.${ext}`;
 };
 
