@@ -20,6 +20,7 @@ import { convertLDMLLayoutToGoTimeLayout, formatDescriptions } from '../../utils
 import { downloadFile } from '../../utils/downloadFile';
 
 import { ExportDataModalProps, ExportFormat, ExportOptions, TimestampFormat } from './types';
+import { extractMetricSelectors } from './utils';
 
 const formatOptions = [
   { label: 'JSON Line', value: 'json' as ExportFormat },
@@ -57,7 +58,7 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
           <Icon title={'Format'} name='info-circle' size='sm' width={16} height={16} />
         </Tooltip>
       </span>
-    ); 
+    );
   }, []);
 
   const availableLabels = useMemo((): Array<SelectableValue<string>> => {
@@ -78,6 +79,32 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
       .map((label) => ({ label, value: label }));
   }, [panelData?.series]);
 
+  const resolvedExpr = useMemo(() => {
+    return datasource.getTemplateSrv().replace(query.expr, panelData?.request?.scopedVars);
+  }, [datasource, query.expr, panelData?.request?.scopedVars]);
+
+  const metricSelectors = useMemo(() => {
+    return extractMetricSelectors(resolvedExpr);
+  }, [resolvedExpr]);
+
+  const validSelectors = useMemo(() => {
+    return metricSelectors.filter((s) => s.metric !== '');
+  }, [metricSelectors]);
+
+  const [selectedSelectors, setSelectedSelectors] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSelectedSelectors(validSelectors.map((s) => s.selector));
+  }, [validSelectors]);
+
+  const canExport = selectedSelectors.length > 0;
+
+  const handleToggleSelector = useCallback((selector: string) => {
+    setSelectedSelectors((prev) =>
+      prev.includes(selector) ? prev.filter((s) => s !== selector) : [...prev, selector]
+    );
+  }, []);
+
   const timeRange = panelData?.timeRange || getDefaultTimeRange();
   const start = timeRange.from.valueOf();
   const end = timeRange.to.valueOf();
@@ -88,34 +115,48 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
     }
   }, [isOpen]);
 
+  const buildCsvFormatString = useCallback((): string => {
+    let tsFormat: string = options.timestampFormat;
+    if (options.timestampFormat === 'custom') {
+      const goLayout = convertLDMLLayoutToGoTimeLayout(options.customLayout);
+      tsFormat = `custom:${goLayout}`;
+    }
+    let fmt = '__name__,';
+    if (options.selectedLabels.length > 0) {
+      fmt += options.selectedLabels.join(',') + ',';
+    }
+    fmt += `__value__,__timestamp__:${tsFormat}`;
+    return fmt;
+  }, [options]);
+
   const handleExport = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const templateSrv = datasource.getTemplateSrv();
-      const expr = templateSrv.replace(query.expr, panelData?.request?.scopedVars);
+      const fileExt = options.format === 'json' ? 'jsonl' : 'csv';
+      const blobType = options.format === 'csv' ? 'text/csv' : 'application/x-ndjson';
+      const timestamp = Date.now();
+      // VM API expects Unix seconds; Grafana timeRange uses milliseconds
+      const startSec = Math.floor(start / 1000);
+      const endSec = Math.floor(end / 1000);
 
-      let customLayout = '';
-      if (options.timestampFormat === 'custom') {
-        customLayout = convertLDMLLayoutToGoTimeLayout(options.customLayout);
+      const apiPath = options.format === 'csv' ? 'api/v1/export/csv' : 'api/v1/export';
+      const params = new URLSearchParams();
+      selectedSelectors.forEach((selector) => params.append('match[]', selector));
+      params.append('start', startSec.toString());
+      params.append('end', endSec.toString());
+      const selectorStr = encodeURI('match[]=' + selectedSelectors.join('&match[]='));
+      if (options.format === 'csv') {
+        params.append('format', buildCsvFormatString());
       }
 
-      const data = await datasource.getResource(
-        'export-data',
-        {
-          query: expr,
-          start: start,
-          end: end,
-          format: options.format,
-          timestampFormat: options.timestampFormat,
-          customLayout: customLayout,
-          labels: options.selectedLabels.length > 0 ? options.selectedLabels.join(',') : '',
-        },
-      );
+      const data = await datasource.getResource(apiPath + '?' + params.toString());
 
-      const fileName = `export-${Date.now()}.${options.format === 'json' ? 'jsonl' : 'csv'}`;
-      const blobType = options.format === 'csv' ? 'text/csv' : 'application/x-ndjson';
+      const fileName =
+        selectedSelectors.length === 1
+          ? `export-${timestamp}.${fileExt}`
+          : `export-${selectorStr}-${timestamp}.${fileExt}`;
       const blob = new Blob([data], { type: blobType });
       downloadFile(blob, fileName);
       onClose();
@@ -131,7 +172,7 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
     } finally {
       setIsLoading(false);
     }
-  }, [datasource, query.expr, panelData, start, end, options, onClose]);
+  }, [datasource, selectedSelectors, start, end, options, onClose, buildCsvFormatString]);
 
   return (
     <Modal title='Export Data' isOpen={isOpen} onDismiss={onClose}>
@@ -139,6 +180,12 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
         {error && (
           <Alert title='Export failed' severity='error' onRemove={() => setError(null)}>
             {error}
+          </Alert>
+        )}
+
+        {!canExport && (
+          <Alert title='No metric selectors found' severity='warning'>
+            Export requires a query with a named metric selector.
           </Alert>
         )}
 
@@ -190,15 +237,35 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
           </div>
         </Field>
 
-        <Field label='Query'>
-          <div className={styles.query}>{query.expr}</div>
-        </Field>
+        {validSelectors.length === 1 && (
+          <Field label='Metric'>
+            <div className={styles.metricSelector}>{validSelectors[0].selector}</div>
+          </Field>
+        )}
+
+        {validSelectors.length > 1 && (
+          <Field label='Select metrics to export'>
+            <div className={styles.selectorList}>
+              {validSelectors.map((s) => (
+                <label key={s.selector} className={styles.selectorOption}>
+                  <input
+                    type='checkbox'
+                    value={s.selector}
+                    checked={selectedSelectors.includes(s.selector)}
+                    onChange={() => handleToggleSelector(s.selector)}
+                  />
+                  <span className={styles.selectorLabel}>{s.selector}</span>
+                </label>
+              ))}
+            </div>
+          </Field>
+        )}
 
         <div className={styles.actions}>
           <Button variant='secondary' onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
-          <Button variant='primary' onClick={handleExport} disabled={isLoading}>
+          <Button variant='primary' onClick={handleExport} disabled={isLoading || !canExport}>
             {isLoading ? 'Exporting...' : 'Export'}
           </Button>
         </div>
@@ -223,10 +290,29 @@ const getStyles = (theme: GrafanaTheme2) => {
       gap: theme.spacing(2),
     }),
     timeRange: infoBox,
-    query: css(infoBox, {
+    metricSelector: css(infoBox, {
       wordBreak: 'break-all',
-      maxHeight: '100px',
-      overflow: 'auto',
+    }),
+    selectorList: css({
+      display: 'flex',
+      flexDirection: 'column',
+      gap: theme.spacing(1),
+    }),
+    selectorOption: css({
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: theme.spacing(1),
+      cursor: 'pointer',
+      padding: theme.spacing(0.5, 1),
+      borderRadius: theme.shape.radius.default,
+      '&:hover': {
+        backgroundColor: theme.colors.action.hover,
+      },
+    }),
+    selectorLabel: css({
+      fontFamily: theme.typography.fontFamilyMonospace,
+      fontSize: theme.typography.bodySmall.fontSize,
+      wordBreak: 'break-all',
     }),
     actions: css({
       display: 'flex',
