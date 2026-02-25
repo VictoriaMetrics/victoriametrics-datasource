@@ -1,0 +1,13 @@
+apiVersion: 1
+datasources:
+  # <string, required> Name of the VictoriaMetrics datasource
+  # displayed in Grafana panels and queries.
+  - name: VictoriaLogs-playground
+    # <string, required> Sets the data source type.
+    type: victoriametrics-metrics-datasource
+    # <string, required> Sets the access mode, either
+    # proxy or direct (Server or Browser in the UI).
+    access: proxy
+    # <string> Sets URL for sending queries to VictoriaMetrics server.
+    # see https://docs.victoriametrics.com/victoriametrics/integrations/grafana/#
+    url: https://play.victoriametrics.com/select/0/prometheus
