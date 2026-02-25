@@ -1,29 +1,76 @@
 services:
-  socks-proxy:
-    image: serjs/go-socks5-proxy
-    restart: always
-  victoriametrics:
-    image: victoriametrics/victoria-metrics:v1.135.0
+  #  Metrics collector.
+  #  It scrapes targets defined in --promscrape.config
+  #  And forward them to --remoteWrite.url
+  vmagent:
+    image: victoriametrics/vmagent:latest
+    depends_on:
+      - "victoriametrics"
     ports:
-     - 8428:8428
+      - 8429:8429
+    volumes:
+      - .vmagentdata:/vmagentdata
+      - ./prometheus-vm-single.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--promscrape.config=/etc/prometheus/prometheus.yml"
+      - "--remoteWrite.url=http://victoriametrics:8428/api/v1/write"
+    restart: always
+
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:latest
+    ports:
+      - 8428:8428
+    volumes:
+      - .vmdata:/storage
+    command:
+      - "--storageDataPath=/storage"
+    restart: always
+
   grafana:
-    build:
-      context: .config
-      args:
-        grafana_version: main
-        grafana_image: grafana
-        development: true
+    image: grafana/grafana:latest
     ports:
       - 3000:3000/tcp
     environment:
-      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
-      GF_AUTH_ANONYMOUS_ENABLED: "true"
-      GF_AUTH_BASIC_ENABLED: "false"
       GF_DEFAULT_APP_MODE: development
-      GF_FEATURE_TOGGLES_ENABLE: secureSocksDSProxyEnabled
-      GF_SECURE_SOCKS_DATASOURCE_PROXY_ENABLED: true
-      GF_SECURE_SOCKS_DATASOURCE_PROXY_PROXY_ADDRESS: socks-proxy:1080
-      GF_SECURE_SOCKS_DATASOURCE_PROXY_ALLOW_INSECURE: true
+      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: victoriametrics-metrics-datasource
     volumes:
-      - ./plugins/victoriametrics-metrics-datasource:/var/lib/grafana/plugins/victoriametrics-metrics-datasource
       - ./provisioning:/etc/grafana/provisioning
+      - ./.grafana:/var/lib/grafana
+      - ./plugins/victoriametrics-metrics-datasource:/var/lib/grafana/plugins/victoriametrics-metrics-datasource
+
+  # vmalert executes alerting and recording rules
+  vmalert:
+    image: victoriametrics/vmalert:latest
+    depends_on:
+      - "victoriametrics"
+      - "alertmanager"
+    ports:
+      - 8880:8880
+    volumes:
+      - ./rules/alerts.yml:/etc/alerts/alerts.yml
+      - ./rules/alerts-health.yml:/etc/alerts/alerts-health.yml
+      - ./rules/alerts-vmagent.yml:/etc/alerts/alerts-vmagent.yml
+      - ./rules/alerts-vmalert.yml:/etc/alerts/alerts-vmalert.yml
+    command:
+      - "--datasource.url=http://victoriametrics:8428/"
+      - "--remoteRead.url=http://victoriametrics:8428/"
+      - "--remoteWrite.url=http://vmagent:8429/"
+      - "--notifier.url=http://alertmanager:9093/"
+      - "--rule=/etc/alerts/*.yml"
+      # display source of alerts in grafana
+      - "--external.url=http://127.0.0.1:3000" #grafana outside container
+      - '--external.alert.source=explore?orgId=1&left={"datasource":"VictoriaMetrics","queries":[{"expr":{{.Expr|jsonEscape|queryEscape}},"refId":"A"}],"range":{"from":"{{ .ActiveAt.UnixMilli }}","to":"now"}}'
+    restart: always
+
+  # alertmanager receives alerting notifications from vmalert
+  # and distributes them according to --config.file.
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    volumes:
+      - ./alertmanager.yml:/config/alertmanager.yml
+    command:
+      - "--config.file=/config/alertmanager.yml"
+    ports:
+      - 9093:9093
+    restart: always
+

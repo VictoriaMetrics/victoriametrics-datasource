@@ -391,6 +391,21 @@ make vm-plugin-build
 
 This command will build frontend part and backend part or the plugin and locate both parts into `dist` folder.
 
+### 7. How to build and run plugin via docker compose:
+
+From the root folder of the project run the following command:
+```
+make vm-plugin-build
+```
+
+Then you can run grafana with the installed plugin by running the following command:
+```
+docker compose up [-d]
+```
+
+The `-d` flag is optional and will run grafana in detached mode.
+The grafana data is stored in `./grafana` folder, so you can stop and start grafana without losing data.
+
 ## How to use WITH templates
 
 The `WITH` templates feature simplifies the construction and management of complex queries. You can try this feature in the [WITH templates playground](https://play.victoriametrics.com/select/accounting/1/6a716b0f-38bc-4856-90ce-448fd713e3fe/expand-with-exprs).

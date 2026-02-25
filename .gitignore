@@ -31,6 +31,11 @@ e2e-results/
 packages/lezer-metricsql/src/parser.js
 packages/lezer-metricsql/src/parser.terms.js
 
+# mounted volumes
+.grafana/
+.vmagentdata/
+.vmdata/
+
 # Editor
 .idea
 .vscode
