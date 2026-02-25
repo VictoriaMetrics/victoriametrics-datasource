@@ -33,6 +33,8 @@ packages/lezer-metricsql/src/parser.terms.js
 
 # mounted volumes
 .grafana/
+.vmagentdata/
+.vmdata/
 
 # Editor
 .idea
