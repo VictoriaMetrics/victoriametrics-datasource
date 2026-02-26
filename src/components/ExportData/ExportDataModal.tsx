@@ -20,6 +20,14 @@ import { convertLDMLLayoutToGoTimeLayout, formatDescriptions } from '../../utils
 import { downloadFile } from '../../utils/downloadFile';
 
 import { ExportDataModalProps, ExportFormat, ExportOptions, TimestampFormat } from './types';
+import { extractMetricSelectors } from './utils';
+
+const FILE_FORMATS = {
+  json: { ext: 'jsonl', mimeType: 'application/x-ndjson', apiPath: 'api/v1/export' },
+  csv: { ext: 'csv', mimeType: 'text/csv', apiPath: 'api/v1/export/csv' }
+} as const;
+
+const toUnixSeconds = (milliseconds: number): number => Math.floor(milliseconds / 1000);
 
 const formatOptions = [
   { label: 'JSON Line', value: 'json' as ExportFormat },
@@ -57,7 +65,7 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
           <Icon title={'Format'} name='info-circle' size='sm' width={16} height={16} />
         </Tooltip>
       </span>
-    ); 
+    );
   }, []);
 
   const availableLabels = useMemo((): Array<SelectableValue<string>> => {
@@ -78,6 +86,32 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
       .map((label) => ({ label, value: label }));
   }, [panelData?.series]);
 
+  const resolvedExpr = useMemo(() => {
+    return datasource.getTemplateSrv().replace(query.expr, panelData?.request?.scopedVars);
+  }, [datasource, query.expr, panelData?.request?.scopedVars]);
+
+  const metricSelectors = useMemo(() => {
+    return extractMetricSelectors(resolvedExpr);
+  }, [resolvedExpr]);
+
+  const validSelectors = useMemo(() => {
+    return metricSelectors.filter((s) => s.metric !== '');
+  }, [metricSelectors]);
+
+  const [selectedSelectors, setSelectedSelectors] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSelectedSelectors(validSelectors.map((s) => s.selector));
+  }, [validSelectors]);
+
+  const canExport = selectedSelectors.length > 0;
+
+  const handleToggleSelector = useCallback((selector: string) => {
+    setSelectedSelectors((prev) =>
+      prev.includes(selector) ? prev.filter((s) => s !== selector) : [...prev, selector]
+    );
+  }, []);
+
   const timeRange = panelData?.timeRange || getDefaultTimeRange();
   const start = timeRange.from.valueOf();
   const end = timeRange.to.valueOf();
@@ -88,50 +122,51 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
     }
   }, [isOpen]);
 
+  const buildCsvFormatString = useCallback((): string => {
+    let tsFormat: string = options.timestampFormat;
+    if (options.timestampFormat === 'custom') {
+      const goLayout = convertLDMLLayoutToGoTimeLayout(options.customLayout);
+      tsFormat = `custom:${goLayout}`;
+    }
+    let fmt = '__name__,';
+    if (options.selectedLabels.length > 0) {
+      fmt += options.selectedLabels.join(',') + ',';
+    }
+    fmt += `__value__,__timestamp__:${tsFormat}`;
+    return fmt;
+  }, [options]);
+
   const handleExport = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-
     try {
-      const templateSrv = datasource.getTemplateSrv();
-      const expr = templateSrv.replace(query.expr, panelData?.request?.scopedVars);
+      const formatConfig = FILE_FORMATS[options.format];
+      const timestamp = Date.now();
+      const startSec = toUnixSeconds(start);
+      const endSec = toUnixSeconds(end);
 
-      let customLayout = '';
-      if (options.timestampFormat === 'custom') {
-        customLayout = convertLDMLLayoutToGoTimeLayout(options.customLayout);
-      }
-
-      const data = await datasource.getResource(
-        'export-data',
-        {
-          query: expr,
-          start: start,
-          end: end,
-          format: options.format,
-          timestampFormat: options.timestampFormat,
-          customLayout: customLayout,
-          labels: options.selectedLabels.length > 0 ? options.selectedLabels.join(',') : '',
-        },
+      const params = buildExportParams(
+        selectedSelectors,
+        startSec,
+        endSec,
+        options.format,
+        options.format === 'csv' ? buildCsvFormatString() : undefined
       );
 
-      const fileName = `export-${Date.now()}.${options.format === 'json' ? 'jsonl' : 'csv'}`;
-      const blobType = options.format === 'csv' ? 'text/csv' : 'application/x-ndjson';
-      const blob = new Blob([data], { type: blobType });
+      const data = await datasource.getResource(`${formatConfig.apiPath}?${params.toString()}`);
+      const fileName = generateFileName(selectedSelectors, timestamp, formatConfig.ext);
+      const blob = new Blob([data], { type: formatConfig.mimeType });
+
       downloadFile(blob, fileName);
       onClose();
     } catch (err) {
-      if (err instanceof Object && 'data' in err && err.data instanceof Object && 'message' in err.data) {
-        const message = String(err.data.message) || 'Export failed';
-        setError(message);
-        return;
-      }
-      const message = err instanceof Error ? err.message : 'Export failed';
+      const message = extractErrorMessage(err);
       setError(message);
       console.error('Export failed:', err);
     } finally {
       setIsLoading(false);
     }
-  }, [datasource, query.expr, panelData, start, end, options, onClose]);
+  }, [datasource, selectedSelectors, start, end, options, onClose, buildCsvFormatString]);
 
   return (
     <Modal title='Export Data' isOpen={isOpen} onDismiss={onClose}>
@@ -139,6 +174,12 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
         {error && (
           <Alert title='Export failed' severity='error' onRemove={() => setError(null)}>
             {error}
+          </Alert>
+        )}
+
+        {!canExport && (
+          <Alert title='No metric selectors found' severity='warning'>
+            Export requires a query with a named metric selector.
           </Alert>
         )}
 
@@ -190,15 +231,35 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
           </div>
         </Field>
 
-        <Field label='Query'>
-          <div className={styles.query}>{query.expr}</div>
-        </Field>
+        {validSelectors.length === 1 && (
+          <Field label='Metric'>
+            <div className={styles.metricSelector}>{validSelectors[0].selector}</div>
+          </Field>
+        )}
+
+        {validSelectors.length > 1 && (
+          <Field label='Select metrics to export'>
+            <div className={styles.selectorList}>
+              {validSelectors.map((s) => (
+                <label key={s.selector} className={styles.selectorOption}>
+                  <input
+                    type='checkbox'
+                    value={s.selector}
+                    checked={selectedSelectors.includes(s.selector)}
+                    onChange={() => handleToggleSelector(s.selector)}
+                  />
+                  <span className={styles.selectorLabel}>{s.selector}</span>
+                </label>
+              ))}
+            </div>
+          </Field>
+        )}
 
         <div className={styles.actions}>
           <Button variant='secondary' onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
-          <Button variant='primary' onClick={handleExport} disabled={isLoading}>
+          <Button variant='primary' onClick={handleExport} disabled={isLoading || !canExport}>
             {isLoading ? 'Exporting...' : 'Export'}
           </Button>
         </div>
@@ -223,10 +284,29 @@ const getStyles = (theme: GrafanaTheme2) => {
       gap: theme.spacing(2),
     }),
     timeRange: infoBox,
-    query: css(infoBox, {
+    metricSelector: css(infoBox, {
       wordBreak: 'break-all',
-      maxHeight: '100px',
-      overflow: 'auto',
+    }),
+    selectorList: css({
+      display: 'flex',
+      flexDirection: 'column',
+      gap: theme.spacing(1),
+    }),
+    selectorOption: css({
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: theme.spacing(1),
+      cursor: 'pointer',
+      padding: theme.spacing(0.5, 1),
+      borderRadius: theme.shape.radius.default,
+      '&:hover': {
+        backgroundColor: theme.colors.action.hover,
+      },
+    }),
+    selectorLabel: css({
+      fontFamily: theme.typography.fontFamilyMonospace,
+      fontSize: theme.typography.bodySmall.fontSize,
+      wordBreak: 'break-all',
     }),
     actions: css({
       display: 'flex',
@@ -235,4 +315,36 @@ const getStyles = (theme: GrafanaTheme2) => {
       marginTop: theme.spacing(2),
     }),
   };
+};
+
+const buildExportParams = (
+  selectors: string[],
+  startSec: number,
+  endSec: number,
+  format: string,
+  csvFormat?: string
+): URLSearchParams => {
+  const params = new URLSearchParams();
+  selectors.forEach((selector) => params.append('match[]', selector));
+  params.append('start', startSec.toString());
+  params.append('end', endSec.toString());
+  if (format === 'csv' && csvFormat) {
+    params.append('format', csvFormat);
+  }
+  return params;
+};
+
+const generateFileName = (selectors: string[], timestamp: number, ext: string): string => {
+  if (selectors.length === 1) {
+    return `export-${timestamp}.${ext}`;
+  }
+  const selectorStr = selectors.map((selector) => encodeURIComponent(selector)).join('_');
+  return `export-${selectorStr}-${timestamp}.${ext}`;
+};
+
+const extractErrorMessage = (err: unknown): string => {
+  if (err instanceof Object && 'data' in err && err.data instanceof Object && 'message' in err.data) {
+    return String(err.data.message) || 'Export failed';
+  }
+  return err instanceof Error ? err.message : 'Export failed';
 };

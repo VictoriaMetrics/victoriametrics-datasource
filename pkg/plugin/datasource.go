@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"net/url"
 	"path"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -60,7 +59,8 @@ func NewDatasource() *Datasource {
 	mux.HandleFunc("/expand-with-exprs", ds.VMAPIQuery)
 	mux.HandleFunc("/api/v1/label/{key}/values", ds.VMAPIQuery)
 	mux.HandleFunc("/vmui", ds.VMUIQuery)
-	mux.HandleFunc("/export-data", ds.ExportData)
+	mux.HandleFunc("/api/v1/export", ds.VMAPIQuery)
+	mux.HandleFunc("/api/v1/export/csv", ds.VMAPIQuery)
 	ds.CallResourceHandler = httpadapter.New(mux)
 
 	return &ds
@@ -451,141 +451,6 @@ func writeError(rw http.ResponseWriter, statusCode int, err error) {
 	_, err = rw.Write(b)
 	if err != nil {
 		log.DefaultLogger.Warn("Error writing response")
-	}
-}
-
-// labelNameRegex is the Prometheus label name format: starts with a letter or underscore,
-// followed by letters, digits, or underscores.
-var labelNameRegex = regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
-
-// validateLabels parses a comma-separated labels string, trims whitespace,
-// removes empty entries, and validates each label name against the Prometheus
-// label name regex. Labels starting with "__" are rejected as reserved.
-func validateLabels(labels string) ([]string, error) {
-	parts := strings.Split(labels, ",")
-	result := make([]string, 0, len(parts))
-	for _, part := range parts {
-		l := strings.TrimSpace(part)
-		if l == "" {
-			continue
-		}
-		if !labelNameRegex.MatchString(l) {
-			return nil, fmt.Errorf("invalid label name %q: must match [a-zA-Z_][a-zA-Z0-9_]*", l)
-		}
-		if strings.HasPrefix(l, "__") {
-			return nil, fmt.Errorf("label name %q is reserved: names starting with \"__\" are not allowed", l)
-		}
-		result = append(result, l)
-	}
-	return result, nil
-}
-
-// ExportData proxies export request to VictoriaMetrics and streams response to client
-func (d *Datasource) ExportData(rw http.ResponseWriter, req *http.Request) {
-	ctx := req.Context()
-	pluginCxt := backend.PluginConfigFromContext(ctx)
-	di, err := d.getInstance(ctx, pluginCxt)
-	if err != nil {
-		d.logger.Error("Error loading datasource", "error", err)
-		writeError(rw, http.StatusInternalServerError, err)
-		return
-	}
-
-	// Parse query parameters
-	queryParams := req.URL.Query()
-	query := queryParams.Get("query")
-	startStr := queryParams.Get("start")
-	endStr := queryParams.Get("end")
-	format := queryParams.Get("format")                   // "json" or "csv"
-	timestampFormat := queryParams.Get("timestampFormat") // unix_s, unix_ms, unix_ns, rfc3339, custom
-	customLayout := queryParams.Get("customLayout")       // custom timestamp format
-	labels := queryParams.Get("labels")                   // comma-separated label names for CSV columns
-
-	if query == "" {
-		writeError(rw, http.StatusBadRequest, fmt.Errorf("query parameter is required"))
-		return
-	}
-	if startStr == "" || endStr == "" {
-		writeError(rw, http.StatusBadRequest, fmt.Errorf("start and end parameters are required"))
-		return
-	}
-
-	var validatedLabels []string
-	if labels != "" {
-		validatedLabels, err = validateLabels(labels)
-		if err != nil {
-			writeError(rw, http.StatusBadRequest, fmt.Errorf("invalid labels parameter: %w", err))
-			return
-		}
-	}
-
-	var exportPath string
-	params := url.Values{}
-	params.Add("match[]", query)
-	params.Add("start", startStr)
-	params.Add("end", endStr)
-
-	if format == "csv" {
-		exportPath = "/api/v1/export/csv"
-		tsFormat := timestampFormat
-		if tsFormat == "" {
-			tsFormat = "unix_s"
-		}
-		if tsFormat == "custom" && customLayout != "" {
-			tsFormat = "custom:" + customLayout
-		}
-		// CSV format: metric_name, [labels], value, timestamp
-		csvFormat := "__name__,"
-		if len(validatedLabels) > 0 {
-			csvFormat += strings.Join(validatedLabels, ",") + ","
-		}
-		csvFormat += "__value__,__timestamp__:" + tsFormat
-		params.Add("format", csvFormat)
-	} else {
-		exportPath = "/api/v1/export"
-	}
-
-	exportURL, err := newURL(di.url, exportPath, false)
-	if err != nil {
-		d.logger.Error("Error building export URL", "error", err)
-		writeError(rw, http.StatusInternalServerError, err)
-		return
-	}
-	exportURL.RawQuery = params.Encode()
-
-	vmReq, err := http.NewRequestWithContext(ctx, http.MethodGet, exportURL.String(), nil)
-	if err != nil {
-		d.logger.Error("Error creating VM request", "error", err)
-		writeError(rw, http.StatusInternalServerError, err)
-		return
-	}
-
-	resp, err := di.httpClient.Do(vmReq)
-	if err != nil {
-		d.logger.Error("Error executing VM request", "error", err)
-		writeError(rw, http.StatusBadGateway, err)
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			d.logger.Error("Failed to read response body", "error", err)
-			writeError(rw, http.StatusInternalServerError, fmt.Errorf("failed to read response: %w", err))
-			return
-		}
-		d.logger.Error("VM returned error", "status", resp.StatusCode, "body", string(body))
-		writeError(rw, resp.StatusCode, fmt.Errorf("VictoriaMetrics returned status %d: %s", resp.StatusCode, string(body)))
-		return
-	}
-
-	rw.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
-	rw.Header().Set("Content-Encoding", resp.Header.Get("Content-Encoding"))
-
-	rw.WriteHeader(http.StatusOK)
-	if _, err := io.Copy(rw, resp.Body); err != nil {
-		d.logger.Error("Error streaming response", "error", err)
 	}
 }
 
