@@ -14,7 +14,6 @@
     "lint:fix": "yarn run lint --fix",
     "server": "docker compose up --build",
     "preinstall": "cd packages/lezer-metricsql && yarn install && cd ../..",
-    "postinstall": "yarn upgrade lezer-metricsql",
     "sign": "[ -z $GRAFANA_ACCESS_POLICY_TOKEN ] && echo 'skip plugin signing' || npx --yes @grafana/sign-plugin@latest"
   },
   "author": "VictoriaMetrics",
@@ -98,8 +97,9 @@
     "string-width": "^4.2.3",
     "@remix-run/router": "^1.23.2"
   },
+  "packageManager": "yarn@4.13.0",
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.7.7",
