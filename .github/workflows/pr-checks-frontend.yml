@@ -42,7 +42,7 @@ jobs:
         run: yarn install
 
       - name: Build lezer-metricsql
-        run: yarn workspace lezer-metricsql build
+        run: yarn build:lezer-metricsql
 
       - name: Run tests
         run: yarn test:ci
