@@ -44,6 +44,14 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate
     setTemplate(datasource.withTemplates.find(t => t.uid === dashboardUID))
   }, [datasource, dashboardUID, setTemplate])
 
+  const [prevDashboardUID, setPrevDashboardUID] = useState(dashboardUID)
+  if (dashboardUID !== prevDashboardUID) {
+    setPrevDashboardUID(dashboardUID)
+    if (!dashboardUID && app !== CoreApp.Explore) {
+      setIsValidDashboard(false)
+    }
+  }
+
   useEffect(() => {
     if (!dashboardUID) { return; }
     const fetchDashboard = async () => {
