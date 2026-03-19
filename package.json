@@ -3,8 +3,9 @@
   "version": "0.23.1",
   "description": "Showcase how to build a basic datasource plugin",
   "scripts": {
-    "build": "webpack -c ./webpack.config.ts --env production",
-    "dev": "webpack -w -c ./webpack.config.ts --env development",
+    "build:lezer": "cd packages/lezer-metricsql && bash build.sh",
+    "build": "yarn build:lezer && webpack -c ./webpack.config.ts --env production",
+    "dev": "yarn build:lezer && webpack -w -c ./webpack.config.ts --env development",
     "typecheck": "tsc --noEmit",
     "test": "jest --watch --onlyChanged",
     "test:watch": "jest --watch",
@@ -13,7 +14,6 @@
     "lint": "eslint --cache .",
     "lint:fix": "yarn run lint --fix",
     "server": "docker compose up --build",
-    "postinstall": "yarn --cwd packages/lezer-metricsql build",
     "sign": "[ -z $GRAFANA_ACCESS_POLICY_TOKEN ] && echo 'skip plugin signing' || npx --yes @grafana/sign-plugin@latest"
   },
   "author": "VictoriaMetrics",
