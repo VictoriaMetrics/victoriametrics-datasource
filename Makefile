@@ -30,6 +30,7 @@ frontend-build: frontend-package-base-image
 		-w /$(PLUGIN_ID) \
 		--user $(shell id -u):$(shell id -g) \
 		--env YARN_CACHE_FOLDER="/$(PLUGIN_ID)/.cache" \
+		--env COREPACK_HOME="/$(PLUGIN_ID)/.cache/corepack" \
 		--env GRAFANA_ACCESS_POLICY_TOKEN=$$GRAFANA_ACCESS_POLICY_TOKEN \
 		--entrypoint=/bin/bash \
 		frontent-builder-image -c "yarn install && yarn build && yarn sign --distDir plugins/$(PLUGIN_ID)"
