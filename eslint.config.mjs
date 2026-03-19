@@ -1,18 +1,16 @@
 import stylistic from '@stylistic/eslint-plugin';
 import {defineConfig} from 'eslint/config';
 import grafanaEslintConfig from '@grafana/eslint-config/flat.js';
-import react from 'eslint-plugin-react';
 import jest from 'eslint-plugin-jest';
 import lodash from 'eslint-plugin-lodash';
-import deprecation from 'eslint-plugin-deprecation';
 import prettier from 'eslint-config-prettier';
 import unusedImports from "eslint-plugin-unused-imports";
 import * as emotionPlugin from '@emotion/eslint-plugin';
-import {fixupPluginRules} from "@eslint/compat";
+import {fixupPluginRules, fixupConfigRules} from "@eslint/compat";
 import importPlugin from 'eslint-plugin-import';
 
 export default defineConfig([
-  grafanaEslintConfig,
+  ...fixupConfigRules(grafanaEslintConfig),
   prettier,
   {
     ignores: [
@@ -38,10 +36,10 @@ export default defineConfig([
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
     plugins: {
-      'react': react,
+
       'jest': jest,
       'lodash': lodash,
-      'deprecation': deprecation,
+
       'unused-imports': unusedImports,
       '@emotion': fixupPluginRules(emotionPlugin),
       'import': importPlugin,

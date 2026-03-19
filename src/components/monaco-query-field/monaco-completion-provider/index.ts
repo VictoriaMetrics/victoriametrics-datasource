@@ -16,8 +16,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { IMarkdownString } from 'monaco-editor';
-
 import type { Monaco, monacoTypes } from '@grafana/ui';
 
 import { escapeMetricNameSpecialCharacters } from '../../../language_utils';
@@ -104,7 +102,7 @@ export function getCompletionProvider(
         label: item.label,
         insertText: item.type === CompletionType.metricName ? escapeMetricNameSpecialCharacters(item.insertText) : item.insertText,
         detail: item.detail,
-        documentation: { value: item.documentation } as IMarkdownString,
+        documentation: { value: item.documentation } as monacoTypes.IMarkdownString,
         sortText: index.toString().padStart(maxIndexDigits, '0'), // to force the order we have
         range,
         command: item.triggerOnInsert

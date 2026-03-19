@@ -24,7 +24,7 @@ import { stylesFactory, useTheme2, ReactUtils, Field, Icon, PopoverContent, Tool
 
 import { Space } from './Space';
 
-interface EditorFieldProps extends ComponentProps<typeof Field> {
+interface EditorFieldProps extends Omit<ComponentProps<typeof Field>, 'children'> {
   label: string;
   children: React.ReactElement;
   width?: number | string;
@@ -39,7 +39,7 @@ export const EditorField: React.FC<EditorFieldProps> = (props) => {
   const styles = getStyles(theme, width);
 
   // Null check for backward compatibility
-  const childInputId = fieldProps?.htmlFor || ReactUtils?.getChildId(children);
+  const childInputId = fieldProps?.htmlFor || ReactUtils?.getChildId(children as React.ReactElement<Record<string, unknown>>);
 
   const labelEl = (
     <>
@@ -59,7 +59,7 @@ export const EditorField: React.FC<EditorFieldProps> = (props) => {
   return (
     <div className={styles.root}>
       <Field className={styles.field} label={labelEl} {...fieldProps}>
-        {children}
+        {children as React.ReactElement<Record<string, unknown>>}
       </Field>
     </div>
   );

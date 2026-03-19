@@ -1,5 +1,11 @@
-import { Block, Editor, Editor as SlateEditor, EditorProperties } from 'slate';
-import Plain from 'slate-plain-serializer';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Plain: any = require('slate-plain-serializer').default || require('slate-plain-serializer');
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SlateEditor: any = require('slate').Editor || require('slate').default?.Editor;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type EditorProperties = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Block = any;
 
 import { AbstractLabelOperator, HistoryItem } from '@grafana/data';
 import { SearchFunctionType, TypeaheadInput } from '@grafana/ui';
@@ -198,7 +204,7 @@ describe('Language completion provider', () => {
       const instance = new LanguageProvider(datasource);
       instance.metrics = ['foo', 'bar'];
       const value = Plain.deserialize('foo + b');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(7).value;
       const result = await instance.provideCompletionItems({
@@ -221,7 +227,7 @@ describe('Language completion provider', () => {
     it('returns no suggestions at the beginning of a non-empty function', async () => {
       const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('sum(up)');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
 
       const valueWithSelection = ed.moveForward(4).value;
@@ -240,7 +246,7 @@ describe('Language completion provider', () => {
     it('returns default label suggestions on label context and no metric', async () => {
       const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('{}');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(1).value;
       const result = await instance.provideCompletionItems({
@@ -269,7 +275,7 @@ describe('Language completion provider', () => {
       } as unknown as PrometheusDatasource;
       const instance = new LanguageProvider(datasources);
       const value = Plain.deserialize('metric{}');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(7).value;
       const result = await instance.provideCompletionItems({
@@ -304,7 +310,7 @@ describe('Language completion provider', () => {
       } as unknown as PrometheusDatasource;
       const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('{job1="foo",job2!="foo",job3=~"foo",__name__="metric",}');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(54).value;
       const result = await instance.provideCompletionItems({
@@ -327,7 +333,7 @@ describe('Language completion provider', () => {
         },
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('{job!=}');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(6).value;
       const result = await instance.provideCompletionItems({
@@ -351,7 +357,7 @@ describe('Language completion provider', () => {
       jest.spyOn(console, 'warn').mockImplementation(() => {});
       const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('metric{}');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(7).value;
       const result = await instance.provideCompletionItems({
@@ -371,7 +377,7 @@ describe('Language completion provider', () => {
         getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('metric{bar=ba}');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(13).value;
       const result = await instance.provideCompletionItems({
@@ -393,7 +399,7 @@ describe('Language completion provider', () => {
         getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum(metric{foo="xx"}) by ()');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(26).value;
       const result = await instance.provideCompletionItems({
@@ -414,7 +420,7 @@ describe('Language completion provider', () => {
         getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum(metric) by ()');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(16).value;
       const result = await instance.provideCompletionItems({
@@ -436,7 +442,7 @@ describe('Language completion provider', () => {
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum(\nmetric\n)\nby ()');
       const aggregationTextBlock = value.document.getBlocks().get(3) as Block;
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       ed.moveToStartOfNode(aggregationTextBlock);
       const valueWithSelection = ed.moveForward(4).value;
@@ -462,7 +468,7 @@ describe('Language completion provider', () => {
         getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum(rate(metric[1h])) by ()');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(26).value;
       const result = await instance.provideCompletionItems({
@@ -487,7 +493,7 @@ describe('Language completion provider', () => {
         getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum(rate(metric{label1="value"}[1h])) by ()');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(42).value;
       const result = await instance.provideCompletionItems({
@@ -509,7 +515,7 @@ describe('Language completion provider', () => {
     it('returns no suggestions inside an unclear aggregation context using alternate syntax', async () => {
       const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('sum by ()');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(8).value;
       const result = await instance.provideCompletionItems({
@@ -528,7 +534,7 @@ describe('Language completion provider', () => {
         getRequest: () => simpleMetricLabelsResponse,
       } as unknown as PrometheusDatasource);
       const value = Plain.deserialize('sum by () (metric)');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(8).value;
       const result = await instance.provideCompletionItems({
@@ -559,7 +565,7 @@ describe('Language completion provider', () => {
 
       const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('{}');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(1).value;
       const args = {
@@ -589,7 +595,7 @@ describe('Language completion provider', () => {
       const mockedGetRequest = jest.mocked(datasource.getRequest);
       const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('{}');
-      const editorProperties = { value } as EditorProperties<Editor>;
+      const editorProperties = { value } as EditorProperties;
       const ed = new SlateEditor(editorProperties);
       const valueWithSelection = ed.moveForward(1).value;
       const args = {

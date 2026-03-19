@@ -19,7 +19,8 @@
 import { chain, difference, once } from 'lodash';
 import { LRUCache as LRU } from 'lru-cache'
 import Prism from 'prismjs';
-import { Value } from 'slate';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Value = any;
 
 import {
   AbstractLabelMatcher,
@@ -294,7 +295,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
     // Stitch all query lines together to support multi-line queries
     let queryOffset;
-    const queryText = value.document.getBlocks().reduce((text, block) => {
+    const queryText = value.document.getBlocks().reduce((text: string | undefined, block: any) => {
       if (text === undefined) {
         return '';
       }

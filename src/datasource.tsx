@@ -100,7 +100,7 @@ export class PrometheusDatasource
     this.type = DATASOURCE_TYPE;
     this.subType = PromApplication.VictoriaMetrics;
     this.rulerEnabled = false;
-    this.id = instanceSettings.id;
+    this.id = instanceSettings.id!;
     this.url = instanceSettings.url!;
     this.access = instanceSettings.access;
     this.basicAuth = instanceSettings.basicAuth;

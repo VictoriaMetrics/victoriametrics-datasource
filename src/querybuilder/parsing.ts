@@ -1,4 +1,4 @@
-import { SyntaxNode } from '@lezer/common';
+import type { SyntaxNode } from '@lezer/common';
 import {
   AggregateExpr,
   AggregateModifier,
@@ -68,7 +68,7 @@ export function buildVisualQueryFromString(expr: string): Context {
   };
 
   try {
-    handleExpression(replacedExpr, node, context);
+    handleExpression(replacedExpr, node as unknown as SyntaxNode, context);
   } catch (err) {
     // Not ideal to log it here, but otherwise we would lose the stack trace.
     console.error(err);

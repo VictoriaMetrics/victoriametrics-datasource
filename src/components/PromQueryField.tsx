@@ -18,8 +18,6 @@
 
 import { LanguageMap, languages as prismLanguages } from 'prismjs';
 import React, { ReactNode } from 'react';
-import { Plugin } from 'slate';
-import { Editor } from 'slate-react';
 
 import { isDataFrame, QueryEditorProps, QueryHint, TimeRange, toLegacyResponseData } from '@grafana/data';
 import {
@@ -73,8 +71,7 @@ interface PromQueryFieldState {
 }
 
 class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryFieldState> {
-  // @ts-ignore
-  plugins: Array<Plugin<Editor>>;
+  plugins: any[];
   declare languageProviderInitializationPromise: CancelablePromise<any>;
 
   constructor(props: PromQueryFieldProps, context: React.Context<any>) {
