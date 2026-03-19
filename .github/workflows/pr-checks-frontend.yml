@@ -41,6 +41,9 @@ jobs:
       - name: Install all dependencies
         run: yarn install
 
+      - name: Build lezer-metricsql
+        run: yarn workspace lezer-metricsql build
+
       - name: Run tests
         run: yarn test:ci
 
