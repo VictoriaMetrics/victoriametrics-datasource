@@ -9968,15 +9968,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lezer-metricsql@file:packages/lezer-metricsql::locator=victoriametrics-metrics-datasource%40workspace%3A.":
-  version: 0.1.7
-  resolution: "lezer-metricsql@file:packages/lezer-metricsql#packages/lezer-metricsql::hash=8f524c&locator=victoriametrics-metrics-datasource%40workspace%3A."
+"lezer-metricsql@portal:packages/lezer-metricsql::locator=victoriametrics-metrics-datasource%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "lezer-metricsql@portal:packages/lezer-metricsql::locator=victoriametrics-metrics-datasource%40workspace%3A."
   peerDependencies:
     "@lezer/highlight": ^1.0.0
     "@lezer/lr": ^1.0.0
-  checksum: 10c0/e4d08f5bcf8ab6abbe06725f601ef0011af3699c3d7a0f9f67852e1d248507ea66f85bbc2ea78170df535a3bc542da989f60940d8e050ecf0efa2e126fde993a
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "lines-and-columns@npm:^1.1.6":
   version: 1.2.4
@@ -13930,7 +13929,7 @@ __metadata:
     jest: "npm:30.3.0"
     jest-environment-jsdom: "npm:30.3.0"
     jquery: "npm:^4.0.0"
-    lezer-metricsql: "file:packages/lezer-metricsql"
+    lezer-metricsql: "portal:packages/lezer-metricsql"
     lodash: "npm:^4.17.23"
     lru-cache: "npm:11.2.7"
     monaco-editor: "npm:0.55.1"
