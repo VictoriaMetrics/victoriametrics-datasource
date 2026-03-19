@@ -136,6 +136,12 @@ const getStyles = stylesFactory((theme: GrafanaTheme) => ({
     padding: ${theme.spacing.sm};
     width: 100%;
   `,
+  sectionsRow: css`
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: ${theme.spacing.md};
+    align-items: start;
+  `,
   list: css`
     margin-top: ${theme.spacing.sm};
     display: flex;
@@ -145,10 +151,10 @@ const getStyles = stylesFactory((theme: GrafanaTheme) => ({
     align-content: flex-start;
   `,
   section: css`
-    & + & {
-      margin: ${theme.spacing.md} 0;
-    }
+    margin: ${theme.spacing.md} 0;
     position: relative;
+    overflow: hidden;
+    resize: horizontal;
   `,
   selector: css`
     font-family: ${theme.typography.fontFamily.monospace};
@@ -175,17 +181,19 @@ const getStyles = stylesFactory((theme: GrafanaTheme) => ({
     color: ${theme.palette.brandDanger};
   `,
   valueList: css`
+    height: 600px;
     margin-right: ${theme.spacing.sm};
-    resize: horizontal;
   `,
   valueListWrapper: css`
     border-left: 1px solid ${theme.colors.border2};
     margin: ${theme.spacing.sm} 0;
     padding: ${theme.spacing.sm} 0 ${theme.spacing.sm} ${theme.spacing.sm};
+    flex-shrink: 0;
   `,
   valueListArea: css`
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     margin-top: ${theme.spacing.sm};
   `,
   valueTitle: css`
@@ -501,139 +509,151 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
 
     return (
       <div className={styles.wrapper}>
-        <HorizontalGroup align='flex-start' spacing='lg'>
-          <div>
-            <div className={styles.section}>
-              <Label description='Once a metric is selected only possible labels are shown.'>1. Select a metric</Label>
-              <div>
-                <Input
-                  onChange={this.onChangeMetricSearch}
-                  aria-label='Filter expression for metric'
-                  value={metricSearchTerm}
-                />
-              </div>
-              <div role='list' className={styles.valueListWrapper}>
-                <List
-                  defaultHeight={Math.min(450, metricCount * LIST_ITEM_SIZE)}
-                  rowCount={metricCount}
-                  rowHeight={LIST_ITEM_SIZE}
-                  style={{ width: '300px' }}
-                  className={styles.valueList}
-                  rowProps={{}}
-                  rowComponent={({ index, style }) => {
-                    const value = metrics?.values?.[index];
-                    if (!value) {
-                      return null;
-                    }
-                    return (
-                      <div style={style} key={(metrics!.values as FacettableValue[])[index].name}>
-                        <PromLabel
-                          name={metrics!.name}
-                          value={value?.name}
-                          title={value.details}
-                          active={value?.selected}
-                          onClick={this.onClickMetric}
-                          searchTerm={metricSearchTerm}
-                        />
-                      </div>
-                    );
-                  }}
-                >
-                </List>
-              </div>
+        <div className={styles.sectionsRow}>
+          <div className={styles.section}>
+            <Label description='Once a metric is selected only possible labels are shown.'>1. Select a metric</Label>
+            <div>
+              <Input
+                onChange={this.onChangeMetricSearch}
+                aria-label='Filter expression for metric'
+                value={metricSearchTerm}
+              />
+            </div>
+            <div role='list' className={styles.valueListWrapper}>
+              <List
+                defaultHeight={Math.min(450, metricCount * LIST_ITEM_SIZE)}
+                rowCount={metricCount}
+                rowHeight={LIST_ITEM_SIZE}
+                className={styles.valueList}
+                rowProps={{}}
+                rowComponent={({ index, style }) => {
+                  const value = metrics?.values?.[index];
+                  if (!value) {
+                    return null;
+                  }
+                  return (
+                    <div style={style} key={(metrics!.values as FacettableValue[])[index].name}>
+                      <PromLabel
+                        name={metrics!.name}
+                        value={value?.name}
+                        title={value.details}
+                        active={value?.selected}
+                        onClick={this.onClickMetric}
+                        searchTerm={metricSearchTerm}
+                      />
+                    </div>
+                  );
+                }}
+              >
+              </List>
             </div>
           </div>
 
-          <div>
-            <div className={styles.section}>
-              <Label description='Once label values are selected, only possible label combinations are shown.'>
-                2. Select labels to search in
-              </Label>
-              <div>
-                <Input
-                  onChange={this.onChangeLabelSearch}
-                  aria-label='Filter expression for label'
-                  value={labelSearchTerm}
-                />
-              </div>
-              {/* Using fixed height here to prevent jumpy layout */}
-              <div className={styles.list} style={{ height: 120 }}>
-                {nonMetricLabels.map((label) => (
-                  <PromLabel
-                    key={label.name}
-                    name={label.name}
-                    loading={label.loading}
-                    active={label.selected}
-                    hidden={label.hidden}
-                    facets={label.facets}
-                    onClick={this.onClickLabel}
-                    searchTerm={labelSearchTerm}
-                  />
-                ))}
-              </div>
+          <div className={styles.section}>
+            <Label description='Once label values are selected, only possible label combinations are shown.'>
+              2. Select labels to search in
+            </Label>
+            <div>
+              <Input
+                onChange={this.onChangeLabelSearch}
+                aria-label='Filter expression for label'
+                value={labelSearchTerm}
+              />
             </div>
-            <div className={styles.section}>
-              <Label description='Use the search field to find values across selected labels.'>
-                3. Select (multiple) values for your labels
-              </Label>
-              <div>
-                <Input
-                  onChange={this.onChangeValueSearch}
-                  aria-label='Filter expression for label values'
-                  value={valueSearchTerm}
-                />
-              </div>
-              <div className={styles.valueListArea} ref={this.valueListsRef}>
-                {selectedLabels.map((label) => (
-                  <div
-                    role='list'
-                    key={label.name}
-                    aria-label={`Values for ${label.name}`}
-                    className={styles.valueListWrapper}
-                  >
-                    <div className={styles.valueTitle}>
+            <div role='list' className={styles.valueListWrapper}>
+              {/* Using fixed height here to prevent jumpy layout */}
+              <List
+                defaultHeight={Math.min(450, LIST_ITEM_SIZE * (nonMetricLabels?.length || 0))}
+                rowCount={nonMetricLabels?.length || 0}
+                rowHeight={28}
+                className={styles.valueList}
+                rowProps={{}}
+                rowComponent={({ index, style }) => {
+                  const label = nonMetricLabels?.[index];
+                  if (!label) {
+                    return null;
+                  }
+                  return (
+                    <div style={style} key={label.name}>
                       <PromLabel
+                        key={label.name}
                         name={label.name}
                         loading={label.loading}
                         active={label.selected}
                         hidden={label.hidden}
-                        //If no facets, we want to show number of all label values
-                        facets={label.facets || label.values?.length}
+                        facets={label.facets}
                         onClick={this.onClickLabel}
+                        searchTerm={labelSearchTerm}
                       />
                     </div>
-                    <List
-                      defaultHeight={Math.min(200, LIST_ITEM_SIZE * (label.values?.length || 0))}
-                      rowCount={label.values?.length || 0}
-                      rowHeight={28}
-                      style={{ width: '200px' }}
-                      className={styles.valueList}
-                      rowProps={{}}
-                      rowComponent={({ index, style }) => {
-                        const value = label.values?.[index];
-                        if (!value) {
-                          return null;
-                        }
-                        return (
-                          <div style={style} key={(label.values as FacettableValue[])[index].name}>
-                            <PromLabel
-                              name={label.name}
-                              value={value?.name}
-                              active={value?.selected}
-                              onClick={this.onClickValue}
-                              searchTerm={valueSearchTerm}
-                            />
-                          </div>
-                        );
-                      }}
-                    >
-                    </List>
-                  </div>
-                ))}
-              </div>
+                  );
+                }}
+              >
+              </List>
             </div>
           </div>
-        </HorizontalGroup>
+
+          <div className={styles.section} style={{ overflow: 'hidden', resize: 'horizontal' }}>
+            <Label description='Use the search field to find values across selected labels.'>
+              3. Select (multiple) values for your labels
+            </Label>
+            <div>
+              <Input
+                onChange={this.onChangeValueSearch}
+                aria-label='Filter expression for label values'
+                value={valueSearchTerm}
+              />
+            </div>
+            <div className={styles.valueListArea} ref={this.valueListsRef}>
+              {selectedLabels.map((label) => (
+                <div
+                  role='list'
+                  key={label.name}
+                  aria-label={`Values for ${label.name}`}
+                  className={styles.valueListWrapper}
+                >
+                  <div className={styles.valueTitle}>
+                    <PromLabel
+                      name={label.name}
+                      loading={label.loading}
+                      active={label.selected}
+                      hidden={label.hidden}
+                      //If no facets, we want to show number of all label values
+                      facets={label.facets || label.values?.length}
+                      onClick={this.onClickLabel}
+                    />
+                  </div>
+                  <List
+                    defaultHeight={Math.min(450, LIST_ITEM_SIZE * (label.values?.length || 0))}
+                    rowCount={label.values?.length || 0}
+                    rowHeight={28}
+                    style={{ width: '200px' }}
+                    className={styles.valueList}
+                    rowProps={{}}
+                    rowComponent={({ index, style }) => {
+                      const value = label.values?.[index];
+                      if (!value) {
+                        return null;
+                      }
+                      return (
+                        <div style={style} key={(label.values as FacettableValue[])[index].name}>
+                          <PromLabel
+                            name={label.name}
+                            value={value?.name}
+                            active={value?.selected}
+                            onClick={this.onClickValue}
+                            searchTerm={valueSearchTerm}
+                          />
+                        </div>
+                      );
+                    }}
+                  >
+                  </List>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
         <div className={styles.section}>
           <Label>4. Resulting selector</Label>
