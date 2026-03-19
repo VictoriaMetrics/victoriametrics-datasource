@@ -18,7 +18,7 @@
 
 import { css } from '@emotion/css';
 import { promLanguageDefinition } from 'monaco-promql';
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useLatest } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
@@ -107,7 +107,7 @@ const getStyles = (theme: GrafanaTheme2, placeholder: string) => {
 
 const MonacoQueryField = (props: Props) => {
   // we need only one instance of `overrideServices` during the lifetime of the react component
-  const overrideServicesRef = useRef(getOverrideServices());
+  const [overrideServices] = useState(() => getOverrideServices());
   const containerRef = useRef<HTMLDivElement>(null);
   const { languageProvider, history, onBlur, onRunQuery, initialValue, placeholder, readOnly } = props;
 
@@ -136,7 +136,7 @@ const MonacoQueryField = (props: Props) => {
       ref={containerRef}
     >
       <ReactMonacoEditor
-        overrideServices={overrideServicesRef.current}
+        overrideServices={overrideServices}
         options={{
           ...options,
           readOnly

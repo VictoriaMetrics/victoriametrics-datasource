@@ -8,16 +8,20 @@ import { useEffect, useState } from 'react';
 
 function useFlash(flash?: boolean) {
   const [keepFlash, setKeepFlash] = useState(true);
-  useEffect(() => {
-    let t: any;
-    if (flash) {
-      t = setTimeout(() => {
-        setKeepFlash(false);
-      }, 1000);
-    } else {
+  const [prevFlash, setPrevFlash] = useState(flash);
+
+  if (flash !== prevFlash) {
+    setPrevFlash(flash);
+    if (!flash) {
       setKeepFlash(true);
     }
+  }
 
+  useEffect(() => {
+    if (!flash) { return; }
+    const t = setTimeout(() => {
+      setKeepFlash(false);
+    }, 1000);
     return () => clearTimeout(t);
   }, [flash]);
 

@@ -24,6 +24,12 @@ const WithTemplateBody: FC<Props> = ({ datasource, dashboardUID, template, setTe
 
   const [value, setValue] = useState(template?.expr || '')
   const [isLoading, setIsLoading] = useState(false)
+  const [prevTemplate, setPrevTemplate] = useState(template)
+
+  if (template !== prevTemplate) {
+    setPrevTemplate(template)
+    setValue(template?.expr || '')
+  }
 
   const handleSave = useCallback(async () => {
     setIsLoading(true)
@@ -43,17 +49,15 @@ const WithTemplateBody: FC<Props> = ({ datasource, dashboardUID, template, setTe
     setIsLoading(false)
   }, [value, isValidExpr, updateDatasource, datasource, dashboardUID, setTemplate, handleClose])
 
-  useEffect(() => {
+  const [prevDeps, setPrevDeps] = useState({ datasource, dashboardUID })
+  if (prevDeps.datasource !== datasource || prevDeps.dashboardUID !== dashboardUID) {
+    setPrevDeps({ datasource, dashboardUID })
     setTemplate(datasource.withTemplates.find(t => t.uid === dashboardUID))
-  }, [setTemplate, datasource, dashboardUID])
+  }
 
   useEffect(() => {
     value && isValidExpr(value)
   }, [value, isValidExpr])
-
-  useEffect(() => {
-    setValue(template?.expr || '')
-  }, [template])
 
   return (
     <div className={styles.body}>

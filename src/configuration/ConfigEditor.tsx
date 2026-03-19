@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import { gte } from 'semver';
 
 import { SIGV4ConnectionConfig } from '@grafana/aws-sdk';
@@ -40,8 +40,8 @@ export enum DataSourceType {
 export type Props = DataSourcePluginOptionsEditorProps<PromOptions>;
 export const ConfigEditor = (props: Props) => {
   const { options, onOptionsChange } = props;
-  // use ref so this is evaluated only first time it renders and the select does not disappear suddenly.
-  const showAccessOptions = useRef(props.options.access === 'direct');
+  // use state so this is evaluated only first time it renders and the select does not disappear suddenly.
+  const [showAccessOptions] = useState(() => props.options.access === 'direct');
 
   const azureAuthSettings = {
     azureAuthSupported: config.azureAuthEnabled,
@@ -60,7 +60,7 @@ export const ConfigEditor = (props: Props) => {
       <DataSourceHttpSettings
         defaultUrl='http://localhost:8428'
         dataSourceConfig={options}
-        showAccessOptions={showAccessOptions.current}
+        showAccessOptions={showAccessOptions}
         onChange={onOptionsChange}
         sigV4AuthToggleEnabled={config.sigV4AuthEnabled}
         azureAuthSettings={azureAuthSettings}

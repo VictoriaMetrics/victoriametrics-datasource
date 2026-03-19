@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 
 import { PrometheusDatasource } from '../../../datasource';
 import PrometheusLanguageProvider from '../../../language_provider';
@@ -11,17 +11,19 @@ interface Props {
 }
 
 const TemplateEditor: FC<Props> = ({ initialValue, datasource, onChange }) => {
+  // Create a fresh language provider without previous WITH templates
+  const [languageProvider] = useState(
+    () => new PrometheusLanguageProvider(datasource as PrometheusDatasource)
+  );
 
   useEffect(() => {
-    // updating the languageProvider without using previous templates WITH
-    datasource.languageProvider = new PrometheusLanguageProvider(datasource as PrometheusDatasource)
-    datasource.languageProvider?.start?.()
-  }, [datasource])
+    languageProvider.start?.();
+  }, [languageProvider]);
 
   return (
     <MonacoQueryFieldWrapper
       runQueryOnBlur={false}
-      languageProvider={datasource.languageProvider}
+      languageProvider={languageProvider}
       history={[]}
       onChange={onChange}
       onRunQuery={() => {}}

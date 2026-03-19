@@ -17,7 +17,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { isEqual } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { SelectableValue } from '@grafana/data';
 
@@ -37,15 +37,15 @@ export interface Props {
 
 export function LabelFilters({ labelsFilters, onChange, onGetLabelNames, onGetLabelValues, error }: Props) {
   const defaultOp = '=';
-  const [items, setItems] = useState<Array<Partial<QueryBuilderLabelFilter>>>([{ op: defaultOp }]);
+  const [items, setItems] = useState<Array<Partial<QueryBuilderLabelFilter>>>(() =>
+    labelsFilters.length > 0 ? labelsFilters : [{ op: defaultOp }]
+  );
+  const [prevLabelsFilters, setPrevLabelsFilters] = useState(labelsFilters);
 
-  useEffect(() => {
-    if (labelsFilters.length > 0) {
-      setItems(labelsFilters);
-    } else {
-      setItems([{ op: defaultOp }]);
-    }
-  }, [labelsFilters]);
+  if (labelsFilters !== prevLabelsFilters) {
+    setPrevLabelsFilters(labelsFilters);
+    setItems(labelsFilters.length > 0 ? labelsFilters : [{ op: defaultOp }]);
+  }
 
   const onLabelsChange = (newItems: Array<Partial<QueryBuilderLabelFilter>>) => {
     setItems(newItems);

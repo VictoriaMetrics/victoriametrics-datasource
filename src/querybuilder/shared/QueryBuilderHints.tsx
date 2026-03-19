@@ -17,9 +17,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { css } from '@emotion/css';
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 
-import { GrafanaTheme2, PanelData, QueryHint } from '@grafana/data';
+import { GrafanaTheme2, PanelData } from '@grafana/data';
 import { Button, Tooltip, useStyles2 } from '@grafana/ui';
 
 import { PrometheusDatasource } from '../../datasource';
@@ -43,14 +43,12 @@ export const QueryBuilderHints = <T extends PromLokiVisualQuery>({
   queryModeller,
   buildVisualQueryFromString,
 }: Props<T>) => {
-  const [hints, setHints] = useState<QueryHint[]>([]);
   const styles = useStyles2(getStyles);
 
-  useEffect(() => {
+  const hints = useMemo(() => {
     const query = { expr: queryModeller.renderQuery(visualQuery), refId: '' };
     // For now show only actionable hints
-    const hints = datasource.getQueryHints(query, data?.series || []).filter((hint) => hint.fix?.action);
-    setHints(hints);
+    return datasource.getQueryHints(query, data?.series || []).filter((hint) => hint.fix?.action);
   }, [datasource, visualQuery, data, queryModeller]);
 
   return (

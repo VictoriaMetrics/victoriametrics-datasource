@@ -19,7 +19,10 @@ export interface WithTemplateConfigProps {
 }
 
 const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate, dashboardUID, datasource, app }) => {
-  const [isValidDashboard, setIsValidDashboard] = useState(app === CoreApp.Explore)
+  const [isValidDashboard, setIsValidDashboard] = useState(() => {
+    if (app === CoreApp.Explore) { return true; }
+    return !!dashboardUID;
+  })
 
   const [dashboardResponse, setDashboardResponse] = useState<DashboardResponse | null>()
 
@@ -37,26 +40,25 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate
   const handleOpen = () => setShowTemplates(true);
   const handleAcceptWarning = () => setIsValidDashboard(true)
 
-  useEffect(() => {
+  const [prevTemplateDeps, setPrevTemplateDeps] = useState({ datasource, dashboardUID })
+  if (prevTemplateDeps.datasource !== datasource || prevTemplateDeps.dashboardUID !== dashboardUID) {
+    setPrevTemplateDeps({ datasource, dashboardUID })
     setTemplate(datasource.withTemplates.find(t => t.uid === dashboardUID))
-  }, [setTemplate, datasource, dashboardUID])
+  }
 
   useEffect(() => {
+    if (!dashboardUID) { return; }
     const fetchDashboard = async () => {
       try {
-        const dashboardResponse = await getDashboardByUID(dashboardUID)
-        setDashboardResponse(dashboardResponse)
+        const resp = await getDashboardByUID(dashboardUID)
+        setDashboardResponse(resp)
         setIsValidDashboard(true)
       } catch (e) {
         console.error(e)
       }
     }
-    if (dashboardUID) {
-      fetchDashboard()
-    } else if (app !== CoreApp.Explore) {
-      setIsValidDashboard(false)
-    }
-  }, [dashboardUID, app]);
+    fetchDashboard()
+  }, [dashboardUID]);
 
   return (
     <>
