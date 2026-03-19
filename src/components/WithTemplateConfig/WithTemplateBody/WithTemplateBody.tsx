@@ -49,11 +49,9 @@ const WithTemplateBody: FC<Props> = ({ datasource, dashboardUID, template, setTe
     setIsLoading(false)
   }, [value, isValidExpr, updateDatasource, datasource, dashboardUID, setTemplate, handleClose])
 
-  const [prevDeps, setPrevDeps] = useState({ datasource, dashboardUID })
-  if (prevDeps.datasource !== datasource || prevDeps.dashboardUID !== dashboardUID) {
-    setPrevDeps({ datasource, dashboardUID })
+  useEffect(() => {
     setTemplate(datasource.withTemplates.find(t => t.uid === dashboardUID))
-  }
+  }, [datasource, dashboardUID, setTemplate])
 
   useEffect(() => {
     value && isValidExpr(value)

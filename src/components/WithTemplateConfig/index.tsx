@@ -40,11 +40,9 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate
   const handleOpen = () => setShowTemplates(true);
   const handleAcceptWarning = () => setIsValidDashboard(true)
 
-  const [prevTemplateDeps, setPrevTemplateDeps] = useState({ datasource, dashboardUID })
-  if (prevTemplateDeps.datasource !== datasource || prevTemplateDeps.dashboardUID !== dashboardUID) {
-    setPrevTemplateDeps({ datasource, dashboardUID })
+  useEffect(() => {
     setTemplate(datasource.withTemplates.find(t => t.uid === dashboardUID))
-  }
+  }, [datasource, dashboardUID, setTemplate])
 
   useEffect(() => {
     if (!dashboardUID) { return; }
