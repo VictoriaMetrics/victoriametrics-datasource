@@ -33,7 +33,7 @@ frontend-build: frontend-package-base-image
 		--env COREPACK_HOME="/$(PLUGIN_ID)/.cache/corepack" \
 		--env GRAFANA_ACCESS_POLICY_TOKEN=$$GRAFANA_ACCESS_POLICY_TOKEN \
 		--entrypoint=/bin/bash \
-		frontent-builder-image -c "yarn install && yarn build && yarn sign --distDir plugins/$(PLUGIN_ID)"
+		frontent-builder-image -c "yarn install --frozen-lockfile && yarn build && yarn sign --distDir plugins/$(PLUGIN_ID)"
 
 vm-backend-plugin-build: mage
 	$(MAGE) -v
