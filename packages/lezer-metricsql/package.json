@@ -1,7 +1,7 @@
 {
   "name": "lezer-metricsql",
   "version": "0.1.7",
-  "main": "index.cjs",
+  "main": "dist/index.cjs",
   "type": "module",
   "exports": {
     "import": "./dist/index.es.js",
