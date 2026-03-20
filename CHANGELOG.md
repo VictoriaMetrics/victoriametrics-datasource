@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: enhance error handling in datasource responses to include detailed error messages. See [#474](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/474).
+
 ## v0.23.1
 
 * BUGFIX: fix plugin Grafana dependencies to ensure compatibility with Grafana version 12.4.x. See [#462](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/462).
