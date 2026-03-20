@@ -3,6 +3,7 @@
   "version": "0.23.1",
   "description": "Showcase how to build a basic datasource plugin",
   "scripts": {
+    "build:lezer-metricsql": "cd packages/lezer-metricsql && bash build.sh",
     "build": "webpack -c ./webpack.config.ts --env production",
     "dev": "webpack -w -c ./webpack.config.ts --env development",
     "typecheck": "tsc --noEmit",
@@ -13,8 +14,6 @@
     "lint": "eslint --cache .",
     "lint:fix": "yarn run lint --fix",
     "server": "docker compose up --build",
-    "preinstall": "cd packages/lezer-metricsql && yarn install && cd ../..",
-    "postinstall": "yarn upgrade lezer-metricsql",
     "sign": "[ -z $GRAFANA_ACCESS_POLICY_TOKEN ] && echo 'skip plugin signing' || npx --yes @grafana/sign-plugin@latest"
   },
   "author": "VictoriaMetrics",
@@ -98,8 +97,12 @@
     "string-width": "^4.2.3",
     "@remix-run/router": "^1.23.2"
   },
+  "workspaces": [
+    "packages/lezer-metricsql"
+  ],
+  "packageManager": "yarn@4.13.0",
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.7.7",
@@ -135,7 +138,7 @@
     "history": "^5.3.0",
     "immutable": "5.0.0-beta.4",
     "jquery": "^3.6.4",
-    "lezer-metricsql": "file:packages/lezer-metricsql",
+    "lezer-metricsql": "workspace:*",
     "lodash": "^4.17.23",
     "lru-cache": "10.0.1",
     "monaco-editor": "0.34.1",

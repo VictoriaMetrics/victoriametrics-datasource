@@ -2,10 +2,12 @@
 
 set -ex
 
-npx lezer-generator src/metricsql.grammar -o src/parser
+ROOT_BIN="$(cd ../.. && pwd)/node_modules/.bin"
+
+"$ROOT_BIN/lezer-generator" src/metricsql.grammar -o src/parser
 
 cat src/parser.terms.js >> src/parser.js
 
 bash ./generate-types.sh
 
-rollup -c
+"$ROOT_BIN/rollup" -c

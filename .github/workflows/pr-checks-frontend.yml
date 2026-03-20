@@ -35,8 +35,14 @@ jobs:
         with:
           node-version: v24.11.1
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install all dependencies
         run: yarn install
+
+      - name: Build lezer-metricsql
+        run: yarn build:lezer-metricsql
 
       - name: Run tests
         run: yarn test:ci

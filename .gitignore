@@ -47,6 +47,15 @@ tsconfig.tsbuildinfo
 cypress/report.json
 cypress/videos
 
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
 # Docker
 .cache
 gocache-for-docker

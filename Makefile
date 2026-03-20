@@ -24,15 +24,14 @@ frontend-build: frontend-package-base-image
 	chown -R $(shell id -u):$(shell id -g) .npm .cache && \
 	docker run --rm \
 		-v "$(shell pwd):/$(PLUGIN_ID)" \
-		-v "$(shell pwd)/.yarn:/.yarn" \
-		-v "$(shell pwd)/.npm:/.npm" \
 		-v "$(shell pwd)/.cache:/.cache" \
 		-w /$(PLUGIN_ID) \
 		--user $(shell id -u):$(shell id -g) \
+		--env HOME="/tmp" \
 		--env YARN_CACHE_FOLDER="/$(PLUGIN_ID)/.cache" \
 		--env GRAFANA_ACCESS_POLICY_TOKEN=$$GRAFANA_ACCESS_POLICY_TOKEN \
 		--entrypoint=/bin/bash \
-		frontent-builder-image -c "yarn preinstall && yarn install --omit=dev && yarn build && yarn sign --distDir plugins/$(PLUGIN_ID)"
+		frontent-builder-image -c "yarn install && yarn build:lezer-metricsql && yarn build && yarn sign --distDir plugins/$(PLUGIN_ID)"
 
 vm-backend-plugin-build: mage
 	$(MAGE) -v
