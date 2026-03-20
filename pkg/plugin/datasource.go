@@ -236,7 +236,20 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		err = fmt.Errorf("got unexpected response status code: %d with request url: %q", resp.StatusCode, reqURL)
+		body, readErr := io.ReadAll(io.LimitReader(resp.Body, 4096))
+		if readErr != nil || len(body) == 0 {
+			err = fmt.Errorf("got unexpected response status code: %d with request url: %q", resp.StatusCode, reqURL)
+			return newResponseError(err, backend.Status(resp.StatusCode))
+		}
+		var errResp Response
+		if jsonErr := json.Unmarshal(body, &errResp); jsonErr == nil {
+			if errMsg := formatResponseError(errResp); errMsg != "" {
+				err = fmt.Errorf("%s", errMsg)
+				return newResponseError(err, backend.Status(resp.StatusCode))
+			}
+		}
+		err = fmt.Errorf("got unexpected response status code: %d with request url: %q and response: %s",
+			resp.StatusCode, reqURL, string(body))
 		return newResponseError(err, backend.Status(resp.StatusCode))
 	}
 
@@ -244,6 +257,15 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
 		err = fmt.Errorf("failed to decode body response: %w", err)
 		return newResponseError(err, backend.StatusInternal)
+	}
+
+	if r.Status == "error" {
+		errMsg := formatResponseError(r)
+		if errMsg == "" {
+			errMsg = "ERROR: unknown error"
+		}
+		err := fmt.Errorf("%s", errMsg)
+		return newResponseError(err, backend.StatusBadRequest)
 	}
 
 	r.ForAlerting = forAlerting
@@ -259,6 +281,16 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 	}
 
 	return backend.DataResponse{Frames: frames}
+}
+
+func formatResponseError(r Response) string {
+	if r.ErrorType != "" && r.Error != "" {
+		return fmt.Sprintf("ERROR: %s, %s", r.ErrorType, r.Error)
+	}
+	if r.Error != "" {
+		return fmt.Sprintf("ERROR: %s", r.Error)
+	}
+	return ""
 }
 
 // CheckHealth performs a request to the specified data source and returns an error if the HTTP handler did not return

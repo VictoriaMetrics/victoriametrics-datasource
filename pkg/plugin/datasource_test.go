@@ -32,6 +32,10 @@ func TestDatasourceQueryRequest(t *testing.T) {
 		switch c {
 		case 0:
 			w.WriteHeader(500)
+			_, err := w.Write([]byte("some error from backend"))
+			if err != nil {
+				t.Fatalf("error write response: %s", err)
+			}
 		case 1:
 			_, err := w.Write([]byte("[]"))
 			if err != nil {
@@ -118,9 +122,9 @@ func TestDatasourceQueryRequest(t *testing.T) {
 		}
 	}
 
-	expErr(ctx, "got unexpected response status code: 500")                                                           // 0
+	expErr(ctx, "and response: some error from backend")                                                              // 0 (non-200 with body)
 	expErr(ctx, "failed to decode body response: json: cannot unmarshal array into Go value of type plugin.Response") // 1
-	expErr(ctx, "failed to prepare data from response: unknown result type \"\"")                                     // 2
+	expErr(ctx, "ERROR: type:, some error msg")                                                                       // 2
 	expErr(ctx, "failed to prepare data from response: unknown result type \"\"")                                     // 3
 	expErr(ctx, "failed to prepare data from response: unmarshal err unexpected end of JSON input")                   // 4
 

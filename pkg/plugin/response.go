@@ -43,6 +43,8 @@ type Data struct {
 // Response contains fields from query response
 type Response struct {
 	Status      string `json:"status"`
+	ErrorType   string `json:"errorType,omitempty"`
+	Error       string `json:"error,omitempty"`
 	Data        Data   `json:"data"`
 	Trace       *Trace `json:"trace,omitempty"`
 	ForAlerting bool   `json:"-"`
