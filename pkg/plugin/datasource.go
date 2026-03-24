@@ -238,19 +238,24 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 	if resp.StatusCode != http.StatusOK {
 		body, readErr := io.ReadAll(io.LimitReader(resp.Body, 4096))
 		if readErr != nil || len(body) == 0 {
-			err = fmt.Errorf("got unexpected response status code: %d with request url: %q", resp.StatusCode, reqURL)
-			return newResponseError(err, backend.Status(resp.StatusCode))
+			return newResponseError(
+				fmt.Errorf("got unexpected response status code: %d with request url: %q", resp.StatusCode, reqURL),
+				backend.Status(resp.StatusCode),
+			)
 		}
 		var errResp Response
 		if jsonErr := json.Unmarshal(body, &errResp); jsonErr == nil {
 			if errMsg := formatResponseError(errResp); errMsg != "" {
-				err = fmt.Errorf("%s", errMsg)
-				return newResponseError(err, backend.Status(resp.StatusCode))
+				return newResponseError(
+					fmt.Errorf("%s", errMsg),
+					backend.Status(resp.StatusCode),
+				)
 			}
 		}
-		err = fmt.Errorf("got unexpected response status code: %d with request url: %q and response: %s",
-			resp.StatusCode, reqURL, string(body))
-		return newResponseError(err, backend.Status(resp.StatusCode))
+		return newResponseError(
+			fmt.Errorf("got unexpected response status code: %d with request url: %q and response: %s", resp.StatusCode, reqURL, string(body)),
+			backend.Status(resp.StatusCode),
+		)
 	}
 
 	var r Response
@@ -264,8 +269,7 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 		if errMsg == "" {
 			errMsg = "ERROR: unknown error"
 		}
-		err := fmt.Errorf("%s", errMsg)
-		return newResponseError(err, backend.StatusBadRequest)
+		return newResponseError(fmt.Errorf("%s", errMsg), backend.StatusBadRequest)
 	}
 
 	r.ForAlerting = forAlerting
