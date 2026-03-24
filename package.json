@@ -14,7 +14,8 @@
     "lint": "eslint --cache .",
     "lint:fix": "yarn run lint --fix",
     "server": "docker compose up --build",
-    "sign": "[ -z $GRAFANA_ACCESS_POLICY_TOKEN ] && echo 'skip plugin signing' || npx --yes @grafana/sign-plugin@latest"
+    "sign": "[ -z $GRAFANA_ACCESS_POLICY_TOKEN ] && echo 'skip plugin signing' || npx --yes @grafana/sign-plugin@latest",
+    "postinstall": "rm -rf node_modules/flatted/golang"
   },
   "author": "VictoriaMetrics",
   "license": "AGPL-3.0-only",
