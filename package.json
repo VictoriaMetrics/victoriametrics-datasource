@@ -14,7 +14,8 @@
     "lint": "eslint --cache .",
     "lint:fix": "yarn run lint --fix",
     "server": "docker compose up --build",
-    "sign": "[ -z $GRAFANA_ACCESS_POLICY_TOKEN ] && echo 'skip plugin signing' || npx --yes @grafana/sign-plugin@latest"
+    "sign": "[ -z $GRAFANA_ACCESS_POLICY_TOKEN ] && echo 'skip plugin signing' || npx --yes @grafana/sign-plugin@latest",
+    "postinstall": "rm -rf node_modules/flatted/golang"
   },
   "author": "VictoriaMetrics",
   "license": "AGPL-3.0-only",
@@ -55,7 +56,7 @@
     "@typescript-eslint/eslint-plugin": "^8.26.1",
     "@typescript-eslint/parser": "^8.26.1",
     "babel-plugin-macros": "^3.1.0",
-    "copy-webpack-plugin": "^11.0.0",
+    "copy-webpack-plugin": "^14.0.0",
     "eslint": "^9.0.0",
     "eslint-plugin-deprecation": "^3.0.0",
     "eslint-plugin-import": "^2.26.0",
@@ -64,7 +65,7 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "eslint-webpack-plugin": "^5.0.0",
     "fork-ts-checker-webpack-plugin": "^8.0.0",
-    "glob": "11.1.0",
+    "glob": "13.0.6",
     "identity-obj-proxy": "3.0.0",
     "imports-loader": "^5.0.0",
     "jest": "30.0.5",
@@ -74,7 +75,7 @@
     "replace-in-file-webpack-plugin": "^1.0.6",
     "sass": "1.63.2",
     "sass-loader": "13.3.1",
-    "terser-webpack-plugin": "^5.3.10",
+    "terser-webpack-plugin": "^5.4.0",
     "typescript": "5.5.4",
     "typescript-eslint": "^8.53.0",
     "webpack": "5.104.1",
@@ -85,17 +86,14 @@
     "webpack-virtual-modules": "^0.6.2"
   },
   "resolutions": {
-    "diff": "^4.0.4",
-    "lodash": "^4.17.23",
-    "js-yaml": "^3.14.2",
-    "react-router": "^6.30.3",
-    "react-router-dom": "^6.30.3",
-    "react-router-dom-v5-compat": "^6.30.3",
-    "@isaacs/brace-expansion": "^5.0.1",
-    "rxjs": "7.8.2",
-    "cliui": "^7.0.4",
-    "string-width": "^4.2.3",
-    "@remix-run/router": "^1.23.2"
+    "dompurify": ">=3.3.2",
+    "flatted": ">=3.4.2",
+    "immutable@^3.8.2": "3.8.3",
+    "immutable@^4.0.0": "4.3.8",
+    "immutable@^4.3.6": "4.3.8",
+    "immutable@5.1.4": "5.1.5",
+    "lodash@4.17.21": "4.17.23",
+    "serialize-javascript": ">=7.0.3"
   },
   "workspaces": [
     "packages/lezer-metricsql"
@@ -136,7 +134,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "history": "^5.3.0",
-    "immutable": "5.0.0-beta.4",
+    "immutable": "5.1.5",
     "jquery": "^3.6.4",
     "lezer-metricsql": "workspace:*",
     "lodash": "^4.17.23",
