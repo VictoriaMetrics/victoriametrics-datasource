@@ -3,6 +3,7 @@
 ## tip
 
 * BUGFIX: enhance error handling in datasource responses to include detailed error messages. See [#474](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/474).
+* BUGFIX: fix an issue with Metrics Browser hangs when the datasource has many metrics. See [#469](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/469).
 
 ## v0.23.1
 
