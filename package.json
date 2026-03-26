@@ -96,7 +96,14 @@
     "immutable@^4.3.6": "4.3.8",
     "immutable@5.1.4": "5.1.5",
     "lodash@4.17.21": "4.17.23",
-    "serialize-javascript": ">=7.0.3"
+    "picomatch@^2.0.4": "2.3.2",
+    "picomatch@^2.2.1": "2.3.2",
+    "picomatch@^2.2.3": "2.3.2",
+    "picomatch@^2.3.1": "2.3.2",
+    "picomatch@^4.0.2": "4.0.4",
+    "picomatch@^4.0.3": "4.0.4",
+    "serialize-javascript": ">=7.0.3",
+    "yaml": "1.10.3"
   },
   "workspaces": [
     "packages/lezer-metricsql"
