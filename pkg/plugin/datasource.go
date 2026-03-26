@@ -30,7 +30,6 @@ var (
 
 const (
 	defaultScrapeInterval = 15 * time.Second
-	health                = "/-/healthy"
 	// it is weird logic to pass an identifier for an alert request in the headers
 	// but Grafana decided to do so, so we need to follow this
 	requestFromAlert = "FromAlert"
@@ -300,19 +299,35 @@ func formatResponseError(r Response) string {
 // CheckHealth performs a request to the specified data source and returns an error if the HTTP handler did not return
 // a 200 OK response.
 func (d *Datasource) CheckHealth(ctx context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
-	res := &backend.CheckHealthResult{}
 	di, err := d.getInstance(ctx, req.PluginContext)
 	if err != nil {
+		res := &backend.CheckHealthResult{}
 		res.Status = backend.HealthStatusError
 		res.Message = "Error getting datasource instance"
 		d.logger.Error("Error getting datasource instance", "err", err)
 		return res, nil
 	}
-	healthURL, err := newURL(di.url, health, true)
+	return d.checkHealthWithInstance(ctx, di)
+}
+
+// checkHealthWithInstance performs a lightweight query against the datasource
+// to verify connectivity and proper URL resolution, including vmauth/proxy setups.
+func (d *Datasource) checkHealthWithInstance(ctx context.Context, di *DatasourceInstance) (*backend.CheckHealthResult, error) {
+	queryURL, err := newURL(di.url, instantQueryPath, false)
 	if err != nil {
 		return newHealthCheckErrorf("failed to build health endpoint: %s", err), nil
 	}
-	r, err := http.NewRequestWithContext(ctx, http.MethodGet, healthURL.String(), nil)
+	values := queryURL.Query()
+	values.Set("query", "1")
+	values.Set("time", strconv.FormatInt(time.Now().Unix(), 10))
+	queryURL.RawQuery = values.Encode()
+
+	method := di.settings.HTTPMethod
+	if method == "" {
+		method = http.MethodGet
+	}
+
+	r, err := http.NewRequestWithContext(ctx, method, queryURL.String(), nil)
 	if err != nil {
 		return newHealthCheckErrorf("could not create request"), nil
 	}
