@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 	"github.com/klauspost/compress/snappy"
 	"github.com/klauspost/compress/zstd"
@@ -882,4 +883,175 @@ func TestVMAPIQuery_ContentEncoding(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCheckHealth(t *testing.T) {
+	t.Run("returns OK when backend responds with 200", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path != "/api/v1/query" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+			if r.URL.Query().Get("query") != "1" {
+				t.Errorf("unexpected query param: %s", r.URL.Query().Get("query"))
+			}
+			if r.URL.Query().Get("time") == "" {
+				t.Errorf("expected time param to be set")
+			}
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer srv.Close()
+
+		ds := &Datasource{logger: log.DefaultLogger}
+		di := &DatasourceInstance{
+			url:        srv.URL,
+			httpClient: srv.Client(),
+			settings:   DataSourceInstanceSettings{HTTPMethod: http.MethodGet},
+		}
+
+		ctx := context.Background()
+		result, err := ds.checkHealthWithInstance(ctx, di)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.Status != backend.HealthStatusOk {
+			t.Errorf("expected HealthStatusOk, got %v", result.Status)
+		}
+	})
+
+	t.Run("returns error when backend responds with non-200", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusServiceUnavailable)
+		}))
+		defer srv.Close()
+
+		ds := &Datasource{logger: log.DefaultLogger}
+		di := &DatasourceInstance{
+			url:        srv.URL,
+			httpClient: srv.Client(),
+			settings:   DataSourceInstanceSettings{HTTPMethod: http.MethodGet},
+		}
+
+		ctx := context.Background()
+		result, err := ds.checkHealthWithInstance(ctx, di)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.Status != backend.HealthStatusError {
+			t.Errorf("expected HealthStatusError, got %v", result.Status)
+		}
+	})
+
+	t.Run("returns error when server is unreachable", func(t *testing.T) {
+		ds := &Datasource{logger: log.DefaultLogger}
+		di := &DatasourceInstance{
+			url:        "http://127.0.0.1:1",
+			httpClient: &http.Client{Timeout: 1 * time.Second},
+			settings:   DataSourceInstanceSettings{HTTPMethod: http.MethodGet},
+		}
+
+		ctx := context.Background()
+		result, err := ds.checkHealthWithInstance(ctx, di)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.Status != backend.HealthStatusError {
+			t.Errorf("expected HealthStatusError, got %v", result.Status)
+		}
+	})
+
+	t.Run("preserves /select/ prefix in URL for cluster setup", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path != "/select/0/prometheus/api/v1/query" {
+				t.Errorf("unexpected path: %s, expected /select/0/prometheus/api/v1/query", r.URL.Path)
+			}
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer srv.Close()
+
+		ds := &Datasource{logger: log.DefaultLogger}
+		di := &DatasourceInstance{
+			url:        srv.URL + "/select/0/prometheus",
+			httpClient: srv.Client(),
+			settings:   DataSourceInstanceSettings{HTTPMethod: http.MethodGet},
+		}
+
+		ctx := context.Background()
+		result, err := ds.checkHealthWithInstance(ctx, di)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.Status != backend.HealthStatusOk {
+			t.Errorf("expected HealthStatusOk, got %v", result.Status)
+		}
+	})
+
+	t.Run("uses configured HTTP method", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodPost {
+				t.Errorf("expected POST, got %s", r.Method)
+			}
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer srv.Close()
+
+		ds := &Datasource{logger: log.DefaultLogger}
+		di := &DatasourceInstance{
+			url:        srv.URL,
+			httpClient: srv.Client(),
+			settings:   DataSourceInstanceSettings{HTTPMethod: http.MethodPost},
+		}
+
+		ctx := context.Background()
+		result, err := ds.checkHealthWithInstance(ctx, di)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.Status != backend.HealthStatusOk {
+			t.Errorf("expected HealthStatusOk, got %v", result.Status)
+		}
+	})
+
+	t.Run("returns error when URL is empty", func(t *testing.T) {
+		ds := &Datasource{logger: log.DefaultLogger}
+		di := &DatasourceInstance{
+			url:        "",
+			httpClient: &http.Client{},
+			settings:   DataSourceInstanceSettings{HTTPMethod: http.MethodGet},
+		}
+
+		ctx := context.Background()
+		result, err := ds.checkHealthWithInstance(ctx, di)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.Status != backend.HealthStatusError {
+			t.Errorf("expected HealthStatusError, got %v", result.Status)
+		}
+	})
+
+	t.Run("falls back to GET when HTTPMethod is empty", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodGet {
+				t.Errorf("expected GET, got %s", r.Method)
+			}
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer srv.Close()
+
+		ds := &Datasource{logger: log.DefaultLogger}
+		di := &DatasourceInstance{
+			url:        srv.URL,
+			httpClient: srv.Client(),
+			settings:   DataSourceInstanceSettings{HTTPMethod: ""},
+		}
+
+		ctx := context.Background()
+		result, err := ds.checkHealthWithInstance(ctx, di)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.Status != backend.HealthStatusOk {
+			t.Errorf("expected HealthStatusOk, got %v", result.Status)
+		}
+	})
 }
