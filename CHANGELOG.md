@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix health check URL generation when using vmauth with URL rewriting by replacing `/-/healthy` endpoint with `/api/v1/query?query=1`. This ensures health checks go through the same URL path as real queries, validating actual VM backend reachability. See [#468](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/468) and [#482](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/482).
+
 ## v0.23.2
 
 * BUGFIX: enhance error handling in datasource responses to include detailed error messages. See [#474](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/474).
