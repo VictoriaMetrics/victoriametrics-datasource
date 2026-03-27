@@ -4,12 +4,10 @@ import grafanaEslintConfig from '@grafana/eslint-config/flat.js';
 import react from 'eslint-plugin-react';
 import jest from 'eslint-plugin-jest';
 import lodash from 'eslint-plugin-lodash';
-import deprecation from 'eslint-plugin-deprecation';
 import prettier from 'eslint-config-prettier';
-import unusedImports from "eslint-plugin-unused-imports";
 import * as emotionPlugin from '@emotion/eslint-plugin';
 import {fixupPluginRules} from "@eslint/compat";
-import importPlugin from 'eslint-plugin-import';
+import importPlugin from 'eslint-plugin-import-x';
 
 export default defineConfig([
   grafanaEslintConfig,
@@ -41,10 +39,8 @@ export default defineConfig([
       'react': react,
       'jest': jest,
       'lodash': lodash,
-      'deprecation': deprecation,
-      'unused-imports': unusedImports,
       '@emotion': fixupPluginRules(emotionPlugin),
-      'import': importPlugin,
+      'import-x': importPlugin,
       '@stylistic': stylistic,
     },
     languageOptions: {
@@ -75,11 +71,26 @@ export default defineConfig([
     rules: {
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+      // Disable new react-hooks v7 rules to keep existing behavior
+      'react-hooks/static-components': 'off',
+      'react-hooks/use-memo': 'off',
+      'react-hooks/void-use-memo': 'off',
+      'react-hooks/component-hook-factories': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-hooks/immutability': 'off',
+      'react-hooks/globals': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/error-boundaries': 'off',
+      'react-hooks/purity': 'off',
+      'react-hooks/set-state-in-render': 'off',
+      'react-hooks/config': 'off',
+      'react-hooks/gating': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
-      "unused-imports/no-unused-imports": "error",
       '@typescript-eslint/no-unused-vars': ['warn', {
         argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_'
+        varsIgnorePattern: '^_',
+        enableAutofixRemoval: { imports: true }
       }],
       'no-console': ['warn', {allow: ['warn', 'error']}],
       "react/prop-types": "off",
@@ -106,7 +117,7 @@ export default defineConfig([
       }],
       '@stylistic/jsx-first-prop-new-line': ['error', 'multiline-multiprop'],
       '@stylistic/jsx-closing-bracket-location': ['error', 'tag-aligned'],
-      "import/order": [
+      "import-x/order": [
         "error",
         {
           "groups": [["builtin", "external"], "internal", "parent", "sibling", "index"],
