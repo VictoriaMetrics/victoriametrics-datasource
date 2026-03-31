@@ -69,7 +69,7 @@ export class PrometheusDatasource
   type: string;
   ruleMappings: { [index: string]: string };
   url: string;
-  id: number;
+  id?: number;
   directUrl: string;
   access: 'direct' | 'proxy';
   basicAuth: any;

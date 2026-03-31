@@ -18,3 +18,21 @@ Object.defineProperty(global, 'IntersectionObserver', {
   configurable: true,
   value: IntersectionObserver,
 });
+
+class ResizeObserver {
+  observe = jest.fn()
+  disconnect = jest.fn()
+  unobserve = jest.fn()
+}
+
+Object.defineProperty(window, 'ResizeObserver', {
+  writable: true,
+  configurable: true,
+  value: ResizeObserver,
+});
+
+Object.defineProperty(global, 'ResizeObserver', {
+  writable: true,
+  configurable: true,
+  value: ResizeObserver,
+});
