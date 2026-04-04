@@ -42,6 +42,8 @@ export interface PromQuery extends DataQuery {
   editorMode?: QueryEditorMode;
   trace?: number;
   fromExploreMetrics?: boolean;
+  /** WITH template expression, e.g. "alias = metric_a" or "$withTemplate" */
+  withTemplate?: string;
 }
 
 export interface PromOptions extends DataSourceJsonData {

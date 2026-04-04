@@ -8,17 +8,17 @@ import { PrometheusDatasource } from '../../datasource';
 import WarningNewDashboard from './WarningSavedDashboard/WarningSavedDashboard';
 import WithTemplateBody from './WithTemplateBody/WithTemplateBody';
 import getDashboardByUID from './api/getDashboardList';
-import { DashboardResponse, WithTemplate } from './types';
+import { DashboardResponse } from './types';
 
 export interface WithTemplateConfigProps {
-  template?: WithTemplate;
-  setTemplate: React.Dispatch<React.SetStateAction<WithTemplate | undefined>>
+  value: string | undefined;
+  onChange: (value: string | undefined) => void;
   datasource: PrometheusDatasource;
   dashboardUID: string;
   app?: CoreApp;
 }
 
-const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate, dashboardUID, datasource, app }) => {
+const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ value, onChange, dashboardUID, datasource, app }) => {
   const [isValidDashboard, setIsValidDashboard] = useState(app === CoreApp.Explore)
 
   const [dashboardResponse, setDashboardResponse] = useState<DashboardResponse | null>()
@@ -36,10 +36,6 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate
   const handleClose = () => setShowTemplates(false);
   const handleOpen = () => setShowTemplates(true);
   const handleAcceptWarning = () => setIsValidDashboard(true)
-
-  useEffect(() => {
-    setTemplate(datasource.withTemplates.find(t => t.uid === dashboardUID))
-  }, [setTemplate, datasource, dashboardUID])
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -75,11 +71,10 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate
       >
         {isValidDashboard ? (
           <WithTemplateBody
+            value={value}
+            onChange={onChange}
             datasource={datasource}
-            dashboardUID={dashboardUID || app || ''}
             handleClose={handleClose}
-            template={template}
-            setTemplate={setTemplate}
           />
         ) : (
           <WarningNewDashboard

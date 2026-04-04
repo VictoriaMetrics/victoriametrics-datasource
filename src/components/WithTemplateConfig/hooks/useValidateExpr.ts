@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { lastValueFrom } from 'rxjs';
 
-import { getBackendSrv } from '@grafana/runtime';
+import { getBackendSrv, getTemplateSrv } from '@grafana/runtime';
 
 interface ValidateResult {
   title: string;
@@ -50,8 +50,10 @@ export default (datasourceUID: string) => {
     setValidateResult(validateStatus.await)
 
     try {
-      // replace Grafana variables with '1s' for validation
-      const val = expr.replace(/\$__interval|\$__range|\$__rate_interval/gm, '1s')
+      // Resolve Grafana variables before validation
+      const interpolated = getTemplateSrv().replace(expr)
+      // replace built-in interval variables with '1s' for validation
+      const val = interpolated.replace(/\$__interval|\$__range|\$__rate_interval/gm, '1s')
       const withTemplate = encodeURIComponent(`WITH(${val})()`)
       const response = await lastValueFrom(getBackendSrv().fetch({
         url: `api/datasources/uid/${datasourceUID}/resources/expand-with-exprs?query=${withTemplate}&format=json`,

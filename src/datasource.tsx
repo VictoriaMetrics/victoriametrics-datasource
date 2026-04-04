@@ -183,7 +183,15 @@ export class PrometheusDatasource
   processTargetV2(target: PromQuery, request: DataQueryRequest<PromQuery>) {
     // Apply WITH templates
     const dashboardUID = request.dashboardUID || request.app || '';
-    const template = this.withTemplates.find(t => t.uid === dashboardUID);
+    const rawTemplateExpr = target.withTemplate
+      || this.withTemplates.find(t => t.uid === dashboardUID)?.expr;
+    // Resolve Grafana variables (e.g. "$withTemplate") before merging
+    const templateExpr = rawTemplateExpr
+      ? this.templateSrv.replace(rawTemplateExpr)
+      : undefined;
+    const template: WithTemplate | undefined = templateExpr
+      ? { uid: dashboardUID, expr: templateExpr }
+      : undefined;
     const expr = mergeTemplateWithQuery(target.expr, template)
 
     const baseTarget = {
@@ -576,6 +584,9 @@ export class PrometheusDatasource
       legendFormat: this.templateSrv.replace(target.legendFormat, variables),
       expr: exprWithAdHocFilters,
       interval: this.templateSrv.replace(target.interval, variables),
+      withTemplate: target.withTemplate
+        ? this.templateSrv.replace(target.withTemplate, variables)
+        : undefined,
     };
   }
 

@@ -2,6 +2,8 @@
 
 ## tip
 
+* FEATURE: store WITH templates per-query in the dashboard JSON instead of datasource settings. Templates are now exported/imported with dashboards, support Grafana `$variables` with automatic panel refresh, and can be shared across all queries via [Constant variables](https://github.com/VictoriaMetrics/victoriametrics-datasource/tree/main/src#shared-with-templates-for-a-dashboard). Existing templates from datasource settings continue to work as a fallback and are shown in the editor for seamless migration — simply open the WITH template modal and save to migrate to the new per-query format. See [#490](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/490).
+
 * MAINTENANCE: update Grafana dependency range to support version 13.x.x.
 
 ## v0.23.3

@@ -108,7 +108,9 @@ const VmuiLink: FC<Props> = ({
           ...getRateIntervalScopedVariable(step, scrapeInterval),
         });
       }
-      let expr = mergeTemplateWithQuery(query.expr, datasource.withTemplates.find(t => t.uid === dashboardUID))
+      const templateExpr = query.withTemplate || datasource.withTemplates.find(t => t.uid === dashboardUID)?.expr;
+      const template = templateExpr ? { uid: '', expr: templateExpr } : undefined;
+      let expr = mergeTemplateWithQuery(query.expr, template)
       expr = templateSrv.replace(expr, scopedVars, datasource.interpolateQueryExpr);
       const resp = await datasource.postResource<{ vmuiURL: string }>('vmui', {
         vmui: {

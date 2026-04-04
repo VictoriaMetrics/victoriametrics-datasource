@@ -12,7 +12,7 @@ export const getArrayFromTemplate = (template?: WithTemplate) => {
     const comment = commentMatch?.join('')?.trim() || ''
 
     const variableMatch = a.match(/(.*?)=/);
-    const variableName = variableMatch?.[0]?.slice(0, -2) || '';
+    const variableName = variableMatch?.[0]?.slice(0, -2).trim() || '';
 
     return {
       label: `${variableName}`,

@@ -64,15 +64,14 @@ See panels examples at [VictoriaMetrics playground](https://play-grafana.victori
 
 The `WITH` templates feature simplifies the construction and management of complex queries. You can try this feature in the [WITH templates playground](https://play.victoriametrics.com/select/accounting/1/6a716b0f-38bc-4856-90ce-448fd713e3fe/prometheus/graph/#/expand-with-exprs).
 
-The "WITH templates" section allows you to create expressions with templates that can be used in dashboards.
+WITH templates are stored per-query in the dashboard JSON. This means templates are automatically included when exporting or importing dashboards.
 
-WITH expressions are stored in the datasource object. If the dashboard gets exported, the associated WITH templates will not be included in the resulting JSON (due to technical limitations) and need to be migrated separately.
+You can use Grafana [variables](https://grafana.com/docs/grafana/latest/dashboards/variables/) inside WITH template expressions (e.g. `$instance`, `$job`). Panels will automatically refresh when variable values change.
 
 ### Defining WITH Expressions
 
 1. Navigate to the dashboard where you want to add a template.<br/>
-   *Note: templates are available within the dashboard scope.*
-1. Click the `WITH templates` button.
+1. Click the `WITH templates` button next to the query.
 1. Enter the expression in the input field. Once done, press the `Save` button to apply the changes. For example:
 ```
 commonFilters = {instance=~"$node:$port",job=~"$job"},
@@ -107,6 +106,15 @@ WITH (
 ```
 
 To view the raw query in the interface, enable the `Raw` toggle.
+
+### Shared WITH Templates for a Dashboard
+
+To use the same WITH template across all queries on a dashboard:
+
+1. Create a [Constant variable](https://grafana.com/docs/grafana/latest/dashboards/variables/add-template-variables/#add-a-constant-variable) (e.g. named `withTemplate`) with the WITH expression as its value.
+2. In each query's WITH template field, enter `$withTemplate`.
+
+This way all queries on the dashboard share the same template, and you only need to update it in one place.
 
 ## Correlations
 
