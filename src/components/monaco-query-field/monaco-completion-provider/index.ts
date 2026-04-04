@@ -23,6 +23,7 @@ import type { Monaco, monacoTypes } from '@grafana/ui';
 import { escapeMetricNameSpecialCharacters } from '../../../language_utils';
 
 import { CompletionType, DataProvider, getCompletions } from './completions';
+import { getDottedIdentifierBounds } from './getDottedIdentifierBounds';
 import { getSituation } from './situation';
 import { NeverCaseError } from './util';
 
@@ -67,6 +68,24 @@ function getMonacoCompletionItemKind(type: CompletionType, monaco: Monaco): mona
       throw new NeverCaseError();
   }
 }
+
+// Get Monaco range that spans the full dotted identifier around the cursor (e.g. "kubernetes.pod.id").
+function getDottedWordRange(
+  model: monacoTypes.editor.ITextModel,
+  position: monacoTypes.Position,
+  monaco: Monaco
+): monacoTypes.Range {
+  const lineContent = model.getLineContent(position.lineNumber);
+  const { start, end } = getDottedIdentifierBounds(lineContent, position.column - 1);
+
+  return monaco.Range.lift({
+    startLineNumber: position.lineNumber,
+    endLineNumber: position.lineNumber,
+    startColumn: start + 1, // 1-based
+    endColumn: end + 1,     // 1-based
+  });
+}
+
 export function getCompletionProvider(
   monaco: Monaco,
   dataProvider: DataProvider
@@ -85,6 +104,7 @@ export function getCompletionProvider(
           endColumn: word.endColumn,
         })
         : monaco.Range.fromPositions(position);
+    const metricNameRange = getDottedWordRange(model, position, monaco);
     // documentation says `position` will be "adjusted" in `getOffsetAt`
     // i don't know what that means, to be sure i clone it
     const positionClone = {
@@ -106,7 +126,7 @@ export function getCompletionProvider(
         detail: item.detail,
         documentation: { value: item.documentation } as IMarkdownString,
         sortText: index.toString().padStart(maxIndexDigits, '0'), // to force the order we have
-        range,
+        range: item.type === CompletionType.metricName ? metricNameRange : range,
         command: item.triggerOnInsert
           ? {
             id: 'editor.action.triggerSuggest',
