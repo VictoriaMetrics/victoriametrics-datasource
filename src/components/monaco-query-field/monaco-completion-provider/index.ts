@@ -67,6 +67,30 @@ function getMonacoCompletionItemKind(type: CompletionType, monaco: Monaco): mona
       throw new NeverCaseError();
   }
 }
+
+// Get range that spans back over dotted identifiers (e.g. "kubernetes.pod.id")
+// Monaco's getWordAtPosition treats dots as word boundaries, so we scan manually.
+function getDottedWordRange(
+  model: monacoTypes.editor.ITextModel,
+  position: monacoTypes.Position,
+  monaco: Monaco
+): monacoTypes.Range {
+  const lineContent = model.getLineContent(position.lineNumber);
+  const colIdx = position.column - 1; // 0-based
+
+  let startIdx = colIdx;
+  while (startIdx > 0 && /[a-zA-Z0-9_.:]/.test(lineContent[startIdx - 1])) {
+    startIdx--;
+  }
+
+  return monaco.Range.lift({
+    startLineNumber: position.lineNumber,
+    endLineNumber: position.lineNumber,
+    startColumn: startIdx + 1, // 1-based
+    endColumn: position.column,
+  });
+}
+
 export function getCompletionProvider(
   monaco: Monaco,
   dataProvider: DataProvider
@@ -85,6 +109,7 @@ export function getCompletionProvider(
           endColumn: word.endColumn,
         })
         : monaco.Range.fromPositions(position);
+    const metricNameRange = getDottedWordRange(model, position, monaco);
     // documentation says `position` will be "adjusted" in `getOffsetAt`
     // i don't know what that means, to be sure i clone it
     const positionClone = {
@@ -106,7 +131,7 @@ export function getCompletionProvider(
         detail: item.detail,
         documentation: { value: item.documentation } as IMarkdownString,
         sortText: index.toString().padStart(maxIndexDigits, '0'), // to force the order we have
-        range,
+        range: item.type === CompletionType.metricName ? metricNameRange : range,
         command: item.triggerOnInsert
           ? {
             id: 'editor.action.triggerSuggest',
