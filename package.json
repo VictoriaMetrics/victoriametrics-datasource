@@ -1,6 +1,6 @@
 {
   "name": "victoriametrics-metrics-datasource",
-  "version": "0.23.3",
+  "version": "0.23.4",
   "description": "Showcase how to build a basic datasource plugin",
   "scripts": {
     "build:lezer-metricsql": "cd packages/lezer-metricsql && bash build.sh",
