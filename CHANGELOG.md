@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.23.4
+
 * MAINTENANCE: update Grafana dependency range to support version 13.x.x.
 
 ## v0.23.3
