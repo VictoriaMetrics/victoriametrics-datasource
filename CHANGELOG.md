@@ -4,6 +4,8 @@
 
 * BUGFIX: fix autocomplete inserting duplicate prefix for metric names containing dots (e.g. `kubernetes.pod.id`). See [#493](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/493).
 
+## v0.23.4
+
 * MAINTENANCE: update Grafana dependency range to support version 13.x.x.
 
 ## v0.23.3
