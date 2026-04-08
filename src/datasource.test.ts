@@ -1009,8 +1009,14 @@ function createDefaultPromResponse() {
 
 describe('processTargetV2', () => {
   let datasource: PrometheusDatasource;
+  const processTargetTemplateSrv = {
+    replace: jest.fn((s: string) => s),
+    getVariables: jest.fn().mockReturnValue([]),
+    containsTemplate: jest.fn().mockReturnValue(false),
+  };
 
   beforeEach(() => {
+    processTargetTemplateSrv.replace.mockImplementation((s: string) => s);
     datasource = new PrometheusDatasource(
       {
         id: 1,
@@ -1020,7 +1026,7 @@ describe('processTargetV2', () => {
           timeInterval: '15s',
         },
       } as any,
-      undefined,
+      processTargetTemplateSrv as any,
       {
         timeRange: jest.fn().mockReturnValue({
           to: {
@@ -1130,5 +1136,98 @@ describe('processTargetV2', () => {
       utcOffsetSec: 0,
       refId: 'A',
     });
+  });
+
+  it('should resolve withTemplate from dashboard constant variable and merge', () => {
+    processTargetTemplateSrv.getVariables.mockReturnValue([
+      { type: 'constant', name: 'withTemplate', current: { value: 'sr = sum(rate(request_total[5m]))' } },
+    ]);
+
+    const target = {
+      expr: 'sr',
+      refId: 'A',
+      range: false,
+      instant: false,
+      withTemplate: '$withTemplate',
+    } as any;
+    const request = {
+      dashboardUID: 'dashboard_1',
+      targets: [],
+      panelId: 2,
+      app: 'app_1',
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    datasource.withTemplates = [];
+
+    const result = datasource.processTargetV2(target, request);
+
+    expect(result).toEqual({
+      expr: 'WITH(\n  sr = sum(rate(request_total[5m]))\n)\nsr',
+      instant: false,
+      queryType: 'timeSeriesQuery',
+      range: false,
+      refId: 'A',
+      requestId: '2A',
+      utcOffsetSec: 0,
+      withTemplate: '$withTemplate',
+    });
+  });
+
+  it('should fallback to datasource.withTemplates when target.withTemplate is absent', () => {
+    processTargetTemplateSrv.replace.mockImplementation((s: string) => s);
+
+    const target = {
+      expr: 'sr',
+      refId: 'A',
+      range: false,
+      instant: false,
+    } as any;
+    const request = {
+      dashboardUID: 'dashboard_1',
+      targets: [],
+      panelId: 2,
+      app: 'app_1',
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    datasource.withTemplates = [{ uid: 'dashboard_1', expr: 'sr = sum(rate(request_total[5m]))' }];
+
+    const result = datasource.processTargetV2(target, request);
+
+    expect(result).toEqual({
+      expr: 'WITH(\n  sr = sum(rate(request_total[5m]))\n)\nsr',
+      instant: false,
+      queryType: 'timeSeriesQuery',
+      range: false,
+      refId: 'A',
+      requestId: '2A',
+      utcOffsetSec: 0,
+    });
+  });
+
+  it('should prefer dashboard variable over datasource.withTemplates', () => {
+    processTargetTemplateSrv.getVariables.mockReturnValue([
+      { type: 'constant', name: 'withTemplate', current: { value: 'sr = from_variable' } },
+    ]);
+
+    const target = {
+      expr: 'sr',
+      refId: 'A',
+      range: false,
+      instant: false,
+      withTemplate: '$withTemplate',
+    } as any;
+    const request = {
+      dashboardUID: 'dashboard_1',
+      targets: [],
+      panelId: 2,
+      app: 'app_1',
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    datasource.withTemplates = [{ uid: 'dashboard_1', expr: 'sr = from_datasource' }];
+
+    const result = datasource.processTargetV2(target, request);
+
+    expect((result as any).expr).toContain('from_variable');
+    expect((result as any).expr).not.toContain('from_datasource');
   });
 });

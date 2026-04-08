@@ -3,15 +3,15 @@ export interface WithTemplate {
   expr: string;
 }
 
-export interface DashboardResponse {
-  dashboard: DashboardType
-  meta: {
-    folderTitle: string;
-    folderUid: string;
-    canEdit: boolean;
-  }
+export interface DashboardVariable {
+  name: string;
+  type: string;
+  query: string;
+  current: { value: string; text: string; selected: boolean };
+  hide: number;
+  label: string;
+  skipUrlSync: boolean;
 }
-
 
 export interface DashboardType {
   id: number;
@@ -28,4 +28,16 @@ export interface DashboardType {
   folderUid?: string;
   folderTitle?: string;
   folderUrl?: string;
+  version?: number;
+  templating?: { list: DashboardVariable[] };
+  panels?: unknown[];
+}
+
+export interface DashboardResponse {
+  dashboard: DashboardType
+  meta: {
+    folderTitle: string;
+    folderUid: string;
+    canEdit: boolean;
+  }
 }

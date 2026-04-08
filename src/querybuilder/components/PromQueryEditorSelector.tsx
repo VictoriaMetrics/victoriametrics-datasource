@@ -19,7 +19,7 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 
 import { CoreApp, DataQueryRequest, LoadingState } from '@grafana/data';
-import { reportInteraction } from '@grafana/runtime';
+import { getTemplateSrv, reportInteraction } from '@grafana/runtime';
 import { ConfirmModal, IconButton } from '@grafana/ui';
 
 import { ExportDataButton } from '../../components/ExportData';
@@ -27,8 +27,9 @@ import PrettifyQuery from '../../components/PrettifyQuery';
 import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../components/QueryEditor';
 import VmuiLink from '../../components/VmuiLink';
 import WithTemplateConfig from '../../components/WithTemplateConfig';
-import { WithTemplate } from '../../components/WithTemplateConfig/types';
+import { WITH_TEMPLATE_VARIABLE_NAME } from '../../components/WithTemplateConfig/constants';
 import { getArrayFromTemplate } from '../../components/WithTemplateConfig/utils/getArrayFromTemplate';
+import { getWithTemplateVariableValue } from '../../components/WithTemplateConfig/utils/getWithTemplateVariableValue';
 import { PromQueryEditorProps } from '../../components/types';
 import PrometheusLanguageProvider from '../../language_provider';
 import { PromQuery } from '../../types';
@@ -58,9 +59,29 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   const { flag: explain, setFlag: setExplain } = useFlag(queryEditorExplainKey);
 
   const dashboardUID: string = (data?.request as DataQueryRequest<PromQuery>)?.dashboardUID || ''
-  const [templateByDashboard, setTemplateByDashboard] = useState<WithTemplate>()
 
   const query = getQueryWithDefaults(props.query, app);
+
+  // Resolve WITH template: from variable or legacy datasource storage
+  const getResolvedWithTemplate = useCallback(() => {
+    return getWithTemplateVariableValue(getTemplateSrv())
+      || datasource.withTemplates.find(t => t.uid === dashboardUID)?.expr;
+  }, [datasource, dashboardUID]);
+
+  const [resolvedWithTemplate, setResolvedWithTemplate] = useState<string | undefined>(getResolvedWithTemplate);
+
+  // Re-resolve when dashboard or datasource changes
+  useEffect(() => {
+    setResolvedWithTemplate(getResolvedWithTemplate());
+  }, [getResolvedWithTemplate]);
+
+  // Auto-set withTemplate reference on query if template exists but query doesn't reference it
+  useEffect(() => {
+    if (resolvedWithTemplate && !query.withTemplate) {
+      onChange({ ...query, withTemplate: `$${WITH_TEMPLATE_VARIABLE_NAME}` });
+    }
+  }, [resolvedWithTemplate, query, onChange]);
+
   // This should be filled in from the defaults by now.
   const editorMode = query.editorMode!;
 
@@ -105,13 +126,14 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   }
 
   useEffect(() => {
-    const withTemplates = getArrayFromTemplate(templateByDashboard)
+    const template = resolvedWithTemplate ? { uid: '', expr: resolvedWithTemplate } : undefined
+    const withTemplates = getArrayFromTemplate(template)
     datasource.languageProvider = new PrometheusLanguageProvider(datasource, { withTemplates })
     datasource.languageProvider.start()
     if (app !== CoreApp.UnifiedAlerting){
       onRunQuery();
     }
-  }, [onRunQuery, datasource, templateByDashboard, app])
+  }, [onRunQuery, datasource, resolvedWithTemplate, app])
 
   useEffect(() => {
     const query = getQueryWithDefaults(props.query, app);
@@ -155,10 +177,12 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
         <FlexItem grow={1} />
         <WithTemplateConfig
           app={app}
-          template={templateByDashboard}
-          setTemplate={setTemplateByDashboard}
           dashboardUID={dashboardUID}
           datasource={datasource}
+          query={query}
+          onQueryChange={onChange}
+          resolvedWithTemplate={resolvedWithTemplate}
+          onTemplateSave={setResolvedWithTemplate}
         />
         <PrettifyQuery query={query} datasource={datasource} onChange={onChange} />
         <VmuiLink query={query} datasource={datasource} panelData={data} dashboardUID={dashboardUID} />
@@ -179,11 +203,11 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
           <>
             <PromQueryCodeEditor
               {...props}
-              key={templateByDashboard?.expr}
+              key={resolvedWithTemplate}
               query={query}
               showExplain={explain}
             />
-            {rawQuery && <QueryPreview query={query.expr} withTemplate={templateByDashboard} />}
+            {rawQuery && <QueryPreview query={query.expr} withTemplate={resolvedWithTemplate} />}
           </>
         )}
         {editorMode === QueryEditorMode.Builder && (

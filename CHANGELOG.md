@@ -2,6 +2,13 @@
 
 ## tip
 
+* FEATURE: store WITH templates as a hidden dashboard variable instead of datasource settings. Templates are now automatically exported/imported with dashboards and support Grafana variable reactivity. See [#490](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/490).
+  **Migration guide:** existing templates from datasource settings continue to work automatically — no action is required. To fully migrate a dashboard to the new storage:
+    1. Open any panel on the dashboard in edit mode.
+    2. Click the `WITH templates` button (gear icon) and click `Save`.
+    3. All panels on the dashboard will be automatically migrated in a single step.
+    4. Save the dashboard to persist the changes.
+
 * BUGFIX: fix autocomplete inserting duplicate prefix for metric names containing dots (e.g. `kubernetes.pod.id`). See [#493](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/493).
 
 ## v0.23.4

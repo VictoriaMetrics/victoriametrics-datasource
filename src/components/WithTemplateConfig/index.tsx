@@ -1,26 +1,28 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { CoreApp } from '@grafana/data';
 import { IconButton, Modal } from '@grafana/ui';
 
 import { PrometheusDatasource } from '../../datasource';
+import { PromQuery } from '../../types';
 
 import WarningNewDashboard from './WarningSavedDashboard/WarningSavedDashboard';
 import WithTemplateBody from './WithTemplateBody/WithTemplateBody';
 import getDashboardByUID from './api/getDashboardList';
-import { DashboardResponse, WithTemplate } from './types';
+import { DashboardResponse } from './types';
 
 export interface WithTemplateConfigProps {
-  template?: WithTemplate;
-  setTemplate: React.Dispatch<React.SetStateAction<WithTemplate | undefined>>
   datasource: PrometheusDatasource;
   dashboardUID: string;
+  query: PromQuery;
+  onQueryChange: (query: PromQuery) => void;
+  resolvedWithTemplate?: string;
+  onTemplateSave?: (expr: string) => void;
   app?: CoreApp;
 }
 
-const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate, dashboardUID, datasource, app }) => {
+const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ dashboardUID, datasource, query, onQueryChange, resolvedWithTemplate, onTemplateSave, app }) => {
   const [isValidDashboard, setIsValidDashboard] = useState(app === CoreApp.Explore)
-
   const [dashboardResponse, setDashboardResponse] = useState<DashboardResponse | null>()
 
   const modalTitle = useMemo(() => {
@@ -33,13 +35,14 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate
   }, [isValidDashboard, dashboardResponse, app])
 
   const [showTemplates, setShowTemplates] = useState(false);
-  const handleClose = () => setShowTemplates(false);
-  const handleOpen = () => setShowTemplates(true);
-  const handleAcceptWarning = () => setIsValidDashboard(true)
+  const [draftValue, setDraftValue] = useState<string | null>(null);
 
-  useEffect(() => {
-    setTemplate(datasource.withTemplates.find(t => t.uid === dashboardUID))
-  }, [setTemplate, datasource, dashboardUID])
+  const handleClose = useCallback(() => setShowTemplates(false), []);
+  const handleOpen = useCallback(() => setShowTemplates(true), []);
+  const handleAcceptWarning = useCallback(() => setIsValidDashboard(true), []);
+  const handleDraftReset = useCallback(() => setDraftValue(null), []);
+
+  const editorValue = draftValue ?? resolvedWithTemplate ?? '';
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -75,11 +78,15 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ template, setTemplate
       >
         {isValidDashboard ? (
           <WithTemplateBody
+            value={editorValue}
+            onValueChange={setDraftValue}
             datasource={datasource}
             dashboardUID={dashboardUID || app || ''}
+            query={query}
+            onQueryChange={onQueryChange}
+            onTemplateSave={onTemplateSave}
+            onDraftReset={handleDraftReset}
             handleClose={handleClose}
-            template={template}
-            setTemplate={setTemplate}
           />
         ) : (
           <WarningNewDashboard
