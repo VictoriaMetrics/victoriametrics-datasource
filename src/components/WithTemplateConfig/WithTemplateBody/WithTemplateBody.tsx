@@ -1,4 +1,5 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import { debounce } from 'lodash';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Badge, Button, useStyles2 } from '@grafana/ui';
 
@@ -8,6 +9,8 @@ import useValidateExpr from '../hooks/useValidateExpr';
 import { WithTemplateConfigProps } from '../index';
 
 import getStyles from './style';
+
+const VALIDATION_DEBOUNCE_MS = 350;
 
 interface Props extends WithTemplateConfigProps {
   handleClose: () => void;
@@ -47,9 +50,17 @@ const WithTemplateBody: FC<Props> = ({ datasource, dashboardUID, template, setTe
     setTemplate(datasource.withTemplates.find(t => t.uid === dashboardUID))
   }, [setTemplate, datasource, dashboardUID])
 
+  const debouncedValidate = useMemo(
+    () => debounce((expr: string) => isValidExpr(expr), VALIDATION_DEBOUNCE_MS),
+    [isValidExpr]
+  )
+
   useEffect(() => {
-    value && isValidExpr(value)
-  }, [value, isValidExpr])
+    if (value) {
+      debouncedValidate(value)
+    }
+    return () => debouncedValidate.cancel()
+  }, [value, debouncedValidate])
 
   useEffect(() => {
     setValue(template?.expr || '')
