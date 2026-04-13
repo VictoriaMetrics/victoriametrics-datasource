@@ -517,26 +517,36 @@ function resolveLabelKeysWithEquals(node: SyntaxNode, text: string, pos: number)
   };
 }
 
-// we find the first error-node in the tree that is at the cursor-position.
-// NOTE: this might be too slow, might need to optimize it
-// (ideas: we do not need to go into every subtree, based on from/to)
-// also, only go to places that are in the sub-tree of the node found
-// by default by lezer. problem is, `next()` will go upward too,
-// and we do not want to go higher than our node
-function getErrorNode(tree: Tree, pos: number): SyntaxNode | null {
-  const cur = tree.cursorAt(pos);
-  while (true) {
-    if (cur.from === pos && cur.to === pos) {
-      const { node } = cur;
-      if (node.type.isError) {
-        return node;
-      }
-    }
+function findErrorNodeAt(node: SyntaxNode, pos: number): SyntaxNode | null {
+  if (node.from === pos && node.to === pos && node.type.isError) {
+    return node;
+  }
 
-    if (!cur.next()) {
-      break;
+  for (let child: SyntaxNode | null = node.firstChild; child !== null; child = child.nextSibling) {
+    if (child.from > pos || child.to < pos) {
+      continue;
+    }
+    const found = findErrorNodeAt(child, pos);
+    if (found !== null) {
+      return found;
     }
   }
+
+  return null;
+}
+
+function getErrorNode(tree: Tree, pos: number): SyntaxNode | null {
+  const startNode = tree.cursorAt(pos).node;
+
+  let node: SyntaxNode | null = startNode;
+  while (node !== null) {
+    const found = findErrorNodeAt(node, pos);
+    if (found !== null) {
+      return found;
+    }
+    node = node.parent;
+  }
+
   return null;
 }
 
