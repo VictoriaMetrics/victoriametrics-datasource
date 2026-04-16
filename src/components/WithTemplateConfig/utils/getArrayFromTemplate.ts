@@ -7,17 +7,18 @@ export const getArrayFromTemplate = (template?: WithTemplate) => {
   const { expr } = template
   const arr = splitByCommaOutsideBrackets(expr)
 
-  return arr.filter(a => a).map(a => {
-    const commentMatch = a.match(/#.*\n/gm);
-    const comment = commentMatch?.join('')?.trim() || ''
+  return arr.filter(a => a.trim()).map(a => {
+    const commentMatch = a.match(/#.*$/gm);
+    const comment = commentMatch?.join('\n')?.trim() || ''
 
-    const variableMatch = a.match(/(.*?)=/);
-    const variableName = variableMatch?.[0]?.slice(0, -2) || '';
+    const withoutComments = a.replace(/#.*$/gm, '')
+    const variableMatch = withoutComments.match(/^\s*([A-Za-z_]\w*(?:\([^)]*\))?)\s*=/m);
+    const variableName = variableMatch?.[1] || '';
 
     return {
-      label: `${variableName}`,
-      comment: comment.replace(/#/gm, ''),
-      value: a.replace(comment, '').trim(),
+      label: variableName,
+      comment: comment.replace(/#\s?/gm, ''),
+      value: a.replace(/#.*$/gm, '').trim(),
     }
   })
 }
@@ -33,7 +34,7 @@ export const mergeTemplateWithQuery = (query = '', template?: WithTemplate) => {
   if (!templateExpr) {return query}
   const labels = getArrayFromTemplate(template).map(a => a.label)
   const includesWithTemplate = labels.some(l => {
-    // remove arguments for functions
+    if (!l) {return false}
     const name = l.replace(/(\w+)\(.*?\)/g, '$1')
     return query.includes(name)
   })

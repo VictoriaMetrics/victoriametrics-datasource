@@ -2,22 +2,25 @@ const isOpeningBracket = (char: string): boolean => ['(', '{', '['].includes(cha
 const isClosingBracket = (char: string): boolean => [')', '}', ']'].includes(char);
 const isQuote = (char: string): boolean => ['"', "'"].includes(char);
 
-const shouldSplit = (char: string, bracketsCount: number, quotesCount: number): boolean =>
-  char === ',' && bracketsCount === 0 && quotesCount % 2 === 0;
-
 const splitByCommaOutsideBrackets = (str: string): string[] => {
   let bracketsCount = 0;
   let quotesCount = 0;
+  let inComment = false;
 
   return str.split('').reduce((result: string[], char: string) => {
-    if (isQuote(char)) {quotesCount++;}
+    if (char === '\n') {inComment = false;}
 
-    if (quotesCount % 2 === 0) {
+    if (isQuote(char) && !inComment) {quotesCount++;}
+
+    if (!inComment && quotesCount % 2 === 0) {
+      if (char === '#') {inComment = true;}
       if (isOpeningBracket(char)) {bracketsCount++;}
       if (isClosingBracket(char)) {bracketsCount--;}
     }
 
-    if (shouldSplit(char, bracketsCount, quotesCount)) {
+    const isSplitPoint = char === ',' && !inComment && bracketsCount === 0 && quotesCount % 2 === 0;
+
+    if (isSplitPoint) {
       result.push('');
     } else {
       result[result.length - 1] += char;
