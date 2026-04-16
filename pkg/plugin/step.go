@@ -12,13 +12,12 @@ import (
 )
 
 const (
-	varInterval            = "$__interval"
-	varIntervalMs          = "$__interval_ms"
-	varRange               = "$__range"
-	varRangeS              = "$__range_s"
-	varRangeMs             = "$__range_ms"
-	varRateInterval        = "$__rate_interval"
-	defaultIntervalMsValue = 1000
+	varInterval     = "$__interval"
+	varIntervalMs   = "$__interval_ms"
+	varRange        = "$__range"
+	varRangeS       = "$__range_s"
+	varRangeMs      = "$__range_ms"
+	varRateInterval = "$__rate_interval"
 )
 
 var (
@@ -37,12 +36,16 @@ func (q *Query) getIntervalFrom(defaultInterval time.Duration) (time.Duration, e
 	if interval == "0s" {
 		interval = ""
 	}
+	// userSetInterval is true when the user explicitly set a "Min step" value in the query editor.
+	// Auto-calculated intervals (IntervalMs, TimeInterval) are subject to the 5min minimum for instant queries.
+	userSetInterval := interval != ""
 	if interval == "" {
-		if q.IntervalMs == defaultIntervalMsValue && q.Instant {
-			return instantQueryDefaultStep, nil
-		}
 		if q.IntervalMs != 0 {
-			return time.Duration(q.IntervalMs) * time.Millisecond, nil
+			d := time.Duration(q.IntervalMs) * time.Millisecond
+			if q.Instant && d < instantQueryDefaultStep {
+				return instantQueryDefaultStep, nil
+			}
+			return d, nil
 		}
 	}
 	if interval == "" && q.TimeInterval != "" {
@@ -54,7 +57,9 @@ func (q *Query) getIntervalFrom(defaultInterval time.Duration) (time.Duration, e
 		if err != nil {
 			return time.Duration(0), err
 		}
-
+		if q.Instant && !userSetInterval && parsedInterval < instantQueryDefaultStep {
+			return instantQueryDefaultStep, nil
+		}
 		return parsedInterval, nil
 	}
 
