@@ -19,23 +19,23 @@
 import React from 'react';
 
 import { EditorRow, EditorFieldGroup, EditorField } from '../../components/QueryEditor';
-import { WithTemplate } from '../../components/WithTemplateConfig/types';
 import { mergeTemplateWithQuery } from '../../components/WithTemplateConfig/utils/getArrayFromTemplate';
 import metricsqlGrammar from '../../metricsql';
 import { RawQuery } from '../shared/RawQuery';
 
 export interface Props {
   query: string;
-  withTemplate?: WithTemplate
+  withTemplate?: string
 }
 
 export function QueryPreview({ query, withTemplate }: Props) {
+  const template = withTemplate ? { uid: '', expr: withTemplate } : undefined
   return (
     <EditorRow>
       <EditorFieldGroup>
         <EditorField label='Raw query'>
           <RawQuery
-            query={mergeTemplateWithQuery(query, withTemplate)}
+            query={mergeTemplateWithQuery(query, template)}
             lang={{ grammar: metricsqlGrammar, name: 'promql' }}
           />
         </EditorField>

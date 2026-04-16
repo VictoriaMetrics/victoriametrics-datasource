@@ -42,6 +42,8 @@ export interface PromQuery extends DataQuery {
   editorMode?: QueryEditorMode;
   trace?: number;
   fromExploreMetrics?: boolean;
+  /** Reference to dashboard variable with WITH template, e.g. "$withTemplate" */
+  withTemplate?: string;
 }
 
 export interface PromOptions extends DataSourceJsonData {
