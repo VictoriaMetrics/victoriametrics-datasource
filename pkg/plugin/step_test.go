@@ -264,6 +264,46 @@ func Test_calculateStep(t *testing.T) {
 		want: "5m0s",
 	}
 	f(o)
+
+	// instant query with auto-calculated 15s interval (below 5min minimum)
+	o = opts{
+		query: &Query{
+			Instant:    true,
+			IntervalMs: 15000,
+		},
+		want: "5m0s",
+	}
+	f(o)
+
+	// instant query with auto-calculated 10min interval (above 5min minimum, keep as-is)
+	o = opts{
+		query: &Query{
+			Instant:    true,
+			IntervalMs: 600000,
+		},
+		want: "10m0s",
+	}
+	f(o)
+
+	// instant query with datasource TimeInterval "30s" and no user-set interval
+	o = opts{
+		query: &Query{
+			Instant:      true,
+			TimeInterval: "30s",
+		},
+		want: "5m0s",
+	}
+	f(o)
+
+	// instant query with user-set Min step "10s" — user override bypasses 5min minimum
+	o = opts{
+		query: &Query{
+			Instant:  true,
+			Interval: "10s",
+		},
+		want: "10s",
+	}
+	f(o)
 }
 
 func Test_calculateRateInterval(t *testing.T) {
