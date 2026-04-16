@@ -89,7 +89,7 @@
     "@lezer/common": "1.2.3",
     "@lezer/highlight": "1.2.1",
     "@lezer/lr": "1.4.2",
-    "dompurify": ">=3.3.2",
+    "dompurify": ">=3.4.0",
     "flatted": ">=3.4.2",
     "immutable@^3.8.2": "3.8.3",
     "immutable@^4.0.0": "4.3.8",
