@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.24.0
+
 * FEATURE: store WITH templates as a hidden dashboard variable instead of datasource settings. Templates are now automatically exported/imported with dashboards and support Grafana variable reactivity. See [#490](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/490).
   **Migration guide:** existing templates from datasource settings continue to work automatically — no action is required. To fully migrate a dashboard to the new storage:
     1. Open any panel on the dashboard in edit mode.
