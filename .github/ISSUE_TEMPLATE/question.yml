@@ -1,0 +1,48 @@
+name: Ask a question
+description: Ask a question about the plugin usage, configuration, or behavior
+labels: [question, vm-datasource]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before opening an issue, please check the following resources:
+
+        - [Plugin README](https://github.com/VictoriaMetrics/victoriametrics-datasource/tree/main/src) — usage and configuration documentation
+        - [VictoriaMetrics community and contributions](https://docs.victoriametrics.com/victoriametrics/#community-and-contributions) — Slack, Telegram, Reddit, and other ways to get help
+
+        For quick questions, the community channels above may get you an answer faster than a GitHub issue.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: |
+        A clear and concise description of your question.
+    validations:
+      required: true
+  - type: textarea
+    id: what-tried
+    attributes:
+      label: What have you already tried?
+      description: |
+        Describe the steps you've already taken — documentation, community channels,
+        configuration changes, workarounds, etc.
+    validations:
+      required: false
+  - type: textarea
+    id: version
+    attributes:
+      label: Versions of VictoriaMetrics datasource and VictoriaMetrics backend
+      description: |
+        Please provide the version of VictoriaMetrics datasource plugin and VictoriaMetrics backend you are using.
+        Also provide the version of Grafana you are using and version of the vmauth if it is used.
+      value: "Plugin version: v0.x.x\nVictoriaMetrics version: v1.x.x\nGrafana version: vx.x.x\nVmauth(if used) version: v1.x.x"
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: |
+        Any other context, links, screenshots, or references related to your question.
+    validations:
+      required: false
