@@ -25,7 +25,10 @@ func Build() {
 	freebsd := func() error {
 		return b.Custom("freebsd", "amd64")
 	}
-	mg.Deps(b.Linux, b.Windows, b.Darwin, b.DarwinARM64, b.LinuxARM64, b.LinuxARM, linuxS390, freebsd)
+	openbsd := func() error {
+		return b.Custom("openbsd", "amd64")
+	}
+	mg.Deps(b.Linux, b.Windows, b.Darwin, b.DarwinARM64, b.LinuxARM64, b.LinuxARM, linuxS390, freebsd, openbsd)
 }
 
 // Default configures the default target.
