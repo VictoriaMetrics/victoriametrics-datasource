@@ -2,6 +2,10 @@
 
 ## tip
 
+## v0.25.0
+
+* FEATURE: provide a plugin binary for OpenBSD
+
 ## v0.24.0
 
 * FEATURE: store WITH templates as a hidden dashboard variable instead of datasource settings. Templates are now automatically exported/imported with dashboards and support Grafana variable reactivity. See [#490](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/490).
