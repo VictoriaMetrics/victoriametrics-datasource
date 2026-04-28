@@ -4,7 +4,7 @@
 
 ## v0.25.0
 
-* FEATURE: provide a plugin binary for OpenBSD
+* FEATURE: provide a plugin binary for OpenBSD. Thanks @ledeuns for contributing.
 
 ## v0.24.0
 
