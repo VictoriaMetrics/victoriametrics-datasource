@@ -107,4 +107,49 @@ describe('extractMetricSelectors', () => {
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({ selector: 'metric', metric: 'metric' });
   });
+
+  it('should resolve metric name from positive __name__ label matcher', () => {
+    expect(extractMetricSelectors('{__name__="vm_rows"}')).toEqual([
+      { selector: '{__name__="vm_rows"}', metric: 'vm_rows' },
+    ]);
+  });
+
+  it('should resolve __name__ alongside other label matchers (bug #508)', () => {
+    expect(extractMetricSelectors('{type!~"indexdb.*", __name__="vm_rows"}')).toEqual([
+      { selector: '{type!~"indexdb.*", __name__="vm_rows"}', metric: 'vm_rows' },
+    ]);
+  });
+
+  it('should resolve __name__ when it is the first matcher', () => {
+    expect(extractMetricSelectors('{__name__="vm_rows", job="api"}')).toEqual([
+      { selector: '{__name__="vm_rows", job="api"}', metric: 'vm_rows' },
+    ]);
+  });
+
+  it('should not treat negated __name__ as the metric name', () => {
+    expect(extractMetricSelectors('{__name__!="vm_rows"}')).toEqual([
+      { selector: '{__name__!="vm_rows"}', metric: '' },
+    ]);
+  });
+
+  it('should not treat regex __name__ matcher as the metric name', () => {
+    expect(extractMetricSelectors('{__name__=~"vm_.*"}')).toEqual([
+      { selector: '{__name__=~"vm_.*"}', metric: '' },
+    ]);
+  });
+
+  it('should resolve __name__ inside nested function calls', () => {
+    expect(extractMetricSelectors('sum(rate({__name__="vm_rows"}[5m]))')).toEqual([
+      { selector: '{__name__="vm_rows"}', metric: 'vm_rows' },
+    ]);
+  });
+
+  it('should not return error-recovered VectorSelector when parser fails on special chars', () => {
+    // 'CellTemp(1)[°C]{...}' is invalid PromQL — the parser recovers by truncating
+    // the input into a VectorSelector "CellTemp(1" with surrounding error nodes.
+    // Such partial parses must never surface as valid selectors.
+    const result = extractMetricSelectors('CellTemp(1)[°C]{station="Solvallen2",timest="10min"}');
+    expect(result.map((s) => s.selector)).not.toContain('CellTemp(1');
+    expect(result.find((s) => s.metric === 'CellTemp')).toBeUndefined();
+  });
 });

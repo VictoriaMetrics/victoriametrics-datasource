@@ -39,6 +39,9 @@ import { escapeLabelValueInExactSelector, escapeLabelValueInRegexSelector } from
 const EMPTY_SELECTOR = '{}';
 const METRIC_LABEL = '__name__';
 const LIST_ITEM_SIZE = 25;
+// PromQL identifier grammar: leading [a-zA-Z_:] then [a-zA-Z0-9_:]*. Names
+// outside this set (e.g. 'CellTemp(1)[°C]') must be expressed via __name__.
+const METRIC_NAME_RE = /^[a-zA-Z_:][a-zA-Z0-9_:]*$/;
 
 export interface BrowserProps {
   languageProvider: PromQlLanguageProvider;
@@ -92,6 +95,12 @@ export function buildSelector(labels: SelectableLabel[]): string {
         }
       }
     }
+  }
+  // Metric names with characters outside the PromQL identifier grammar must
+  // be emitted as a __name__="..." matcher to stay parseable downstream.
+  if (singleMetric && !METRIC_NAME_RE.test(singleMetric)) {
+    selectedLabels.unshift(`${METRIC_LABEL}="${escapeLabelValueInExactSelector(singleMetric)}"`);
+    singleMetric = '';
   }
   return [singleMetric, '{', selectedLabels.join(','), '}'].join('');
 }
