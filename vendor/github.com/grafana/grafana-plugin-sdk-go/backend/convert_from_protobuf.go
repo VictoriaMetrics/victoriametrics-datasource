@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend/useragent"
+	"github.com/grafana/grafana-plugin-sdk-go/config"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 	"github.com/grafana/grafana-plugin-sdk-go/genproto/pluginv2"
 )
@@ -58,7 +59,7 @@ func (f ConvertFromProtobuf) DataSourceInstanceSettings(proto *pluginv2.DataSour
 	}
 
 	return &DataSourceInstanceSettings{
-		ID:                      proto.Id,
+		ID:                      proto.Id, // nolint:staticcheck
 		UID:                     proto.Uid,
 		Type:                    pluginID,
 		Name:                    proto.Name,
@@ -89,10 +90,11 @@ func (f ConvertFromProtobuf) UserAgent(u string) *useragent.UserAgent {
 // PluginContext converts protobuf version of a PluginContext to the SDK version.
 func (f ConvertFromProtobuf) PluginContext(proto *pluginv2.PluginContext) PluginContext {
 	return PluginContext{
-		OrgID:                      proto.OrgId,
+		OrgID:                      proto.OrgId, // nolint:staticcheck
 		PluginID:                   proto.PluginId,
 		PluginVersion:              proto.PluginVersion,
 		APIVersion:                 proto.ApiVersion,
+		Namespace:                  proto.Namespace,
 		User:                       f.User(proto.User),
 		AppInstanceSettings:        f.AppInstanceSettings(proto.AppInstanceSettings),
 		DataSourceInstanceSettings: f.DataSourceInstanceSettings(proto.DataSourceInstanceSettings, proto.PluginId),
@@ -438,6 +440,6 @@ func (f ConvertFromProtobuf) ConversionResponse(rsp *pluginv2.ConversionResponse
 	}
 }
 
-func (f ConvertFromProtobuf) GrafanaConfig(cfg map[string]string) *GrafanaCfg {
-	return NewGrafanaCfg(cfg)
+func (f ConvertFromProtobuf) GrafanaConfig(cfg map[string]string) *config.GrafanaCfg {
+	return config.NewGrafanaCfg(cfg)
 }

@@ -7,6 +7,7 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend/useragent"
+	"github.com/grafana/grafana-plugin-sdk-go/config"
 	"github.com/grafana/grafana-plugin-sdk-go/genproto/pluginv2"
 )
 
@@ -127,6 +128,7 @@ func (t ConvertToProtobuf) PluginContext(pluginCtx PluginContext) *pluginv2.Plug
 		PluginId:                   pluginCtx.PluginID,
 		PluginVersion:              pluginCtx.PluginVersion,
 		ApiVersion:                 pluginCtx.APIVersion,
+		Namespace:                  pluginCtx.Namespace,
 		User:                       t.User(pluginCtx.User),
 		AppInstanceSettings:        t.AppInstanceSettings(pluginCtx.AppInstanceSettings),
 		DataSourceInstanceSettings: t.DataSourceInstanceSettings(pluginCtx.DataSourceInstanceSettings),
@@ -468,9 +470,9 @@ func (t ConvertToProtobuf) ConversionResponse(rsp *ConversionResponse) *pluginv2
 }
 
 // GrafanaConfig converts the SDK version of a GrafanaCfg to the protobuf version.
-func (t ConvertToProtobuf) GrafanaConfig(cfg *GrafanaCfg) map[string]string {
+func (t ConvertToProtobuf) GrafanaConfig(cfg *config.GrafanaCfg) map[string]string {
 	if cfg == nil {
 		return map[string]string{}
 	}
-	return cfg.config
+	return cfg.Config()
 }
