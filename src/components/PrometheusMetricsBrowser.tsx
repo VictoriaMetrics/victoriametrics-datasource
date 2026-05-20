@@ -39,8 +39,6 @@ import { escapeLabelValueInExactSelector, escapeLabelValueInRegexSelector } from
 const EMPTY_SELECTOR = '{}';
 const METRIC_LABEL = '__name__';
 const LIST_ITEM_SIZE = 25;
-// PromQL identifier grammar: leading [a-zA-Z_:] then [a-zA-Z0-9_:]*. Names
-// outside this set (e.g. 'CellTemp(1)[°C]') must be expressed via __name__.
 const METRIC_NAME_RE = /^[a-zA-Z_:][a-zA-Z0-9_:]*$/;
 
 export interface BrowserProps {
@@ -96,8 +94,6 @@ export function buildSelector(labels: SelectableLabel[]): string {
       }
     }
   }
-  // Metric names with characters outside the PromQL identifier grammar must
-  // be emitted as a __name__="..." matcher to stay parseable downstream.
   if (singleMetric && !METRIC_NAME_RE.test(singleMetric)) {
     selectedLabels.unshift(`${METRIC_LABEL}="${escapeLabelValueInExactSelector(singleMetric)}"`);
     singleMetric = '';
@@ -473,8 +469,14 @@ export class UnthemedPrometheusMetricsBrowser extends React.Component<BrowserPro
   async validateSelector(selector: string) {
     const { languageProvider } = this.props;
     this.setState({ validationStatus: `Validating selector ${selector}`, error: '' });
-    const streams = await languageProvider.fetchSeries(selector);
-    this.setState({ validationStatus: `Selector is valid (${streams.length} series found)` });
+    try {
+      const streams = await languageProvider.fetchSeries(selector);
+      const count = Array.isArray(streams) ? streams.length : 0;
+      this.setState({ validationStatus: `Selector is valid (${count} series found)` });
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      this.setState({ validationStatus: '', error: `Selector is invalid: ${message}` });
+    }
   }
 
   render() {

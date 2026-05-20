@@ -17,14 +17,13 @@ import {
 } from '@grafana/ui';
 
 import { convertLDMLLayoutToGoTimeLayout, formatDescriptions } from '../../utils/convertLDMLLayoutToGoTimeLayout';
-import { downloadFile } from '../../utils/downloadFile';
 
 import { ExportDataModalProps, ExportFormat, ExportOptions, TimestampFormat } from './types';
 import { extractMetricSelectors } from './utils';
 
 const FILE_FORMATS = {
-  json: { ext: 'jsonl', mimeType: 'application/x-ndjson', apiPath: 'api/v1/export' },
-  csv: { ext: 'csv', mimeType: 'text/csv', apiPath: 'api/v1/export/csv' }
+  json: { ext: 'jsonl', apiPath: 'api/v1/export' },
+  csv: { ext: 'csv', apiPath: 'api/v1/export/csv' }
 } as const;
 
 const toUnixSeconds = (milliseconds: number): number => Math.floor(milliseconds / 1000);
@@ -44,7 +43,6 @@ const timestampOptions = [
 
 export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClose, datasource, query, panelData }) => {
   const styles = useStyles2(getStyles);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [options, setOptions] = useState<ExportOptions>({
     format: 'json',
@@ -52,6 +50,7 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
     customLayout: 'YYYY-MM-DDThh:mm:ss.SSSZ',
     selectedLabels: [],
   });
+
   const customLayoutDescription = useMemo(() => {
     const helpText = Object.entries(formatDescriptions).reduce((acc, [key, value]) => {
       acc += `${key}: ${value}\n`;
@@ -94,9 +93,7 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
     return extractMetricSelectors(resolvedExpr);
   }, [resolvedExpr]);
 
-  const validSelectors = useMemo(() => {
-    return metricSelectors.filter((s) => s.metric !== '');
-  }, [metricSelectors]);
+  const validSelectors = metricSelectors;
 
   const [selectedSelectors, setSelectedSelectors] = useState<string[]>([]);
 
@@ -128,17 +125,15 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
       const goLayout = convertLDMLLayoutToGoTimeLayout(options.customLayout);
       tsFormat = `custom:${goLayout}`;
     }
-    let fmt = '__name__,';
+    let fmt = `__timestamp__:${tsFormat},__name__`;
     if (options.selectedLabels.length > 0) {
-      fmt += options.selectedLabels.join(',') + ',';
+      fmt += ',' + options.selectedLabels.join(',');
     }
-    fmt += `__value__,__timestamp__:${tsFormat}`;
+    fmt += ',__value__';
     return fmt;
   }, [options]);
 
-  const handleExport = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+  const handleExport = useCallback(() => {
     try {
       const formatConfig = FILE_FORMATS[options.format];
       const timestamp = Date.now();
@@ -153,18 +148,19 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
         options.format === 'csv' ? buildCsvFormatString() : undefined
       );
 
-      const data = await datasource.getResource(`${formatConfig.apiPath}?${params.toString()}`);
       const fileName = generateFileName(selectedSelectors, timestamp, formatConfig.ext);
-      const blob = new Blob([data], { type: formatConfig.mimeType });
+      const url = `${datasource.url}/${formatConfig.apiPath}?${params.toString()}`;
 
-      downloadFile(blob, fileName);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
       onClose();
     } catch (err) {
-      const message = extractErrorMessage(err);
-      setError(message);
-      console.error('Export failed:', err);
-    } finally {
-      setIsLoading(false);
+      setError(err instanceof Error ? err.message : 'Export failed');
     }
   }, [datasource, selectedSelectors, start, end, options, onClose, buildCsvFormatString]);
 
@@ -178,8 +174,8 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
         )}
 
         {!canExport && (
-          <Alert title='No metric selectors found' severity='warning'>
-            Export requires a query with a named metric selector.
+          <Alert title='No selectors found' severity='warning'>
+            Export requires a query with at least one vector selector (named metric or label-only).
           </Alert>
         )}
 
@@ -256,11 +252,11 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
         )}
 
         <div className={styles.actions}>
-          <Button variant='secondary' onClick={onClose} disabled={isLoading}>
+          <Button variant='secondary' onClick={onClose}>
             Cancel
           </Button>
-          <Button variant='primary' onClick={handleExport} disabled={isLoading || !canExport}>
-            {isLoading ? 'Exporting...' : 'Export'}
+          <Button variant='primary' onClick={handleExport} disabled={!canExport}>
+            Export
           </Button>
         </div>
       </div>
@@ -340,11 +336,4 @@ const generateFileName = (selectors: string[], timestamp: number, ext: string): 
   }
   const selectorStr = selectors.map((selector) => encodeURIComponent(selector)).join('_');
   return `export-${selectorStr}-${timestamp}.${ext}`;
-};
-
-const extractErrorMessage = (err: unknown): string => {
-  if (err instanceof Object && 'data' in err && err.data instanceof Object && 'message' in err.data) {
-    return String(err.data.message) || 'Export failed';
-  }
-  return err instanceof Error ? err.message : 'Export failed';
 };
