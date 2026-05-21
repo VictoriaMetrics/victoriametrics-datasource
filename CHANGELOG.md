@@ -2,9 +2,9 @@
 
 ## tip
 
-## v0.25.0
-
 * FEATURE: provide a plugin binary for OpenBSD. Thanks @ledeuns for contributing.
+
+* BUGFIX: preserve metric names containing special characters (e.g. `CellTemp(1)[°C]`) in the Export Data flow. Such names are now wrapped into a `__name__="..."` matcher, producing a parseable selector. See [#508](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/508).
 
 ## v0.24.0
 
