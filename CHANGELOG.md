@@ -2,15 +2,12 @@
 
 ## tip
 
-* FEATURE: allow exporting label-only selectors such as `{job="prometheus"}` from the Export Data dialog. Previously the export button required a named metric in the query. See [#471](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/471).
-* FEATURE: move the timestamp column first in exported CSV files and change the download to a direct link to avoid loading large datasets into the browser. Column order is controlled via the `format` parameter. See [#471](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/471).
-* BUGFIX: fix selector validation errors in the Metrics Browser being reported as "undefined series found". Errors are now shown as a clear message. See [#471](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/471).
-
-## v0.25.0
-
-* FEATURE: provide a plugin binary for OpenBSD. Thanks @ledeuns for contributing.
+* FEATURE: allow exporting label-only selectors such as `{job="prometheus"}` from the Export Data dialog. Previously the export button required a named metric in the query. See [#471](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/471). Thanks to @dmedovich for contributing.
+* FEATURE: move the timestamp column first in exported CSV files and change the download to a direct link to avoid loading large datasets into the browser. Column order is controlled via the `format` parameter. See [#471](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/471). Thanks to @dmedovich for contributing.
+* FEATURE: provide a plugin binary for OpenBSD. Thanks to @ledeuns for contributing.
 
 * BUGFIX: preserve metric names containing special characters (e.g. `CellTemp(1)[°C]`) in the Export Data flow. Such names are now wrapped into a `__name__="..."` matcher, producing a parseable selector. See [#508](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/508).
+* BUGFIX: fix selector validation errors in the Metrics Browser being reported as "undefined series found". Errors are now shown as a clear message. See [#471](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/471). Thanks to @dmedovich for contributing.
 
 ## v0.24.0
 
