@@ -69,4 +69,15 @@ describe('buildSelector', () => {
 
     expect(buildSelector(labels)).toBe('{__name__="weird\\"name"}');
   });
+
+  it('should wrap metric names containing a dot into __name__="..." form', () => {
+    const labels: SelectableLabel[] = [
+      {
+        name: '__name__',
+        values: [{ name: 'my.metric.name', selected: true }],
+      },
+    ];
+
+    expect(buildSelector(labels)).toBe('{__name__="my.metric.name"}');
+  });
 });

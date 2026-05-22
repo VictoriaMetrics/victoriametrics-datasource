@@ -8,6 +8,7 @@ import {
   Field,
   Icon,
   Input,
+  LinkButton,
   Modal,
   MultiSelect,
   RadioButtonGroup,
@@ -43,7 +44,6 @@ const timestampOptions = [
 
 export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClose, datasource, query, panelData }) => {
   const styles = useStyles2(getStyles);
-  const [error, setError] = useState<string | null>(null);
   const [options, setOptions] = useState<ExportOptions>({
     format: 'json',
     timestampFormat: 'unix_s',
@@ -113,12 +113,6 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
   const start = timeRange.from.valueOf();
   const end = timeRange.to.valueOf();
 
-  useEffect(() => {
-    if (isOpen) {
-      setError(null);
-    }
-  }, [isOpen]);
-
   const buildCsvFormatString = useCallback((): string => {
     let tsFormat: string = options.timestampFormat;
     if (options.timestampFormat === 'custom') {
@@ -133,46 +127,27 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
     return fmt;
   }, [options]);
 
-  const handleExport = useCallback(() => {
-    try {
-      const formatConfig = FILE_FORMATS[options.format];
-      const timestamp = Date.now();
-      const startSec = toUnixSeconds(start);
-      const endSec = toUnixSeconds(end);
-
-      const params = buildExportParams(
-        selectedSelectors,
-        startSec,
-        endSec,
-        options.format,
-        options.format === 'csv' ? buildCsvFormatString() : undefined
-      );
-
-      const fileName = generateFileName(selectedSelectors, timestamp, formatConfig.ext);
-      const url = `${datasource.url}/${formatConfig.apiPath}?${params.toString()}`;
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      onClose();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Export failed');
+  const { exportUrl, exportFileName } = useMemo(() => {
+    if (!canExport) {
+      return { exportUrl: '', exportFileName: '' };
     }
-  }, [datasource, selectedSelectors, start, end, options, onClose, buildCsvFormatString]);
+    const formatConfig = FILE_FORMATS[options.format];
+    const params = buildExportParams(
+      selectedSelectors,
+      toUnixSeconds(start),
+      toUnixSeconds(end),
+      options.format,
+      options.format === 'csv' ? buildCsvFormatString() : undefined
+    );
+    return {
+      exportUrl: `api/datasources/uid/${datasource.uid}/resources/${formatConfig.apiPath}?${params.toString()}`,
+      exportFileName: generateFileName(selectedSelectors, Date.now(), formatConfig.ext),
+    };
+  }, [canExport, datasource.uid, selectedSelectors, start, end, options.format, buildCsvFormatString]);
 
   return (
     <Modal title='Export Data' isOpen={isOpen} onDismiss={onClose}>
       <div className={styles.content}>
-        {error && (
-          <Alert title='Export failed' severity='error' onRemove={() => setError(null)}>
-            {error}
-          </Alert>
-        )}
-
         {!canExport && (
           <Alert title='No selectors found' severity='warning'>
             Export requires a query with at least one vector selector (named metric or label-only).
@@ -255,9 +230,16 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
           <Button variant='secondary' onClick={onClose}>
             Cancel
           </Button>
-          <Button variant='primary' onClick={handleExport} disabled={!canExport}>
+          <LinkButton
+            variant='primary'
+            href={exportUrl}
+            target='_blank'
+            download={exportFileName}
+            disabled={!canExport}
+            onClick={onClose}
+          >
             Export
-          </Button>
+          </LinkButton>
         </div>
       </div>
     </Modal>
