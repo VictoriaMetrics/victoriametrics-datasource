@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.25.0
+
 * FEATURE: allow exporting label-only selectors such as `{job="prometheus"}` from the Export Data dialog. Previously the export button required a named metric in the query. See [#471](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/471). Thanks to @dmedovich for contributing.
 * FEATURE: move the timestamp column first in exported CSV files and change the download to a direct link to avoid loading large datasets into the browser. Column order is controlled via the `format` parameter. See [#471](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/471). Thanks to @dmedovich for contributing.
 * FEATURE: provide a plugin binary for OpenBSD. Thanks to @ledeuns for contributing.
