@@ -10,6 +10,60 @@ import {
   VectorSelector,
 } from 'lezer-metricsql';
 
+import { convertLDMLLayoutToGoTimeLayout } from '../../utils/convertLDMLLayoutToGoTimeLayout';
+
+import { ExportFormat, TimestampFormat } from './types';
+
+export const toUnixSeconds = (milliseconds: number): number => Math.floor(milliseconds / 1000);
+
+interface BuildCsvFormatStringArgs {
+  timestampFormat: TimestampFormat;
+  customLayout: string;
+  selectedLabels: string[];
+}
+
+export function buildCsvFormatString({
+  timestampFormat,
+  customLayout,
+  selectedLabels,
+}: BuildCsvFormatStringArgs): string {
+  let tsFormat: string = timestampFormat;
+  if (timestampFormat === 'custom') {
+    tsFormat = `custom:${convertLDMLLayoutToGoTimeLayout(customLayout)}`;
+  }
+  let fmt = `__timestamp__:${tsFormat},__name__`;
+  if (selectedLabels.length > 0) {
+    fmt += ',' + selectedLabels.join(',');
+  }
+  fmt += ',__value__';
+  return fmt;
+}
+
+export function buildExportParams(
+  selectors: string[],
+  startSec: number,
+  endSec: number,
+  format: ExportFormat,
+  csvFormat?: string
+): URLSearchParams {
+  const params = new URLSearchParams();
+  selectors.forEach((selector) => params.append('match[]', selector));
+  params.append('start', startSec.toString());
+  params.append('end', endSec.toString());
+  if (format === 'csv' && csvFormat) {
+    params.append('format', csvFormat);
+  }
+  return params;
+}
+
+export function generateExportFileName(selectors: string[], timestamp: number, ext: string): string {
+  if (selectors.length === 1) {
+    return `export-${timestamp}.${ext}`;
+  }
+  const selectorStr = selectors.map((selector) => encodeURIComponent(selector)).join('_');
+  return `export-${selectorStr}-${timestamp}.${ext}`;
+}
+
 export interface MetricSelector {
   /** Full text of the vector selector, e.g. 'http_requests_total{job="api"}' */
   selector: string;

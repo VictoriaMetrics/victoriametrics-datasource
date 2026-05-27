@@ -8,6 +8,7 @@
 
 * BUGFIX: preserve metric names containing special characters (e.g. `CellTemp(1)[°C]`) in the Export Data flow. Such names are now wrapped into a `__name__="..."` matcher, producing a parseable selector. See [#508](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/508).
 * BUGFIX: fix selector validation errors in the Metrics Browser being reported as "undefined series found". Errors are now shown as a clear message. See [#471](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/471). Thanks to @dmedovich for contributing.
+* BUGFIX: make label keys in the Export Data CSV options available even when the query has not been executed yet. Previously they were derived from the current panel response, so opening the export dialog before running the query (or on a query that returned no data) left the labels picker empty.
 
 ## v0.24.0
 

@@ -1,149 +1,51 @@
 import { css } from '@emotion/css';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
-import { getDefaultTimeRange, GrafanaTheme2, SelectableValue } from '@grafana/data';
-import {
-  Alert,
-  Button,
-  Field,
-  Icon,
-  Input,
-  LinkButton,
-  Modal,
-  MultiSelect,
-  RadioButtonGroup,
-  Select,
-  Tooltip,
-  useStyles2,
-} from '@grafana/ui';
+import { getDefaultTimeRange, GrafanaTheme2 } from '@grafana/data';
+import { Alert, Button, Field, LinkButton, Modal, RadioButtonGroup, useStyles2 } from '@grafana/ui';
 
-import { convertLDMLLayoutToGoTimeLayout, formatDescriptions } from '../../utils/convertLDMLLayoutToGoTimeLayout';
-
-import { ExportDataModalProps, ExportFormat, ExportOptions, TimestampFormat } from './types';
-import { extractMetricSelectors } from './utils';
-
-const FILE_FORMATS = {
-  json: { ext: 'jsonl', apiPath: 'api/v1/export' },
-  csv: { ext: 'csv', apiPath: 'api/v1/export/csv' }
-} as const;
-
-const toUnixSeconds = (milliseconds: number): number => Math.floor(milliseconds / 1000);
-
-const formatOptions = [
-  { label: 'JSON Line', value: 'json' as ExportFormat },
-  { label: 'CSV', value: 'csv' as ExportFormat },
-];
-
-const timestampOptions = [
-  { label: 'Unix Seconds', value: 'unix_s' as TimestampFormat, description: 'Unix timestamp in seconds' },
-  { label: 'Unix Milliseconds', value: 'unix_ms' as TimestampFormat, description: 'Unix timestamp in milliseconds' },
-  { label: 'Unix Nanoseconds', value: 'unix_ns' as TimestampFormat, description: 'Unix timestamp in nanoseconds' },
-  { label: 'RFC3339', value: 'rfc3339' as TimestampFormat, description: 'RFC3339 format (e.g., 2006-01-02T15:04:05Z)' },
-  { label: 'Custom', value: 'custom' as TimestampFormat, description: 'Custom Go time layout' },
-];
+import { CsvOptionsFields } from './CsvOptionsFields';
+import { SelectorsField } from './SelectorsField';
+import { TimeRangeField } from './TimeRangeField';
+import { DEFAULT_CUSTOM_LAYOUT, FORMAT_OPTIONS } from './constants';
+import { ExportDataModalProps, ExportOptions } from './types';
+import { useExportLabels } from './useExportLabels';
+import { useExportSelectors } from './useExportSelectors';
+import { useExportUrl } from './useExportUrl';
 
 export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClose, datasource, query, panelData }) => {
   const styles = useStyles2(getStyles);
   const [options, setOptions] = useState<ExportOptions>({
     format: 'json',
     timestampFormat: 'unix_s',
-    customLayout: 'YYYY-MM-DDThh:mm:ss.SSSZ',
-    selectedLabels: [],
+    customLayout: DEFAULT_CUSTOM_LAYOUT,
   });
 
-  const customLayoutDescription = useMemo(() => {
-    const helpText = Object.entries(formatDescriptions).reduce((acc, [key, value]) => {
-      acc += `${key}: ${value}\n`;
-      return acc;
-    }, '');
-    const helpTooltipContent = <pre>{helpText}</pre>;
-    return (
-      <span>
-        Custom layout format
-        <Tooltip placement='top' content={helpTooltipContent} theme='info'>
-          <Icon title={'Format'} name='info-circle' size='sm' width={16} height={16} />
-        </Tooltip>
-      </span>
-    );
-  }, []);
+  const { validSelectors, selectedSelectors, toggleSelector } = useExportSelectors(datasource, query, panelData);
 
-  const availableLabels = useMemo((): Array<SelectableValue<string>> => {
-    const labelSet = new Set<string>();
-    panelData?.series?.forEach((frame) => {
-      frame.fields.forEach((field) => {
-        if (field.labels) {
-          Object.keys(field.labels).forEach((key) => {
-            if (key !== '__name__') {
-              labelSet.add(key);
-            }
-          });
-        }
-      });
-    });
-    return Array.from(labelSet)
-      .sort()
-      .map((label) => ({ label, value: label }));
-  }, [panelData?.series]);
-
-  const resolvedExpr = useMemo(() => {
-    return datasource.getTemplateSrv().replace(query.expr, panelData?.request?.scopedVars);
-  }, [datasource, query.expr, panelData?.request?.scopedVars]);
-
-  const metricSelectors = useMemo(() => {
-    return extractMetricSelectors(resolvedExpr);
-  }, [resolvedExpr]);
-
-  const validSelectors = metricSelectors;
-
-  const [selectedSelectors, setSelectedSelectors] = useState<string[]>([]);
-
-  useEffect(() => {
-    setSelectedSelectors(validSelectors.map((s) => s.selector));
-  }, [validSelectors]);
-
-  const canExport = selectedSelectors.length > 0;
-
-  const handleToggleSelector = useCallback((selector: string) => {
-    setSelectedSelectors((prev) =>
-      prev.includes(selector) ? prev.filter((s) => s !== selector) : [...prev, selector]
-    );
-  }, []);
+  const {
+    availableLabels,
+    selectedLabels,
+    setSelectedLabels,
+    isLoading: labelsLoading,
+  } = useExportLabels({
+    datasource,
+    isOpen,
+    isCsv: options.format === 'csv',
+    selectors: selectedSelectors,
+    panelData,
+  });
 
   const timeRange = panelData?.timeRange || getDefaultTimeRange();
-  const start = timeRange.from.valueOf();
-  const end = timeRange.to.valueOf();
 
-  const buildCsvFormatString = useCallback((): string => {
-    let tsFormat: string = options.timestampFormat;
-    if (options.timestampFormat === 'custom') {
-      const goLayout = convertLDMLLayoutToGoTimeLayout(options.customLayout);
-      tsFormat = `custom:${goLayout}`;
-    }
-    let fmt = `__timestamp__:${tsFormat},__name__`;
-    if (options.selectedLabels.length > 0) {
-      fmt += ',' + options.selectedLabels.join(',');
-    }
-    fmt += ',__value__';
-    return fmt;
-  }, [options]);
-
-  const { exportUrl, exportFileName } = useMemo(() => {
-    if (!canExport) {
-      return { exportUrl: '', exportFileName: '' };
-    }
-    const formatConfig = FILE_FORMATS[options.format];
-    const params = buildExportParams(
-      selectedSelectors,
-      toUnixSeconds(start),
-      toUnixSeconds(end),
-      options.format,
-      options.format === 'csv' ? buildCsvFormatString() : undefined
-    );
-    return {
-      exportUrl: `api/datasources/uid/${datasource.uid}/resources/${formatConfig.apiPath}?${params.toString()}`,
-      exportFileName: generateFileName(selectedSelectors, Date.now(), formatConfig.ext),
-    };
-  }, [canExport, datasource.uid, selectedSelectors, start, end, options.format, buildCsvFormatString]);
+  const { exportUrl, exportFileName, canExport } = useExportUrl({
+    datasource,
+    selectors: selectedSelectors,
+    options,
+    selectedLabels,
+    startMs: timeRange.from.valueOf(),
+    endMs: timeRange.to.valueOf(),
+  });
 
   return (
     <Modal title='Export Data' isOpen={isOpen} onDismiss={onClose}>
@@ -156,75 +58,32 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
 
         <Field label='Format'>
           <RadioButtonGroup
-            options={formatOptions}
+            options={FORMAT_OPTIONS}
             value={options.format}
             onChange={(value) => setOptions({ ...options, format: value })}
           />
         </Field>
 
         {options.format === 'csv' && (
-          <>
-            <Field label='Timestamp format'>
-              <Select
-                options={timestampOptions}
-                value={options.timestampFormat}
-                onChange={(v) => v.value && setOptions({ ...options, timestampFormat: v.value })}
-              />
-            </Field>
-
-            {options.timestampFormat === 'custom' && (
-              <Field label='Custom layout' description={customLayoutDescription}>
-                <Input
-                  value={options.customLayout}
-                  onChange={(e) => setOptions({ ...options, customLayout: e.currentTarget.value })}
-                  placeholder='YYYY-MM-DDThh:mm:ss.SSSSSSSSSZ'
-                />
-              </Field>
-            )}
-
-            {availableLabels.length > 0 && (
-              <Field label='Labels' description='Select labels to include as additional CSV columns'>
-                <MultiSelect
-                  options={availableLabels}
-                  value={options.selectedLabels}
-                  onChange={(selected) => setOptions({ ...options, selectedLabels: selected.map((s) => s.value!) })}
-                  placeholder='Select labels...'
-                  isClearable
-                />
-              </Field>
-            )}
-          </>
+          <CsvOptionsFields
+            timestampFormat={options.timestampFormat}
+            onTimestampFormatChange={(format) => setOptions({ ...options, timestampFormat: format })}
+            customLayout={options.customLayout}
+            onCustomLayoutChange={(layout) => setOptions({ ...options, customLayout: layout })}
+            availableLabels={availableLabels}
+            selectedLabels={selectedLabels}
+            onSelectedLabelsChange={setSelectedLabels}
+            labelsLoading={labelsLoading}
+          />
         )}
 
-        <Field label='Time range'>
-          <div className={styles.timeRange}>
-            {timeRange.from.format('YYYY-MM-DD HH:mm:ss')} — {timeRange.to.format('YYYY-MM-DD HH:mm:ss')}
-          </div>
-        </Field>
+        <TimeRangeField timeRange={timeRange} />
 
-        {validSelectors.length === 1 && (
-          <Field label='Metric'>
-            <div className={styles.metricSelector}>{validSelectors[0].selector}</div>
-          </Field>
-        )}
-
-        {validSelectors.length > 1 && (
-          <Field label='Select metrics to export'>
-            <div className={styles.selectorList}>
-              {validSelectors.map((s) => (
-                <label key={s.selector} className={styles.selectorOption}>
-                  <input
-                    type='checkbox'
-                    value={s.selector}
-                    checked={selectedSelectors.includes(s.selector)}
-                    onChange={() => handleToggleSelector(s.selector)}
-                  />
-                  <span className={styles.selectorLabel}>{s.selector}</span>
-                </label>
-              ))}
-            </div>
-          </Field>
-        )}
+        <SelectorsField
+          selectors={validSelectors}
+          selectedSelectors={selectedSelectors}
+          onToggle={toggleSelector}
+        />
 
         <div className={styles.actions}>
           <Button variant='secondary' onClick={onClose}>
@@ -246,76 +105,16 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
   );
 };
 
-const getStyles = (theme: GrafanaTheme2) => {
-  const infoBox = css({
-    padding: theme.spacing(1),
-    backgroundColor: theme.colors.background.secondary,
-    borderRadius: theme.shape.radius.default,
-    fontFamily: theme.typography.fontFamilyMonospace,
-    fontSize: theme.typography.bodySmall.fontSize,
-  });
-
-  return {
-    content: css({
-      display: 'flex',
-      flexDirection: 'column',
-      gap: theme.spacing(2),
-    }),
-    timeRange: infoBox,
-    metricSelector: css(infoBox, {
-      wordBreak: 'break-all',
-    }),
-    selectorList: css({
-      display: 'flex',
-      flexDirection: 'column',
-      gap: theme.spacing(1),
-    }),
-    selectorOption: css({
-      display: 'flex',
-      alignItems: 'flex-start',
-      gap: theme.spacing(1),
-      cursor: 'pointer',
-      padding: theme.spacing(0.5, 1),
-      borderRadius: theme.shape.radius.default,
-      '&:hover': {
-        backgroundColor: theme.colors.action.hover,
-      },
-    }),
-    selectorLabel: css({
-      fontFamily: theme.typography.fontFamilyMonospace,
-      fontSize: theme.typography.bodySmall.fontSize,
-      wordBreak: 'break-all',
-    }),
-    actions: css({
-      display: 'flex',
-      justifyContent: 'flex-end',
-      gap: theme.spacing(1),
-      marginTop: theme.spacing(2),
-    }),
-  };
-};
-
-const buildExportParams = (
-  selectors: string[],
-  startSec: number,
-  endSec: number,
-  format: string,
-  csvFormat?: string
-): URLSearchParams => {
-  const params = new URLSearchParams();
-  selectors.forEach((selector) => params.append('match[]', selector));
-  params.append('start', startSec.toString());
-  params.append('end', endSec.toString());
-  if (format === 'csv' && csvFormat) {
-    params.append('format', csvFormat);
-  }
-  return params;
-};
-
-const generateFileName = (selectors: string[], timestamp: number, ext: string): string => {
-  if (selectors.length === 1) {
-    return `export-${timestamp}.${ext}`;
-  }
-  const selectorStr = selectors.map((selector) => encodeURIComponent(selector)).join('_');
-  return `export-${selectorStr}-${timestamp}.${ext}`;
-};
+const getStyles = (theme: GrafanaTheme2) => ({
+  content: css({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(2),
+  }),
+  actions: css({
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: theme.spacing(1),
+    marginTop: theme.spacing(2),
+  }),
+});
