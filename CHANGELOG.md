@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix autocomplete not triggering when the cursor is placed after a middle comma inside a label selector (e.g. `metric{job="j1",^host="h2"}`). See [#522](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/522).
+
 ## v0.25.0
 
 * FEATURE: allow exporting label-only selectors such as `{job="prometheus"}` from the Export Data dialog. Previously the export button required a named metric in the query. See [#471](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/471). Thanks to @dmedovich for contributing.

@@ -127,6 +127,9 @@ export function getCompletionProvider(
         documentation: { value: item.documentation } as IMarkdownString,
         sortText: index.toString().padStart(maxIndexDigits, '0'), // to force the order we have
         range: item.type === CompletionType.metricName ? metricNameRange : range,
+        insertTextRules: item.isSnippet
+          ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+          : undefined,
         command: item.triggerOnInsert
           ? {
             id: 'editor.action.triggerSuggest',

@@ -109,6 +109,66 @@ describe('situation', () => {
     });
   });
 
+  it('handles label names after a middle comma', () => {
+    assertSituation('something{job="j1",^host="h2"}', {
+      type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME',
+      hasMatcherAfterCursor: true,
+      metricName: 'something',
+      otherLabels: [
+        { name: 'job', value: 'j1', op: '=' },
+        { name: 'host', value: 'h2', op: '=' },
+      ],
+    });
+
+    // with whitespace around the cursor
+    assertSituation('something{job="j1", ^ host="h2"}', {
+      type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME',
+      hasMatcherAfterCursor: true,
+      metricName: 'something',
+      otherLabels: [
+        { name: 'job', value: 'j1', op: '=' },
+        { name: 'host', value: 'h2', op: '=' },
+      ],
+    });
+
+    // three labels, cursor after the first comma (nested LabelMatchList)
+    assertSituation('something{a="1",^b="2",c="3"}', {
+      type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME',
+      hasMatcherAfterCursor: true,
+      metricName: 'something',
+      otherLabels: [
+        { name: 'a', value: '1', op: '=' },
+        { name: 'b', value: '2', op: '=' },
+        { name: 'c', value: '3', op: '=' },
+      ],
+    });
+
+    // three labels, cursor after the second comma
+    assertSituation('something{a="1",b="2",^c="3"}', {
+      type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME',
+      hasMatcherAfterCursor: true,
+      metricName: 'something',
+      otherLabels: [
+        { name: 'a', value: '1', op: '=' },
+        { name: 'b', value: '2', op: '=' },
+        { name: 'c', value: '3', op: '=' },
+      ],
+    });
+
+    // without a metric name
+    assertSituation('{job="j1",^host="h2"}', {
+      type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME',
+      hasMatcherAfterCursor: true,
+      otherLabels: [
+        { name: 'job', value: 'j1', op: '=' },
+        { name: 'host', value: 'h2', op: '=' },
+      ],
+    });
+
+    // cursor before the comma must not trigger label-name suggestions
+    assertSituation('something{job="j1"^,host="h2"}', null);
+  });
+
   it('handles label values', () => {
     assertSituation('something{job=^}', {
       type: 'IN_LABEL_SELECTOR_WITH_LABEL_NAME',

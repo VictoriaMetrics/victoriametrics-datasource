@@ -159,6 +159,9 @@ export type Situation =
     type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME';
     metricName?: string;
     otherLabels: Label[];
+    // true when another label-matcher follows the cursor,
+    // like in `something{job="j1",^host="h2"}`
+    hasMatcherAfterCursor?: boolean;
   }
   | {
     type: 'IN_GROUPING';
@@ -188,6 +191,10 @@ const RESOLVERS: Resolver[] = [
   {
     path: [LabelMatchers, VectorSelector],
     fun: resolveLabelKeysWithEquals,
+  },
+  {
+    path: [LabelMatchList],
+    fun: resolveLabelKeysAfterComma,
   },
   {
     path: [MetricsQL],
@@ -492,13 +499,19 @@ function resolveLabelKeysWithEquals(node: SyntaxNode, text: string, pos: number)
     }
   }
 
-  const metricNameNode = walk(node, [
+  return buildInLabelSelectorSituation(node, text);
+}
+
+type InLabelSelectorNoLabelNameSituation = Extract<Situation, { type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME' }>;
+
+function buildInLabelSelectorSituation(labelMatchersNode: SyntaxNode, text: string): InLabelSelectorNoLabelNameSituation {
+  const metricNameNode = walk(labelMatchersNode, [
     ['parent', VectorSelector],
     ['firstChild', MetricIdentifier],
     ['firstChild', Identifier],
   ]);
 
-  const otherLabels = getLabels(node, text);
+  const otherLabels = getLabels(labelMatchersNode, text);
 
   if (metricNameNode === null) {
     // we are probably in a situation without a metric name.
@@ -515,6 +528,58 @@ function resolveLabelKeysWithEquals(node: SyntaxNode, text: string, pos: number)
     metricName,
     otherLabels,
   };
+}
+
+// for example `something{job="j1",^host="h2"}`
+// the cursor is inside a LabelMatchList, after a "middle" comma.
+
+// we walk up through the nested LabelMatchList parents,
+// as soon as we reach LabelMatchers, we stop
+function resolveLabelKeysAfterComma(node: SyntaxNode, text: string, pos: number): Situation | null {
+  let listNode = node;
+  let labelMatchersNode: SyntaxNode | null = null;
+  while (labelMatchersNode === null) {
+    const p = listNode.parent;
+    if (p === null) {
+      return null;
+    }
+
+    switch (p.type.id) {
+      case LabelMatchList:
+        // we keep looping
+        listNode = p;
+        continue;
+      case LabelMatchers:
+        // we reached the end, we can stop the loop
+        labelMatchersNode = p;
+        continue;
+      default:
+        // we reached some other node, we stop
+        return null;
+    }
+  }
+
+  if (subTreeHasError(labelMatchersNode)) {
+    return null;
+  }
+
+  // the cursor must be after a `,` character:
+  // the area between the end of the previous label-matcher
+  // and the cursor-pos must contain a `,`
+  // (this keeps `something{job="j1"^,host="h2"}` returning null)
+  const child = node.firstChild;
+  if (child === null) {
+    return null;
+  }
+
+  const textToCheck = text.slice(child.to, pos);
+  if (!textToCheck.includes(',')) {
+    return null;
+  }
+
+  // in this situation the grammar guarantees that another
+  // label-matcher follows the cursor
+  return { ...buildInLabelSelectorSituation(labelMatchersNode, text), hasMatcherAfterCursor: true };
 }
 
 // we find the first error-node in the tree that is at the cursor-position.

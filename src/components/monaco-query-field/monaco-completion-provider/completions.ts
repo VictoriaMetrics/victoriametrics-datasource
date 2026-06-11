@@ -40,6 +40,7 @@ type Completion = {
   detail?: string;
   documentation?: string;
   triggerOnInsert?: boolean;
+  isSnippet?: boolean;
 };
 
 type Metric = {
@@ -165,6 +166,7 @@ async function getLabelNamesForCompletions(
   metric: string | undefined,
   suffix: string,
   triggerOnInsert: boolean,
+  isSnippet: boolean,
   otherLabels: Label[],
   dataProvider: DataProvider
 ): Promise<Completion[]> {
@@ -174,6 +176,7 @@ async function getLabelNamesForCompletions(
     label: text,
     insertText: `${text}${suffix}`,
     triggerOnInsert,
+    isSnippet,
   }))
   const withTemplatesCompletions = await getAllWithTemplatesCompletions(dataProvider);
   const withTemplatesCompletionsLabels = withTemplatesCompletions.filter((c) => {
@@ -186,16 +189,21 @@ async function getLabelNamesForCompletions(
 async function getLabelNamesForSelectorCompletions(
   metric: string | undefined,
   otherLabels: Label[],
+  hasMatcherAfterCursor: boolean,
   dataProvider: DataProvider
 ): Promise<Completion[]> {
-  return getLabelNamesForCompletions(metric, '=', true, otherLabels, dataProvider);
+  // when another label-matcher follows the cursor, we have to insert
+  // a `,` after the new label-matcher to keep the query valid,
+  // and we use a snippet to keep the cursor before that `,`
+  const suffix = hasMatcherAfterCursor ? '=$0,' : '=';
+  return getLabelNamesForCompletions(metric, suffix, true, hasMatcherAfterCursor, otherLabels, dataProvider);
 }
 async function getLabelNamesForByCompletions(
   metric: string | undefined,
   otherLabels: Label[],
   dataProvider: DataProvider
 ): Promise<Completion[]> {
-  return getLabelNamesForCompletions(metric, '', false, otherLabels, dataProvider);
+  return getLabelNamesForCompletions(metric, '', false, false, otherLabels, dataProvider);
 }
 
 async function getLabelValues(
@@ -244,7 +252,12 @@ export async function getCompletions(situation: Situation, dataProvider: DataPro
       return [...historyCompletions, ...FUNCTION_COMPLETIONS, ...metricNames];
     }
     case 'IN_LABEL_SELECTOR_NO_LABEL_NAME':
-      return getLabelNamesForSelectorCompletions(situation.metricName, situation.otherLabels, dataProvider);
+      return getLabelNamesForSelectorCompletions(
+        situation.metricName,
+        situation.otherLabels,
+        situation.hasMatcherAfterCursor ?? false,
+        dataProvider
+      );
     case 'IN_GROUPING':
       return getLabelNamesForByCompletions(situation.metricName, situation.otherLabels, dataProvider);
     case 'IN_LABEL_SELECTOR_WITH_LABEL_NAME':
