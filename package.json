@@ -85,6 +85,7 @@
     "webpack-virtual-modules": "^0.6.2"
   },
   "resolutions": {
+    "@grafana/plugin-ui": "0.15.0",
     "@lezer/common": "1.2.3",
     "@lezer/highlight": "1.2.1",
     "@lezer/lr": "1.4.2",
@@ -122,7 +123,7 @@
     "@grafana/aws-sdk": "^0.10.3",
     "@grafana/data": "^13.0.1",
     "@grafana/i18n": "^13.0.1",
-    "@grafana/plugin-ui": "^0.13.1",
+    "@grafana/plugin-ui": "^0.15.0",
     "@grafana/runtime": "^13.0.1",
     "@grafana/schema": "^13.0.1",
     "@grafana/ui": "^13.0.1",
