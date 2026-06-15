@@ -95,8 +95,11 @@ export function getCompletionProvider(
     position: monacoTypes.Position
   ): monacoTypes.languages.ProviderResult<monacoTypes.languages.CompletionList> => {
     const word = model.getWordAtPosition(position);
+    // when the cursor only touches the start boundary of the word
+    // (e.g. `{job="j1",^host="h2"}`), the user has typed no prefix of it,
+    // so we must insert at the cursor instead of replacing the word
     const range =
-      word != null
+      word != null && position.column > word.startColumn
         ? monaco.Range.lift({
           startLineNumber: position.lineNumber,
           endLineNumber: position.lineNumber,
@@ -127,6 +130,9 @@ export function getCompletionProvider(
         documentation: { value: item.documentation } as IMarkdownString,
         sortText: index.toString().padStart(maxIndexDigits, '0'), // to force the order we have
         range: item.type === CompletionType.metricName ? metricNameRange : range,
+        insertTextRules: item.isSnippet
+          ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+          : undefined,
         command: item.triggerOnInsert
           ? {
             id: 'editor.action.triggerSuggest',
