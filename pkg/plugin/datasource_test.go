@@ -525,6 +525,59 @@ func TestDatasourceQueryRequestWithRetry(t *testing.T) {
 	expErr("EOF") // 3, 4 - retries
 }
 
+func TestDatasourceQueryRequest_PreservesInstantQueryMilliseconds(t *testing.T) {
+	var gotTime string
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotTime = r.URL.Query().Get("time")
+		_, err := w.Write([]byte(`{"status":"success","data":{"resultType":"scalar","result":[1583786142, "1"]}}`))
+		if err != nil {
+			t.Fatalf("error write response: %s", err)
+		}
+	}))
+	defer srv.Close()
+
+	ctx := context.Background()
+	ds := NewDatasource()
+	pluginCtx := backend.PluginContext{
+		DataSourceInstanceSettings: &backend.DataSourceInstanceSettings{
+			URL:      srv.URL,
+			JSONData: []byte(`{"httpMethod":"GET","customQueryParameters":""}`),
+		},
+	}
+
+	_, err := ds.QueryData(ctx, &backend.QueryDataRequest{
+		PluginContext: pluginCtx,
+		Queries: []backend.DataQuery{
+			{
+				RefID:     "A",
+				QueryType: instantQueryPath,
+				TimeRange: backend.TimeRange{
+					From: time.Unix(1670226733, 0),
+					To:   time.UnixMilli(1670226793123),
+				},
+				JSON: []byte(`{
+    "refId": "A",
+    "instant": true,
+    "range": false,
+    "interval": "10s",
+    "intervalMs": 10000,
+    "timeInterval": "",
+    "expr": "sum(vm_http_request_total)",
+    "legendFormat": "__auto"
+}`),
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if gotTime != "1670226793.123" {
+		t.Fatalf("unexpected time query parameter: got %q want %q", gotTime, "1670226793.123")
+	}
+}
+
 func TestDatasource_checkAlertingRequest(t *testing.T) {
 	type opts struct {
 		headers map[string]string

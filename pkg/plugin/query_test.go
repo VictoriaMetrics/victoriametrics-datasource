@@ -116,6 +116,27 @@ func TestQuery_getQueryURL(t *testing.T) {
 	}
 	f(o)
 
+	// instant query should preserve millisecond precision in time param
+	o = opts{
+		RefID:         "1",
+		Instant:       true,
+		Range:         false,
+		Interval:      "20s",
+		IntervalMs:    0,
+		TimeInterval:  "5s",
+		Expr:          "up",
+		MaxDataPoints: 20000,
+		getTimeRange: func() TimeRange {
+			from := time.Unix(1670226733, 0)
+			to := time.UnixMilli(1670226793123)
+			return TimeRange{From: from, To: to}
+		},
+		rawURL:  "http://127.0.0.1:8428",
+		wantErr: false,
+		want:    "http://127.0.0.1:8428/api/v1/query?query=up&step=20s&time=1670226793.123",
+	}
+	f(o)
+
 	// $__rate_interval query with interval
 	o = opts{
 		RefID:         "1",
