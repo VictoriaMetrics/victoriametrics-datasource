@@ -2,6 +2,7 @@
 
 ## tip
 
+* BUGFIX: keep the range vector (e.g. `[24h]`) when the query builder parses `holt_winters`, `predict_linear`, `idelta`, `deriv` and `resets`. Previously, the Range field disappeared after reopening the panel or switching from Code to Builder view, and editing other parameters produced an invalid query. See [#528](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/528).
 * BUGFIX: fix autocomplete not triggering when the cursor is placed after a middle comma inside a label selector (e.g. `metric{job="j1",^host="h2"}`). See [#522](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/522).
 
 ## v0.25.0
