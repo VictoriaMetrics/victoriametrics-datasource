@@ -28,7 +28,7 @@ import {
 } from 'lezer-metricsql';
 
 import { binaryScalarOperatorToOperatorName } from './binaryScalarOperations';
-import { overTimeFunctionNames }  from './metricsql-functions/aggregations/overTime';
+import { addOperationWithRangeVector, getOperationDefinitions } from './operations';
 import {
   ErrorId,
   ErrorName,
@@ -196,7 +196,12 @@ function getLabel(
   };
 }
 
-const rangeFunctions = ['changes', 'rate', 'irate', 'increase', 'delta', ...overTimeFunctionNames];
+// Functions whose first argument is a range vector (e.g. `rate(m[5m])`)
+const rangeVectorFunctionNames = new Set(
+  getOperationDefinitions()
+    .filter((def) => def.addOperationHandler === addOperationWithRangeVector)
+    .map((def) => def.id)
+);
 
 /**
  * Handle function call which is usually and identifier and its body > arguments.
@@ -218,7 +223,7 @@ function handleFunction(expr: string, node: SyntaxNode, context: InternalContext
   // - interval is not part of the function args per promQL grammar, but we model it as argument for the function in
   //   the query model.
   // - it is easier to handle template variables this way as template variable is an error for the parser
-  if (rangeFunctions.includes(funcName) || funcName.endsWith('_over_time')) {
+  if (rangeVectorFunctionNames.has(funcName) || funcName.endsWith('_over_time')) {
     let match = getString(expr, node).match(/(?<!\{[^}]*)\[(.+?)](?![^{]*})/);
     if (match?.[1]) {
       interval = match[1];

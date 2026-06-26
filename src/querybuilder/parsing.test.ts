@@ -163,6 +163,18 @@ describe('buildVisualQueryFromString', () => {
     );
   });
 
+  it.each([
+    ['holt_winters(metric[5m], 0.5, 0.5)', { id: 'holt_winters', params: ['5m', 0.5, 0.5] }],
+    ['predict_linear(metric[5m], 60)', { id: 'predict_linear', params: ['5m', 60] }],
+    ['idelta(metric[5m])', { id: 'idelta', params: ['5m'] }],
+    ['deriv(metric[5m])', { id: 'deriv', params: ['5m'] }],
+    ['resets(metric[5m])', { id: 'resets', params: ['5m'] }],
+  ])('keeps the range vector when parsing %s', (query, operation) => {
+    expect(buildVisualQueryFromString(query)).toEqual(
+      noErrors({ metric: 'metric', labels: [], operations: [operation] })
+    );
+  });
+
   it('parses query with aggregation by labels', () => {
     const visQuery = {
       metric: 'metric_name',
