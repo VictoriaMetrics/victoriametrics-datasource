@@ -92,7 +92,7 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 				values.Add(k, v)
 			}
 		}
-		values.Set("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
+		values.Set("time", formatPromTimestamp(q.TimeRange.To))
 	}
 	if q.Trace > 0 {
 		values.Set("trace", strconv.Itoa(q.Trace))
@@ -102,6 +102,15 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 
 	u.RawQuery = values.Encode()
 	return u.String(), nil
+}
+
+func formatPromTimestamp(t time.Time) string {
+	seconds := t.Unix()
+	millis := t.Nanosecond() / int(time.Millisecond)
+	if millis == 0 {
+		return strconv.FormatInt(seconds, 10)
+	}
+	return fmt.Sprintf("%d.%03d", seconds, millis)
 }
 
 // withIntervalVariable checks does query has interval variable
