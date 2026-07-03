@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: fix client-side crash when opening the variable editor with the `Label values` query type on Grafana 13.x. See [#532](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/532).
+
 ## v0.25.1
 
 * BUGFIX: keep the range vector (e.g. `[24h]`) when the query builder parses `holt_winters`, `predict_linear`, `idelta`, `deriv` and `resets`. Previously, the Range field disappeared after reopening the panel or switching from Code to Builder view, and editing other parameters produced an invalid query. See [#528](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/528).

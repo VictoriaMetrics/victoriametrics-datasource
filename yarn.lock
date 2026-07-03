@@ -2392,9 +2392,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/plugin-ui@npm:0.15.0":
-  version: 0.15.0
-  resolution: "@grafana/plugin-ui@npm:0.15.0"
+"@grafana/plugin-ui@npm:0.16.0":
+  version: 0.16.0
+  resolution: "@grafana/plugin-ui@npm:0.16.0"
   dependencies:
     "@emotion/css": "npm:11.13.5"
     "@hello-pangea/dnd": "npm:17.0.0"
@@ -2415,7 +2415,9 @@ __metadata:
     "@testing-library/jest-dom": ">=5.16.5"
     "@testing-library/react": ">=15.0.2"
     "@testing-library/user-event": ">=14.5.2"
-  checksum: 10c0/89bea1324812df19a59aa739da1adfa24a58d8191d15c1c52cd702b60c5d70c514a28dd2d821398f35e30a926d7cc981e8233ae806610cf905400510ab40a01c
+    react: ">=18.2.0"
+    react-dom: ">=18.2.0"
+  checksum: 10c0/19df22d4c6a527078dc848138ce797ee9e981a39df7c13f03d9fbee6435c7f0d7d9666564d036214eb77a35de4d4eb770ae037359bab99d87405eaf0105ae673
   languageName: node
   linkType: hard
 
@@ -13683,7 +13685,6 @@ __metadata:
     "@grafana/e2e-selectors": "npm:^13.0.1"
     "@grafana/eslint-config": "npm:^9.0.0"
     "@grafana/i18n": "npm:^13.0.1"
-    "@grafana/plugin-ui": "npm:^0.15.0"
     "@grafana/runtime": "npm:^13.0.1"
     "@grafana/schema": "npm:^13.0.1"
     "@grafana/tsconfig": "npm:^2.1.0"
