@@ -236,23 +236,20 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 
 	if resp.StatusCode != http.StatusOK {
 		body, readErr := io.ReadAll(io.LimitReader(resp.Body, 4096))
-		if readErr != nil || len(body) == 0 {
-			return newResponseError(
-				fmt.Errorf("got unexpected response status code: %d with request url: %q", resp.StatusCode, reqURL),
-				backend.Status(resp.StatusCode),
-			)
-		}
-		var errResp Response
-		if jsonErr := json.Unmarshal(body, &errResp); jsonErr == nil {
-			if errMsg := formatResponseError(errResp); errMsg != "" {
-				return newResponseError(
-					fmt.Errorf("%s", errMsg),
-					backend.Status(resp.StatusCode),
-				)
+		if readErr == nil {
+			var errResp Response
+			if jsonErr := json.Unmarshal(body, &errResp); jsonErr == nil {
+				if errMsg := formatResponseError(errResp); errMsg != "" {
+					return newResponseError(
+						fmt.Errorf("%s", errMsg),
+						backend.Status(resp.StatusCode),
+					)
+				}
 			}
 		}
+
 		return newResponseError(
-			fmt.Errorf("got unexpected response status code: %d with request url: %q and response: %s", resp.StatusCode, reqURL, string(body)),
+			fmt.Errorf("got unexpected response status code: %d with request url: %q", resp.StatusCode, reqURL),
 			backend.Status(resp.StatusCode),
 		)
 	}
@@ -462,14 +459,18 @@ func (d *Datasource) VMAPIQuery(rw http.ResponseWriter, req *http.Request) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			d.logger.Error("Failed to read response body", "error", err)
-			writeError(rw, http.StatusInternalServerError, fmt.Errorf("failed to read response: %w", err))
-			return
+		d.logger.Error("VM returned error", "status", resp.StatusCode)
+		body, err := io.ReadAll(io.LimitReader(resp.Body, 4096))
+		if err == nil {
+			var errResp Response
+			if jsonErr := json.Unmarshal(body, &errResp); jsonErr == nil {
+				if errMsg := formatResponseError(errResp); errMsg != "" {
+					writeError(rw, resp.StatusCode, fmt.Errorf("%s", errMsg))
+					return
+				}
+			}
 		}
-		d.logger.Error("VM returned error", "status", resp.StatusCode, "body", string(body))
-		writeError(rw, resp.StatusCode, fmt.Errorf("VictoriaMetrics returned status %d: %s", resp.StatusCode, string(body)))
+		writeError(rw, resp.StatusCode, fmt.Errorf("VictoriaMetrics returned status %d", resp.StatusCode))
 		return
 	}
 

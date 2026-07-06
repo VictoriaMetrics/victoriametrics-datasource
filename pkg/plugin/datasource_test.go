@@ -123,7 +123,7 @@ func TestDatasourceQueryRequest(t *testing.T) {
 		}
 	}
 
-	expErr(ctx, "and response: some error from backend")                                                              // 0 (non-200 with body)
+	expErr(ctx, "got unexpected response status code: 500")                                                           // 0 (non-200 with body is not included in the error)
 	expErr(ctx, "failed to decode body response: json: cannot unmarshal array into Go value of type plugin.Response") // 1
 	expErr(ctx, "ERROR: type:, some error msg")                                                                       // 2
 	expErr(ctx, "failed to prepare data from response: unknown result type \"\"")                                     // 3
