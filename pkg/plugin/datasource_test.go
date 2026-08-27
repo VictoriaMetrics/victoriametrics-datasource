@@ -63,7 +63,7 @@ func TestDatasourceQueryRequest(t *testing.T) {
 				t.Fatalf("error write response: %s", err)
 			}
 		case 6:
-			_, err := w.Write([]byte(`{"status":"success","data":{"resultType":"scalar","result":[1583786142, "1"]}}`))
+			_, err := w.Write([]byte(`{"status":"success","isPartial":true,"data":{"resultType":"scalar","result":[1583786142, "1"]}}`))
 			if err != nil {
 				t.Fatalf("error write response: %s", err)
 			}
@@ -234,7 +234,13 @@ func TestDatasourceQueryRequest(t *testing.T) {
 		data.NewFrame("",
 			data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 0)}),
 			data.NewField(data.TimeSeriesValueFieldName, nil, []float64{1}),
-		).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: scalar}}),
+		).SetMeta(&data.FrameMeta{
+			Custom: &CustomMeta{ResultType: scalar},
+			Notices: []data.Notice{{
+				Severity: data.NoticeSeverityWarning,
+				Text:     partialResponseWarning,
+			}},
+		}),
 	}
 
 	response = rsp.Responses["A"]

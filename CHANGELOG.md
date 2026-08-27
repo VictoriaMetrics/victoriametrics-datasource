@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: bring back warning about partial response. See [#542](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/542).
+
 ## v0.25.2
 
 * BUGFIX: fix client-side crash when opening the variable editor with the `Label values` query type on Grafana 13.x. See [#532](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/532).
