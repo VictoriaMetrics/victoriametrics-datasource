@@ -11,6 +11,7 @@ import (
 
 const (
 	vector, matrix, scalar = "vector", "matrix", "scalar"
+	partialResponseWarning = "The shown results are marked as PARTIAL. The result is marked as partial if one or more vmstorage nodes failed to respond to the query."
 )
 
 type CustomMeta struct {
@@ -47,6 +48,7 @@ type Response struct {
 	Error       string `json:"error,omitempty"`
 	Data        Data   `json:"data"`
 	Trace       *Trace `json:"trace,omitempty"`
+	IsPartial   bool   `json:"isPartial,omitempty"`
 	ForAlerting bool   `json:"-"`
 }
 
@@ -212,7 +214,11 @@ func (r *Response) getDataFrames() (fss data.Frames, err error) {
 			return nil, fmt.Errorf("unmarshal err %w; \n %#v", err, string(r.Data.Result))
 		}
 		if r.ForAlerting {
-			return pi.alertingDataFrames()
+			fss, err = pi.alertingDataFrames()
+			if err != nil {
+				return nil, err
+			}
+			return r.addNotices(fss), nil
 		}
 		df = pi
 	case matrix:
@@ -233,6 +239,25 @@ func (r *Response) getDataFrames() (fss data.Frames, err error) {
 	if frames, err := df.dataframes(); err != nil {
 		return nil, err
 	} else {
-		return append(fss, frames...), nil
+		return append(fss, r.addNotices(frames)...), nil
 	}
+}
+
+func (r *Response) addNotices(frames data.Frames) data.Frames {
+	if !r.IsPartial {
+		return frames
+	}
+
+	notice := data.Notice{
+		Severity: data.NoticeSeverityWarning,
+		Text:     partialResponseWarning,
+	}
+	for _, frame := range frames {
+		if frame.Meta == nil {
+			frame.Meta = &data.FrameMeta{}
+		}
+		frame.Meta.Notices = append(frame.Meta.Notices, notice)
+	}
+
+	return frames
 }

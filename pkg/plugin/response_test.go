@@ -17,6 +17,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 		want        func() data.Frames
 		wantErr     bool
 		trace       *Trace
+		isPartial   bool
 	}
 	f := func(opts opts) {
 		t.Helper()
@@ -25,6 +26,7 @@ func TestResponse_getDataFrames(t *testing.T) {
 			Data:        opts.data,
 			ForAlerting: opts.forAlerting,
 			Trace:       opts.trace,
+			IsPartial:   opts.isPartial,
 		}
 		got, err := r.getDataFrames()
 		if (err != nil) != opts.wantErr {
@@ -67,9 +69,10 @@ func TestResponse_getDataFrames(t *testing.T) {
 	}
 	f(o)
 
-	// scalar result type with trace
+	// partial scalar result type with trace
 	o = opts{
-		status: "success",
+		status:    "success",
+		isPartial: true,
 		data: Data{
 			ResultType: "scalar",
 			Result:     []byte(`[1583786142, "1"]`),
@@ -89,7 +92,13 @@ func TestResponse_getDataFrames(t *testing.T) {
 				data.NewFrame("",
 					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 0)}),
 					data.NewField(data.TimeSeriesValueFieldName, nil, []float64{1}),
-				).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: scalar}}),
+				).SetMeta(&data.FrameMeta{
+					Custom: &CustomMeta{ResultType: scalar},
+					Notices: []data.Notice{{
+						Severity: data.NoticeSeverityWarning,
+						Text:     partialResponseWarning,
+					}},
+				}),
 			}
 		},
 		wantErr: false,
@@ -139,6 +148,32 @@ func TestResponse_getDataFrames(t *testing.T) {
 					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 50*1e6)}),
 					data.NewField(data.TimeSeriesValueFieldName, nil, []float64{1}),
 				).SetMeta(&data.FrameMeta{Custom: &CustomMeta{ResultType: scalar}}),
+			}
+		},
+	}
+	f(o)
+
+	// partial scalar response
+	o = opts{
+		status:    "success",
+		isPartial: true,
+		data: Data{
+			ResultType: "scalar",
+			Result:     []byte(`[1583786142.050, "1"]`),
+		},
+		query: Query{},
+		want: func() data.Frames {
+			return []*data.Frame{
+				data.NewFrame("",
+					data.NewField(data.TimeSeriesTimeFieldName, nil, []time.Time{time.Unix(1583786142, 50*1e6)}),
+					data.NewField(data.TimeSeriesValueFieldName, nil, []float64{1}),
+				).SetMeta(&data.FrameMeta{
+					Custom: &CustomMeta{ResultType: scalar},
+					Notices: []data.Notice{{
+						Severity: data.NoticeSeverityWarning,
+						Text:     partialResponseWarning,
+					}},
+				}),
 			}
 		},
 	}
