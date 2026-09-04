@@ -2,6 +2,8 @@
 
 ## tip
 
+* FEATURE: align `start` and `end` of range queries to the query step. See [#539](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/539).
+
 * BUGFIX: bring back warning about partial response. See [#542](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/542). Thanks to @ilyalabun for contributing.
 
 ## v0.25.2
