@@ -2,7 +2,7 @@
 
 ## tip
 
-* BUGFIX: bring back warning about partial response. See [#542](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/542).
+* BUGFIX: bring back warning about partial response. See [#542](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/542). Thanks to @ilyalabun for contributing.
 
 ## v0.25.2
 
