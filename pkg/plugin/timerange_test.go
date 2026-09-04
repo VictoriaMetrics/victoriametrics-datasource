@@ -47,3 +47,19 @@ func TestTimeRange_alignToStep(t *testing.T) {
 	f(tr, 0, 0, 1670226733, 1670226793)
 	f(tr, -time.Second, 0, 1670226733, 1670226793)
 }
+
+func Test_formatTimestamp(t *testing.T) {
+	f := func(ts time.Time, want string) {
+		t.Helper()
+		if got := formatTimestamp(ts); got != want {
+			t.Errorf("formatTimestamp(%v) = %q, want %q", ts, got, want)
+		}
+	}
+
+	f(time.Unix(1670226733, 0), "1670226733000")
+	f(time.Unix(1670226733, 631_000_000), "1670226733631")
+	f(time.Unix(1670226733, 5_000_000), "1670226733005")
+	// sub-millisecond part is dropped
+	f(time.Unix(1670226733, 631_456_789), "1670226733631")
+	f(time.Unix(0, 0), "0")
+}

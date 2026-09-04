@@ -1,6 +1,9 @@
 package plugin
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 type TimeRange struct {
 	From time.Time
@@ -35,4 +38,9 @@ func floorDiv(a, b int64) int64 {
 		q--
 	}
 	return q
+}
+
+// formatTimestamp formats t as unix milliseconds for the start/end/time query params.
+func formatTimestamp(t time.Time) string {
+	return strconv.FormatInt(t.UnixMilli(), 10)
 }

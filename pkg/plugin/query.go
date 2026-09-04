@@ -73,8 +73,8 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 			}
 		}
 		aligned := q.TimeRange.alignToStep(step, q.UTCOffsetSec)
-		values.Add("start", strconv.FormatInt(aligned.From.Unix(), 10))
-		values.Add("end", strconv.FormatInt(aligned.To.Unix(), 10))
+		values.Add("start", formatTimestamp(aligned.From))
+		values.Add("end", formatTimestamp(aligned.To))
 	} else {
 		u, err = newURL(rawURL, instantQueryPath, false)
 		if err != nil {
@@ -86,7 +86,7 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 				values.Add(k, v)
 			}
 		}
-		values.Set("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
+		values.Set("time", formatTimestamp(q.TimeRange.To))
 	}
 	if q.Trace > 0 {
 		values.Set("trace", strconv.Itoa(q.Trace))
