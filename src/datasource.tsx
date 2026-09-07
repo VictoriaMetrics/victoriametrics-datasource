@@ -33,6 +33,7 @@ import {
   DataSourceWithQueryImportSupport,
   dateMath,
   DateTime,
+  dateTimeForTimeZone,
   getDefaultTimeRange,
   LegacyMetricFindQueryOptions,
   QueryFixAction,
@@ -201,10 +202,12 @@ export class PrometheusDatasource
       expr: expr,
       queryType: PromQueryType.timeSeriesQuery,
       requestId: request.panelId + target.refId,
-      // The backend aligns range queries to the step using the dashboard time zone offset.
-      // request.range is built by Grafana in the dashboard time zone; the plugin's own TimeSrv
-      // copy is never initialised with the dashboard model and would report the browser offset.
-      utcOffsetSec: request.range.to.utcOffset() * 60,
+      // The backend aligns range queries to the step using the offset of the request time zone
+      // (dashboard or Explore) at the end of the range, so DST is honoured. request.range.to itself
+      // cannot be used directly: Grafana parses relative ranges in the request time zone but absolute
+      // ones with plain dateTime(), i.e. in the browser time zone. The plugin's own TimeSrv copy is
+      // never initialised with the dashboard model and would report the browser offset as well.
+      utcOffsetSec: dateTimeForTimeZone(request.timezone, request.range.to.valueOf()).utcOffset() * 60,
     }
 
     if (target.range && target.instant) {
