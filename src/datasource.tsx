@@ -201,8 +201,10 @@ export class PrometheusDatasource
       expr: expr,
       queryType: PromQueryType.timeSeriesQuery,
       requestId: request.panelId + target.refId,
-      // We need to pass utcOffsetSec to backend to calculate aligned range
-      utcOffsetSec: this.timeSrv.timeRange().to.utcOffset() * 60,
+      // The backend aligns range queries to the step using the dashboard time zone offset.
+      // request.range is built by Grafana in the dashboard time zone; the plugin's own TimeSrv
+      // copy is never initialised with the dashboard model and would report the browser offset.
+      utcOffsetSec: request.range.to.utcOffset() * 60,
     }
 
     if (target.range && target.instant) {

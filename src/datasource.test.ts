@@ -1037,12 +1037,29 @@ describe('processTargetV2', () => {
     );
   });
 
+  it('should take utcOffsetSec from the request range (dashboard time zone), not from timeSrv', () => {
+    const target = { expr: 'metric_name', refId: 'A', range: true, instant: false } as any;
+    const request = {
+      dashboardUID: 'dashboard_1',
+      targets: [],
+      panelId: 2,
+      app: 'app_1',
+      // dashboard time zone is UTC+2 while the timeSrv stub reports the browser offset 0
+      range: { to: { utcOffset: () => 120 } },
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    const result = datasource.processTargetV2(target, request);
+
+    expect((result as any).utcOffsetSec).toBe(7200);
+  });
+
   it('should merge template with query and adjust target properties', () => {
     const target = { expr: 'sr', refId: 'A', range: false, instant: false, } as any;
     const request = {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      range: { to: { utcOffset: () => 0 } },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1067,6 +1084,7 @@ describe('processTargetV2', () => {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      range: { to: { utcOffset: () => 0 } },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1100,6 +1118,7 @@ describe('processTargetV2', () => {
       dashboardUID: 'unknown_dashboard',
       targets: [],
       panelId: 2,
+      range: { to: { utcOffset: () => 0 } },
       app: 'unknown_app',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1122,6 +1141,7 @@ describe('processTargetV2', () => {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      range: { to: { utcOffset: () => 0 } },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1154,6 +1174,7 @@ describe('processTargetV2', () => {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      range: { to: { utcOffset: () => 0 } },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1186,6 +1207,7 @@ describe('processTargetV2', () => {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      range: { to: { utcOffset: () => 0 } },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1220,6 +1242,7 @@ describe('processTargetV2', () => {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      range: { to: { utcOffset: () => 0 } },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 
