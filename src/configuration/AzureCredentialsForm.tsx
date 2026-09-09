@@ -57,7 +57,7 @@ export const AzureCredentialsForm: FunctionComponent<Props> = (props: Props) => 
     let canceled = false;
     getSubscriptions().then((result) => {
       if (!canceled) {
-        updateSubscriptions(result, loadSubscriptionsClicked);
+        updateSubscriptions(result, loadSubscriptionsClicked > 0);
       }
     });
     return () => {

@@ -4,7 +4,7 @@ process.env.TZ = 'UTC';
 
 const { grafanaESModules, nodeModulesToTransform } = require('./.config/jest/utils');
 
-grafanaESModules.push('monaco-promql');
+grafanaESModules.push('monaco-promql', '@react-hookz/web', '@ver0/deep-equal');
 
 module.exports = {
   // Jest configuration provided by Grafana scaffolding

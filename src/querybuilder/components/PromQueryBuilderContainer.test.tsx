@@ -1,7 +1,6 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
 
 import { DataSourceInstanceSettings, DataSourcePluginMeta } from '@grafana/data';
 

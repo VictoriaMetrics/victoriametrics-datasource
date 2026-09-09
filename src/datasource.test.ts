@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { of } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 
 import {
   CoreApp,
@@ -131,16 +131,16 @@ describe('PrometheusDatasource', () => {
         timeSrvStub
       );
 
-      it('adds params to timeseries query', () => {
-        promDs.query(makeQuery(target));
+      it('adds params to timeseries query', async () => {
+        await lastValueFrom(promDs.query(makeQuery(target)));
         expect(fetchMock.mock.calls.length).toBe(1);
         expect(fetchMock.mock.calls[0][0].url).toBe(
           '/api/ds/query?ds_type=victoriametrics-metrics-datasource'
         );
       });
 
-      it('adds params to instant query', () => {
-        promDs.query(makeQuery({ ...target, instant: true }));
+      it('adds params to instant query', async () => {
+        await lastValueFrom(promDs.query(makeQuery({ ...target, instant: true })));
         expect(fetchMock.mock.calls.length).toBe(1);
         expect(fetchMock.mock.calls[0][0].url).toEqual('/api/ds/query?ds_type=victoriametrics-metrics-datasource');
         expect(fetchMock.mock.calls[0][0].data).toEqual({
@@ -178,8 +178,8 @@ describe('PrometheusDatasource', () => {
         timeSrvStub
       );
 
-      it('adds params to timeseries query', () => {
-        promDs.query(makeQuery(target));
+      it('adds params to timeseries query', async () => {
+        await lastValueFrom(promDs.query(makeQuery(target)));
         expect(fetchMock.mock.calls.length).toBe(1);
         expect(fetchMock.mock.calls[0][0].data).toEqual({
           queries: [
@@ -207,8 +207,8 @@ describe('PrometheusDatasource', () => {
         });
       });
 
-      it('adds params to instant query', () => {
-        promDs.query(makeQuery({ ...target, instant: true }));
+      it('adds params to instant query', async () => {
+        await lastValueFrom(promDs.query(makeQuery({ ...target, instant: true })));
         expect(fetchMock.mock.calls.length).toBe(1);
       });
     });

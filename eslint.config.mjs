@@ -1,6 +1,6 @@
 import stylistic from '@stylistic/eslint-plugin';
 import {defineConfig} from 'eslint/config';
-import grafanaEslintConfig from '@grafana/eslint-config/flat.js';
+import grafanaEslintConfig from '@grafana/eslint-config';
 import react from 'eslint-plugin-react';
 import jest from 'eslint-plugin-jest';
 import lodash from 'eslint-plugin-lodash';
@@ -9,8 +9,15 @@ import * as emotionPlugin from '@emotion/eslint-plugin';
 import {fixupPluginRules} from "@eslint/compat";
 import importPlugin from 'eslint-plugin-import-x';
 
+// eslint-plugin-react 7.x still relies on context APIs removed in ESLint 10,
+// so wrap only that plugin (including the instance registered by @grafana/eslint-config).
+const reactCompat = fixupPluginRules(react);
+const grafanaConfig = grafanaEslintConfig.map((config) =>
+  config.plugins?.react ? { ...config, plugins: { ...config.plugins, react: reactCompat } } : config
+);
+
 export default defineConfig([
-  grafanaEslintConfig,
+  ...grafanaConfig,
   prettier,
   {
     ignores: [
@@ -36,7 +43,7 @@ export default defineConfig([
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
     plugins: {
-      'react': react,
+      'react': reactCompat,
       'jest': jest,
       'lodash': lodash,
       '@emotion': fixupPluginRules(emotionPlugin),
