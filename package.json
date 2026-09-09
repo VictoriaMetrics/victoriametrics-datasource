@@ -84,6 +84,9 @@
     "webpack-subresource-integrity": "^5.1.0",
     "webpack-virtual-modules": "^0.6.2"
   },
+  "resolutions": {
+    "immutable@^3.8.2": "4.3.9"
+  },
   "workspaces": [
     "packages/lezer-metricsql"
   ],
