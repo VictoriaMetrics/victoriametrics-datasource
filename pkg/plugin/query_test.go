@@ -18,6 +18,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		TimeInterval  string
 		Expr          string
 		MaxDataPoints int64
+		UTCOffsetSec  int64
 		getTimeRange  func() TimeRange
 		rawURL        string
 		params        string
@@ -35,6 +36,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 			TimeInterval:  opts.TimeInterval,
 			Expr:          opts.Expr,
 			MaxDataPoints: opts.MaxDataPoints,
+			UTCOffsetSec:  opts.UTCOffsetSec,
 			TimeRange:     opts.getTimeRange(),
 		}
 		params, err := url.ParseQuery(opts.params)
@@ -95,7 +97,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		getTimeRange: getTimeRage,
 		rawURL:       "http://127.0.0.1:8428",
 		wantErr:      false,
-		want:         "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B10s%5D%29&step=10s&time=1670226793",
+		want:         "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B10s%5D%29&step=10s&time=1670226793000",
 	}
 	f(o)
 
@@ -112,7 +114,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		getTimeRange:  getTimeRage,
 		rawURL:        "http://127.0.0.1:8428",
 		wantErr:       false,
-		want:          "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B1m20s%5D%29&step=20s&time=1670226793",
+		want:          "http://127.0.0.1:8428/api/v1/query?query=rate%28ingress_nginx_request_qps%7B%7D%5B1m20s%5D%29&step=20s&time=1670226793000",
 	}
 	f(o)
 
@@ -129,7 +131,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		getTimeRange:  getTimeRage,
 		rawURL:        "http://127.0.0.1:8428",
 		wantErr:       false,
-		want:          "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28ingress_nginx_request_qps%7B%7D%5B20s%5D%29&start=1670226733&step=5s",
+		want:          "http://127.0.0.1:8428/api/v1/query_range?end=1670226790000&query=rate%28ingress_nginx_request_qps%7B%7D%5B20s%5D%29&start=1670226730000&step=5s",
 	}
 	f(o)
 
@@ -144,7 +146,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		getTimeRange: getTimeRage,
 		rawURL:       "http://127.0.0.1:8428",
 		wantErr:      false,
-		want:         "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28rpc_durations_seconds_count%5B10m0s%5D%29&start=1670226733&step=2m30s",
+		want:         "http://127.0.0.1:8428/api/v1/query_range?end=1670226750000&query=rate%28rpc_durations_seconds_count%5B10m0s%5D%29&start=1670226600000&step=2m30s",
 	}
 	f(o)
 
@@ -159,7 +161,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		getTimeRange: getTimeRage,
 		rawURL:       "http://127.0.0.1:8428",
 		wantErr:      false,
-		want:         "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28rpc_durations_seconds_count%5B10m0s%5D%29&start=1670226733&step=2m30s",
+		want:         "http://127.0.0.1:8428/api/v1/query_range?end=1670226750000&query=rate%28rpc_durations_seconds_count%5B10m0s%5D%29&start=1670226600000&step=2m30s",
 	}
 	f(o)
 
@@ -174,7 +176,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		getTimeRange: getTimeRage,
 		rawURL:       "http://127.0.0.1:8428",
 		wantErr:      false,
-		want:         "http://127.0.0.1:8428/api/v1/query_range?end=1670226793&query=rate%28rpc_durations_seconds_count%5B8m0s%5D%29&start=1670226733&step=2m0s",
+		want:         "http://127.0.0.1:8428/api/v1/query_range?end=1670226720000&query=rate%28rpc_durations_seconds_count%5B8m0s%5D%29&start=1670226720000&step=2m0s",
 	}
 	f(o)
 
@@ -193,11 +195,11 @@ func TestQuery_getQueryURL(t *testing.T) {
 		},
 		rawURL:  "http://127.0.0.1:8428",
 		wantErr: false,
-		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670230333&query=rate%28rpc_durations_seconds_count%5B2m0s%5D%29&start=1670226733&step=30s",
+		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670230320000&query=rate%28rpc_durations_seconds_count%5B2m0s%5D%29&start=1670226720000&step=30s",
 	}
 	f(o)
 
-	// end interval rounded to ceil
+	// time range shorter than step collapses to a single step-aligned point
 	o = opts{
 		RefID:      "1",
 		Instant:    false,
@@ -212,7 +214,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		},
 		rawURL:  "http://127.0.0.1:8428",
 		wantErr: false,
-		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670226734&query=rate%28rpc_durations_seconds_count%5B2m0s%5D%29&start=1670226733&step=30s",
+		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670226720000&query=rate%28rpc_durations_seconds_count%5B2m0s%5D%29&start=1670226720000&step=30s",
 	}
 	f(o)
 
@@ -231,7 +233,7 @@ func TestQuery_getQueryURL(t *testing.T) {
 		},
 		rawURL:  "http://127.0.0.1:8428",
 		wantErr: false,
-		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670230333&query=rate%28rpc_durations_seconds_count%5B30s%5D%29&start=1670226733&step=30s",
+		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670230320000&query=rate%28rpc_durations_seconds_count%5B30s%5D%29&start=1670226720000&step=30s",
 	}
 	f(o)
 
@@ -250,7 +252,75 @@ func TestQuery_getQueryURL(t *testing.T) {
 		},
 		rawURL:  "http://127.0.0.1:8428",
 		wantErr: false,
-		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670399533&query=rate%28rpc_durations_seconds_count%5B2m0s%5D%29&start=1670226733&step=2m0s",
+		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670399520000&query=rate%28rpc_durations_seconds_count%5B2m0s%5D%29&start=1670226720000&step=2m0s",
+	}
+	f(o)
+	// range query with 1d step is aligned to local midnight using utcOffsetSec (UTC+4)
+	o = opts{
+		RefID:        "1",
+		Instant:      false,
+		Range:        true,
+		Expr:         "up",
+		Interval:     "1d",
+		IntervalMs:   86400000,
+		UTCOffsetSec: 14400,
+		getTimeRange: func() TimeRange {
+			from := time.Unix(1670226733, 0)
+			to := from.Add(time.Hour * 24 * 2)
+			return TimeRange{From: from, To: to}
+		},
+		rawURL:  "http://127.0.0.1:8428",
+		wantErr: false,
+		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670356800000&query=up&start=1670184000000&step=24h0m0s",
+	}
+	f(o)
+
+	// instant query is not aligned to step
+	o = opts{
+		RefID:        "1",
+		Instant:      true,
+		Range:        false,
+		Expr:         "up",
+		Interval:     "1h",
+		UTCOffsetSec: 14400,
+		getTimeRange: getTimeRage,
+		rawURL:       "http://127.0.0.1:8428",
+		wantErr:      false,
+		want:         "http://127.0.0.1:8428/api/v1/query?query=up&step=1h0m0s&time=1670226793000",
+	}
+	f(o)
+	// millisecond time range with sub-second step keeps millisecond precision in start/end
+	o = opts{
+		RefID:      "1",
+		Instant:    false,
+		Range:      true,
+		Expr:       "up",
+		Interval:   "200ms",
+		IntervalMs: 200,
+		getTimeRange: func() TimeRange {
+			from := time.Unix(1670226733, 631_000_000)
+			to := time.Unix(1670226734, 631_000_000)
+			return TimeRange{From: from, To: to}
+		},
+		rawURL:  "http://127.0.0.1:8428",
+		wantErr: false,
+		want:    "http://127.0.0.1:8428/api/v1/query_range?end=1670226734600&query=up&start=1670226733600&step=200ms",
+	}
+	f(o)
+
+	// instant query keeps millisecond precision in time
+	o = opts{
+		RefID:    "1",
+		Instant:  true,
+		Range:    false,
+		Expr:     "up",
+		Interval: "1h",
+		getTimeRange: func() TimeRange {
+			return TimeRange{From: time.Unix(1670226733, 0), To: time.Unix(1670226793, 250_000_000)}
+		},
+		rawURL:  "http://127.0.0.1:8428",
+		wantErr: false,
+		want:    "http://127.0.0.1:8428/api/v1/query?query=up&step=1h0m0s&time=1670226793250",
 	}
 	f(o)
 }

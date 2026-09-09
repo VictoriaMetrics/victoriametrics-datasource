@@ -2,7 +2,6 @@ package plugin
 
 import (
 	"fmt"
-	"math"
 	"net/url"
 	"regexp"
 	"sort"
@@ -33,15 +32,10 @@ type Query struct {
 	Expr                 string `json:"expr"`
 	LegendFormat         string `json:"legendFormat"`
 	Trace                int    `json:"trace,omitempty"`
+	UTCOffsetSec         int64  `json:"utcOffsetSec"` // dashboard time zone offset from UTC, used to align range query start/end to step
 	MaxDataPoints        int64
 	TimeRange            TimeRange
 	BackendQueryInterval time.Duration
-}
-
-// TimeRange represents time range backend object
-type TimeRange struct {
-	From time.Time
-	To   time.Time
 }
 
 // getQueryURL calculates step and clear expression from template variables,
@@ -78,9 +72,9 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 				values.Add(k, v)
 			}
 		}
-		values.Add("start", strconv.FormatInt(q.TimeRange.From.Unix(), 10))
-		entTime := int64(math.Ceil(float64(q.TimeRange.To.UnixMilli()) / 1000))
-		values.Add("end", strconv.FormatInt(entTime, 10))
+		aligned := q.TimeRange.alignToStep(step, q.UTCOffsetSec)
+		values.Add("start", formatTimestamp(aligned.From))
+		values.Add("end", formatTimestamp(aligned.To))
 	} else {
 		u, err = newURL(rawURL, instantQueryPath, false)
 		if err != nil {
@@ -92,7 +86,7 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 				values.Add(k, v)
 			}
 		}
-		values.Set("time", strconv.FormatInt(q.TimeRange.To.Unix(), 10))
+		values.Set("time", formatTimestamp(q.TimeRange.To))
 	}
 	if q.Trace > 0 {
 		values.Set("trace", strconv.Itoa(q.Trace))

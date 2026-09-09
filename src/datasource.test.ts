@@ -1037,12 +1037,48 @@ describe('processTargetV2', () => {
     );
   });
 
+  it('should take utcOffsetSec from the request time zone even for an absolute range in the browser time zone', () => {
+    const target = { expr: 'metric_name', refId: 'A', range: true, instant: false } as any;
+    const request = {
+      dashboardUID: 'dashboard_1',
+      targets: [],
+      panelId: 2,
+      app: 'app_1',
+      timezone: 'Europe/Berlin',
+      // absolute ranges are parsed by Grafana with plain dateTime(), i.e. in the browser time zone (UTC in tests)
+      range: { to: dateTime('2026-09-07T08:00:00Z') },
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    const result = datasource.processTargetV2(target, request);
+
+    // Europe/Berlin is UTC+2 (CEST) at that instant; the timeSrv stub still reports 0
+    expect((result as any).utcOffsetSec).toBe(7200);
+  });
+
+  it('should use zero utcOffsetSec for a UTC request time zone', () => {
+    const target = { expr: 'metric_name', refId: 'A', range: true, instant: false } as any;
+    const request = {
+      dashboardUID: 'dashboard_1',
+      targets: [],
+      panelId: 2,
+      app: 'app_1',
+      timezone: 'utc',
+      range: { to: dateTime('2026-09-07T08:00:00Z') },
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    const result = datasource.processTargetV2(target, request);
+
+    expect((result as any).utcOffsetSec).toBe(0);
+  });
+
   it('should merge template with query and adjust target properties', () => {
     const target = { expr: 'sr', refId: 'A', range: false, instant: false, } as any;
     const request = {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      timezone: 'utc',
+      range: { to: dateTime('2026-09-07T08:00:00Z') },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1067,6 +1103,8 @@ describe('processTargetV2', () => {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      timezone: 'utc',
+      range: { to: dateTime('2026-09-07T08:00:00Z') },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1100,6 +1138,8 @@ describe('processTargetV2', () => {
       dashboardUID: 'unknown_dashboard',
       targets: [],
       panelId: 2,
+      timezone: 'utc',
+      range: { to: dateTime('2026-09-07T08:00:00Z') },
       app: 'unknown_app',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1122,6 +1162,8 @@ describe('processTargetV2', () => {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      timezone: 'utc',
+      range: { to: dateTime('2026-09-07T08:00:00Z') },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1154,6 +1196,8 @@ describe('processTargetV2', () => {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      timezone: 'utc',
+      range: { to: dateTime('2026-09-07T08:00:00Z') },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1186,6 +1230,8 @@ describe('processTargetV2', () => {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      timezone: 'utc',
+      range: { to: dateTime('2026-09-07T08:00:00Z') },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 
@@ -1220,6 +1266,8 @@ describe('processTargetV2', () => {
       dashboardUID: 'dashboard_1',
       targets: [],
       panelId: 2,
+      timezone: 'utc',
+      range: { to: dateTime('2026-09-07T08:00:00Z') },
       app: 'app_1',
     } as unknown as DataQueryRequest<PromQuery>;
 

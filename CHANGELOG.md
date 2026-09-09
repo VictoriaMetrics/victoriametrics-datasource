@@ -2,7 +2,10 @@
 
 ## tip
 
+* FEATURE: align `start` and `end` of range queries to the query step. See [#539](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/539).
+
 * BUGFIX: bring back warning about partial response. See [#542](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/542). Thanks to @ilyalabun for contributing.
+* BUGFIX: send `start`, `end` and `time` query params as unix milliseconds instead of whole seconds, so zoomed-in graphs with sub-second steps are no longer cut off at the edges. See [#539](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/539).
 
 ## v0.25.2
 
