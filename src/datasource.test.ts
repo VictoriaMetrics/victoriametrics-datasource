@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { lastValueFrom, of } from 'rxjs';
+import { firstValueFrom, lastValueFrom, of } from 'rxjs';
 
 import {
   CoreApp,
@@ -574,9 +574,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      ds.query(query).subscribe((data) => {
-        results = data;
-      });
+      results = await lastValueFrom(ds.query(query));
     });
 
     it('should generate the correct query', () => {
@@ -636,12 +634,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      await new Promise((resolve) => {
-        ds.query(query).subscribe((data) => {
-          results = data;
-          resolve('');
-        });
-      });
+      results = await firstValueFrom(ds.query(query));
 
 
       expect(results.data.length).toBe(2);
@@ -680,12 +673,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      await new Promise((resolve) => {
-        ds.query(query).subscribe((data) => {
-          results = data;
-          resolve('');
-        });
-      });
+      results = await firstValueFrom(ds.query(query));
 
       expect(results.data.length).toBe(1);
       expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('table');
@@ -716,12 +704,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      await new Promise((resolve) => {
-        ds.query(query).subscribe((data) => {
-          results = data;
-          resolve('');
-        });
-      });
+      results = await firstValueFrom(ds.query(query));
 
       expect(results.data.length).toBe(1);
       expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
@@ -753,12 +736,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      await new Promise((resolve) => {
-        ds.query(query).subscribe((data) => {
-          results = data;
-          resolve('');
-        });
-      });
+      results = await firstValueFrom(ds.query(query));
 
       expect(results.data.length).toBe(1);
       expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
@@ -832,12 +810,7 @@ describe('PrometheusDatasource for POST', () => {
       };
 
       fetchMock.mockImplementation(() => of(response));
-      await new Promise((resolve) => {
-        ds.query(query).subscribe((data) => {
-          results = data;
-          resolve('');
-        });
-      });
+      results = await firstValueFrom(ds.query(query));
 
       expect(results.data.length).toBe(4);
       expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
@@ -905,9 +878,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      ds.query(query).subscribe((data) => {
-        results = data;
-      });
+      results = await lastValueFrom(ds.query(query));
     });
 
     it('should generate the correct query', () => {

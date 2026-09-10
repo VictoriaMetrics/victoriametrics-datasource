@@ -42,8 +42,9 @@ describe('PromQueryBuilderContainer', () => {
     const { container } = setup({ expr: 'sum(ALERTS)' });
     await act(async () => await userEvent.click(screen.getByTestId('operations.0.add-rest-param')))
 
-    waitFor(() => {
-      expect(container.querySelector(`${getOperationParamId(0, 0)}`)).toBeInTheDocument();
+    await waitFor(() => {
+      // The id contains dots, so it has to be matched as an attribute rather than a `#id` selector.
+      expect(container.querySelector(`[id="${getOperationParamId(0, 0)}"]`)).toBeInTheDocument();
     });
   });
 });
