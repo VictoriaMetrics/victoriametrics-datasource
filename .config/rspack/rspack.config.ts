@@ -117,11 +117,6 @@ const config = async (env): Promise<Configuration> => {
       minimize: Boolean(env.production),
       minimizer: [
         new TerserPlugin({
-          extractComments: {
-            banner: false,
-            filename: 'LICENSE.txt',
-          },
-
           terserOptions: {
             format: {
               comments: (_, { type, value }) => type === 'comment2' && value.trim().startsWith('[create-plugin]'),
@@ -198,7 +193,7 @@ const config = async (env): Promise<Configuration> => {
         },
       ]),
       new SubresourceIntegrityPlugin({
-        hashFuncNames: ['sha256'],
+        hashFuncNames: ["sha256"],
       }),
       ...(env.development
         ? [
