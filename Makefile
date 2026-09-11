@@ -92,7 +92,9 @@ PLUGINCHECK2 = $(LOCALBIN)/plugincheck2-$(PLUGINCHECK2_VERSION)
 MAGE = $(LOCALBIN)/mage-$(MAGE_VERSION)
 GOLANGCI_LINT = $(LOCALBIN)/golangci-lint-$(GOLANGCI_LINT_VERSION)
 
-PLUGINCHECK2_VERSION = v0.38.2
+# plugin-validator releases are tagged `plugin-validator/vX.Y.Z`, which Go modules cannot resolve,
+# so the tool is pinned to the commit of release plugin-validator/v0.45.10.
+PLUGINCHECK2_VERSION = v0.41.1-0.20260828140749-82bce41392a7
 MAGE_VERSION = v1.15.0
 GOLANGCI_LINT_VERSION = v2.2.2
 

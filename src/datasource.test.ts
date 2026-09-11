@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { of } from 'rxjs';
+import { firstValueFrom, lastValueFrom, of } from 'rxjs';
 
 import {
   CoreApp,
@@ -131,16 +131,16 @@ describe('PrometheusDatasource', () => {
         timeSrvStub
       );
 
-      it('adds params to timeseries query', () => {
-        promDs.query(makeQuery(target));
+      it('adds params to timeseries query', async () => {
+        await lastValueFrom(promDs.query(makeQuery(target)));
         expect(fetchMock.mock.calls.length).toBe(1);
         expect(fetchMock.mock.calls[0][0].url).toBe(
           '/api/ds/query?ds_type=victoriametrics-metrics-datasource'
         );
       });
 
-      it('adds params to instant query', () => {
-        promDs.query(makeQuery({ ...target, instant: true }));
+      it('adds params to instant query', async () => {
+        await lastValueFrom(promDs.query(makeQuery({ ...target, instant: true })));
         expect(fetchMock.mock.calls.length).toBe(1);
         expect(fetchMock.mock.calls[0][0].url).toEqual('/api/ds/query?ds_type=victoriametrics-metrics-datasource');
         expect(fetchMock.mock.calls[0][0].data).toEqual({
@@ -178,8 +178,8 @@ describe('PrometheusDatasource', () => {
         timeSrvStub
       );
 
-      it('adds params to timeseries query', () => {
-        promDs.query(makeQuery(target));
+      it('adds params to timeseries query', async () => {
+        await lastValueFrom(promDs.query(makeQuery(target)));
         expect(fetchMock.mock.calls.length).toBe(1);
         expect(fetchMock.mock.calls[0][0].data).toEqual({
           queries: [
@@ -207,8 +207,8 @@ describe('PrometheusDatasource', () => {
         });
       });
 
-      it('adds params to instant query', () => {
-        promDs.query(makeQuery({ ...target, instant: true }));
+      it('adds params to instant query', async () => {
+        await lastValueFrom(promDs.query(makeQuery({ ...target, instant: true })));
         expect(fetchMock.mock.calls.length).toBe(1);
       });
     });
@@ -574,9 +574,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      ds.query(query).subscribe((data) => {
-        results = data;
-      });
+      results = await lastValueFrom(ds.query(query));
     });
 
     it('should generate the correct query', () => {
@@ -636,12 +634,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      await new Promise((resolve) => {
-        ds.query(query).subscribe((data) => {
-          results = data;
-          resolve('');
-        });
-      });
+      results = await firstValueFrom(ds.query(query));
 
 
       expect(results.data.length).toBe(2);
@@ -680,12 +673,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      await new Promise((resolve) => {
-        ds.query(query).subscribe((data) => {
-          results = data;
-          resolve('');
-        });
-      });
+      results = await firstValueFrom(ds.query(query));
 
       expect(results.data.length).toBe(1);
       expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('table');
@@ -716,12 +704,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      await new Promise((resolve) => {
-        ds.query(query).subscribe((data) => {
-          results = data;
-          resolve('');
-        });
-      });
+      results = await firstValueFrom(ds.query(query));
 
       expect(results.data.length).toBe(1);
       expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
@@ -753,12 +736,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      await new Promise((resolve) => {
-        ds.query(query).subscribe((data) => {
-          results = data;
-          resolve('');
-        });
-      });
+      results = await firstValueFrom(ds.query(query));
 
       expect(results.data.length).toBe(1);
       expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
@@ -832,12 +810,7 @@ describe('PrometheusDatasource for POST', () => {
       };
 
       fetchMock.mockImplementation(() => of(response));
-      await new Promise((resolve) => {
-        ds.query(query).subscribe((data) => {
-          results = data;
-          resolve('');
-        });
-      });
+      results = await firstValueFrom(ds.query(query));
 
       expect(results.data.length).toBe(4);
       expect(results.data[0].meta.preferredVisualisationType).toStrictEqual('graph');
@@ -905,9 +878,7 @@ describe('PrometheusDatasource for POST', () => {
         },
       };
       fetchMock.mockImplementation(() => of(response));
-      ds.query(query).subscribe((data) => {
-        results = data;
-      });
+      results = await lastValueFrom(ds.query(query));
     });
 
     it('should generate the correct query', () => {

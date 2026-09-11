@@ -26,7 +26,6 @@ import { Space } from './Space';
 
 interface EditorFieldProps extends ComponentProps<typeof Field> {
   label: string;
-  children: React.ReactElement;
   width?: number | string;
   optional?: boolean;
   tooltip?: PopoverContent;

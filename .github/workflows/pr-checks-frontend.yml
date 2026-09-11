@@ -35,7 +35,7 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
         with:
-          node-version: v24.11.1
+          node-version: v24.20.0
 
       - name: Enable Corepack
         run: corepack enable
@@ -45,6 +45,9 @@ jobs:
 
       - name: Build lezer-metricsql
         run: yarn build:lezer-metricsql
+
+      - name: Run lint
+        run: yarn lint
 
       - name: Run tests
         run: yarn test:ci

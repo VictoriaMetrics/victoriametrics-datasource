@@ -182,7 +182,8 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     // Local text properties
     const empty = value.document.text.length === 0;
     const selectedLines = value.document.getTextsAtRange(value.selection);
-    const currentLine = selectedLines.size === 1 ? selectedLines.first().getText() : null;
+    // Immutable 4 types first() as `T | undefined`, so narrow it explicitly
+    const currentLine = selectedLines.size === 1 ? (selectedLines.first()?.getText() ?? null) : null;
 
     const nextCharacter = currentLine ? currentLine[value.selection.anchor.offset] : null;
 

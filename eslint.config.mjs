@@ -1,7 +1,8 @@
 import stylistic from '@stylistic/eslint-plugin';
 import {defineConfig} from 'eslint/config';
-import grafanaEslintConfig from '@grafana/eslint-config/flat.js';
+import grafanaEslintConfig from '@grafana/eslint-config';
 import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
 import jest from 'eslint-plugin-jest';
 import lodash from 'eslint-plugin-lodash';
 import prettier from 'eslint-config-prettier';
@@ -9,8 +10,23 @@ import * as emotionPlugin from '@emotion/eslint-plugin';
 import {fixupPluginRules} from "@eslint/compat";
 import importPlugin from 'eslint-plugin-import-x';
 
+// eslint-plugin-react 7.x still relies on context APIs removed in ESLint 10,
+// so wrap only that plugin (including the instance registered by @grafana/eslint-config).
+const reactCompat = fixupPluginRules(react);
+
+// Switch off every rule the plugin ships - including the ones @grafana/eslint-config does not
+// enable today - so a plugin release cannot turn new rules on here unnoticed. Derived from the
+// plugin instead of hand-listed, because eslint-plugin-react-hooks@7 alone added a dozen rules.
+// The two rules this project does enforce are re-enabled explicitly in `rules` below.
+const reactHooksRulesOff = Object.fromEntries(
+  Object.keys(reactHooks.rules).map((rule) => [`react-hooks/${rule}`, 'off'])
+);
+const grafanaConfig = grafanaEslintConfig.map((config) =>
+  config.plugins?.react ? { ...config, plugins: { ...config.plugins, react: reactCompat } } : config
+);
+
 export default defineConfig([
-  grafanaEslintConfig,
+  ...grafanaConfig,
   prettier,
   {
     ignores: [
@@ -36,7 +52,7 @@ export default defineConfig([
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
     plugins: {
-      'react': react,
+      'react': reactCompat,
       'jest': jest,
       'lodash': lodash,
       '@emotion': fixupPluginRules(emotionPlugin),
@@ -50,7 +66,6 @@ export default defineConfig([
         ecmaFeatures: {
           jsx: true,
         },
-        project: './tsconfig.json',
       },
       globals: {
         // Browser globals
@@ -69,23 +84,9 @@ export default defineConfig([
 
 
     rules: {
+      ...reactHooksRulesOff,
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
-      // Disable new react-hooks v7 rules to keep existing behavior
-      'react-hooks/static-components': 'off',
-      'react-hooks/use-memo': 'off',
-      'react-hooks/void-use-memo': 'off',
-      'react-hooks/component-hook-factories': 'off',
-      'react-hooks/preserve-manual-memoization': 'off',
-      'react-hooks/immutability': 'off',
-      'react-hooks/globals': 'off',
-      'react-hooks/refs': 'off',
-      'react-hooks/set-state-in-effect': 'off',
-      'react-hooks/error-boundaries': 'off',
-      'react-hooks/purity': 'off',
-      'react-hooks/set-state-in-render': 'off',
-      'react-hooks/config': 'off',
-      'react-hooks/gating': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': ['warn', {
         argsIgnorePattern: '^_',

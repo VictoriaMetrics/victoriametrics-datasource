@@ -4,6 +4,7 @@ process.env.TZ = 'UTC';
 
 const { grafanaESModules, nodeModulesToTransform } = require('./.config/jest/utils');
 
+// @react-hookz/web and @ver0/deep-equal are provided by .config/jest/utils.js since create-plugin 7.10.1
 grafanaESModules.push('monaco-promql');
 
 module.exports = {

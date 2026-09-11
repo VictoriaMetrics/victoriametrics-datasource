@@ -1,7 +1,6 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
 
 import { DataSourceInstanceSettings, DataSourcePluginMeta } from '@grafana/data';
 
@@ -43,8 +42,9 @@ describe('PromQueryBuilderContainer', () => {
     const { container } = setup({ expr: 'sum(ALERTS)' });
     await act(async () => await userEvent.click(screen.getByTestId('operations.0.add-rest-param')))
 
-    waitFor(() => {
-      expect(container.querySelector(`${getOperationParamId(0, 0)}`)).toBeInTheDocument();
+    await waitFor(() => {
+      // The id contains dots, so it has to be matched as an attribute rather than a `#id` selector.
+      expect(container.querySelector(`[id="${getOperationParamId(0, 0)}"]`)).toBeInTheDocument();
     });
   });
 });

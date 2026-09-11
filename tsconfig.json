@@ -1,9 +1,14 @@
 {
   "compilerOptions": {
     "jsx": "react",
-    "baseUrl": "./src",
     "outDir": "victoriametrics-datasource",
-    "rootDirs": ["./src"],
+    "rootDirs": [
+      "./src"
+    ],
+    "types": [
+      "node",
+      "jest"
+    ],
     "allowJs": true,
     "strict": true,
     "resolveJsonModule": true,
