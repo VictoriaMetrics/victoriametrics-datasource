@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.26.0
+
 * FEATURE: align `start` and `end` of range queries to the query step. See [#539](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/539).
   - **Note:** if a query returns 50 or more data points, VictoriaMetrics shifts `start` and `end` a bit further on its own side to make response caching work, so the returned timestamps may not match the selected time range exactly. Add `nocache=1` to the datasource custom query parameters to turn this off.
 
