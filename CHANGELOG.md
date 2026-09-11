@@ -3,6 +3,7 @@
 ## tip
 
 * FEATURE: align `start` and `end` of range queries to the query step. See [#539](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/539).
+  - **Note:** if a query returns 50 or more data points, VictoriaMetrics shifts `start` and `end` a bit further on its own side to make response caching work, so the returned timestamps may not match the selected time range exactly. Add `nocache=1` to the datasource custom query parameters to turn this off.
 
 * BUGFIX: bring back warning about partial response. See [#542](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/542). Thanks to @ilyalabun for contributing.
 * BUGFIX: send `start`, `end` and `time` query params as unix milliseconds instead of whole seconds, so zoomed-in graphs with sub-second steps are no longer cut off at the edges. See [#539](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/539).
