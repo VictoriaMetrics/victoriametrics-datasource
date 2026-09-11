@@ -28,6 +28,15 @@ const config = async (env): Promise<Configuration> => {
       symlinks: false,
     },
 
+    // Everything under `node_modules` is snapshotted as `<name>@<version>` from its package.json,
+    // on the assumption that only a package manager writes there. `lezer-metricsql` is built from
+    // this repository by `yarn build:lezer-metricsql` and its version does not change, so without
+    // this webpack would silently reuse the previously bundled parser after the grammar is
+    // regenerated.
+    snapshot: {
+      unmanagedPaths: [path.resolve(process.cwd(), 'node_modules/lezer-metricsql')],
+    },
+
     // update output configuration
     // other configurations stay the same
     output: {
