@@ -2,6 +2,8 @@
 
 ## tip
 
+## v0.26.1
+
 * MAINTENANCE: fix the frontend build of the plugin.
 
 ## v0.26.0
