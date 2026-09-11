@@ -2,6 +2,8 @@
 
 ## tip
 
+* MAINTENANCE: fix the frontend build of the plugin.
+
 ## v0.26.0
 
 * FEATURE: align `start` and `end` of range queries to the query step. See [#539](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/539).

@@ -18,6 +18,16 @@ const config = async (env): Promise<Configuration> => {
   const baseConfig = await grafanaConfig(env);
 
   const newConfig = merge(baseConfig, {
+    // `lezer-metricsql` is a workspace package, so `node_modules/lezer-metricsql` is a symlink into
+    // `packages/`. Resolved to its real path, its generated bundle is recorded in `module.js.map` as
+    // `../packages/lezer-metricsql/dist/index.es.js`, and the Grafana plugin validator then treats a
+    // build artifact as plugin source code and byte-compares it against the repository
+    // (`js-map-no-match`). Keeping the symlink path records it under `../node_modules/` instead,
+    // which the validator ignores like every other dependency.
+    resolve: {
+      symlinks: false,
+    },
+
     // update output configuration
     // other configurations stay the same
     output: {

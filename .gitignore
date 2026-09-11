@@ -23,6 +23,7 @@ coverage
 bin/
 dist/
 !packages/lezer-metricsql/dist/
+!packages/lezer-metricsql/dist/**
 victoriametrics-datasource/
 plugins/
 artifacts/
