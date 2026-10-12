@@ -1081,7 +1081,7 @@ func TestDatasourceInstance_query_HTTPMethod(t *testing.T) {
 		}
 	}
 
-	t.Run("POST sends every param in a form body and keeps the URL clean", func(t *testing.T) {
+	t.Run("POST sends the query params in a form body and keeps the datasource params in the URL", func(t *testing.T) {
 		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != http.MethodPost {
 				t.Errorf("expected POST, got %s", r.Method)
@@ -1089,8 +1089,8 @@ func TestDatasourceInstance_query_HTTPMethod(t *testing.T) {
 			if r.URL.Path != "/select/0/prometheus/api/v1/query" {
 				t.Errorf("unexpected path: %s", r.URL.Path)
 			}
-			if r.URL.RawQuery != "" {
-				t.Errorf("expected empty query string, got %q", r.URL.RawQuery)
+			if r.URL.RawQuery != "from_url=1&nocache=1" {
+				t.Errorf("expected the datasource params in the query string, got %q", r.URL.RawQuery)
 			}
 			if ct := r.Header.Get("Content-Type"); ct != "application/x-www-form-urlencoded" {
 				t.Errorf("unexpected Content-Type: %q", ct)
@@ -1098,9 +1098,14 @@ func TestDatasourceInstance_query_HTTPMethod(t *testing.T) {
 			if err := r.ParseForm(); err != nil {
 				t.Errorf("failed to parse form: %s", err)
 			}
-			for _, k := range []string{"query", "time", "step", "nocache", "from_url"} {
+			for _, k := range []string{"query", "time", "step"} {
 				if r.PostForm.Get(k) == "" {
 					t.Errorf("expected %q in the request body, body form: %v", k, r.PostForm)
+				}
+			}
+			for _, k := range []string{"nocache", "from_url"} {
+				if r.PostForm.Get(k) != "" {
+					t.Errorf("expected %q to stay out of the request body, body form: %v", k, r.PostForm)
 				}
 			}
 			if got := r.PostForm.Get("query"); got != "up" {
@@ -1174,8 +1179,8 @@ func TestCheckHealth_POSTSendsParamsInBody(t *testing.T) {
 		if r.Method != http.MethodPost {
 			t.Errorf("expected POST, got %s", r.Method)
 		}
-		if r.URL.RawQuery != "" {
-			t.Errorf("expected empty query string, got %q", r.URL.RawQuery)
+		if r.URL.RawQuery != "from_url=1" {
+			t.Errorf("expected the datasource params in the query string, got %q", r.URL.RawQuery)
 		}
 		if ct := r.Header.Get("Content-Type"); ct != "application/x-www-form-urlencoded" {
 			t.Errorf("unexpected Content-Type: %q", ct)
@@ -1189,13 +1194,16 @@ func TestCheckHealth_POSTSendsParamsInBody(t *testing.T) {
 		if r.PostForm.Get("time") == "" {
 			t.Errorf("expected time in body")
 		}
+		if r.PostForm.Get("from_url") != "" {
+			t.Errorf("expected from_url to stay out of the request body")
+		}
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer srv.Close()
 
 	ds := &Datasource{logger: log.DefaultLogger}
 	di := &DatasourceInstance{
-		url:        srv.URL,
+		url:        srv.URL + "?from_url=1",
 		httpClient: srv.Client(),
 		settings:   DataSourceInstanceSettings{HTTPMethod: http.MethodPost},
 	}

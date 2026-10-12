@@ -85,6 +85,44 @@ func TestNewRequest(t *testing.T) {
 		}
 	})
 
+	t.Run("GET merges params into the existing URL query string, keeping its values first", func(t *testing.T) {
+		u, err := url.Parse("http://localhost:8428/api/v1/query_range?nocache=1&step=1m")
+		if err != nil {
+			t.Fatalf("failed to parse url: %s", err)
+		}
+		req, err := newRequest(context.Background(), http.MethodGet, u, params)
+		if err != nil {
+			t.Fatalf("unexpected error: %s", err)
+		}
+		if got := req.URL.String(); got != "http://localhost:8428/api/v1/query_range?nocache=1&query=up%7Bjob%3D%22a+b%22%7D&step=1m&step=15s" {
+			t.Errorf("unexpected url: %s", got)
+		}
+		if u.RawQuery != "nocache=1&step=1m" {
+			t.Errorf("newRequest mutated the input url: %q", u.RawQuery)
+		}
+	})
+
+	t.Run("POST keeps the existing URL query string and sends only params in the body", func(t *testing.T) {
+		u, err := url.Parse("http://localhost:8428/api/v1/query_range?nocache=1")
+		if err != nil {
+			t.Fatalf("failed to parse url: %s", err)
+		}
+		req, err := newRequest(context.Background(), http.MethodPost, u, params)
+		if err != nil {
+			t.Fatalf("unexpected error: %s", err)
+		}
+		if got := req.URL.String(); got != "http://localhost:8428/api/v1/query_range?nocache=1" {
+			t.Errorf("unexpected url: %s", got)
+		}
+		body, err := io.ReadAll(req.Body)
+		if err != nil {
+			t.Fatalf("failed to read body: %s", err)
+		}
+		if got := string(body); got != "query=up%7Bjob%3D%22a+b%22%7D&step=15s" {
+			t.Errorf("unexpected body: %s", got)
+		}
+	})
+
 	t.Run("does not mutate the given URL", func(t *testing.T) {
 		if _, err := newRequest(context.Background(), http.MethodGet, baseURL, params); err != nil {
 			t.Fatalf("unexpected error: %s", err)

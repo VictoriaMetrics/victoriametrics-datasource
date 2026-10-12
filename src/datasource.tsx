@@ -87,7 +87,7 @@ export class PrometheusDatasource
   languageProvider: PrometheusLanguageProvider;
   exemplarTraceIdDestinations: ExemplarTraceIdDestination[] | undefined;
   lookupsDisabled: boolean;
-  customQueryParameters: any;
+  customQueryParameters: URLSearchParams;
   exemplarsAvailable: boolean;
   subType: PromApplication;
   rulerEnabled: boolean;
@@ -151,9 +151,11 @@ export class PrometheusDatasource
 
   // Use this for tab completion features, won't publish response to other components
   async getRequest(url: string, params: BackendSrvRequest['params'] = {}, options?: Partial<BackendSrvRequest>) {
+    // A request param with the same key wins over the custom query param
+    const customParams: BackendSrvRequest['params'] = {};
     for (const [key, value] of this.customQueryParameters) {
       if (params[key] === undefined) {
-        params[key] = value;
+        customParams[key] = value;
       }
     }
     const requestOptions: Partial<BackendSrvRequest> = {
@@ -162,12 +164,14 @@ export class PrometheusDatasource
       ...options,
     };
     if (this.httpMethod === 'POST') {
+      // The custom query params stay in the URL, only the request params go to the body
       return await this.postResource(url, params, {
         ...requestOptions,
+        params: customParams,
         headers: { ...options?.headers, ...FORM_URLENCODED_HEADERS },
       });
     }
-    return await this.getResource(url, params, requestOptions);
+    return await this.getResource(url, { ...params, ...customParams }, requestOptions);
   }
 
   interpolateQueryExpr(value: string | string[] = [], variable: any) {

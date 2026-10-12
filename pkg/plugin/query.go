@@ -39,8 +39,9 @@ type Query struct {
 }
 
 // getQueryURLAndParams builds the query endpoint URL and the request parameters for the query.
-// The URL has no query string: all parameters are returned separately,
-// so the caller decides whether to send them in the URL or in the request body
+// The datasource URL params and the custom query params stay in the URL query string,
+// the per-query params are returned separately, so the caller decides whether to send them
+// in the URL or in the request body
 func (q *Query) getQueryURLAndParams(rawURL string, queryParams url.Values) (*url.URL, url.Values, error) {
 	from := q.TimeRange.From
 	to := q.TimeRange.To
@@ -67,14 +68,15 @@ func (q *Query) getQueryURLAndParams(rawURL string, queryParams url.Values) (*ur
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to build query url: %w", err)
 	}
-	values := u.Query()
-	u.RawQuery = ""
+	urlValues := u.Query()
 	for k, vl := range queryParams {
 		for _, v := range vl {
-			values.Add(k, v)
+			urlValues.Add(k, v)
 		}
 	}
+	u.RawQuery = urlValues.Encode()
 
+	values := url.Values{}
 	if queryPath == rangeQueryPath {
 		aligned := q.TimeRange.alignToStep(step, q.UTCOffsetSec)
 		values.Add("start", formatTimestamp(aligned.From))

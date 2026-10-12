@@ -89,7 +89,7 @@ describe('PrometheusDatasource', () => {
       const call = fetchMock.mock.calls[0][0];
       expect(call.method).toBe('POST');
       expect(call.url).toBe('/api/datasources/uid/ABCDEF/resources/api/v1/series');
-      expect(call.params).toBeUndefined();
+      expect(call.params).toEqual({});
       expect(call.data).toEqual({ 'match[]': 'up{job="a b"}', limit: 10 });
       expect(call.headers).toEqual(expect.objectContaining(formHeaders));
     });
@@ -141,20 +141,19 @@ describe('PrometheusDatasource', () => {
       });
     });
 
-    it('should send the custom query params in the body of a POST request', () => {
+    it('should keep the custom query params in the URL of a POST request and send the rest in the body', () => {
       const postSettings = cloneDeep(instanceSettings);
       const promDs = new PrometheusDatasource({
         ...postSettings,
-        jsonData: { httpMethod: 'POST', customQueryParameters: 'extra_filter[]={foo: "bar"}' }
+        jsonData: { httpMethod: 'POST', customQueryParameters: 'extra_filter[]={foo: "bar"}&foo=custom' }
       }, templateSrvStub, timeSrvStub);
       promDs.getRequest('api/v1/label/id/values', { bar: 'baz baz', foo: 'foo' });
       expect(fetchMock.mock.calls.length).toBe(1);
-      expect(fetchMock.mock.calls[0][0].method).toBe('POST');
-      expect(fetchMock.mock.calls[0][0].data).toEqual({
-        bar: 'baz baz',
-        foo: 'foo',
-        'extra_filter[]': '{foo: "bar"}',
-      });
+      const call = fetchMock.mock.calls[0][0];
+      expect(call.method).toBe('POST');
+      expect(call.data).toEqual({ bar: 'baz baz', foo: 'foo' });
+      // a custom param with the same key as a request param is dropped, the request param wins
+      expect(call.params).toEqual({ 'extra_filter[]': '{foo: "bar"}' });
     });
   });
 

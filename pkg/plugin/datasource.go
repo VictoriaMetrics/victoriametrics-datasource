@@ -315,8 +315,7 @@ func (d *Datasource) checkHealthWithInstance(ctx context.Context, di *Datasource
 	if err != nil {
 		return newHealthCheckErrorf("failed to build health endpoint: %s", err), nil
 	}
-	values := queryURL.Query()
-	queryURL.RawQuery = ""
+	values := url.Values{}
 	values.Set("query", "1")
 	values.Set("time", strconv.FormatInt(time.Now().Unix(), 10))
 
