@@ -38,16 +38,17 @@ type Query struct {
 	BackendQueryInterval time.Duration
 }
 
-// getQueryURL calculates step and clear expression from template variables,
-// and after builds query url depends on query type
-func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, error) {
+// getQueryURLAndParams builds the query endpoint URL and the request parameters for the query.
+// The URL has no query string: all parameters are returned separately,
+// so the caller decides whether to send them in the URL or in the request body
+func (q *Query) getQueryURLAndParams(rawURL string, queryParams url.Values) (*url.URL, url.Values, error) {
 	from := q.TimeRange.From
 	to := q.TimeRange.To
 	timerange := to.Sub(from)
 	originalQueryInterval := q.Interval
 	minInterval, err := q.calculateMinInterval()
 	if err != nil {
-		return "", fmt.Errorf("failed to calculate minimal interval: %w", err)
+		return nil, nil, fmt.Errorf("failed to calculate minimal interval: %w", err)
 	}
 
 	step := q.calculateStep(minInterval)
@@ -55,37 +56,30 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 	expr := replaceTemplateVariable(q.Expr, q.BackendQueryInterval, step, originalQueryInterval, q.TimeInterval, timerange)
 
 	if expr == "" {
-		return "", fmt.Errorf("expression can't be blank")
+		return nil, nil, fmt.Errorf("expression can't be blank")
 	}
 
-	var u *url.URL
-	var values url.Values
-
+	queryPath := instantQueryPath
 	if q.Range || !q.Instant {
-		u, err = newURL(rawURL, rangeQueryPath, false)
-		if err != nil {
-			return "", fmt.Errorf("failed to build query url: %w", err)
+		queryPath = rangeQueryPath
+	}
+	u, err := newURL(rawURL, queryPath, false)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to build query url: %w", err)
+	}
+	values := u.Query()
+	u.RawQuery = ""
+	for k, vl := range queryParams {
+		for _, v := range vl {
+			values.Add(k, v)
 		}
-		values = u.Query()
-		for k, vl := range queryParams {
-			for _, v := range vl {
-				values.Add(k, v)
-			}
-		}
+	}
+
+	if queryPath == rangeQueryPath {
 		aligned := q.TimeRange.alignToStep(step, q.UTCOffsetSec)
 		values.Add("start", formatTimestamp(aligned.From))
 		values.Add("end", formatTimestamp(aligned.To))
 	} else {
-		u, err = newURL(rawURL, instantQueryPath, false)
-		if err != nil {
-			return "", fmt.Errorf("failed to build query url: %w", err)
-		}
-		values = u.Query()
-		for k, vl := range queryParams {
-			for _, v := range vl {
-				values.Add(k, v)
-			}
-		}
 		values.Set("time", formatTimestamp(q.TimeRange.To))
 	}
 	if q.Trace > 0 {
@@ -94,8 +88,7 @@ func (q *Query) getQueryURL(rawURL string, queryParams url.Values) (string, erro
 	values.Set("query", expr)
 	values.Set("step", step.String())
 
-	u.RawQuery = values.Encode()
-	return u.String(), nil
+	return u, values, nil
 }
 
 // withIntervalVariable checks does query has interval variable

@@ -65,6 +65,10 @@ enum PromApplication {
   VictoriaMetrics = 'VictoriaMetrics',
 }
 
+// The explicit Content-Type is required: BackendSrv defaults POST requests to application/json
+// and would JSON-encode the params instead of form-encoding them.
+const FORM_URLENCODED_HEADERS = { 'Content-Type': 'application/x-www-form-urlencoded' };
+
 export class PrometheusDatasource
   extends DataSourceWithBackend<PromQuery, PromOptions>
   implements DataSourceWithQueryImportSupport<PromQuery>, DataSourceWithQueryExportSupport<PromQuery> {
@@ -152,11 +156,18 @@ export class PrometheusDatasource
         params[key] = value;
       }
     }
-    return await this.getResource(url, params, {
+    const requestOptions: Partial<BackendSrvRequest> = {
       hideFromInspector: true,
       showErrorAlert: false,
       ...options,
-    });
+    };
+    if (this.httpMethod === 'POST') {
+      return await this.postResource(url, params, {
+        ...requestOptions,
+        headers: { ...FORM_URLENCODED_HEADERS, ...options?.headers },
+      });
+    }
+    return await this.getResource(url, params, requestOptions);
   }
 
   interpolateQueryExpr(value: string | string[] = [], variable: any) {

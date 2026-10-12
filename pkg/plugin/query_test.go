@@ -8,7 +8,7 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
-func TestQuery_getQueryURL(t *testing.T) {
+func TestQuery_getQueryURLAndParams(t *testing.T) {
 	type opts struct {
 		RefID         string
 		Instant       bool
@@ -44,13 +44,22 @@ func TestQuery_getQueryURL(t *testing.T) {
 			t.Errorf("failed to parse query params: %v", err)
 			return
 		}
-		got, err := q.getQueryURL(opts.rawURL, params)
+		u, values, err := q.getQueryURLAndParams(opts.rawURL, params)
 		if (err != nil) != opts.wantErr {
-			t.Errorf("getQueryURL() error = %v, wantErr %v", err, opts.wantErr)
+			t.Errorf("getQueryURLAndParams() error = %v, wantErr %v", err, opts.wantErr)
 			return
 		}
-		if got != opts.want {
-			t.Errorf("getQueryURL() got = %v, want %v", got, opts.want)
+		if err != nil {
+			return
+		}
+		if u.RawQuery != "" {
+			t.Errorf("getQueryURLAndParams() url must not carry a query string, got %q", u.RawQuery)
+		}
+		// the full URL is composed here so that expectations stay readable as one string
+		full := *u
+		full.RawQuery = values.Encode()
+		if got := full.String(); got != opts.want {
+			t.Errorf("getQueryURLAndParams() got = %v, want %v", got, opts.want)
 		}
 	}
 

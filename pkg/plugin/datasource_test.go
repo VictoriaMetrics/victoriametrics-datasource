@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 	"time"
@@ -1060,4 +1061,267 @@ func TestCheckHealth(t *testing.T) {
 			t.Errorf("expected HealthStatusOk, got %v", result.Status)
 		}
 	})
+}
+
+func TestDatasourceInstance_query_HTTPMethod(t *testing.T) {
+	const okResponse = `{"status":"success","data":{"resultType":"scalar","result":[1583786142, "1"]}}`
+	queryJSON := []byte(`{"refId":"A","instant":true,"range":false,"expr":"up","legendFormat":"__auto"}`)
+	timeRange := backend.TimeRange{
+		From: time.Unix(1700000000, 0),
+		To:   time.Unix(1700000600, 0),
+	}
+
+	newInstance := func(srv *httptest.Server, method string) *DatasourceInstance {
+		return &DatasourceInstance{
+			url:         srv.URL + "/select/0/prometheus?from_url=1",
+			httpClient:  srv.Client(),
+			logger:      log.DefaultLogger,
+			queryParams: url.Values{"nocache": {"1"}},
+			settings:    DataSourceInstanceSettings{HTTPMethod: method},
+		}
+	}
+
+	t.Run("POST sends every param in a form body and keeps the URL clean", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodPost {
+				t.Errorf("expected POST, got %s", r.Method)
+			}
+			if r.URL.Path != "/select/0/prometheus/api/v1/query" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+			if r.URL.RawQuery != "" {
+				t.Errorf("expected empty query string, got %q", r.URL.RawQuery)
+			}
+			if ct := r.Header.Get("Content-Type"); ct != "application/x-www-form-urlencoded" {
+				t.Errorf("unexpected Content-Type: %q", ct)
+			}
+			if err := r.ParseForm(); err != nil {
+				t.Errorf("failed to parse form: %s", err)
+			}
+			for _, k := range []string{"query", "time", "step", "nocache", "from_url"} {
+				if r.PostForm.Get(k) == "" {
+					t.Errorf("expected %q in the request body, body form: %v", k, r.PostForm)
+				}
+			}
+			if got := r.PostForm.Get("query"); got != "up" {
+				t.Errorf("unexpected query in body: %q", got)
+			}
+			_, _ = w.Write([]byte(okResponse))
+		}))
+		defer srv.Close()
+
+		resp := newInstance(srv, http.MethodPost).query(context.Background(), backend.DataQuery{RefID: "A", JSON: queryJSON, TimeRange: timeRange}, false)
+		if resp.Error != nil {
+			t.Fatalf("unexpected error: %s", resp.Error)
+		}
+	})
+
+	t.Run("GET sends every param in the URL query string", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodGet {
+				t.Errorf("expected GET, got %s", r.Method)
+			}
+			q := r.URL.Query()
+			for _, k := range []string{"query", "time", "step", "nocache", "from_url"} {
+				if q.Get(k) == "" {
+					t.Errorf("expected %q in the query string, got %q", k, r.URL.RawQuery)
+				}
+			}
+			if body, _ := io.ReadAll(r.Body); len(body) != 0 {
+				t.Errorf("expected empty body, got %q", body)
+			}
+			_, _ = w.Write([]byte(okResponse))
+		}))
+		defer srv.Close()
+
+		resp := newInstance(srv, http.MethodGet).query(context.Background(), backend.DataQuery{RefID: "A", JSON: queryJSON, TimeRange: timeRange}, false)
+		if resp.Error != nil {
+			t.Fatalf("unexpected error: %s", resp.Error)
+		}
+	})
+
+	t.Run("POST retry after a dropped connection resends the body", func(t *testing.T) {
+		attempts := 0
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			attempts++
+			if attempts == 1 {
+				conn, _, _ := w.(http.Hijacker).Hijack()
+				_ = conn.Close()
+				return
+			}
+			if err := r.ParseForm(); err != nil {
+				t.Errorf("failed to parse form: %s", err)
+			}
+			if got := r.PostForm.Get("query"); got != "up" {
+				t.Errorf("retry lost the body: query=%q", got)
+			}
+			_, _ = w.Write([]byte(okResponse))
+		}))
+		defer srv.Close()
+
+		resp := newInstance(srv, http.MethodPost).query(context.Background(), backend.DataQuery{RefID: "A", JSON: queryJSON, TimeRange: timeRange}, false)
+		if resp.Error != nil {
+			t.Fatalf("unexpected error: %s", resp.Error)
+		}
+		if attempts != 2 {
+			t.Errorf("expected 2 attempts, got %d", attempts)
+		}
+	})
+}
+
+func TestCheckHealth_POSTSendsParamsInBody(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			t.Errorf("expected POST, got %s", r.Method)
+		}
+		if r.URL.RawQuery != "" {
+			t.Errorf("expected empty query string, got %q", r.URL.RawQuery)
+		}
+		if ct := r.Header.Get("Content-Type"); ct != "application/x-www-form-urlencoded" {
+			t.Errorf("unexpected Content-Type: %q", ct)
+		}
+		if err := r.ParseForm(); err != nil {
+			t.Errorf("failed to parse form: %s", err)
+		}
+		if got := r.PostForm.Get("query"); got != "1" {
+			t.Errorf("unexpected query in body: %q", got)
+		}
+		if r.PostForm.Get("time") == "" {
+			t.Errorf("expected time in body")
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer srv.Close()
+
+	ds := &Datasource{logger: log.DefaultLogger}
+	di := &DatasourceInstance{
+		url:        srv.URL,
+		httpClient: srv.Client(),
+		settings:   DataSourceInstanceSettings{HTTPMethod: http.MethodPost},
+	}
+	result, err := ds.checkHealthWithInstance(context.Background(), di)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Status != backend.HealthStatusOk {
+		t.Errorf("expected HealthStatusOk, got %v: %s", result.Status, result.Message)
+	}
+}
+
+func TestVMAPIQuery_POSTForwardsBody(t *testing.T) {
+	const formBody = "match%5B%5D=up%7Bjob%3D%22a%22%7D&limit=10"
+	newResourceRequest := func(srv *httptest.Server) *http.Request {
+		pluginCtx := backend.PluginContext{
+			DataSourceInstanceSettings: &backend.DataSourceInstanceSettings{
+				URL:      srv.URL,
+				JSONData: []byte(`{"httpMethod":"POST","customQueryParameters":""}`),
+			},
+		}
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/series?from_url=1", strings.NewReader(formBody))
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		return req.WithContext(backend.WithPluginContext(context.Background(), pluginCtx))
+	}
+	assertUpstream := func(t *testing.T, r *http.Request) {
+		t.Helper()
+		if r.Method != http.MethodPost {
+			t.Errorf("expected POST, got %s", r.Method)
+		}
+		if r.URL.RawQuery != "from_url=1" {
+			t.Errorf("expected the query string to be forwarded, got %q", r.URL.RawQuery)
+		}
+		if ct := r.Header.Get("Content-Type"); ct != "application/x-www-form-urlencoded" {
+			t.Errorf("unexpected Content-Type: %q", ct)
+		}
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Errorf("failed to read body: %s", err)
+		}
+		if string(body) != formBody {
+			t.Errorf("unexpected body: %q", body)
+		}
+	}
+
+	t.Run("forwards method, body and Content-Type", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assertUpstream(t, r)
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(`{"status":"success","data":[]}`))
+		}))
+		defer srv.Close()
+
+		rr := httptest.NewRecorder()
+		NewDatasource().VMAPIQuery(rr, newResourceRequest(srv))
+		if rr.Code != http.StatusOK {
+			t.Fatalf("expected status %d, got %d; body: %s", http.StatusOK, rr.Code, rr.Body.String())
+		}
+	})
+
+	t.Run("retry after a dropped connection resends the body", func(t *testing.T) {
+		attempts := 0
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			attempts++
+			if attempts == 1 {
+				conn, _, _ := w.(http.Hijacker).Hijack()
+				_ = conn.Close()
+				return
+			}
+			assertUpstream(t, r)
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(`{"status":"success","data":[]}`))
+		}))
+		defer srv.Close()
+
+		rr := httptest.NewRecorder()
+		NewDatasource().VMAPIQuery(rr, newResourceRequest(srv))
+		if rr.Code != http.StatusOK {
+			t.Fatalf("expected status %d, got %d; body: %s", http.StatusOK, rr.Code, rr.Body.String())
+		}
+		if attempts != 2 {
+			t.Errorf("expected 2 attempts, got %d", attempts)
+		}
+	})
+}
+
+// Grafana builds resource requests without a body for GET, so req.Body is nil (not http.NoBody).
+func TestVMAPIQuery_GETWithoutBody(t *testing.T) {
+	var gotMethod, gotQuery string
+	var gotBody []byte
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotMethod = r.Method
+		gotQuery = r.URL.RawQuery
+		gotBody, _ = io.ReadAll(r.Body)
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"status":"success","data":[]}`))
+	}))
+	defer srv.Close()
+
+	pluginCtx := backend.PluginContext{
+		DataSourceInstanceSettings: &backend.DataSourceInstanceSettings{
+			URL:      srv.URL,
+			JSONData: []byte(`{"httpMethod":"POST","customQueryParameters":""}`),
+		},
+	}
+	ctx := backend.WithPluginContext(context.Background(), pluginCtx)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/labels?limit=5", nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %s", err)
+	}
+	if req.Body != nil {
+		t.Fatal("expected a nil request body")
+	}
+
+	rr := httptest.NewRecorder()
+	NewDatasource().VMAPIQuery(rr, req)
+	if rr.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d; body: %s", http.StatusOK, rr.Code, rr.Body.String())
+	}
+	if gotMethod != http.MethodGet {
+		t.Errorf("expected GET, got %s", gotMethod)
+	}
+	if gotQuery != "limit=5" {
+		t.Errorf("expected the query string to be forwarded, got %q", gotQuery)
+	}
+	if len(gotBody) != 0 {
+		t.Errorf("expected an empty body, got %q", gotBody)
+	}
 }
