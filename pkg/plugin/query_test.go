@@ -588,12 +588,14 @@ func TestQuery_getQueryURLAndParams_queryParamsWinOverCustomOnes(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to parse custom params: %v", err)
 	}
+	// only the keys the query itself sets are dropped from the URL; the others are harmless for VM
 	cases := []struct {
-		name string
-		q    Query
+		name         string
+		q            Query
+		wantRawQuery string
 	}{
-		{name: "range", q: Query{RefID: "1", Range: true, Interval: "15s", Expr: "up", Trace: 1, TimeRange: getTimeRage(), MaxDataPoints: 1000}},
-		{name: "instant", q: Query{RefID: "1", Instant: true, Interval: "15s", Expr: "up", Trace: 1, TimeRange: getTimeRage(), MaxDataPoints: 1000}},
+		{name: "range", q: Query{RefID: "1", Range: true, Interval: "15s", Expr: "up", Trace: 1, TimeRange: getTimeRage(), MaxDataPoints: 1000}, wantRawQuery: "nocache=1&time=3"},
+		{name: "instant", q: Query{RefID: "1", Instant: true, Interval: "15s", Expr: "up", Trace: 1, TimeRange: getTimeRage(), MaxDataPoints: 1000}, wantRawQuery: "end=2&nocache=1&start=1"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -601,8 +603,8 @@ func TestQuery_getQueryURLAndParams_queryParamsWinOverCustomOnes(t *testing.T) {
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
-			if u.RawQuery != "nocache=1" {
-				t.Errorf("custom params with per-query names must be dropped from the URL, got %q", u.RawQuery)
+			if u.RawQuery != c.wantRawQuery {
+				t.Errorf("custom params with per-query names must be dropped from the URL, got %q, want %q", u.RawQuery, c.wantRawQuery)
 			}
 			if got := values.Get("query"); got != "up" {
 				t.Errorf("unexpected query: %q", got)

@@ -390,11 +390,7 @@ func (d *Datasource) VMUIQuery(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 	params := url.Values{}
-	for k, vl := range di.queryParams {
-		for _, v := range vl {
-			params.Add(k, v)
-		}
-	}
+	mergeValues(params, di.queryParams)
 	for k, v := range vmuiReq.VMUI {
 		params.Add("g0."+k, v)
 	}

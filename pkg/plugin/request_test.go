@@ -132,3 +132,15 @@ func TestNewRequest(t *testing.T) {
 		}
 	})
 }
+
+func TestMergeValues(t *testing.T) {
+	dst := url.Values{"a": {"1"}, "shared": {"dst"}}
+	src := url.Values{"b": {"2", "3"}, "shared": {"src"}}
+	mergeValues(dst, src)
+	if got := dst.Encode(); got != "a=1&b=2&b=3&shared=dst&shared=src" {
+		t.Errorf("unexpected merge result: %s", got)
+	}
+	if got := src.Encode(); got != "b=2&b=3&shared=src" {
+		t.Errorf("mergeValues mutated src: %s", got)
+	}
+}

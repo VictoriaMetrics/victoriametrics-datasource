@@ -30,12 +30,17 @@ func newRequest(ctx context.Context, method string, u *url.URL, params url.Value
 	}
 
 	query := u.Query()
-	for k, vl := range params {
-		query[k] = append(query[k], vl...)
-	}
+	mergeValues(query, params)
 	target := *u
 	target.RawQuery = query.Encode()
 	return http.NewRequestWithContext(ctx, method, target.String(), nil)
+}
+
+// mergeValues appends every value of src to dst, keeping the values already in dst first
+func mergeValues(dst, src url.Values) {
+	for k, vl := range src {
+		dst[k] = append(dst[k], vl...)
+	}
 }
 
 // newProxyRequest builds the upstream request for a resource call proxied as-is:
