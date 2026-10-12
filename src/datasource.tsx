@@ -167,7 +167,7 @@ export class PrometheusDatasource
       // The custom query params stay in the URL, only the request params go to the body
       return await this.postResource(url, params, {
         ...requestOptions,
-        params: customParams,
+        params: { ...requestOptions.params, ...customParams },
         headers: { ...options?.headers, ...FORM_URLENCODED_HEADERS },
       });
     }

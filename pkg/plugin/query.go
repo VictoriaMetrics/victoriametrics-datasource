@@ -38,6 +38,9 @@ type Query struct {
 	BackendQueryInterval time.Duration
 }
 
+// queryParamKeys are the request params set per query by the plugin
+var queryParamKeys = []string{"query", "start", "end", "time", "step", "trace"}
+
 // getQueryURLAndParams builds the query endpoint URL and the request parameters for the query.
 // The datasource URL params and the custom query params stay in the URL query string,
 // the per-query params are returned separately, so the caller decides whether to send them
@@ -73,6 +76,11 @@ func (q *Query) getQueryURLAndParams(rawURL string, queryParams url.Values) (*ur
 		for _, v := range vl {
 			urlValues.Add(k, v)
 		}
+	}
+	// The per-query params always win: a datasource or custom param with the same name is dropped,
+	// otherwise VictoriaMetrics would pick the URL value first for GET requests.
+	for _, k := range queryParamKeys {
+		urlValues.Del(k)
 	}
 	u.RawQuery = urlValues.Encode()
 

@@ -115,6 +115,19 @@ describe('PrometheusDatasource', () => {
       expect(call.showErrorAlert).toBe(true);
     });
 
+    it('should merge the URL params given in the options with the custom query params for POST requests', () => {
+      const postSettings = cloneDeep(instanceSettings);
+      const promDs = new PrometheusDatasource({
+        ...postSettings,
+        jsonData: { httpMethod: 'POST', customQueryParameters: 'nocache=1' }
+      }, templateSrvStub, timeSrvStub);
+      promDs.getRequest('api/v1/labels', { limit: 5 }, { params: { tenant: 'a' } });
+      const call = fetchMock.mock.calls[0][0];
+      expect(call.method).toBe('POST');
+      expect(call.params).toEqual({ tenant: 'a', nocache: '1' });
+      expect(call.data).toEqual({ limit: 5 });
+    });
+
     it('should try to perform a GET request with the DS HTTP method set to GET and GET-friendly endpoint', () => {
       const postSettings = cloneDeep(instanceSettings);
       const promDs = new PrometheusDatasource(postSettings, templateSrvStub, timeSrvStub);
