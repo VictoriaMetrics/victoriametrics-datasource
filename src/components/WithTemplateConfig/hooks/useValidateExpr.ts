@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
-import { lastValueFrom } from 'rxjs';
 
-import { getBackendSrv } from '@grafana/runtime';
+import { PrometheusDatasource } from '../../../datasource';
 
 interface ValidateResult {
   title: string;
@@ -38,7 +37,13 @@ const validateStatus: {[key: string]: ValidateResult} = {
   }
 }
 
-export default (datasourceUID: string) => {
+interface ExpandWithExprsResponse {
+  status: 'success' | 'error';
+  error?: string;
+}
+
+// The request goes through datasource.getRequest so that it honours the configured HTTP method.
+export default (datasource: PrometheusDatasource) => {
   const [validateResult, setValidateResult] = useState<ValidateResult>(validateStatus.noValidate)
 
   const isValidExpr = useCallback(async (expr: string) => {
@@ -52,12 +57,11 @@ export default (datasourceUID: string) => {
     try {
       // replace Grafana variables with '1s' for validation
       const val = expr.replace(/\$__interval|\$__range|\$__rate_interval/gm, '1s')
-      const withTemplate = encodeURIComponent(`WITH(${val})()`)
-      const response = await lastValueFrom(getBackendSrv().fetch({
-        url: `api/datasources/uid/${datasourceUID}/resources/expand-with-exprs?query=${withTemplate}&format=json`,
-        method: 'GET',
-      }));
-      const { status, error = '' } = response?.data as { status: 'success' | 'error', error?: string }
+      const response: ExpandWithExprsResponse = await datasource.getRequest('expand-with-exprs', {
+        query: `WITH(${val})()`,
+        format: 'json',
+      })
+      const { status, error = '' } = response
       setValidateResult({
         ...(status === 'success' ? validateStatus.success : validateStatus.invalid),
         error
@@ -73,7 +77,7 @@ export default (datasourceUID: string) => {
       }
       return false
     }
-  }, [datasourceUID])
+  }, [datasource])
 
   return {
     validateResult,

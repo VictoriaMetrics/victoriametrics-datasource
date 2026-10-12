@@ -631,3 +631,17 @@ func Test_roundInterval(t *testing.T) {
 		})
 	}
 }
+
+func Test_calculateMinInterval_keepsQueryInterval(t *testing.T) {
+	q := &Query{Interval: "$__interval", IntervalMs: 30000}
+	minInterval, err := q.calculateMinInterval()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if minInterval != 30*time.Second {
+		t.Errorf("unexpected min interval: %v", minInterval)
+	}
+	if q.Interval != "$__interval" {
+		t.Errorf("calculateMinInterval must not modify q.Interval, got %q", q.Interval)
+	}
+}
