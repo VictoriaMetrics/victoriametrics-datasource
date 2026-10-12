@@ -164,7 +164,7 @@ export class PrometheusDatasource
     if (this.httpMethod === 'POST') {
       return await this.postResource(url, params, {
         ...requestOptions,
-        headers: { ...FORM_URLENCODED_HEADERS, ...options?.headers },
+        headers: { ...options?.headers, ...FORM_URLENCODED_HEADERS },
       });
     }
     return await this.getResource(url, params, requestOptions);
