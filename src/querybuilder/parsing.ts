@@ -14,8 +14,6 @@ import {
   GroupingLabelList,
   GroupingLabels,
   LabelMatcher,
-  LabelName,
-  MatchOp,
   MetricIdentifier,
   NumberLiteral,
   On,
@@ -33,13 +31,14 @@ import {
   ErrorId,
   ErrorName,
   getAllByType,
+  getLabel,
   getLeftMostChild,
   getString,
   makeBinOp,
   makeError,
   replaceVariables,
 } from './shared/parsingUtils';
-import { QueryBuilderLabelFilter, QueryBuilderOperation } from './shared/types';
+import { QueryBuilderOperation } from './shared/types';
 import { PromVisualQuery, PromVisualQueryBinary } from './types';
 
 /**
@@ -126,7 +125,7 @@ export function handleExpression(expr: string, node: SyntaxNode, context: Intern
 
     case LabelMatcher: {
       // Same as MetricIdentifier should be just one per query.
-      visQuery.labels.push(getLabel(expr, node, LabelName));
+      visQuery.labels.push(getLabel(expr, node));
       const err = node.getChild(ErrorId) || node.getChild(ErrorName);
       if (err) {
         context.errors.push(makeError(expr, err));
@@ -179,21 +178,6 @@ export function handleExpression(expr: string, node: SyntaxNode, context: Intern
 // TODO check if we still need this
 function isIntervalVariableError(node: SyntaxNode) {
   return node.prevSibling?.type.id === Expr && node.prevSibling?.firstChild?.type.id === VectorSelector;
-}
-
-function getLabel(
-  expr: string,
-  node: SyntaxNode,
-  labelType: typeof LabelName
-): QueryBuilderLabelFilter {
-  const label = getString(expr, node.getChild(labelType));
-  const op = getString(expr, node.getChild(MatchOp));
-  const value = getString(expr, node.getChild(StringLiteral)).replace(/^["'`]|["'`]$/g, '');
-  return {
-    label,
-    op,
-    value,
-  };
 }
 
 // Functions whose first argument is a range vector (e.g. `rate(m[5m])`)
