@@ -2,17 +2,42 @@ name: release
 
 on:
   workflow_dispatch:
-    ref: main
-    branches:
-      - main
-    permissions:
-      teams:
-        - development
+    inputs:
+      run_security_scan:
+        description: 'Run security vulnerability scan'
+        required: false
+        type: boolean
+        default: true
 
 jobs:
+  security-scan:
+    name: Security Vulnerability Scan
+    if: ${{ inputs.run_security_scan == true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Cache tool binaries
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: ./bin
+          key: ${{ runner.os }}-bin-${{ github.job }}-${{ hashFiles('Makefile', 'scripts/install-plugincheck2.sh') }}
+
+      # The same vulnerability check the Grafana plugin catalog runs on publish.
+      - name: Check dependencies for vulnerabilities
+        run: make vm-plugin-vuln-check
+
   release:
     name: Release on GitHub
     runs-on: ubuntu-latest
+    needs: security-scan
+    if: ${{ always() && (needs.security-scan.result == 'success' || needs.security-scan.result == 'skipped') }}
     outputs:
       PKG_TAG: ${{ env.PKG_TAG }}
     permissions:
@@ -31,7 +56,7 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
         with:
           path: ./bin
-          key: binary
+          key: ${{ runner.os }}-bin-${{ github.job }}-${{ hashFiles('Makefile', 'scripts/install-plugincheck2.sh') }}
       - name: Setup Go
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5.6.0
         with:
@@ -92,7 +117,7 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
         with:
           path: ./bin
-          key: binary
+          key: ${{ runner.os }}-bin-${{ github.job }}-${{ hashFiles('Makefile', 'scripts/install-plugincheck2.sh') }}
       - name: Upload release assets
         if: ${{ hashFiles('NOTES.md') != '' }}
         env:
