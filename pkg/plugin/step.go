@@ -30,9 +30,8 @@ var (
 // TimeInterval is the string representation of data source min interval, if configured.
 // Interval is the string representation of query interval (min interval), e.g. "10ms" or "10s".
 // IntervalMs is a pre-calculated numeric representation of the query interval in milliseconds.
-func (q *Query) getIntervalFrom(defaultInterval time.Duration) (time.Duration, error) {
+func (q *Query) getIntervalFrom(interval string, defaultInterval time.Duration) (time.Duration, error) {
 	// Apparently we are setting default value of queryInterval to 0s now
-	interval := q.Interval
 	if interval == "0s" {
 		interval = ""
 	}

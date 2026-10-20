@@ -1,6 +1,8 @@
 package plugin
 
 import (
+	"context"
+	"net/http"
 	"net/url"
 	"testing"
 	"time"
@@ -8,7 +10,7 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
-func TestQuery_getQueryURL(t *testing.T) {
+func TestQuery_getQueryURLAndParams(t *testing.T) {
 	type opts struct {
 		RefID         string
 		Instant       bool
@@ -44,13 +46,22 @@ func TestQuery_getQueryURL(t *testing.T) {
 			t.Errorf("failed to parse query params: %v", err)
 			return
 		}
-		got, err := q.getQueryURL(opts.rawURL, params)
+		u, values, err := q.getQueryURLAndParams(opts.rawURL, params)
 		if (err != nil) != opts.wantErr {
-			t.Errorf("getQueryURL() error = %v, wantErr %v", err, opts.wantErr)
+			t.Errorf("getQueryURLAndParams() error = %v, wantErr %v", err, opts.wantErr)
 			return
 		}
-		if got != opts.want {
-			t.Errorf("getQueryURL() got = %v, want %v", got, opts.want)
+		if err != nil {
+			return
+		}
+		// the full GET URL is composed here so that expectations stay readable as one string
+		req, err := newRequest(context.Background(), http.MethodGet, u, values)
+		if err != nil {
+			t.Errorf("failed to build request: %v", err)
+			return
+		}
+		if got := req.URL.String(); got != opts.want {
+			t.Errorf("getQueryURLAndParams() got = %v, want %v", got, opts.want)
 		}
 	}
 
@@ -535,4 +546,72 @@ func TestQuery_parseLegend(t *testing.T) {
 		want: "vm_http_request_total",
 	}
 	f(o)
+}
+
+func TestQuery_getQueryURLAndParams_keepsDatasourceParamsInURL(t *testing.T) {
+	q := Query{
+		RefID:         "1",
+		Range:         true,
+		Interval:      "15s",
+		Expr:          "up",
+		TimeRange:     getTimeRage(),
+		MaxDataPoints: 1000,
+	}
+	custom, err := url.ParseQuery("nocache=1&extra_label=team%3Dops")
+	if err != nil {
+		t.Fatalf("failed to parse custom params: %v", err)
+	}
+	u, values, err := q.getQueryURLAndParams("http://127.0.0.1:8428/select/0/prometheus?from_url=1", custom)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	// the datasource URL params and the custom query params stay in the URL
+	if u.RawQuery != "extra_label=team%3Dops&from_url=1&nocache=1" {
+		t.Errorf("unexpected url query string: %q", u.RawQuery)
+	}
+	// only the per-query params are returned separately
+	for _, k := range []string{"from_url", "nocache", "extra_label"} {
+		if _, ok := values[k]; ok {
+			t.Errorf("param %q must stay in the URL, but was returned in values", k)
+		}
+	}
+	for _, k := range []string{"query", "start", "end", "step"} {
+		if _, ok := values[k]; !ok {
+			t.Errorf("per-query param %q is missing in values", k)
+		}
+	}
+}
+
+func TestQuery_getQueryURLAndParams_queryParamsWinOverCustomOnes(t *testing.T) {
+	// every per-query key is also given as a custom query param
+	custom, err := url.ParseQuery("nocache=1&query=custom&start=1&end=2&time=3&step=1m&trace=9")
+	if err != nil {
+		t.Fatalf("failed to parse custom params: %v", err)
+	}
+	// only the keys the query itself sets are dropped from the URL; the others are harmless for VM
+	cases := []struct {
+		name         string
+		q            Query
+		wantRawQuery string
+	}{
+		{name: "range", q: Query{RefID: "1", Range: true, Interval: "15s", Expr: "up", Trace: 1, TimeRange: getTimeRage(), MaxDataPoints: 1000}, wantRawQuery: "nocache=1&time=3"},
+		{name: "instant", q: Query{RefID: "1", Instant: true, Interval: "15s", Expr: "up", Trace: 1, TimeRange: getTimeRage(), MaxDataPoints: 1000}, wantRawQuery: "end=2&nocache=1&start=1"},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			u, values, err := c.q.getQueryURLAndParams("http://127.0.0.1:8428", custom)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if u.RawQuery != c.wantRawQuery {
+				t.Errorf("custom params with per-query names must be dropped from the URL, got %q, want %q", u.RawQuery, c.wantRawQuery)
+			}
+			if got := values.Get("query"); got != "up" {
+				t.Errorf("unexpected query: %q", got)
+			}
+			if got := values.Get("trace"); got != "1" {
+				t.Errorf("unexpected trace: %q", got)
+			}
+		})
+	}
 }

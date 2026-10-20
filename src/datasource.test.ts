@@ -70,20 +70,62 @@ describe('PrometheusDatasource', () => {
   });
 
   describe('Datasource metadata requests', () => {
+    const formHeaders = { 'Content-Type': 'application/x-www-form-urlencoded' };
+
     it('should perform a GET request with the default config', () => {
       ds.getRequest('foo', { bar: 'baz baz', foo: 'foo' });
       expect(fetchMock.mock.calls.length).toBe(1);
       expect(fetchMock.mock.calls[0][0].method).toBe('GET');
       expect(fetchMock.mock.calls[0][0].params).toEqual({ bar: 'baz baz', foo: 'foo' });
+      expect(fetchMock.mock.calls[0][0].data).toBeUndefined();
     });
 
-    it('should still perform a GET request with the DS HTTP method set to POST and not POST-friendly endpoint', () => {
+    it('should perform a POST request with a form-urlencoded body when the DS HTTP method is POST', () => {
       const postSettings = cloneDeep(instanceSettings);
       postSettings.jsonData.httpMethod = 'POST';
       const promDs = new PrometheusDatasource(postSettings, templateSrvStub, timeSrvStub);
-      promDs.getRequest('foo');
+      promDs.getRequest('api/v1/series', { 'match[]': 'up{job="a b"}', limit: 10 });
       expect(fetchMock.mock.calls.length).toBe(1);
-      expect(fetchMock.mock.calls[0][0].method).toBe('GET');
+      const call = fetchMock.mock.calls[0][0];
+      expect(call.method).toBe('POST');
+      expect(call.url).toBe('/api/datasources/uid/ABCDEF/resources/api/v1/series');
+      expect(call.params).toEqual({});
+      expect(call.data).toEqual({ 'match[]': 'up{job="a b"}', limit: 10 });
+      expect(call.headers).toEqual(expect.objectContaining(formHeaders));
+    });
+
+    it('should use POST for every endpoint when the DS HTTP method is POST', () => {
+      const postSettings = cloneDeep(instanceSettings);
+      postSettings.jsonData.httpMethod = 'POST';
+      const promDs = new PrometheusDatasource(postSettings, templateSrvStub, timeSrvStub);
+      promDs.getRequest('prettify-query', { query: 'up' });
+      expect(fetchMock.mock.calls.length).toBe(1);
+      expect(fetchMock.mock.calls[0][0].method).toBe('POST');
+      expect(fetchMock.mock.calls[0][0].data).toEqual({ query: 'up' });
+    });
+
+    it('should keep request options for POST requests', () => {
+      const postSettings = cloneDeep(instanceSettings);
+      postSettings.jsonData.httpMethod = 'POST';
+      const promDs = new PrometheusDatasource(postSettings, templateSrvStub, timeSrvStub);
+      promDs.getRequest('api/v1/labels', {}, { showErrorAlert: true });
+      const call = fetchMock.mock.calls[0][0];
+      expect(call.method).toBe('POST');
+      expect(call.hideFromInspector).toBe(true);
+      expect(call.showErrorAlert).toBe(true);
+    });
+
+    it('should merge the URL params given in the options with the custom query params for POST requests', () => {
+      const postSettings = cloneDeep(instanceSettings);
+      const promDs = new PrometheusDatasource({
+        ...postSettings,
+        jsonData: { httpMethod: 'POST', customQueryParameters: 'nocache=1' }
+      }, templateSrvStub, timeSrvStub);
+      promDs.getRequest('api/v1/labels', { limit: 5 }, { params: { tenant: 'a' } });
+      const call = fetchMock.mock.calls[0][0];
+      expect(call.method).toBe('POST');
+      expect(call.params).toEqual({ tenant: 'a', nocache: '1' });
+      expect(call.data).toEqual({ limit: 5 });
     });
 
     it('should try to perform a GET request with the DS HTTP method set to GET and GET-friendly endpoint', () => {
@@ -110,6 +152,32 @@ describe('PrometheusDatasource', () => {
         foo: 'foo',
         'extra_filter[]': '{foo: "bar"}',
       });
+    });
+
+    it('should keep the custom query params in the URL of a POST request and send the rest in the body', () => {
+      const postSettings = cloneDeep(instanceSettings);
+      const promDs = new PrometheusDatasource({
+        ...postSettings,
+        jsonData: { httpMethod: 'POST', customQueryParameters: 'extra_filter[]={foo: "bar"}&foo=custom' }
+      }, templateSrvStub, timeSrvStub);
+      promDs.getRequest('api/v1/label/id/values', { bar: 'baz baz', foo: 'foo' });
+      expect(fetchMock.mock.calls.length).toBe(1);
+      const call = fetchMock.mock.calls[0][0];
+      expect(call.method).toBe('POST');
+      expect(call.data).toEqual({ bar: 'baz baz', foo: 'foo' });
+      // a custom param with the same key as a request param is dropped, the request param wins
+      expect(call.params).toEqual({ 'extra_filter[]': '{foo: "bar"}' });
+    });
+
+    it('should keep the first value of a duplicated custom query param', () => {
+      const postSettings = cloneDeep(instanceSettings);
+      const promDs = new PrometheusDatasource({
+        ...postSettings,
+        jsonData: { customQueryParameters: 'foo=first&foo=last' }
+      }, templateSrvStub, timeSrvStub);
+      promDs.getRequest('api/v1/labels', { limit: 5 });
+      expect(fetchMock.mock.calls.length).toBe(1);
+      expect(fetchMock.mock.calls[0][0].params).toEqual({ limit: 5, foo: 'first' });
     });
   });
 

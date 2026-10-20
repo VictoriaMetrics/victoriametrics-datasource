@@ -197,17 +197,18 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 	q.TimeInterval = di.settings.TimeInterval
 	q.BackendQueryInterval = query.Interval
 
-	reqURL, err := q.getQueryURL(di.url, di.queryParams)
+	u, params, err := q.getQueryURLAndParams(di.url, di.queryParams)
 	if err != nil {
 		err = fmt.Errorf("failed to create request URL: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, di.settings.HTTPMethod, reqURL, nil)
+	req, err := newRequest(ctx, di.settings.HTTPMethod, u, params)
 	if err != nil {
 		err = fmt.Errorf("failed to create new request with context: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
 	}
+	reqURL := req.URL.String()
 	resp, err := di.httpClient.Do(req)
 	if err != nil {
 		if !isTrivialError(err) {
@@ -217,7 +218,7 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 
 		// Something in the middle between client and datasource might be closing
 		// the connection. So we do a one more attempt in hope request will succeed.
-		req, err = http.NewRequestWithContext(ctx, di.settings.HTTPMethod, reqURL, nil)
+		req, err = newRequest(ctx, di.settings.HTTPMethod, u, params)
 		if err != nil {
 			err = fmt.Errorf("failed to create new request with context: %w", err)
 			return newResponseError(err, backend.StatusBadRequest)
@@ -314,17 +315,11 @@ func (d *Datasource) checkHealthWithInstance(ctx context.Context, di *Datasource
 	if err != nil {
 		return newHealthCheckErrorf("failed to build health endpoint: %s", err), nil
 	}
-	values := queryURL.Query()
+	values := url.Values{}
 	values.Set("query", "1")
 	values.Set("time", strconv.FormatInt(time.Now().Unix(), 10))
-	queryURL.RawQuery = values.Encode()
 
-	method := di.settings.HTTPMethod
-	if method == "" {
-		method = http.MethodGet
-	}
-
-	r, err := http.NewRequestWithContext(ctx, method, queryURL.String(), nil)
+	r, err := newRequest(ctx, di.settings.HTTPMethod, queryURL, values)
 	if err != nil {
 		return newHealthCheckErrorf("could not create request"), nil
 	}
@@ -395,11 +390,7 @@ func (d *Datasource) VMUIQuery(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 	params := url.Values{}
-	for k, vl := range di.queryParams {
-		for _, v := range vl {
-			params.Add(k, v)
-		}
-	}
+	mergeValues(params, di.queryParams)
 	for k, v := range vmuiReq.VMUI {
 		params.Add("g0."+k, v)
 	}
@@ -428,7 +419,17 @@ func (d *Datasource) VMAPIQuery(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 	u.RawQuery = req.URL.Query().Encode()
-	newReq, err := http.NewRequestWithContext(ctx, req.Method, u.String(), nil)
+
+	// Grafana passes a nil body for requests without one, such as GET
+	var body []byte
+	if req.Body != nil {
+		body, err = io.ReadAll(req.Body)
+		if err != nil {
+			writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to read request body: %w", err))
+			return
+		}
+	}
+	newReq, err := newProxyRequest(ctx, req, u, body)
 	if err != nil {
 		writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to create new request with context: %w", err))
 		return
@@ -442,7 +443,7 @@ func (d *Datasource) VMAPIQuery(rw http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		newReq, err := http.NewRequestWithContext(ctx, req.Method, u.String(), nil)
+		newReq, err := newProxyRequest(ctx, req, u, body)
 		if err != nil {
 			writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to create new request with context: %w", err))
 			return

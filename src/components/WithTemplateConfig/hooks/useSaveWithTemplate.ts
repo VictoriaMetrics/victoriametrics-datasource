@@ -36,7 +36,7 @@ export default function useSaveWithTemplate({
   onDraftReset,
   handleClose,
 }: UseSaveWithTemplateParams): UseSaveWithTemplateResult {
-  const { validateResult, isValidExpr } = useValidateExpr(datasource.uid)
+  const { validateResult, isValidExpr } = useValidateExpr(datasource)
   const { updateDashboardVariable } = useUpdateDashboardVariable(dashboardUID)
 
   const [isLoading, setIsLoading] = useState(false)
