@@ -46,7 +46,7 @@ describe('addLabelToQuery()', () => {
     expect(addLabelToQuery('foo{x="yy"} + metric', 'bar', 'baz')).toBe('foo{x="yy", bar="baz"} + metric{bar="baz"}');
     expect(addLabelToQuery('avg(foo) + sum(xx_yy)', 'bar', 'baz')).toBe('avg(foo{bar="baz"}) + sum(xx_yy{bar="baz"})');
     expect(addLabelToQuery('foo{x="yy"} * metric{y="zz",a="bb"} * metric2', 'bar', 'baz')).toBe(
-      'foo{x="yy", bar="baz"} * metric{y="zz", a="bb", bar="baz"} * metric2{bar="baz"}'
+      'foo{x="yy", bar="baz"} * metric{y="zz",a="bb", bar="baz"} * metric2{bar="baz"}'
     );
   });
 
@@ -110,5 +110,57 @@ describe('addLabelToQuery()', () => {
 
   it('should not add ad-hoc filter bool operator', () => {
     expect(addLabelToQuery('ALERTS < bool 1', 'bar', 'baz')).toBe('ALERTS{bar="baz"} < bool 1');
+  });
+
+  it('should put the filter first when the matchers end with a comment', () => {
+    // Appending after the comment would make the filter part of the comment and silently drop it.
+    expect(addLabelToQuery('foo{a="b" # c\n}', 'bar', 'baz')).toBe('foo{bar="baz", a="b" # c\n}');
+    expect(addLabelToQuery('foo{\n  a="b", # c\n  d="e" # f\n}', 'bar', 'baz')).toBe(
+      'foo{bar="baz", \n  a="b", # c\n  d="e" # f\n}'
+    );
+  });
+
+  it('should preserve the original text of the selector', () => {
+    expect(addLabelToQuery('foo{ a="b" ,c="d" }', 'bar', 'baz')).toBe('foo{ a="b" ,c="d", bar="baz" }');
+    expect(addLabelToQuery('foo {a="b"}', 'bar', 'baz')).toBe('foo {a="b", bar="baz"}');
+  });
+
+  it('should reuse a trailing comma instead of adding a second one', () => {
+    expect(addLabelToQuery('foo{a="b",}', 'bar', 'baz')).toBe('foo{a="b", bar="baz"}');
+    expect(addLabelToQuery('foo{a="b", }', 'bar', 'baz')).toBe('foo{a="b", bar="baz" }');
+  });
+
+  describe('WITH templates (#551)', () => {
+    it('should keep a bare template reference in the selector', () => {
+      expect(addLabelToQuery('probe_success{f} == 0', 'service.name', 'public')).toBe(
+        'probe_success{f, service.name="public"} == 0'
+      );
+      expect(addLabelToQuery('probe_success{f, a="b"} == 0', 'service.name', 'public')).toBe(
+        'probe_success{f, a="b", service.name="public"} == 0'
+      );
+    });
+
+    it('should keep the WITH block intact and add the filter only to the query body', () => {
+      const query = `WITH(
+  f={cloud.account.name=~"$account_name"}
+)
+probe_success{f} == 0`;
+      expect(addLabelToQuery(query, 'service.name', 'public')).toBe(`WITH(
+  f={cloud.account.name=~"$account_name"}
+)
+probe_success{f, service.name="public"} == 0`);
+    });
+
+    it('should find the end of the WITH block across nested brackets and strings', () => {
+      const query = 'WITH (f(x) = rate(x[5m]), s = label_replace(up, "a", ")", "b", "(.*)")) f(foo{s})';
+      expect(addLabelToQuery(query, 'bar', 'baz')).toBe(
+        'WITH (f(x) = rate(x[5m]), s = label_replace(up, "a", ")", "b", "(.*)")) f(foo{s, bar="baz"})'
+      );
+    });
+
+    it('should treat an unclosed WITH block as a plain query', () => {
+      // The query is invalid anyway: the point is that the header is not stripped and nothing is corrupted.
+      expect(addLabelToQuery('WITH (f={a="b"} foo', 'bar', 'baz')).toBe('WITH (f={a="b", bar="baz"} foo');
+    });
   });
 });

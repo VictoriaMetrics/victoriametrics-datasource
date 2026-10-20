@@ -13,22 +13,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { parser, VectorSelector } from 'lezer-metricsql';
+import { SyntaxNode } from '@lezer/common';
+import { LabelMatcher, LabelMatchers, parser, VectorSelector } from 'lezer-metricsql';
 
-import { PromQueryModeller } from './querybuilder/PromQueryModeller';
-import { buildVisualQueryFromString } from './querybuilder/parsing';
+import { splitWithHeader } from './components/WithTemplateConfig/utils/splitWithHeader';
+import { getLabel } from './querybuilder/shared/parsingUtils';
 import { QueryBuilderLabelFilter } from './querybuilder/shared/types';
-import { PromVisualQuery } from './querybuilder/types';
 
 /**
  * Adds label filter to existing query. Useful for query modification for example for ad hoc filters.
  *
- * It uses PromQL parser to find instances of metric and labels, alters them and then splices them back into the query.
- * Ideally we could use the parse -> change -> render is a simple 3 steps but right now building the visual query
- * object does not support all possible queries.
- *
- * So instead this just operates on substrings of the query with labels and operates just on those. This makes this
- * more robust and can alter even invalid queries, and preserves in general the query structure and whitespace.
+ * It uses the MetricsQL parser to find the vector selectors and inserts the filter into the text of each of them.
+ * Nothing is re-rendered, so the original formatting is preserved and constructs the grammar does not know
+ * (WITH templates, bare template references like `{f}`) stay untouched.
  * @param query
  * @param key
  * @param value
@@ -39,35 +36,62 @@ export function addLabelToQuery(query: string, key: string, value: string | numb
     throw new Error('Need label to add to query.');
   }
 
-  const vectorSelectorPositions = getVectorSelectorPositions(query);
-  if (!vectorSelectorPositions.length) {
+  // The grammar does not know WITH expressions: the header is kept as is and the filter is applied to the body.
+  const { header, body } = splitWithHeader(query);
+  const selectors = getVectorSelectors(body);
+  if (!selectors.length) {
     return query;
   }
 
   const filter = toLabelFilter(key, value, operator);
-  return addFilter(query, vectorSelectorPositions, filter);
+  return header + addFilter(body, selectors, filter);
 }
 
-type VectorSelectorPosition = { from: number; to: number; query: PromVisualQuery };
+type VectorSelectorPosition = {
+  from: number;
+  to: number;
+  /** Position of the `{...}` part of the selector, if it has one */
+  labelMatchers?: { from: number; to: number };
+  /** Existing label filters, used to avoid duplicates */
+  labels: QueryBuilderLabelFilter[];
+};
 
 /**
- * Parse the string and get all VectorSelector positions in the query together with parsed representation of the vector
- * selector.
+ * Parse the string and get all VectorSelector positions in the query together with their existing label filters.
  * @param query
  */
-function getVectorSelectorPositions(query: string): VectorSelectorPosition[] {
+function getVectorSelectors(query: string): VectorSelectorPosition[] {
   const tree = parser.parse(query);
   const positions: VectorSelectorPosition[] = [];
   tree.iterate({
-    enter: ({ to, from, type }): false | void => {
+    enter: ({ to, from, type, node }): false | void => {
       if (type.id === VectorSelector) {
-        const visQuery = buildVisualQueryFromString(query.substring(from, to));
-        positions.push({ query: visQuery.query, from, to });
+        const labelMatchers = node.getChild(LabelMatchers);
+        positions.push({
+          from,
+          to,
+          labelMatchers: labelMatchers ? { from: labelMatchers.from, to: labelMatchers.to } : undefined,
+          labels: labelMatchers ? getLabelFilters(query, labelMatchers) : [],
+        });
         return false;
       }
     },
   });
   return positions;
+}
+
+/**
+ * Label filters of a `{...}` node. A bare template reference like `{f}` has no operator and value.
+ */
+function getLabelFilters(query: string, labelMatchers: SyntaxNode): QueryBuilderLabelFilter[] {
+  const filters: QueryBuilderLabelFilter[] = [];
+  const cursor = labelMatchers.cursor();
+  while (cursor.next() && cursor.from < labelMatchers.to) {
+    if (cursor.type.id === LabelMatcher) {
+      filters.push(getLabel(query, cursor.node));
+    }
+  }
+  return filters;
 }
 
 function toLabelFilter(key: string, value: string | number, operator: string): QueryBuilderLabelFilter {
@@ -76,33 +100,54 @@ function toLabelFilter(key: string, value: string | number, operator: string): Q
   return { label: key, op: operator, value: transformedValue };
 }
 
-function addFilter(
-  query: string,
-  vectorSelectorPositions: VectorSelectorPosition[],
-  filter: QueryBuilderLabelFilter
-): string {
-  const modeller = new PromQueryModeller();
+function addFilter(query: string, selectors: VectorSelectorPosition[], filter: QueryBuilderLabelFilter): string {
+  // This is basically just doing splice on a string for each matched vector selector.
   let newQuery = '';
   let prev = 0;
-
-  for (let i = 0; i < vectorSelectorPositions.length; i++) {
-    // This is basically just doing splice on a string for each matched vector selector.
-
-    const match = vectorSelectorPositions[i];
-    const isLast = i === vectorSelectorPositions.length - 1;
-
-    const start = query.substring(prev, match.from);
-    const end = isLast ? query.substring(match.to) : '';
-
-    if (!labelExists(match.query.labels, filter)) {
-      // We don't want to add duplicate labels.
-      match.query.labels.push(filter);
-    }
-    const newLabels = modeller.renderQuery(match.query);
-    newQuery += start + newLabels + end;
-    prev = match.to;
+  for (const selector of selectors) {
+    newQuery += query.substring(prev, selector.from) + addFilterToSelector(query, selector, filter);
+    prev = selector.to;
   }
-  return newQuery;
+  return newQuery + query.substring(prev);
+}
+
+function addFilterToSelector(query: string, selector: VectorSelectorPosition, filter: QueryBuilderLabelFilter): string {
+  const text = query.substring(selector.from, selector.to);
+  if (labelExists(selector.labels, filter)) {
+    // We don't want to add duplicate labels.
+    return text;
+  }
+  const rendered = renderLabelFilter(filter);
+  if (!selector.labelMatchers) {
+    return text + `{${rendered}}`;
+  }
+
+  const open = selector.labelMatchers.from - selector.from;
+  const close = selector.labelMatchers.to - selector.from - 1;
+  if (text[close] !== '}') {
+    // Unparseable matchers, leave the selector alone rather than corrupt it.
+    return text;
+  }
+
+  // Insert before the closing brace, keeping the existing text of the matchers and its trailing whitespace.
+  const [, existing, trailingSpace] = /^(.*?),?(\s*)$/s.exec(text.substring(open + 1, close))!;
+  if (!existing.trim()) {
+    return text.substring(0, open + 1) + rendered + trailingSpace + text.substring(close);
+  }
+  if (endsWithComment(existing)) {
+    // Appended after a comment the filter would become part of it, so it goes first instead.
+    return text.substring(0, open + 1) + rendered + ', ' + text.substring(open + 1);
+  }
+  return text.substring(0, open + 1) + existing + ', ' + rendered + trailingSpace + text.substring(close);
+}
+
+/** Whether the last line of the matchers text contains a `#` comment. A `#` inside quotes is a harmless false positive. */
+function endsWithComment(matchers: string): boolean {
+  return matchers.substring(matchers.lastIndexOf('\n') + 1).includes('#');
+}
+
+function renderLabelFilter({ label, op, value }: QueryBuilderLabelFilter): string {
+  return `${label}${op}"${value}"`;
 }
 
 /**

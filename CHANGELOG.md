@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: apply ad hoc filters to queries that use WITH templates without breaking them. Previously, selecting an ad hoc filter rewrote such queries into invalid MetricsQL and the panel failed with a `422` error. The same fix applies to the `Add filter` action in the query editor. See [#551](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/551).
+
 ## v0.26.1
 
 * MAINTENANCE: fix the frontend build of the plugin.
