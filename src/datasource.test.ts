@@ -168,6 +168,17 @@ describe('PrometheusDatasource', () => {
       // a custom param with the same key as a request param is dropped, the request param wins
       expect(call.params).toEqual({ 'extra_filter[]': '{foo: "bar"}' });
     });
+
+    it('should keep the first value of a duplicated custom query param', () => {
+      const postSettings = cloneDeep(instanceSettings);
+      const promDs = new PrometheusDatasource({
+        ...postSettings,
+        jsonData: { customQueryParameters: 'foo=first&foo=last' }
+      }, templateSrvStub, timeSrvStub);
+      promDs.getRequest('api/v1/labels', { limit: 5 });
+      expect(fetchMock.mock.calls.length).toBe(1);
+      expect(fetchMock.mock.calls[0][0].params).toEqual({ limit: 5, foo: 'first' });
+    });
   });
 
   describe('customQueryParams', () => {

@@ -151,10 +151,11 @@ export class PrometheusDatasource
 
   // Use this for tab completion features, won't publish response to other components
   async getRequest(url: string, params: BackendSrvRequest['params'] = {}, options?: Partial<BackendSrvRequest>) {
-    // A request param with the same key wins over the custom query param
+    // A request param with the same key wins over the custom query param,
+    // and the first value of a duplicated custom query param wins over the later ones
     const customParams: BackendSrvRequest['params'] = {};
     for (const [key, value] of this.customQueryParameters) {
-      if (params[key] === undefined) {
+      if (params[key] === undefined && customParams[key] === undefined) {
         customParams[key] = value;
       }
     }
