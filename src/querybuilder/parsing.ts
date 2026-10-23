@@ -14,16 +14,20 @@ import {
   GroupingLabelList,
   GroupingLabels,
   LabelMatcher,
+  LabelMatchers,
   LabelName,
   MatchOp,
   MetricIdentifier,
   NumberLiteral,
   On,
   OnOrIgnoring,
+  Or,
   ParenExpr,
   parser,
   StringLiteral,
+  TemplateCall,
   VectorSelector,
+  WithExpr,
   Without,
 } from 'lezer-metricsql';
 
@@ -149,6 +153,27 @@ export function handleExpression(expr: string, node: SyntaxNode, context: Intern
       break;
     }
 
+    case LabelMatchers: {
+      // Or-separated matchers would be merged into one AND group by the builder, so we report it.
+      if (node.getChild(Or)) {
+        context.errors.push({
+          text: 'or-separated label matchers are not supported in the builder, they would be merged into one AND group',
+          from: node.from,
+          to: node.to,
+        });
+      }
+      handleChildren(expr, node, context);
+      break;
+    }
+
+    case WithExpr:
+    case TemplateCall: {
+      // WITH templates and template calls are not supported in the builder, we report them.
+      context.errors.push(makeError(expr, node));
+      handleChildren(expr, node, context);
+      break;
+    }
+
     case ErrorId: {
       if (isIntervalVariableError(node)) {
         break;
@@ -167,12 +192,16 @@ export function handleExpression(expr: string, node: SyntaxNode, context: Intern
       // nodes that can be skipped.
       // TODO: there are probably cases where we will just skip nodes we don't support and we should be able to
       //  detect those and report back.
-      let child = node.firstChild;
-      while (child) {
-        handleExpression(expr, child, context);
-        child = child.nextSibling;
-      }
+      handleChildren(expr, node, context);
     }
+  }
+}
+
+function handleChildren(expr: string, node: SyntaxNode, context: InternalContext) {
+  let child = node.firstChild;
+  while (child) {
+    handleExpression(expr, child, context);
+    child = child.nextSibling;
   }
 }
 
