@@ -242,4 +242,21 @@ describe('situation', () => {
       ],
     });
   });
+
+  it('keeps label name completion inside or-separated matchers and WITH queries', () => {
+    // No completion after `or` today either; a resolver for [ERROR_NODE_NAME, LabelMatchers] is a follow-up.
+    assertSituation('something{a="b" or ^}', null);
+    assertSituation('something{fo^', {
+      type: 'IN_LABEL_SELECTOR_WITH_LABEL_NAME',
+      metricName: 'something',
+      labelName: 'fo',
+      betweenQuotes: false,
+      otherLabels: [],
+    });
+    assertSituation('WITH (f = {a="b"}) up{^}', {
+      type: 'IN_LABEL_SELECTOR_NO_LABEL_NAME',
+      metricName: 'up',
+      otherLabels: [],
+    });
+  });
 });

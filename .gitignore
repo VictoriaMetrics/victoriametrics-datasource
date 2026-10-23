@@ -32,6 +32,7 @@ ci/
 e2e-results/
 packages/lezer-metricsql/src/parser.js
 packages/lezer-metricsql/src/parser.terms.js
+packages/lezer-metricsql/src/functionNames.js
 
 # mounted volumes
 .grafana/
