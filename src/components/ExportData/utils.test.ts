@@ -152,4 +152,10 @@ describe('extractMetricSelectors', () => {
     expect(result.map((s) => s.selector)).not.toContain('CellTemp(1');
     expect(result.find((s) => s.metric === 'CellTemp')).toBeUndefined();
   });
+
+  it('extracts the template body selectors of a WITH query and skips the one with a template reference', () => {
+    // Before the grammar change nothing was extracted: the whole WITH block sat inside a recovered selector.
+    // `up{f}` is skipped because its matcher list still carries an error node.
+    expect(extractMetricSelectors('WITH (f = {job="a"}) up{f}').map((s) => s.selector)).toEqual(['{job="a"}']);
+  });
 });
