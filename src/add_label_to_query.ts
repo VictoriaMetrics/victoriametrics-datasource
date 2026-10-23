@@ -117,12 +117,18 @@ function getSelectorEdits(query: string, selector: SyntaxNode, rendered: string,
   // The group ends with its last matcher, so the filter lands before a trailing comma, `or`, comment or whitespace.
   return groups
     .filter((group) => !labelExists(query, group, filter))
-    .map((group) => ({ at: group.to, text: `, ${rendered}` }));
+    .map((group) => ({ at: getGroupInsertPosition(group), text: `, ${rendered}` }));
 }
 
 /**
  * LabelMatchList is left-recursive: LabelMatchList > [LabelMatchList, ",", LabelMatcher].
  */
+function getGroupInsertPosition(group: SyntaxNode): number {
+  // A trailing comma can be recovered inside the group, so anchor on the last matcher instead of the group end.
+  const matchers = getGroupMatchers(group);
+  return matchers.length ? matchers[matchers.length - 1].to : group.to;
+}
+
 function getGroupMatchers(group: SyntaxNode): SyntaxNode[] {
   const matchers: SyntaxNode[] = [];
   for (let child = group.firstChild; child; child = child.nextSibling) {

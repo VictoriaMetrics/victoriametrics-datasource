@@ -979,6 +979,14 @@ describe('PrometheusDatasource for POST', () => {
 });
 
 describe('modifyQuery', () => {
+  it('keeps a numeric Infinity value as +Inf', () => {
+    const instanceSettings = { jsonData: {} } as unknown as DataSourceInstanceSettings<PromOptions>;
+    const ds = new PrometheusDatasource(instanceSettings, templateSrvStub, timeSrvStub);
+    const action = { options: { key: 'le', value: Infinity as unknown as string }, type: 'ADD_FILTER' };
+    const result = ds.modifyQuery({ expr: 'up', refId: 'A' }, action);
+    expect(result.expr).toBe('up{le="+Inf"}');
+  });
+
   describe('when called with ADD_FILTER', () => {
     describe('and query has no labels', () => {
       it('then the correct label should be added', () => {

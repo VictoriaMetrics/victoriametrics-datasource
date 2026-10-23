@@ -490,7 +490,7 @@ export class PrometheusDatasource
       case 'ADD_FILTER': {
         const { key, value } = action.options ?? {};
         if (key && value) {
-          expression = addLabelToQuery(expression, key, escapeLabelValueInExactSelector(String(value)));
+          expression = addLabelToQuery(expression, key, typeof value === 'string' ? escapeLabelValueInExactSelector(value) : value);
         }
 
         break;
@@ -498,7 +498,7 @@ export class PrometheusDatasource
       case 'ADD_FILTER_OUT': {
         const { key, value } = action.options ?? {};
         if (key && value) {
-          expression = addLabelToQuery(expression, key, escapeLabelValueInExactSelector(String(value)), '!=');
+          expression = addLabelToQuery(expression, key, typeof value === 'string' ? escapeLabelValueInExactSelector(value) : value, '!=');
         }
         break;
       }
@@ -565,7 +565,7 @@ export class PrometheusDatasource
 
     return resultFilters.reduce((acc: string, filter: { key: string, operator: string, value: string }) => {
       const { key, operator } = filter;
-      const value = escapeLabelValueInExactSelector(String(filter.value));
+      const value = typeof filter.value === 'string' ? escapeLabelValueInExactSelector(filter.value) : filter.value;
       return addLabelToQuery(acc, key, value, operator);
     }, expr);
   }

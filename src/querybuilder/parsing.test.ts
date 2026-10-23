@@ -546,6 +546,11 @@ describe('WITH templates and or-separated matchers are not supported in the buil
     expect(result.errors.length).toBeGreaterThan(0);
     expect(result.query.metric).toBe('up');
   });
+  it('reports an error for a clean WITH expression', () => {
+    const result = buildVisualQueryFromString('WITH (x = 1) up');
+    expect(result.errors.length).toBeGreaterThan(0);
+    expect(result.query.metric).toBe('up');
+  });
   it('reports an error for a template call', () => {
     expect(buildVisualQueryFromString('WITH (f(x) = rate(x[5m])) f(up)').errors.length).toBeGreaterThan(0);
   });

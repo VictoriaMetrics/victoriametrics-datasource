@@ -177,6 +177,15 @@ describe('or-separated label matchers', () => {
 });
 
 describe('text preservation', () => {
+  it('inserts before a trailing comma after or-groups', () => {
+    expect(addLabelToQuery('foo{a="b" or c="d",}', 'bar', 'baz')).toBe('foo{a="b", bar="baz" or c="d", bar="baz",}');
+  });
+
+  it('fills an empty matcher list', () => {
+    expect(addLabelToQuery('foo{}', 'bar', 'baz')).toBe('foo{bar="baz"}');
+    expect(addLabelToQuery('foo{ }', 'bar', 'baz')).toBe('foo{bar="baz" }');
+  });
+
   it('inserts before a trailing comma and keeps it', () => {
     expect(addLabelToQuery('foo{a="b",}', 'bar', 'baz')).toBe('foo{a="b", bar="baz",}');
   });
