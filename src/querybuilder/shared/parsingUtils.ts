@@ -17,8 +17,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { SyntaxNode, TreeCursor } from '@lezer/common';
+import { LabelName, MatchOp, StringLiteral } from 'lezer-metricsql';
 
-import { QueryBuilderOperation } from './types';
+import { QueryBuilderLabelFilter, QueryBuilderOperation } from './types';
 
 // Although 0 isn't explicitly provided in the lezer-promql library as the error node ID, it does appear to be the ID of error nodes within lezer.
 export const ErrorId = 0;
@@ -103,6 +104,21 @@ export function getString(expr: string, node: SyntaxNode | TreeCursor | null | u
     return '';
   }
   return returnVariables(expr.substring(node.from, node.to));
+}
+
+export function getLabel(
+  expr: string,
+  node: SyntaxNode,
+  labelType: typeof LabelName
+): QueryBuilderLabelFilter {
+  const label = getString(expr, node.getChild(labelType));
+  const op = getString(expr, node.getChild(MatchOp));
+  const value = getString(expr, node.getChild(StringLiteral)).replace(/^["'`]|["'`]$/g, '');
+  return {
+    label,
+    op,
+    value,
+  };
 }
 
 /**

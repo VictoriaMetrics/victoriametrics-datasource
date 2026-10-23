@@ -16,7 +16,6 @@ import {
   LabelMatcher,
   LabelMatchers,
   LabelName,
-  MatchOp,
   MetricIdentifier,
   NumberLiteral,
   On,
@@ -37,13 +36,14 @@ import {
   ErrorId,
   ErrorName,
   getAllByType,
+  getLabel,
   getLeftMostChild,
   getString,
   makeBinOp,
   makeError,
   replaceVariables,
 } from './shared/parsingUtils';
-import { QueryBuilderLabelFilter, QueryBuilderOperation } from './shared/types';
+import { QueryBuilderOperation } from './shared/types';
 import { PromVisualQuery, PromVisualQueryBinary } from './types';
 
 /**
@@ -208,21 +208,6 @@ function handleChildren(expr: string, node: SyntaxNode, context: InternalContext
 // TODO check if we still need this
 function isIntervalVariableError(node: SyntaxNode) {
   return node.prevSibling?.type.id === Expr && node.prevSibling?.firstChild?.type.id === VectorSelector;
-}
-
-function getLabel(
-  expr: string,
-  node: SyntaxNode,
-  labelType: typeof LabelName
-): QueryBuilderLabelFilter {
-  const label = getString(expr, node.getChild(labelType));
-  const op = getString(expr, node.getChild(MatchOp));
-  const value = getString(expr, node.getChild(StringLiteral)).replace(/^["'`]|["'`]$/g, '');
-  return {
-    label,
-    op,
-    value,
-  };
 }
 
 // Functions whose first argument is a range vector (e.g. `rate(m[5m])`)
