@@ -30,6 +30,12 @@ describe('addLabelToQuery()', () => {
     ).toBe('sum(rate(prometheus_tsdb_compaction_chunk_size_bytes_bucket{le="+Inf"}[5m])) by (le)');
   });
 
+  it('should convert number -Infinity to -Inf', () => {
+    expect(addLabelToQuery('histogram_quantile(0.9, foo)', 'le', -Infinity)).toBe(
+      'histogram_quantile(0.9, foo{le="-Inf"})'
+    );
+  });
+
   it('should handle selectors with punctuation', () => {
     expect(addLabelToQuery('foo{instance="my-host.com:9100"}', 'bar', 'baz')).toBe(
       'foo{instance="my-host.com:9100", bar="baz"}'
@@ -192,6 +198,11 @@ describe('text preservation', () => {
 
   it('inserts before a trailing comment', () => {
     expect(addLabelToQuery('foo{a="b" # c\n}', 'bar', 'baz')).toBe('foo{a="b", bar="baz" # c\n}');
+  });
+
+  it('inserts right after a template reference matcher, before its trailing whitespace', () => {
+    expect(addLabelToQuery('up{f }', 'k', 'v')).toBe('up{f, k="v" }');
+    expect(addLabelToQuery('up{f or job="a"}', 'k', 'v')).toBe('up{f, k="v" or job="a", k="v"}');
   });
 
   it('keeps whitespace around matchers', () => {

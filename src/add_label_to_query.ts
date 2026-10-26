@@ -74,7 +74,7 @@ export function addLabelToQuery(query: string, key: string, value: string | numb
 
 function toLabelFilter(key: string, value: string | number, operator: string): QueryBuilderLabelFilter {
   // We need to make sure that we convert the value back to string because it may be a number
-  const transformedValue = value === Infinity ? '+Inf' : value.toString();
+  const transformedValue = value === Infinity ? '+Inf' : value === -Infinity ? '-Inf' : value.toString();
   return { label: key, op: operator, value: transformedValue };
 }
 
@@ -117,16 +117,21 @@ function getSelectorEdits(query: string, selector: SyntaxNode, rendered: string,
   // The group ends with its last matcher, so the filter lands before a trailing comma, `or`, comment or whitespace.
   return groups
     .filter((group) => !labelExists(query, group, filter))
-    .map((group) => ({ at: getGroupInsertPosition(group), text: `, ${rendered}` }));
+    .map((group) => ({ at: getGroupInsertPosition(query, group), text: `, ${rendered}` }));
 }
 
 /**
  * LabelMatchList is left-recursive: LabelMatchList > [LabelMatchList, ",", LabelMatcher].
  */
-function getGroupInsertPosition(group: SyntaxNode): number {
+function getGroupInsertPosition(query: string, group: SyntaxNode): number {
   // A trailing comma can be recovered inside the group, so anchor on the last matcher instead of the group end.
   const matchers = getGroupMatchers(group);
-  return matchers.length ? matchers[matchers.length - 1].to : group.to;
+  let at = matchers.length ? matchers[matchers.length - 1].to : group.to;
+  // A matcher recovered from a template reference (`{f }`) spans its trailing whitespace; keep it after the filter.
+  while (at > group.from && /\s/.test(query[at - 1])) {
+    at--;
+  }
+  return at;
 }
 
 function getGroupMatchers(group: SyntaxNode): SyntaxNode[] {
