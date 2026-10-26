@@ -63,7 +63,7 @@ export default function useSaveWithTemplate({
       if (isExplore) {
         onQueryChange({ ...query, withTemplate: value })
       } else {
-        await updateDashboardVariable(value, { panelId, refId: query.refId })
+        await updateDashboardVariable(value, { panelId, refId: query.refId, withTemplate: query.withTemplate })
         datasource.withTemplatesUpdate(
           [...datasource.withTemplates.filter(t => t.uid !== dashboardUID), { uid: dashboardUID, expr: value }]
         )
