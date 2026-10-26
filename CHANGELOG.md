@@ -7,6 +7,7 @@
 
 * BUGFIX: keep WITH templates intact when ad hoc filters or the `Filter for value` action in Explore add label filters to a query. Previously such queries were rewritten into invalid MetricsQL and failed with a `422` error. Filters are now also added to every `or` alternative inside `{...}` and to metrics defined inside WITH templates, and label values are escaped. See [#551](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/551).
 * BUGFIX: fix WITH templates in Explore: a saved template used to be ignored, now it is applied to the query and kept after a page reload, in shared Explore links and after `Add to dashboard`.
+* BUGFIX: show the metrics of a query that uses a WITH template in the `Export data` dialog. Previously such a query had no selectors to export.
 
 ## v0.26.1
 
