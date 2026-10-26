@@ -66,12 +66,12 @@ describe('useSaveWithTemplate', () => {
   });
 
   it('keeps the dashboard variable flow outside Explore', async () => {
-    const { result, onQueryChange } = setup({ app: CoreApp.Dashboard, dashboardUID: 'd1' });
+    const { result, onQueryChange } = setup({ app: CoreApp.Dashboard, dashboardUID: 'd1', panelId: 7 });
     await act(() => result.current.handleSaveClick('f = {a="b"}'));
     expect(result.current.showConfirm).toBe(true);
     expect(updateDashboardVariable).not.toHaveBeenCalled();
     await act(() => result.current.handleConfirmedSave());
-    expect(updateDashboardVariable).toHaveBeenCalledWith('f = {a="b"}');
+    expect(updateDashboardVariable).toHaveBeenCalledWith('f = {a="b"}', { panelId: 7, refId: 'A' });
     expect(onQueryChange).toHaveBeenCalledWith({ ...query, withTemplate: '$withTemplate' });
   });
 

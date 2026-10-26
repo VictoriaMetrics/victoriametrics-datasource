@@ -1,6 +1,6 @@
 import { TemplateSrv } from '@grafana/runtime';
 
-import { isWithTemplateReference, resolveWithTemplate } from './resolveWithTemplate';
+import { getInlineWithTemplate, isWithTemplateReference, resolveWithTemplate } from './resolveWithTemplate';
 
 const templateSrvWith = (value?: string) => ({
   getVariables: () => (value === undefined ? [] : [{ type: 'constant', name: 'withTemplate', current: { value } }]),
@@ -27,7 +27,18 @@ describe('resolveWithTemplate', () => {
     expect(resolveWithTemplate(undefined, templateSrvWith(), [{ uid: 'd1', expr: 'l = up' }], 'd2')).toBeUndefined();
   });
 
-  it('ignores an empty withTemplate value', () => {
+  it('ignores an empty or whitespace-only withTemplate value', () => {
     expect(resolveWithTemplate({ withTemplate: '' }, templateSrvWith('v = up'), [], 'd1')).toBe('v = up');
+    expect(resolveWithTemplate({ withTemplate: ' \n ' }, templateSrvWith('v = up'), [], 'd1')).toBe('v = up');
+  });
+});
+
+describe('getInlineWithTemplate', () => {
+  it('returns the trimmed template text and nothing for empty values or references', () => {
+    expect(getInlineWithTemplate(' f = {a="b"} \n')).toBe('f = {a="b"}');
+    expect(getInlineWithTemplate('   ')).toBeUndefined();
+    expect(getInlineWithTemplate('')).toBeUndefined();
+    expect(getInlineWithTemplate(undefined)).toBeUndefined();
+    expect(getInlineWithTemplate('$withTemplate')).toBeUndefined();
   });
 });

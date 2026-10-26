@@ -14,6 +14,8 @@ interface UseSaveWithTemplateParams {
   datasource: PrometheusDatasource;
   dashboardUID: string;
   app?: CoreApp;
+  /** Id of the dashboard panel the query belongs to, undefined outside dashboards */
+  panelId?: number;
   query: PromQuery;
   onQueryChange: (query: PromQuery) => void;
   onTemplateSave?: (expr: string) => void;
@@ -35,6 +37,7 @@ export default function useSaveWithTemplate({
   datasource,
   dashboardUID,
   app,
+  panelId,
   query,
   onQueryChange,
   onTemplateSave,
@@ -60,7 +63,7 @@ export default function useSaveWithTemplate({
       if (isExplore) {
         onQueryChange({ ...query, withTemplate: value })
       } else {
-        await updateDashboardVariable(value)
+        await updateDashboardVariable(value, { panelId, refId: query.refId })
         datasource.withTemplatesUpdate(
           [...datasource.withTemplates.filter(t => t.uid !== dashboardUID), { uid: dashboardUID, expr: value }]
         )
@@ -77,7 +80,7 @@ export default function useSaveWithTemplate({
     } finally {
       setIsLoading(false)
     }
-  }, [updateDashboardVariable, datasource, dashboardUID, isExplore, query, onQueryChange, onTemplateSave, onDraftReset, handleClose])
+  }, [updateDashboardVariable, datasource, dashboardUID, isExplore, panelId, query, onQueryChange, onTemplateSave, onDraftReset, handleClose])
 
   const handleSaveClick = useCallback(async (value: string) => {
     const isValid = await isValidExpr(value)

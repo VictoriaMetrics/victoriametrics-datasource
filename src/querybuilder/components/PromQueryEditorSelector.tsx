@@ -186,6 +186,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
         <WithTemplateConfig
           app={app}
           dashboardUID={dashboardUID}
+          panelId={data?.request?.panelId}
           datasource={datasource}
           query={query}
           onQueryChange={onChange}

@@ -16,6 +16,7 @@ interface Props {
   datasource: PrometheusDatasource;
   dashboardUID: string;
   app?: CoreApp;
+  panelId?: number;
   query: PromQuery;
   onQueryChange: (query: PromQuery) => void;
   onTemplateSave?: (expr: string) => void;
@@ -23,7 +24,7 @@ interface Props {
   handleClose: () => void;
 }
 
-const WithTemplateBody: FC<Props> = ({ value, onValueChange, datasource, dashboardUID, app, query, onQueryChange, onTemplateSave, onDraftReset, handleClose }) => {
+const WithTemplateBody: FC<Props> = ({ value, onValueChange, datasource, dashboardUID, app, panelId, query, onQueryChange, onTemplateSave, onDraftReset, handleClose }) => {
   const styles = useStyles2(getStyles);
 
   const {
@@ -34,7 +35,7 @@ const WithTemplateBody: FC<Props> = ({ value, onValueChange, datasource, dashboa
     handleSaveClick,
     handleConfirmedSave,
     dismissConfirm,
-  } = useSaveWithTemplate({ datasource, dashboardUID, app, query, onQueryChange, onTemplateSave, onDraftReset, handleClose });
+  } = useSaveWithTemplate({ datasource, dashboardUID, app, panelId, query, onQueryChange, onTemplateSave, onDraftReset, handleClose });
 
   return (
     <div className={styles.body}>

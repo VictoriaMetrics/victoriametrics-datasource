@@ -15,6 +15,15 @@ export const WITH_TEMPLATE_VARIABLE_REFERENCE = `$${WITH_TEMPLATE_VARIABLE_NAME}
 export const isWithTemplateReference = (value: string | undefined): boolean => !!value && value.startsWith('$');
 
 /**
+ * The template text stored in the query itself (Explore), or undefined when the field is empty,
+ * whitespace only or a variable reference.
+ */
+export const getInlineWithTemplate = (value: string | undefined): string | undefined => {
+  const text = value?.trim();
+  return text && !isWithTemplateReference(text) ? text : undefined;
+};
+
+/**
  * Resolves the WITH template text for a query: the template stored in the query itself (Explore) wins,
  * then the dashboard variable, then the legacy datasource storage keyed by dashboard uid (or app name).
  */
@@ -24,9 +33,9 @@ export const resolveWithTemplate = (
   withTemplates: WithTemplate[],
   dashboardUID: string
 ): string | undefined => {
-  const queryTemplate = query?.withTemplate;
-  if (queryTemplate && !isWithTemplateReference(queryTemplate)) {
-    return queryTemplate;
-  }
-  return getWithTemplateVariableValue(templateSrv) || withTemplates.find(t => t.uid === dashboardUID)?.expr;
+  return (
+    getInlineWithTemplate(query?.withTemplate) ||
+    getWithTemplateVariableValue(templateSrv) ||
+    withTemplates.find(t => t.uid === dashboardUID)?.expr
+  );
 };

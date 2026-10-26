@@ -12,4 +12,20 @@ describe('migrateWithTemplateQueries', () => {
     expect(panels[0].targets!.map((t) => t.withTemplate)).toEqual(['$withTemplate', '$withTemplate', 'f = {a="b"}']);
     expect(panels[1].panels![0].targets.map((t) => t.withTemplate)).toEqual(['$withTemplate', '']);
   });
+
+  it('treats a whitespace-only template as missing', () => {
+    const panels = [{ datasource: { type: DATASOURCE_TYPE }, targets: [{ withTemplate: ' \n ' }] }];
+    migrateWithTemplateQueries(panels as any);
+    expect(panels[0].targets[0].withTemplate).toBe('$withTemplate');
+  });
+
+  it('switches the edited query to the variable even when it holds an inline template', () => {
+    const panels = [
+      { id: 1, datasource: { type: DATASOURCE_TYPE }, targets: [{ refId: 'A', withTemplate: 'f = {a="b"}' }, { refId: 'B', withTemplate: 'g = up' }] },
+      { panels: [{ id: 2, datasource: { type: DATASOURCE_TYPE }, targets: [{ refId: 'A', withTemplate: 'h = up' }] }] },
+    ];
+    migrateWithTemplateQueries(panels as any, { panelId: 2, refId: 'A' });
+    expect(panels[0].targets!.map((t) => t.withTemplate)).toEqual(['f = {a="b"}', 'g = up']);
+    expect(panels[1].panels![0].targets[0].withTemplate).toBe('$withTemplate');
+  });
 });

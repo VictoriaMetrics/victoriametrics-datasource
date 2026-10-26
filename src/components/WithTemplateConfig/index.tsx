@@ -19,9 +19,11 @@ export interface WithTemplateConfigProps {
   resolvedWithTemplate?: string;
   onTemplateSave?: (expr: string) => void;
   app?: CoreApp;
+  /** Id of the dashboard panel the query belongs to, undefined outside dashboards */
+  panelId?: number;
 }
 
-const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ dashboardUID, datasource, query, onQueryChange, resolvedWithTemplate, onTemplateSave, app }) => {
+const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ dashboardUID, datasource, query, onQueryChange, resolvedWithTemplate, onTemplateSave, app, panelId }) => {
   const [isValidDashboard, setIsValidDashboard] = useState(app === CoreApp.Explore)
   const [dashboardResponse, setDashboardResponse] = useState<DashboardResponse | null>()
 
@@ -83,6 +85,7 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ dashboardUID, datasou
             datasource={datasource}
             dashboardUID={dashboardUID || app || ''}
             app={app}
+            panelId={panelId}
             query={query}
             onQueryChange={onQueryChange}
             onTemplateSave={onTemplateSave}

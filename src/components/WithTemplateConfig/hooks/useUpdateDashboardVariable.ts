@@ -6,27 +6,36 @@ import { getBackendSrv } from '@grafana/runtime';
 import { DATASOURCE_TYPE } from '../../../consts';
 import { WITH_TEMPLATE_VARIABLE_NAME } from '../constants';
 import { DashboardResponse, DashboardVariable } from '../types';
-import { isWithTemplateReference, WITH_TEMPLATE_VARIABLE_REFERENCE } from '../utils/resolveWithTemplate';
+import { getInlineWithTemplate, WITH_TEMPLATE_VARIABLE_REFERENCE } from '../utils/resolveWithTemplate';
 
 interface DashboardPanel {
+  id?: number;
   datasource?: { type?: string };
-  targets?: Array<{ withTemplate?: string; datasource?: { type?: string } }>;
+  targets?: Array<{ refId?: string; withTemplate?: string; datasource?: { type?: string } }>;
   panels?: DashboardPanel[];
 }
 
-// Point all queries of our datasource type that have no template or a variable reference at the dashboard variable;
-// inline template texts (e.g. added from Explore) are kept as is
-export function migrateWithTemplateQueries(panels: DashboardPanel[] | undefined): void {
+/** The query whose template is being saved: its target switches to the variable even if it held an inline template */
+export interface EditedTarget {
+  panelId?: number;
+  refId?: string;
+}
+
+// Point all queries of our datasource type at the dashboard variable, except the ones holding an inline template
+// text (e.g. added from Explore), which keep it; the edited query always switches to the variable
+export function migrateWithTemplateQueries(panels: DashboardPanel[] | undefined, edited?: EditedTarget): void {
   if (!panels) { return }
   for (const panel of panels) {
     // Handle row panels with nested panels
     if (panel.panels) {
-      migrateWithTemplateQueries(panel.panels);
+      migrateWithTemplateQueries(panel.panels, edited);
     }
     if (!panel.targets) { continue }
     for (const target of panel.targets) {
       const dsType = target.datasource?.type || panel.datasource?.type;
-      if (dsType === DATASOURCE_TYPE && (!target.withTemplate || isWithTemplateReference(target.withTemplate))) {
+      if (dsType !== DATASOURCE_TYPE) { continue }
+      const isEdited = edited?.panelId !== undefined && panel.id === edited.panelId && target.refId === edited.refId;
+      if (isEdited || !getInlineWithTemplate(target.withTemplate)) {
         target.withTemplate = WITH_TEMPLATE_VARIABLE_REFERENCE;
       }
     }
@@ -41,7 +50,7 @@ export class DashboardVersionConflictError extends Error {
 }
 
 export default (dashboardUID: string) => {
-  const updateDashboardVariable = useCallback(async (value: string) => {
+  const updateDashboardVariable = useCallback(async (value: string, edited?: EditedTarget) => {
     const response = await lastValueFrom(getBackendSrv().fetch<DashboardResponse>({
       url: `/api/dashboards/uid/${dashboardUID}`,
       method: 'GET',
@@ -75,8 +84,8 @@ export default (dashboardUID: string) => {
       // Grafana resolves the dashboard by uid when id is omitted.
       const { id: _, ...dashboardWithoutId } = dashboard;
 
-      // Migrate all queries to reference the dashboard variable
-      migrateWithTemplateQueries(dashboardWithoutId.panels as DashboardPanel[] | undefined);
+      // Migrate the queries to reference the dashboard variable
+      migrateWithTemplateQueries(dashboardWithoutId.panels as DashboardPanel[] | undefined, edited);
 
       await lastValueFrom(getBackendSrv().fetch({
         url: '/api/dashboards/db',
