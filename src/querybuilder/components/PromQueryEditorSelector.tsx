@@ -27,9 +27,8 @@ import PrettifyQuery from '../../components/PrettifyQuery';
 import { EditorHeader, EditorRows, FlexItem, InlineSelect, Space } from '../../components/QueryEditor';
 import VmuiLink from '../../components/VmuiLink';
 import WithTemplateConfig from '../../components/WithTemplateConfig';
-import { WITH_TEMPLATE_VARIABLE_NAME } from '../../components/WithTemplateConfig/constants';
 import { getArrayFromTemplate } from '../../components/WithTemplateConfig/utils/getArrayFromTemplate';
-import { resolveWithTemplate } from '../../components/WithTemplateConfig/utils/resolveWithTemplate';
+import { resolveWithTemplate, WITH_TEMPLATE_VARIABLE_REFERENCE } from '../../components/WithTemplateConfig/utils/resolveWithTemplate';
 import { PromQueryEditorProps } from '../../components/types';
 import PrometheusLanguageProvider from '../../language_provider';
 import { PromQuery } from '../../types';
@@ -87,7 +86,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   // and a stale `query` prop right after saving would overwrite the saved template with the reference.
   useEffect(() => {
     if (app !== CoreApp.Explore && resolvedWithTemplate && !query.withTemplate) {
-      onChange({ ...query, withTemplate: `$${WITH_TEMPLATE_VARIABLE_NAME}` });
+      onChange({ ...query, withTemplate: WITH_TEMPLATE_VARIABLE_REFERENCE });
     }
   }, [resolvedWithTemplate, query, onChange, app]);
 
