@@ -231,8 +231,12 @@ const keywordTokens = {
     with: With$1,
 };
 
+// Keyword maps are plain objects: look up own keys only, so names inherited from Object.prototype
+// (`constructor`, `__proto__`) stay ordinary identifiers.
+const lookupToken = (tokens, name) => (Object.prototype.hasOwnProperty.call(tokens, name) ? tokens[name] : -1);
+
 const specializeIdentifier = (value) => {
-    return keywordTokens[value.toLowerCase()] || -1;
+    return lookupToken(keywordTokens, value.toLowerCase());
 };
 
 const contextualKeywordTokens = {
@@ -260,7 +264,7 @@ const contextualKeywordTokens = {
 };
 
 const extendIdentifier = (value) => {
-    return contextualKeywordTokens[value.toLowerCase()] || -1;
+    return lookupToken(contextualKeywordTokens, value.toLowerCase());
 };
 
 const isIdentStart = (ch) => (ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122) || ch === 95 /* _ */ || ch === 58 /* : */;
@@ -293,7 +297,7 @@ const templateIdentifier = new ExternalTokenizer((input, stack) => {
         return;
     }
     const lower = name.toLowerCase();
-    if (functionNames.has(lower) || lower in contextualKeywordTokens || lower in keywordTokens) {
+    if (functionNames.has(lower) || lookupToken(contextualKeywordTokens, lower) !== -1 || lookupToken(keywordTokens, lower) !== -1) {
         return;
     }
     input.acceptToken(TemplateIdentifier$1, len);

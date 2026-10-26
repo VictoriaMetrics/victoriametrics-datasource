@@ -202,4 +202,16 @@ describe('metricsql grammar', () => {
   it('treats lowercase with as the keyword', () => {
     expect(dump('with (a = up) a')).toContain("WithExpr 'with (a = up) a'");
   });
+
+  it('does not mistake names inherited from Object.prototype for keywords', () => {
+    for (const name of ['constructor', '__proto__']) {
+      const selector = dump(`${name}{a="b"}`);
+      expect(selector).not.toContain(' ERR ');
+      expect(selector).toContain(`MetricIdentifier '${name}'`);
+
+      const template = dump(`WITH (${name}(x) = x) ${name}(up)`);
+      expect(template).not.toContain(' ERR ');
+      expect(template).toContain(`TemplateCall '${name}(up)'`);
+    }
+  });
 });
