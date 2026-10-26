@@ -1318,6 +1318,42 @@ describe('processTargetV2', () => {
     });
   });
 
+  it('merges the template stored in the query itself (Explore link)', () => {
+    processTargetTemplateSrv.getVariables.mockReturnValue([]);
+    datasource.withTemplates = [];
+    const target = { expr: 'rate(up{f})', refId: 'A', withTemplate: 'f = {container="vmagent"}' } as any;
+    const request = {
+      targets: [],
+      panelId: 1,
+      app: 'explore',
+      timezone: 'utc',
+      range: { to: dateTime('2026-09-07T08:00:00Z') },
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    const result = datasource.processTargetV2(target, request) as PromQuery;
+
+    expect(result.expr).toBe('WITH(\n  f = {container="vmagent"}\n)\nrate(up{f})');
+    expect(result.withTemplate).toBe('f = {container="vmagent"}');
+  });
+
+  it('prefers the template stored in the query over the dashboard variable', () => {
+    processTargetTemplateSrv.getVariables.mockReturnValue([
+      { type: 'constant', name: 'withTemplate', current: { value: 'f = {job="variable"}' } },
+    ]);
+    const target = { expr: 'rate(up{f})', refId: 'A', withTemplate: 'f = {job="inline"}' } as any;
+    const request = {
+      dashboardUID: 'dashboard_1',
+      targets: [],
+      panelId: 1,
+      app: 'dashboard',
+      timezone: 'utc',
+      range: { to: dateTime('2026-09-07T08:00:00Z') },
+    } as unknown as DataQueryRequest<PromQuery>;
+
+    expect((datasource.processTargetV2(target, request) as PromQuery).expr)
+      .toBe('WITH(\n  f = {job="inline"}\n)\nrate(up{f})');
+  });
+
   it('should prefer dashboard variable over datasource.withTemplates', () => {
     processTargetTemplateSrv.getVariables.mockReturnValue([
       { type: 'constant', name: 'withTemplate', current: { value: 'sr = from_variable' } },

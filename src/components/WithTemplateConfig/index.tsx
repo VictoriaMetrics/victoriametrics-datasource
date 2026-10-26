@@ -82,6 +82,7 @@ const WithTemplateConfig: FC<WithTemplateConfigProps> = ({ dashboardUID, datasou
             onValueChange={setDraftValue}
             datasource={datasource}
             dashboardUID={dashboardUID || app || ''}
+            app={app}
             query={query}
             onQueryChange={onQueryChange}
             onTemplateSave={onTemplateSave}

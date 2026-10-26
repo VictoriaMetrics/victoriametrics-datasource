@@ -6,8 +6,7 @@ import { getBackendSrv, isFetchError } from '@grafana/runtime';
 import { DATASOURCE_TYPE } from '../../../consts';
 import { WITH_TEMPLATE_VARIABLE_NAME } from '../constants';
 import { DashboardResponse, DashboardVariable } from '../types';
-
-const VARIABLE_REFERENCE = `$${WITH_TEMPLATE_VARIABLE_NAME}`;
+import { isWithTemplateReference, WITH_TEMPLATE_VARIABLE_REFERENCE } from '../utils/resolveWithTemplate';
 
 interface DashboardPanel {
   datasource?: { type?: string };
@@ -15,8 +14,9 @@ interface DashboardPanel {
   panels?: DashboardPanel[];
 }
 
-// Migrate all queries of our datasource type to reference the dashboard variable
-function migrateWithTemplateQueries(panels: DashboardPanel[] | undefined): void {
+// Point all queries of our datasource type that have no template or a variable reference at the dashboard variable;
+// inline template texts (e.g. added from Explore) are kept as is
+export function migrateWithTemplateQueries(panels: DashboardPanel[] | undefined): void {
   if (!panels) { return }
   for (const panel of panels) {
     // Handle row panels with nested panels
@@ -26,8 +26,8 @@ function migrateWithTemplateQueries(panels: DashboardPanel[] | undefined): void 
     if (!panel.targets) { continue }
     for (const target of panel.targets) {
       const dsType = target.datasource?.type || panel.datasource?.type;
-      if (dsType === DATASOURCE_TYPE && target.withTemplate !== VARIABLE_REFERENCE) {
-        target.withTemplate = VARIABLE_REFERENCE;
+      if (dsType === DATASOURCE_TYPE && (!target.withTemplate || isWithTemplateReference(target.withTemplate))) {
+        target.withTemplate = WITH_TEMPLATE_VARIABLE_REFERENCE;
       }
     }
   }

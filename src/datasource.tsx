@@ -48,7 +48,7 @@ import { addLabelToQuery } from './add_label_to_query';
 import { AnnotationQueryEditor } from './components/Annotations/AnnotationQueryEditor';
 import { WithTemplate } from './components/WithTemplateConfig/types';
 import { mergeTemplateWithQuery } from './components/WithTemplateConfig/utils/getArrayFromTemplate';
-import { getWithTemplateVariableValue } from './components/WithTemplateConfig/utils/getWithTemplateVariableValue';
+import { resolveWithTemplate } from './components/WithTemplateConfig/utils/resolveWithTemplate';
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from './consts';
 import PrometheusLanguageProvider from './language_provider';
 import { escapeLabelValueInExactSelector, expandRecordingRules, getVictoriaMetricsTime } from './language_utils';
@@ -198,19 +198,10 @@ export class PrometheusDatasource
     return this.templateSrv.containsTemplate(target.expr);
   }
 
-  private resolveWithTemplateExpr(target: PromQuery, dashboardUID: string): WithTemplate | undefined {
-    // Read raw template value directly from the constant variable to avoid
-    // Grafana's automatic interpolation of nested variables (e.g. $job inside the template).
-    // Variables inside the template will be resolved later when the merged expr
-    // goes through applyTemplateVariables with the correct format function.
-    const templateExpr = getWithTemplateVariableValue(this.templateSrv)
-      || this.withTemplates.find(t => t.uid === dashboardUID)?.expr;
-    return templateExpr ? { uid: dashboardUID, expr: templateExpr } : undefined;
-  }
-
   processTargetV2(target: PromQuery, request: DataQueryRequest<PromQuery>) {
     const dashboardUID = request.dashboardUID || request.app || '';
-    const template = this.resolveWithTemplateExpr(target, dashboardUID);
+    const templateExpr = resolveWithTemplate(target, this.templateSrv, this.withTemplates, dashboardUID);
+    const template = templateExpr ? { uid: dashboardUID, expr: templateExpr } : undefined;
     const expr = mergeTemplateWithQuery(target.expr, template)
 
     const baseTarget = {
@@ -604,8 +595,8 @@ export class PrometheusDatasource
       legendFormat: this.templateSrv.replace(target.legendFormat, variables),
       expr: exprWithAdHocFilters,
       interval: this.templateSrv.replace(target.interval, variables),
-      // withTemplate is a variable reference ("$withTemplate") used by processTargetV2
-      // to read the raw template value. It does not need interpolation here.
+      // withTemplate is either a variable reference ("$withTemplate") or the template text itself;
+      // processTargetV2 resolves it to the raw template, so it does not need interpolation here.
       withTemplate: target.withTemplate,
     };
   }

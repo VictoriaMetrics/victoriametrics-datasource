@@ -3,10 +3,11 @@ import { Observable, of, throwError } from 'rxjs';
 
 import { BackendSrvRequest, FetchResponse, getBackendSrv, setBackendSrv } from '@grafana/runtime';
 
+import { DATASOURCE_TYPE } from '../../../consts';
 import { WITH_TEMPLATE_VARIABLE_NAME } from '../constants';
 import { DashboardResponse } from '../types';
 
-import useUpdateDashboardVariable, { DashboardVersionConflictError } from './useUpdateDashboardVariable';
+import useUpdateDashboardVariable, { DashboardVersionConflictError, migrateWithTemplateQueries } from './useUpdateDashboardVariable';
 
 function makeDashboardResponse(): DashboardResponse {
   return {
@@ -91,5 +92,17 @@ describe('useUpdateDashboardVariable', () => {
     const { result } = renderHook(() => useUpdateDashboardVariable('dashboard-uid'));
 
     await expect(result.current.updateDashboardVariable('up{job="foo"}')).rejects.toBe(error);
+  });
+});
+
+describe('migrateWithTemplateQueries', () => {
+  it('migrates empty references to the variable but keeps inline templates', () => {
+    const panels = [
+      { datasource: { type: DATASOURCE_TYPE }, targets: [{ withTemplate: undefined }, { withTemplate: '$withTemplate' }, { withTemplate: 'f = {a="b"}' }] },
+      { panels: [{ targets: [{ datasource: { type: DATASOURCE_TYPE }, withTemplate: '' }, { datasource: { type: 'other' }, withTemplate: '' }] }] },
+    ];
+    migrateWithTemplateQueries(panels as any);
+    expect(panels[0].targets!.map((t) => t.withTemplate)).toEqual(['$withTemplate', '$withTemplate', 'f = {a="b"}']);
+    expect(panels[1].panels![0].targets.map((t) => t.withTemplate)).toEqual(['$withTemplate', '']);
   });
 });
