@@ -46,6 +46,7 @@ const setup = (overrides: Record<string, unknown> = {}) => {
 
 describe('useSaveWithTemplate', () => {
   beforeEach(() => {
+    jest.restoreAllMocks();
     jest.clearAllMocks();
     updateDashboardVariable.mockResolvedValue(undefined);
   });
@@ -74,7 +75,31 @@ describe('useSaveWithTemplate', () => {
     expect(onQueryChange).toHaveBeenCalledWith({ ...query, withTemplate: '$withTemplate' });
   });
 
+  it('shows the backend error message of a failed dashboard save', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    updateDashboardVariable.mockRejectedValue({
+      status: 403,
+      statusText: 'Forbidden',
+      data: { message: 'Access denied to this dashboard' },
+      config: {},
+    });
+    const { result } = setup({ app: CoreApp.Dashboard, dashboardUID: 'd1' });
+    await act(() => result.current.handleSaveClick('f = {a="b"}'));
+    await act(() => result.current.handleConfirmedSave());
+    expect(result.current.saveError).toBe('Access denied to this dashboard');
+  });
+
+  it('falls back to the status text when the backend error has no message', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    updateDashboardVariable.mockRejectedValue({ status: 502, statusText: 'Bad Gateway', data: '', config: {} });
+    const { result } = setup({ app: CoreApp.Dashboard, dashboardUID: 'd1' });
+    await act(() => result.current.handleSaveClick('f = {a="b"}'));
+    await act(() => result.current.handleConfirmedSave());
+    expect(result.current.saveError).toBe('Bad Gateway');
+  });
+
   it('shows a non-conflict save error in the dialog', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     updateDashboardVariable.mockRejectedValue(new Error('boom'));
     const { result, handleClose } = setup({ app: CoreApp.Dashboard, dashboardUID: 'd1' });
     await act(() => result.current.handleSaveClick('f = {a="b"}'));

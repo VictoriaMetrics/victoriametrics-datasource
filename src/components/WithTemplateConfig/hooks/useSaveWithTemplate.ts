@@ -4,6 +4,7 @@ import { CoreApp } from '@grafana/data';
 
 import { PrometheusDatasource } from '../../../datasource';
 import { PromQuery } from '../../../types';
+import { getErrorMessage } from '../../../utils/getErrorMessage';
 import { WITH_TEMPLATE_VARIABLE_REFERENCE } from '../utils/resolveWithTemplate';
 
 import useUpdateDashboardVariable from './useUpdateDashboardVariable';
@@ -71,7 +72,8 @@ export default function useSaveWithTemplate({
       onDraftReset()
       handleClose()
     } catch (e) {
-      setSaveError(e instanceof Error ? e.message : String(e))
+      console.error('Error saving WITH template:', e)
+      setSaveError(getErrorMessage(e))
     } finally {
       setIsLoading(false)
     }
