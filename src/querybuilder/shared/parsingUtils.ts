@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { SyntaxNode, TreeCursor } from '@lezer/common';
-import { LabelName, MatchOp, StringLiteral } from 'lezer-metricsql';
+import { SyntaxNode, Tree, TreeCursor } from '@lezer/common';
+import { LabelName, MatchOp, StringLiteral, WithArgName, WithArgParam } from 'lezer-metricsql';
 
 import { QueryBuilderLabelFilter, QueryBuilderOperation } from './types';
 
@@ -236,4 +236,20 @@ function jsonToText(
 
 function nodeToString(expr: string, node: SyntaxNode) {
   return node.name + ': ' + getString(expr, node);
+}
+
+/**
+ * Names of WITH templates and their parameters anywhere in the expression. Scoping is not tracked on purpose: a
+ * real metric named like a template of another scope is treated as a template reference too.
+ */
+export function collectTemplateNames(tree: Tree, expr: string): Set<string> {
+  const names = new Set<string>();
+  tree.iterate({
+    enter: ({ type, from, to }) => {
+      if (type.id === WithArgName || type.id === WithArgParam) {
+        names.add(expr.substring(from, to));
+      }
+    },
+  });
+  return names;
 }

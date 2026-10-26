@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { SyntaxNode, Tree } from '@lezer/common';
+import { SyntaxNode } from '@lezer/common';
 import {
   LabelMatcher,
   LabelMatchers,
@@ -22,11 +22,9 @@ import {
   MetricIdentifier,
   parser,
   VectorSelector,
-  WithArgName,
-  WithArgParam,
 } from 'lezer-metricsql';
 
-import { getLabel } from './querybuilder/shared/parsingUtils';
+import { collectTemplateNames, getLabel } from './querybuilder/shared/parsingUtils';
 import { QueryBuilderLabelFilter } from './querybuilder/shared/types';
 
 type Edit = { at: number; text: string };
@@ -80,22 +78,6 @@ function toLabelFilter(key: string, value: string | number, operator: string): Q
 
 function renderLabelFilter({ label, op, value }: QueryBuilderLabelFilter): string {
   return `${label}${op}"${value}"`;
-}
-
-/**
- * Names of WITH templates and their parameters anywhere in the query. Scoping is not tracked on purpose: a real
- * metric named like a template of another scope will not get the filter.
- */
-function collectTemplateNames(tree: Tree, query: string): Set<string> {
-  const names = new Set<string>();
-  tree.iterate({
-    enter: ({ type, from, to }) => {
-      if (type.id === WithArgName || type.id === WithArgParam) {
-        names.add(query.substring(from, to));
-      }
-    },
-  });
-  return names;
 }
 
 /**

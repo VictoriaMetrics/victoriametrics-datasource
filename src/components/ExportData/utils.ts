@@ -8,8 +8,10 @@ import {
   parser,
   StringLiteral,
   VectorSelector,
+  WithArg,
 } from 'lezer-metricsql';
 
+import { collectTemplateNames } from '../../querybuilder/shared/parsingUtils';
 import { convertLDMLLayoutToGoTimeLayout } from '../../utils/convertLDMLLayoutToGoTimeLayout';
 
 import { ExportFormat, TimestampFormat } from './types';
@@ -89,11 +91,17 @@ export function extractMetricSelectors(expr: string): MetricSelector[] {
   }
 
   const tree = parser.parse(expr);
+  const templateNames = collectTemplateNames(tree, expr);
   const seen = new Set<string>();
   const selectors: MetricSelector[] = [];
+  let templateDepth = 0;
 
   tree.iterate({
     enter: (nodeRef): false | void => {
+      if (nodeRef.type.id === WithArg) {
+        templateDepth++;
+        return;
+      }
       if (nodeRef.type.id === VectorSelector) {
         const node = nodeRef.node;
 
@@ -108,8 +116,6 @@ export function extractMetricSelectors(expr: string): MetricSelector[] {
         const selector = expr.substring(nodeRef.from, nodeRef.to);
 
         if (!seen.has(selector)) {
-          seen.add(selector);
-
           let metric = '';
           const metricNode = node.getChild(MetricIdentifier);
           if (metricNode) {
@@ -120,15 +126,34 @@ export function extractMetricSelectors(expr: string): MetricSelector[] {
             metric = extractNameFromLabelMatchers(expr, node);
           }
 
-          selectors.push({ selector, metric });
+          if (isExportableSelector(metric, templateNames, templateDepth > 0)) {
+            seen.add(selector);
+            selectors.push({ selector, metric });
+          }
         }
 
         return false;
       }
     },
+    leave: (nodeRef) => {
+      if (nodeRef.type.id === WithArg) {
+        templateDepth--;
+      }
+    },
   });
 
   return selectors;
+}
+
+/**
+ * A template reference (`f` in `WITH (f = up) f`) or a template parameter is not a series to export, and a
+ * label-only template body (`f = {job="a"}`) is a fragment to be merged into another selector.
+ */
+function isExportableSelector(metric: string, templateNames: Set<string>, insideTemplate: boolean): boolean {
+  if (templateNames.has(metric)) {
+    return false;
+  }
+  return !(insideTemplate && metric === '');
 }
 
 function subtreeHasErrors(node: SyntaxNode): boolean {

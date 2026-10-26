@@ -153,9 +153,27 @@ describe('extractMetricSelectors', () => {
     expect(result.find((s) => s.metric === 'CellTemp')).toBeUndefined();
   });
 
-  it('extracts the template body selectors of a WITH query and skips the one with a template reference', () => {
-    // Before the grammar change nothing was extracted: the whole WITH block sat inside a recovered selector.
-    // `up{f}` is skipped because its matcher list still carries an error node.
-    expect(extractMetricSelectors('WITH (f = {job="a"}) up{f}').map((s) => s.selector)).toEqual(['{job="a"}']);
+  describe('WITH templates', () => {
+    const selectorsOf = (expr: string) => extractMetricSelectors(expr).map((s) => s.selector);
+
+    it('exports the metric defined inside a template instead of the template reference', () => {
+      expect(selectorsOf('WITH (f = up) f')).toEqual(['up']);
+      expect(selectorsOf('WITH (f = up{job="a"}) f + foo')).toEqual(['up{job="a"}', 'foo']);
+    });
+
+    it('skips template parameters and keeps the metric passed to the template', () => {
+      expect(selectorsOf('WITH (f(x) = rate(x[5m])) f(up)')).toEqual(['up']);
+    });
+
+    it('skips a label-only template body, which is a fragment rather than a selector', () => {
+      // Exporting `{job="a"}` on its own would pull every series with that label.
+      // `up{f}` is skipped because its matcher list carries an error node.
+      expect(selectorsOf('WITH (f = {job="a"}) up{f}')).toEqual([]);
+      expect(selectorsOf('WITH (f = {job="a"}) up{f} + foo{job="b"}')).toEqual(['foo{job="b"}']);
+    });
+
+    it('keeps a label-only selector outside of templates', () => {
+      expect(selectorsOf('WITH (f = up) f + {job="b"}')).toEqual(['up', '{job="b"}']);
+    });
   });
 });
