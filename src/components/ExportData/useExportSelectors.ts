@@ -25,7 +25,6 @@ interface Expansion {
   /** The query the expansion was requested for, so a stale response is never applied to a newer query */
   source: string;
   expr: string;
-  error: string | null;
 }
 
 /**
@@ -53,37 +52,41 @@ export function useExportSelectors(
     };
   }, [datasource, expr, withTemplate, request]);
 
+  // A successful expansion is kept per query text; a failure is kept only until the next attempt,
+  // so reopening the modal retries and shows the loading state instead of the stale error.
   const [expansion, setExpansion] = useState<Expansion | null>(null);
+  const [expandError, setExpandError] = useState<string | null>(null);
+  const expanded = needsExpansion && expansion?.source === resolvedExpr ? expansion : null;
 
   useEffect(() => {
-    if (!isOpen || !needsExpansion) {
+    if (!isOpen || !needsExpansion || expanded) {
       return;
     }
     let cancelled = false;
+    setExpandError(null);
     expandWithExprs(datasource, resolvedExpr)
       .then((response) => {
         if (cancelled) {
           return;
         }
         if (response.status === 'success' && response.expr) {
-          setExpansion({ source: resolvedExpr, expr: response.expr, error: null });
+          setExpansion({ source: resolvedExpr, expr: response.expr });
         } else {
-          setExpansion({ source: resolvedExpr, expr: '', error: response.error || 'Unable to expand WITH templates' });
+          setExpandError(response.error || 'Unable to expand WITH templates');
         }
       })
       .catch((e: unknown) => {
         if (!cancelled) {
-          setExpansion({ source: resolvedExpr, expr: '', error: getErrorMessage(e) });
+          setExpandError(getErrorMessage(e));
         }
       });
     return () => {
       cancelled = true;
     };
-  }, [datasource, resolvedExpr, needsExpansion, isOpen]);
+  }, [datasource, resolvedExpr, needsExpansion, isOpen, expanded]);
 
-  const currentExpansion = needsExpansion && expansion?.source === resolvedExpr ? expansion : null;
-  const isLoading = isOpen && needsExpansion && !currentExpansion;
-  const exprToParse = needsExpansion ? (currentExpansion?.expr ?? '') : resolvedExpr;
+  const isLoading = isOpen && needsExpansion && !expanded && !expandError;
+  const exprToParse = needsExpansion ? (expanded?.expr ?? '') : resolvedExpr;
 
   const validSelectors = useMemo(() => extractMetricSelectors(exprToParse), [exprToParse]);
 
@@ -104,6 +107,6 @@ export function useExportSelectors(
     selectedSelectors,
     toggleSelector,
     isLoading,
-    expandError: currentExpansion?.error ?? null,
+    expandError: needsExpansion ? expandError : null,
   };
 }

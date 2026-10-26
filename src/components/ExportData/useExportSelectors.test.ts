@@ -18,7 +18,9 @@ const datasource = {
 const panelData = { request: { app: 'explore', dashboardUID: '' } } as unknown as PanelData;
 
 const render = (query: PromQuery, isOpen = true) =>
-  renderHook(() => useExportSelectors(datasource, query, panelData, isOpen));
+  renderHook(({ open }: { open: boolean }) => useExportSelectors(datasource, query, panelData, open), {
+    initialProps: { open: isOpen },
+  });
 
 describe('useExportSelectors', () => {
   beforeEach(() => {
@@ -63,6 +65,33 @@ describe('useExportSelectors', () => {
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.expandError).toBe('Bad Gateway');
+  });
+
+  it('retries with the loading state when the modal is reopened after a failure', async () => {
+    getRequest.mockResolvedValueOnce({ status: 'error', error: 'cannot parse query' });
+    const { result, rerender } = render({ refId: 'A', expr: 'rate(up{f}[5m])', withTemplate: 'f = {container="vmagent"}' });
+    await waitFor(() => expect(result.current.expandError).toBe('cannot parse query'));
+
+    getRequest.mockResolvedValueOnce({ status: 'success', expr: 'rate(up{container="vmagent"}[5m])' });
+    rerender({ open: false });
+    rerender({ open: true });
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.expandError).toBeNull();
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.validSelectors.map((s) => s.selector)).toEqual(['up{container="vmagent"}']);
+    expect(getRequest).toHaveBeenCalledTimes(2);
+  });
+
+  it('reuses a successful expansion when the modal is reopened', async () => {
+    getRequest.mockResolvedValue({ status: 'success', expr: 'rate(up{container="vmagent"}[5m])' });
+    const { result, rerender } = render({ refId: 'A', expr: 'rate(up{f}[5m])', withTemplate: 'f = {container="vmagent"}' });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    rerender({ open: false });
+    rerender({ open: true });
+    expect(result.current.isLoading).toBe(false);
+    expect(getRequest).toHaveBeenCalledTimes(1);
   });
 
   it('does not expand while the modal is closed', () => {
