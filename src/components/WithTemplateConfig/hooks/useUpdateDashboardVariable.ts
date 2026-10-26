@@ -17,8 +17,23 @@ interface DashboardPanel {
 
 /** The query whose template is being saved: its target switches to the variable even if it held an inline template */
 export interface EditedTarget {
+  /** Id of the panel the query belongs to; may be unknown when the panel has not run its queries yet */
   panelId?: number;
   refId?: string;
+  /** Current withTemplate value of the query, used to recognise its target when the panel id is unknown */
+  withTemplate?: string;
+}
+
+// Without a panel id the target is recognised by its refId and the identical inline template text:
+// a match is the edited query itself or a copy of it carrying the template that is being replaced.
+function isEditedTarget(panel: DashboardPanel, target: { refId?: string; withTemplate?: string }, edited?: EditedTarget): boolean {
+  if (!edited || target.refId !== edited.refId) {
+    return false;
+  }
+  if (edited.panelId !== undefined) {
+    return panel.id === edited.panelId;
+  }
+  return !!edited.withTemplate && target.withTemplate === edited.withTemplate;
 }
 
 // Point all queries of our datasource type at the dashboard variable, except the ones holding an inline template
@@ -34,8 +49,7 @@ export function migrateWithTemplateQueries(panels: DashboardPanel[] | undefined,
     for (const target of panel.targets) {
       const dsType = target.datasource?.type || panel.datasource?.type;
       if (dsType !== DATASOURCE_TYPE) { continue }
-      const isEdited = edited?.panelId !== undefined && panel.id === edited.panelId && target.refId === edited.refId;
-      if (isEdited || !getInlineWithTemplate(target.withTemplate)) {
+      if (isEditedTarget(panel, target, edited) || !getInlineWithTemplate(target.withTemplate)) {
         target.withTemplate = WITH_TEMPLATE_VARIABLE_REFERENCE;
       }
     }
