@@ -29,7 +29,7 @@ import VmuiLink from '../../components/VmuiLink';
 import WithTemplateConfig from '../../components/WithTemplateConfig';
 import { WITH_TEMPLATE_VARIABLE_NAME } from '../../components/WithTemplateConfig/constants';
 import { getArrayFromTemplate } from '../../components/WithTemplateConfig/utils/getArrayFromTemplate';
-import { getWithTemplateVariableValue } from '../../components/WithTemplateConfig/utils/getWithTemplateVariableValue';
+import { resolveWithTemplate } from '../../components/WithTemplateConfig/utils/resolveWithTemplate';
 import { PromQueryEditorProps } from '../../components/types';
 import PrometheusLanguageProvider from '../../language_provider';
 import { PromQuery } from '../../types';
@@ -59,28 +59,37 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
   const { flag: explain, setFlag: setExplain } = useFlag(queryEditorExplainKey);
 
   const dashboardUID: string = (data?.request as DataQueryRequest<PromQuery>)?.dashboardUID || ''
+  // Scope of the legacy WITH template storage: the dashboard uid, or the app name outside dashboards
+  const templateScopeUID = dashboardUID || app || '';
 
   const query = getQueryWithDefaults(props.query, app);
 
-  // Resolve WITH template: from variable or legacy datasource storage
+  const queryWithTemplate = query.withTemplate;
+
   const getResolvedWithTemplate = useCallback(() => {
-    return getWithTemplateVariableValue(getTemplateSrv())
-      || datasource.withTemplates.find(t => t.uid === dashboardUID)?.expr;
-  }, [datasource, dashboardUID]);
+    return resolveWithTemplate(
+      { withTemplate: queryWithTemplate },
+      getTemplateSrv(),
+      datasource.withTemplates,
+      templateScopeUID
+    );
+  }, [queryWithTemplate, datasource, templateScopeUID]);
 
   const [resolvedWithTemplate, setResolvedWithTemplate] = useState<string | undefined>(getResolvedWithTemplate);
 
-  // Re-resolve when dashboard or datasource changes
+  // Re-resolve when the query's withTemplate, dashboard or datasource changes
   useEffect(() => {
     setResolvedWithTemplate(getResolvedWithTemplate());
   }, [getResolvedWithTemplate]);
 
-  // Auto-set withTemplate reference on query if template exists but query doesn't reference it
+  // Auto-set withTemplate reference on query if template exists but query doesn't reference it.
+  // Skipped in Explore: it has no dashboard variable, the template is stored in the query itself,
+  // and a stale `query` prop right after saving would overwrite the saved template with the reference.
   useEffect(() => {
-    if (resolvedWithTemplate && !query.withTemplate) {
+    if (app !== CoreApp.Explore && resolvedWithTemplate && !query.withTemplate) {
       onChange({ ...query, withTemplate: `$${WITH_TEMPLATE_VARIABLE_NAME}` });
     }
-  }, [resolvedWithTemplate, query, onChange]);
+  }, [resolvedWithTemplate, query, onChange, app]);
 
   // This should be filled in from the defaults by now.
   const editorMode = query.editorMode!;
@@ -185,7 +194,7 @@ export const PromQueryEditorSelector = React.memo<Props>((props) => {
           onTemplateSave={setResolvedWithTemplate}
         />
         <PrettifyQuery query={query} datasource={datasource} onChange={onChange} />
-        <VmuiLink query={query} datasource={datasource} panelData={data} dashboardUID={dashboardUID} />
+        <VmuiLink query={query} datasource={datasource} panelData={data} dashboardUID={templateScopeUID} />
         <ExportDataButton query={query} datasource={datasource} panelData={data} />
         {app !== CoreApp.Explore && (
           <IconButton

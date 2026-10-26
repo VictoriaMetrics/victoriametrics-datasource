@@ -1,15 +1,18 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
+
+import { CoreApp } from '@grafana/data';
 
 import { PrometheusDatasource } from '../../../datasource';
 import { PromQuery } from '../../../types';
-import { WITH_TEMPLATE_VARIABLE_NAME } from '../constants';
+import { WITH_TEMPLATE_VARIABLE_REFERENCE } from '../utils/resolveWithTemplate';
 
-import useUpdateDashboardVariable, { DashboardVersionConflictError } from './useUpdateDashboardVariable';
+import useUpdateDashboardVariable from './useUpdateDashboardVariable';
 import useValidateExpr from './useValidateExpr';
 
 interface UseSaveWithTemplateParams {
   datasource: PrometheusDatasource;
   dashboardUID: string;
+  app?: CoreApp;
   query: PromQuery;
   onQueryChange: (query: PromQuery) => void;
   onTemplateSave?: (expr: string) => void;
@@ -30,6 +33,7 @@ interface UseSaveWithTemplateResult {
 export default function useSaveWithTemplate({
   datasource,
   dashboardUID,
+  app,
   query,
   onQueryChange,
   onTemplateSave,
@@ -41,54 +45,63 @@ export default function useSaveWithTemplate({
 
   const [isLoading, setIsLoading] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
-  const [showConfirm, setShowConfirm] = useState(false)
+  // Template text waiting for the dashboard confirmation; the confirm modal is open while it is set
+  const [templateAwaitingConfirm, setTemplateAwaitingConfirm] = useState<string | null>(null)
 
-  // Store the value being saved so handleConfirmedSave has access to it
-  const pendingValueRef = useRef<string>('')
+  // Explore has no dashboard to store a variable in: the template text lives in the query itself,
+  // so there is nothing to confirm either
+  const isExplore = app === CoreApp.Explore
+
+  const saveTemplate = useCallback(async (value: string) => {
+    setIsLoading(true)
+    setSaveError(null)
+    try {
+      if (isExplore) {
+        onQueryChange({ ...query, withTemplate: value })
+      } else {
+        await updateDashboardVariable(value)
+        datasource.withTemplatesUpdate(
+          [...datasource.withTemplates.filter(t => t.uid !== dashboardUID), { uid: dashboardUID, expr: value }]
+        )
+        if (query.withTemplate !== WITH_TEMPLATE_VARIABLE_REFERENCE) {
+          onQueryChange({ ...query, withTemplate: WITH_TEMPLATE_VARIABLE_REFERENCE })
+        }
+      }
+      onTemplateSave?.(value)
+      onDraftReset()
+      handleClose()
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setIsLoading(false)
+    }
+  }, [updateDashboardVariable, datasource, dashboardUID, isExplore, query, onQueryChange, onTemplateSave, onDraftReset, handleClose])
 
   const handleSaveClick = useCallback(async (value: string) => {
     const isValid = await isValidExpr(value)
     if (!isValid) { return }
-    pendingValueRef.current = value
-    setShowConfirm(true)
-  }, [isValidExpr])
+    if (isExplore) {
+      await saveTemplate(value)
+      return
+    }
+    setTemplateAwaitingConfirm(value)
+  }, [isValidExpr, isExplore, saveTemplate])
 
   const handleConfirmedSave = useCallback(async () => {
-    const value = pendingValueRef.current
-    setShowConfirm(false)
-    setIsLoading(true)
-    try {
-      setSaveError(null)
-      await updateDashboardVariable(value)
-      datasource.withTemplatesUpdate(
-        [...datasource.withTemplates.filter(t => t.uid !== dashboardUID), { uid: dashboardUID, expr: value }]
-      )
-      if (query.withTemplate !== `$${WITH_TEMPLATE_VARIABLE_NAME}`) {
-        onQueryChange({ ...query, withTemplate: `$${WITH_TEMPLATE_VARIABLE_NAME}` })
-      }
-      onTemplateSave?.(value)
-      onDraftReset()
-      setIsLoading(false)
-      handleClose()
-    } catch (e) {
-      if (e instanceof DashboardVersionConflictError) {
-        setSaveError(e.message)
-      } else {
-        console.error(e)
-      }
-      setIsLoading(false)
-    }
-  }, [updateDashboardVariable, datasource, dashboardUID, query, onQueryChange, onTemplateSave, onDraftReset, handleClose])
+    if (templateAwaitingConfirm === null) { return }
+    setTemplateAwaitingConfirm(null)
+    await saveTemplate(templateAwaitingConfirm)
+  }, [templateAwaitingConfirm, saveTemplate])
 
   const dismissConfirm = useCallback(() => {
-    setShowConfirm(false)
+    setTemplateAwaitingConfirm(null)
   }, [])
 
   return {
     validateResult,
     isLoading,
     saveError,
-    showConfirm,
+    showConfirm: templateAwaitingConfirm !== null,
     handleSaveClick,
     handleConfirmedSave,
     dismissConfirm,
