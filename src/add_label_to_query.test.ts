@@ -30,6 +30,12 @@ describe('addLabelToQuery()', () => {
     ).toBe('sum(rate(prometheus_tsdb_compaction_chunk_size_bytes_bucket{le="+Inf"}[5m])) by (le)');
   });
 
+  it('should convert number -Infinity to -Inf', () => {
+    expect(addLabelToQuery('histogram_quantile(0.9, foo)', 'le', -Infinity)).toBe(
+      'histogram_quantile(0.9, foo{le="-Inf"})'
+    );
+  });
+
   it('should handle selectors with punctuation', () => {
     expect(addLabelToQuery('foo{instance="my-host.com:9100"}', 'bar', 'baz')).toBe(
       'foo{instance="my-host.com:9100", bar="baz"}'
@@ -46,7 +52,7 @@ describe('addLabelToQuery()', () => {
     expect(addLabelToQuery('foo{x="yy"} + metric', 'bar', 'baz')).toBe('foo{x="yy", bar="baz"} + metric{bar="baz"}');
     expect(addLabelToQuery('avg(foo) + sum(xx_yy)', 'bar', 'baz')).toBe('avg(foo{bar="baz"}) + sum(xx_yy{bar="baz"})');
     expect(addLabelToQuery('foo{x="yy"} * metric{y="zz",a="bb"} * metric2', 'bar', 'baz')).toBe(
-      'foo{x="yy", bar="baz"} * metric{y="zz", a="bb", bar="baz"} * metric2{bar="baz"}'
+      'foo{x="yy", bar="baz"} * metric{y="zz",a="bb", bar="baz"} * metric2{bar="baz"}'
     );
   });
 
@@ -110,5 +116,105 @@ describe('addLabelToQuery()', () => {
 
   it('should not add ad-hoc filter bool operator', () => {
     expect(addLabelToQuery('ALERTS < bool 1', 'bar', 'baz')).toBe('ALERTS{bar="baz"} < bool 1');
+  });
+});
+
+describe('WITH templates (#551)', () => {
+  it('keeps the WITH block and a bare template reference intact', () => {
+    expect(addLabelToQuery('WITH (f = {a="b"}) probe_success{f} == 0', 'bar', 'baz')).toBe(
+      'WITH (f = {a="b", bar="baz"}) probe_success{f, bar="baz"} == 0'
+    );
+  });
+
+  it('filters a metric defined only inside a template', () => {
+    expect(addLabelToQuery('WITH (f() = up) f()', 'bar', 'baz')).toBe('WITH (f() = up{bar="baz"}) f()');
+  });
+
+  it('does not treat a template name as a metric', () => {
+    expect(addLabelToQuery('WITH (a = rate(up[1m])) a', 'bar', 'baz')).toBe('WITH (a = rate(up{bar="baz"}[1m])) a');
+  });
+
+  it('does not treat template parameters as metrics but filters call arguments', () => {
+    expect(addLabelToQuery('WITH (f(x) = rate(x[5m])) f(up) + f(down)', 'bar', 'baz')).toBe(
+      'WITH (f(x) = rate(x[5m])) f(up{bar="baz"}) + f(down{bar="baz"})'
+    );
+  });
+
+  it('filters every argument of a template call', () => {
+    expect(addLabelToQuery('WITH (f(x, y) = x / y) f(up, down)', 'bar', 'baz')).toBe(
+      'WITH (f(x, y) = x / y) f(up{bar="baz"}, down{bar="baz"})'
+    );
+  });
+
+  it('keeps the formatting of a multi-line WITH block', () => {
+    expect(
+      addLabelToQuery(
+        'WITH(\n  f={cloud.account.name=~"$account_name"}\n)\nprobe_success{f} == 0',
+        'service.name',
+        'public'
+      )
+    ).toBe(
+      'WITH(\n  f={cloud.account.name=~"$account_name", service.name="public"}\n)\nprobe_success{f, service.name="public"} == 0'
+    );
+  });
+
+  it('collects template names from the whole query (documented simplification)', () => {
+    expect(addLabelToQuery('sum(WITH (a = up) a) + a', 'bar', 'baz')).toBe('sum(WITH (a = up{bar="baz"}) a) + a');
+  });
+
+  it('does not corrupt an unclosed WITH block', () => {
+    // The query is invalid anyway; the point is that nothing crashes and the header is not rewritten.
+    expect(addLabelToQuery('WITH (f = {a="b"} foo', 'bar', 'baz')).toBe('WITH (f = {a="b", bar="baz"} foo');
+  });
+});
+
+describe('or-separated label matchers', () => {
+  it('adds the filter to every alternative', () => {
+    expect(addLabelToQuery('foo{a="b" or c="d"}', 'bar', 'baz')).toBe('foo{a="b", bar="baz" or c="d", bar="baz"}');
+  });
+
+  it('skips an alternative that already has the filter', () => {
+    expect(addLabelToQuery('foo{bar="baz" or c="d"}', 'bar', 'baz')).toBe('foo{bar="baz" or c="d", bar="baz"}');
+  });
+
+  it('is case-insensitive for the or keyword', () => {
+    expect(addLabelToQuery('foo{a="b" OR c="d"}', 'bar', 'baz')).toBe('foo{a="b", bar="baz" OR c="d", bar="baz"}');
+  });
+});
+
+describe('text preservation', () => {
+  it('inserts before a trailing comma after or-groups', () => {
+    expect(addLabelToQuery('foo{a="b" or c="d",}', 'bar', 'baz')).toBe('foo{a="b", bar="baz" or c="d", bar="baz",}');
+  });
+
+  it('fills an empty matcher list', () => {
+    expect(addLabelToQuery('foo{}', 'bar', 'baz')).toBe('foo{bar="baz"}');
+    expect(addLabelToQuery('foo{ }', 'bar', 'baz')).toBe('foo{bar="baz" }');
+  });
+
+  it('inserts before a trailing comma and keeps it', () => {
+    expect(addLabelToQuery('foo{a="b",}', 'bar', 'baz')).toBe('foo{a="b", bar="baz",}');
+  });
+
+  it('inserts before a trailing comment', () => {
+    expect(addLabelToQuery('foo{a="b" # c\n}', 'bar', 'baz')).toBe('foo{a="b", bar="baz" # c\n}');
+  });
+
+  it('inserts right after a template reference matcher, before its trailing whitespace', () => {
+    expect(addLabelToQuery('up{f }', 'k', 'v')).toBe('up{f, k="v" }');
+    expect(addLabelToQuery('up{f or job="a"}', 'k', 'v')).toBe('up{f, k="v" or job="a", k="v"}');
+  });
+
+  it('keeps whitespace around matchers', () => {
+    expect(addLabelToQuery('foo{ a="b" ,c="d" }', 'bar', 'baz')).toBe('foo{ a="b" ,c="d", bar="baz" }');
+    expect(addLabelToQuery('foo {a="b"}', 'bar', 'baz')).toBe('foo {a="b", bar="baz"}');
+  });
+});
+
+describe('duplicate detection with escaped values', () => {
+  it('does not add the same regex filter twice', () => {
+    const once = addLabelToQuery('foo', 'bar', 'a\\\\.b', '=~');
+    expect(once).toBe('foo{bar=~"a\\\\.b"}');
+    expect(addLabelToQuery(once, 'bar', 'a\\\\.b', '=~')).toBe(once);
   });
 });

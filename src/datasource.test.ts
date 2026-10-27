@@ -521,6 +521,18 @@ describe('PrometheusDatasource', () => {
       expect(result).toMatchObject({ expr: 'test{job="bar", k1="v1", k2!="v2"}' });
     });
 
+    it('escapes ad hoc filter values for the string literal', () => {
+      replaceMock.mockImplementation((a: string) => a);
+      getAdhocFiltersMock.mockReturnValue([
+        { key: 'k1', operator: '=~', value: 'a\\.b' },
+        { key: 'k2', operator: '=', value: 'say "hi"' },
+      ]);
+
+      const result = ds.applyTemplateVariables({ expr: 'test', refId: 'A' }, {});
+
+      expect(result).toMatchObject({ expr: 'test{k1=~"a\\\\.b", k2="say \\"hi\\""}' });
+    });
+
     it('AdhocFilters should not add filters', () => {
       getAdhocFiltersMock.mockReturnValue([
         {
@@ -967,6 +979,14 @@ describe('PrometheusDatasource for POST', () => {
 });
 
 describe('modifyQuery', () => {
+  it('keeps a numeric Infinity value as +Inf', () => {
+    const instanceSettings = { jsonData: {} } as unknown as DataSourceInstanceSettings<PromOptions>;
+    const ds = new PrometheusDatasource(instanceSettings, templateSrvStub, timeSrvStub);
+    const action = { options: { key: 'le', value: Infinity as unknown as string }, type: 'ADD_FILTER' };
+    const result = ds.modifyQuery({ expr: 'up', refId: 'A' }, action);
+    expect(result.expr).toBe('up{le="+Inf"}');
+  });
+
   describe('when called with ADD_FILTER', () => {
     describe('and query has no labels', () => {
       it('then the correct label should be added', () => {
@@ -1025,6 +1045,15 @@ describe('modifyQuery', () => {
         expect(result.expr).toEqual('go_goroutines{cluster="us-cluster", pod!="pod-123"}');
       });
     });
+  });
+
+  it('escapes the value of an added filter', () => {
+    const instanceSettings = { jsonData: {} } as unknown as DataSourceInstanceSettings<PromOptions>;
+    const ds = new PrometheusDatasource(instanceSettings, templateSrvStub, timeSrvStub);
+
+    const result = ds.modifyQuery({ expr: 'up', refId: 'A' }, { type: 'ADD_FILTER', options: { key: 'k', value: 'a"b' } });
+
+    expect(result.expr).toBe('up{k="a\\"b"}');
   });
 });
 

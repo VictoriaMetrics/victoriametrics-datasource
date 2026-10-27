@@ -16,9 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { SyntaxNode, TreeCursor } from '@lezer/common';
+import { SyntaxNode, Tree, TreeCursor } from '@lezer/common';
+import { LabelName, MatchOp, StringLiteral, WithArgName, WithArgParam } from 'lezer-metricsql';
 
-import { QueryBuilderOperation } from './types';
+import { QueryBuilderLabelFilter, QueryBuilderOperation } from './types';
 
 // Although 0 isn't explicitly provided in the lezer-promql library as the error node ID, it does appear to be the ID of error nodes within lezer.
 export const ErrorId = 0;
@@ -103,6 +104,21 @@ export function getString(expr: string, node: SyntaxNode | TreeCursor | null | u
     return '';
   }
   return returnVariables(expr.substring(node.from, node.to));
+}
+
+export function getLabel(
+  expr: string,
+  node: SyntaxNode,
+  labelType: typeof LabelName
+): QueryBuilderLabelFilter {
+  const label = getString(expr, node.getChild(labelType));
+  const op = getString(expr, node.getChild(MatchOp));
+  const value = getString(expr, node.getChild(StringLiteral)).replace(/^["'`]|["'`]$/g, '');
+  return {
+    label,
+    op,
+    value,
+  };
 }
 
 /**
@@ -220,4 +236,20 @@ function jsonToText(
 
 function nodeToString(expr: string, node: SyntaxNode) {
   return node.name + ': ' + getString(expr, node);
+}
+
+/**
+ * Names of WITH templates and their parameters anywhere in the expression. Scoping is not tracked on purpose: a
+ * real metric named like a template of another scope is treated as a template reference too.
+ */
+export function collectTemplateNames(tree: Tree, expr: string): Set<string> {
+  const names = new Set<string>();
+  tree.iterate({
+    enter: ({ type, from, to }) => {
+      if (type.id === WithArgName || type.id === WithArgParam) {
+        names.add(expr.substring(from, to));
+      }
+    },
+  });
+  return names;
 }

@@ -51,7 +51,7 @@ import { mergeTemplateWithQuery } from './components/WithTemplateConfig/utils/ge
 import { getWithTemplateVariableValue } from './components/WithTemplateConfig/utils/getWithTemplateVariableValue';
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from './consts';
 import PrometheusLanguageProvider from './language_provider';
-import { expandRecordingRules, getVictoriaMetricsTime } from './language_utils';
+import { escapeLabelValueInExactSelector, expandRecordingRules, getVictoriaMetricsTime } from './language_utils';
 import { renderLegendFormat } from './legend';
 import PrometheusMetricFindQuery from './metric_find_query';
 import { getInitHints, getQueryHints } from './query_hints';
@@ -490,7 +490,7 @@ export class PrometheusDatasource
       case 'ADD_FILTER': {
         const { key, value } = action.options ?? {};
         if (key && value) {
-          expression = addLabelToQuery(expression, key, value);
+          expression = addLabelToQuery(expression, key, typeof value === 'string' ? escapeLabelValueInExactSelector(value) : value);
         }
 
         break;
@@ -498,7 +498,7 @@ export class PrometheusDatasource
       case 'ADD_FILTER_OUT': {
         const { key, value } = action.options ?? {};
         if (key && value) {
-          expression = addLabelToQuery(expression, key, value, '!=');
+          expression = addLabelToQuery(expression, key, typeof value === 'string' ? escapeLabelValueInExactSelector(value) : value, '!=');
         }
         break;
       }
@@ -565,10 +565,7 @@ export class PrometheusDatasource
 
     return resultFilters.reduce((acc: string, filter: { key: string, operator: string, value: string }) => {
       const { key, operator } = filter;
-      let { value } = filter;
-      if (operator === '=~' || operator === '!~') {
-        value = prometheusRegularEscape(value);
-      }
+      const value = typeof filter.value === 'string' ? escapeLabelValueInExactSelector(filter.value) : filter.value;
       return addLabelToQuery(acc, key, value, operator);
     }, expr);
   }

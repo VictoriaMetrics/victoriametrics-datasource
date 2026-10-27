@@ -539,3 +539,28 @@ function noErrors(query: PromVisualQuery) {
     query,
   };
 }
+
+describe('WITH templates and or-separated matchers are not supported in the builder', () => {
+  it('reports an error for a WITH expression but still fills the visual query', () => {
+    const result = buildVisualQueryFromString('WITH (f = {a="b"}) up{f}');
+    expect(result.errors.length).toBeGreaterThan(0);
+    expect(result.query.metric).toBe('up');
+  });
+  it('reports an error for a clean WITH expression', () => {
+    const result = buildVisualQueryFromString('WITH (x = 1) up');
+    expect(result.errors.length).toBeGreaterThan(0);
+    expect(result.query.metric).toBe('up');
+  });
+  it('reports an error for a template call', () => {
+    expect(buildVisualQueryFromString('WITH (f(x) = rate(x[5m])) f(up)').errors.length).toBeGreaterThan(0);
+  });
+  it('reports an error for or-separated label matchers', () => {
+    const result = buildVisualQueryFromString('foo{a="b" or c="d"}');
+    expect(result.errors[0].text).toContain('or-separated label matchers');
+    expect(result.query.metric).toBe('foo');
+  });
+  it('still parses known functions inside binary expressions without errors', () => {
+    expect(buildVisualQueryFromString('rate(up[5m]) + 1').errors).toEqual([]);
+    expect(buildVisualQueryFromString('sum(x) / sum(y)').errors).toEqual([]);
+  });
+});

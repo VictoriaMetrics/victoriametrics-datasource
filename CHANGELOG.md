@@ -5,6 +5,8 @@
 * BUGFIX: send query parameters in the request body when the `HTTP method` setting is `POST`, so large queries no longer fail with `431 Request Header Fields Too Large` behind proxies that limit the URL length. The same applies to metadata requests such as label and series lookups. See [#550](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/550).
   - **Note:** VictoriaMetrics still limits the query length with its `-search.maxQueryLen` flag (16 KiB by default), so very long expressions need that flag raised on the VictoriaMetrics side. See [the list of command-line flags](https://docs.victoriametrics.com/victoriametrics/single-server-victoriametrics/#list-of-command-line-flags).
 
+* BUGFIX: keep WITH templates intact when ad hoc filters or the `Filter for value` action in Explore add label filters to a query. Previously such queries were rewritten into invalid MetricsQL and failed with a `422` error. Filters are now also added to every `or` alternative inside `{...}` and to metrics defined inside WITH templates, and label values are escaped. See [#551](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/551).
+
 ## v0.26.1
 
 * MAINTENANCE: fix the frontend build of the plugin.

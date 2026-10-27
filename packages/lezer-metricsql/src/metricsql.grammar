@@ -8,7 +8,8 @@
   eql @left,
   and @left,
   or @left,
-  default @left
+  default @left,
+  with @left
 }
 
 Expr {
@@ -23,7 +24,9 @@ Expr {
   SubqueryExpr |
   UnaryExpr |
   VectorSelector |
-  StepInvariantExpr
+  StepInvariantExpr |
+  WithExpr |
+  TemplateCall
 }
 
 AggregateExpr {
@@ -335,8 +338,19 @@ VectorSelector {
 LabelMatchers {
   "{" LabelMatchList "}" |
   "{" LabelMatchList "," "}" |
+  "{" LabelMatchList (Or LabelMatchList)+ "}" |
   "{" "}"
 }
+
+WithExpr { With "(" WithArgList? ","? ")" !with Expr }
+WithArgList { WithArgList "," WithArg | WithArg }
+WithArg { WithArgName WithArgParams? EqlSingle Expr }
+WithArgName { Identifier }
+WithArgParams { "(" WithArgParamList? ")" }
+WithArgParamList { WithArgParamList "," WithArgParam | WithArgParam }
+WithArgParam { Identifier }
+
+TemplateCall { TemplateIdentifier FunctionCallBody }
 
 LabelMatchList {
   LabelMatchList "," LabelMatcher |
@@ -369,6 +383,9 @@ AtModifierPreprocessors {
 NumberLiteral {
   ("-"|"+")?~signed (number | inf | nan)
 }
+
+// Identifier followed by "(" that is not a known function or aggregation: a WITH template call
+@external tokens templateIdentifier from "./tokens" { TemplateIdentifier }
 
 @skip { whitespace | LineComment }
 
@@ -438,7 +455,8 @@ NumberLiteral {
   On,
   GroupLeft,
   GroupRight,
-  Offset
+  Offset,
+  With
 }
 
 // Contextual keywords
