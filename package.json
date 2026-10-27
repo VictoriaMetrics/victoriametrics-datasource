@@ -88,6 +88,17 @@
     "immutable@^3.8.2": "4.3.9",
     "basic-ftp@^5.2.0": "6.2.3"
   },
+  "dependenciesMeta": {
+    "@parcel/watcher": {
+      "built": true
+    },
+    "@swc/core": {
+      "built": true
+    },
+    "unrs-resolver": {
+      "built": true
+    }
+  },
   "workspaces": [
     "packages/lezer-metricsql"
   ],
@@ -106,7 +117,7 @@
     "@grafana/runtime": "^13.2.1",
     "@grafana/schema": "^13.2.1",
     "@grafana/ui": "^13.2.1",
-    "@lezer/common": "1.5.2",
+    "@lezer/common": "^1.5.2",
     "@lezer/highlight": "^1.2.3",
     "@lezer/lr": "^1.4.10",
     "@reduxjs/toolkit": "^2.12.0",
