@@ -30,11 +30,16 @@ export function useExpandedExpr(
   const { expr, withTemplate } = query;
 
   const { interpolatedExpr, needsExpansion } = useMemo(() => {
-    const templateSrv = datasource.getTemplateSrv();
     const scopeUID = request?.dashboardUID || request?.app || '';
-    const merged = mergeResolvedWithTemplate({ expr, withTemplate }, templateSrv, datasource.withTemplates, scopeUID);
+    const merged = mergeResolvedWithTemplate(
+      { expr, withTemplate },
+      datasource.getTemplateSrv(),
+      datasource.withTemplates,
+      scopeUID
+    );
     return {
-      interpolatedExpr: templateSrv.replace(merged, request?.scopedVars),
+      // Interpolated the same way as the query the panel runs, so multi-value variables match it
+      interpolatedExpr: datasource.interpolateString(merged, request?.scopedVars),
       needsExpansion: merged !== expr,
     };
   }, [datasource, expr, withTemplate, request]);

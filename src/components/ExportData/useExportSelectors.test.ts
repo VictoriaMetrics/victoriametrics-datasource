@@ -9,9 +9,12 @@ import { useExportSelectors } from './useExportSelectors';
 
 const getRequest = jest.fn();
 
+const interpolateString = jest.fn((s: string) => s);
+
 const datasource = {
   withTemplates: [],
-  getTemplateSrv: () => ({ replace: (s: string) => s, getVariables: () => [] }),
+  getTemplateSrv: () => ({ getVariables: () => [] }),
+  interpolateString,
   getRequest,
 } as unknown as PrometheusDatasource;
 
@@ -25,6 +28,7 @@ const render = (query: PromQuery, isOpen = true) =>
 describe('useExportSelectors', () => {
   beforeEach(() => {
     getRequest.mockReset();
+    interpolateString.mockClear();
   });
 
   it('parses a query without WITH templates locally', () => {
@@ -33,6 +37,11 @@ describe('useExportSelectors', () => {
     expect(result.current.selectedSelectors).toEqual(['up{job="a"}']);
     expect(result.current.isLoading).toBe(false);
     expect(getRequest).not.toHaveBeenCalled();
+  });
+
+  it('interpolates variables through the datasource so that the result matches the panel query', () => {
+    render({ refId: 'A', expr: 'up{job=~"$job"}' });
+    expect(interpolateString).toHaveBeenCalledWith('up{job=~"$job"}', panelData.request?.scopedVars);
   });
 
   it('expands the WITH template through VictoriaMetrics and parses the expanded query', async () => {
