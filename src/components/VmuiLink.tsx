@@ -18,8 +18,7 @@ import React, { FC, memo, useEffect, useState } from 'react';
 import { getDefaultTimeRange, PanelData, rangeUtil, textUtil } from '@grafana/data';
 import { IconButton } from '@grafana/ui';
 
-import { mergeTemplateWithQuery } from '../components/WithTemplateConfig/utils/getArrayFromTemplate';
-import { resolveWithTemplate } from '../components/WithTemplateConfig/utils/resolveWithTemplate';
+import { mergeResolvedWithTemplate } from '../components/WithTemplateConfig/utils/mergeResolvedWithTemplate';
 import { PrometheusDatasource } from '../datasource';
 import { PromQuery } from '../types';
 import { getDurationFromMilliseconds } from '../utils/time';
@@ -109,10 +108,11 @@ const VmuiLink: FC<Props> = ({
           ...getRateIntervalScopedVariable(step, scrapeInterval),
         });
       }
-      const templateExpr = resolveWithTemplate(query, templateSrv, datasource.withTemplates, dashboardUID);
-      const template = templateExpr ? { uid: '', expr: templateExpr } : undefined;
-      let expr = mergeTemplateWithQuery(query.expr, template)
-      expr = templateSrv.replace(expr, scopedVars, datasource.interpolateQueryExpr);
+      const expr = templateSrv.replace(
+        mergeResolvedWithTemplate(query, templateSrv, datasource.withTemplates, dashboardUID),
+        scopedVars,
+        datasource.interpolateQueryExpr
+      );
       const resp = await datasource.postResource<{ vmuiURL: string }>('vmui', {
         vmui: {
           expr: expr,

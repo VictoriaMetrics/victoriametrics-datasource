@@ -47,8 +47,7 @@ import { BackendSrvRequest, DataSourceWithBackend, getTemplateSrv, TemplateSrv }
 import { addLabelToQuery } from './add_label_to_query';
 import { AnnotationQueryEditor } from './components/Annotations/AnnotationQueryEditor';
 import { WithTemplate } from './components/WithTemplateConfig/types';
-import { mergeTemplateWithQuery } from './components/WithTemplateConfig/utils/getArrayFromTemplate';
-import { resolveWithTemplate } from './components/WithTemplateConfig/utils/resolveWithTemplate';
+import { mergeResolvedWithTemplate } from './components/WithTemplateConfig/utils/mergeResolvedWithTemplate';
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from './consts';
 import PrometheusLanguageProvider from './language_provider';
 import { escapeLabelValueInExactSelector, expandRecordingRules, getVictoriaMetricsTime } from './language_utils';
@@ -200,9 +199,7 @@ export class PrometheusDatasource
 
   processTargetV2(target: PromQuery, request: DataQueryRequest<PromQuery>) {
     const dashboardUID = request.dashboardUID || request.app || '';
-    const templateExpr = resolveWithTemplate(target, this.templateSrv, this.withTemplates, dashboardUID);
-    const template = templateExpr ? { uid: dashboardUID, expr: templateExpr } : undefined;
-    const expr = mergeTemplateWithQuery(target.expr, template)
+    const expr = mergeResolvedWithTemplate(target, this.templateSrv, this.withTemplates, dashboardUID);
 
     const baseTarget = {
       ...target,

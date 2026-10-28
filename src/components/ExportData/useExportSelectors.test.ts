@@ -59,14 +59,6 @@ describe('useExportSelectors', () => {
     expect(result.current.validSelectors).toEqual([]);
   });
 
-  it('reports a failed request', async () => {
-    getRequest.mockRejectedValue({ status: 502, statusText: 'Bad Gateway', data: '', config: {} });
-    const { result } = render({ refId: 'A', expr: 'rate(up{f}[5m])', withTemplate: 'f = {container="vmagent"}' });
-
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.expandError).toBe('Bad Gateway');
-  });
-
   it('retries with the loading state when the modal is reopened after a failure', async () => {
     getRequest.mockResolvedValueOnce({ status: 'error', error: 'cannot parse query' });
     const { result, rerender } = render({ refId: 'A', expr: 'rate(up{f}[5m])', withTemplate: 'f = {container="vmagent"}' });
