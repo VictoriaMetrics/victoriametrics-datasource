@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 
-import { PanelData } from '@grafana/data';
+import { PanelData, ScopedVars } from '@grafana/data';
 
 import { PrometheusDatasource } from '../../datasource';
 import { PromQuery } from '../../types';
@@ -20,15 +20,15 @@ const datasource = {
 
 const panelData = { request: { app: 'explore', dashboardUID: '' } } as unknown as PanelData;
 
-const render = (query: PromQuery, isOpen = true) =>
-  renderHook(({ open }: { open: boolean }) => useExportSelectors(datasource, query, panelData, open), {
+const render = (query: PromQuery, isOpen = true, data: unknown = panelData) =>
+  renderHook(({ open }: { open: boolean }) => useExportSelectors(datasource, query, data as PanelData, open), {
     initialProps: { open: isOpen },
   });
 
 describe('useExportSelectors', () => {
   beforeEach(() => {
     getRequest.mockReset();
-    interpolateString.mockClear();
+    interpolateString.mockReset().mockImplementation((s: string) => s);
   });
 
   it('parses a query without WITH templates locally', () => {
@@ -39,9 +39,13 @@ describe('useExportSelectors', () => {
     expect(getRequest).not.toHaveBeenCalled();
   });
 
-  it('interpolates variables through the datasource so that the result matches the panel query', () => {
-    render({ refId: 'A', expr: 'up{job=~"$job"}' });
-    expect(interpolateString).toHaveBeenCalledWith('up{job=~"$job"}', panelData.request?.scopedVars);
+  it('parses the query with its variables interpolated the way the panel query is', () => {
+    const scopedVars = { job: { text: 'a + b', value: ['a', 'b'] } };
+    interpolateString.mockImplementation((s: string, vars?: ScopedVars) =>
+      s.replace('$job', vars === scopedVars ? '(a|b)' : '$job')
+    );
+    const { result } = render({ refId: 'A', expr: 'up{job=~"$job"}' }, true, { request: { app: 'explore', scopedVars } });
+    expect(result.current.validSelectors.map((s) => s.selector)).toEqual(['up{job=~"(a|b)"}']);
   });
 
   it('expands the WITH template through VictoriaMetrics and parses the expanded query', async () => {
