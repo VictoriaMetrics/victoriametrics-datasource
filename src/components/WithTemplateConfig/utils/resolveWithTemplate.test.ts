@@ -27,9 +27,23 @@ describe('resolveWithTemplate', () => {
     expect(resolveWithTemplate(undefined, templateSrvWith(), [{ uid: 'd1', expr: 'l = up' }], 'd2')).toBeUndefined();
   });
 
-  it('ignores an empty or whitespace-only withTemplate value', () => {
+  it('lets the dashboard variable apply to a query whose own withTemplate is empty', () => {
     expect(resolveWithTemplate({ withTemplate: '' }, templateSrvWith('v = up'), [], 'd1')).toBe('v = up');
     expect(resolveWithTemplate({ withTemplate: ' \n ' }, templateSrvWith('v = up'), [], 'd1')).toBe('v = up');
+  });
+
+  it('treats an empty withTemplate as a cleared template (Explore) instead of falling back to the legacy storage', () => {
+    const legacy = [{ uid: 'explore', expr: 'l = up' }];
+    expect(resolveWithTemplate({ withTemplate: '' }, templateSrvWith(), legacy, 'explore')).toBeUndefined();
+    expect(resolveWithTemplate({ withTemplate: ' \n ' }, templateSrvWith(), legacy, 'explore')).toBeUndefined();
+    expect(resolveWithTemplate({ withTemplate: undefined }, templateSrvWith(), legacy, 'explore')).toBe('l = up');
+  });
+
+  it('treats an empty dashboard variable as a cleared template instead of falling back to the legacy storage', () => {
+    const legacy = [{ uid: 'd1', expr: 'l = up' }];
+    expect(resolveWithTemplate({ withTemplate: '$withTemplate' }, templateSrvWith(''), legacy, 'd1')).toBeUndefined();
+    expect(resolveWithTemplate({ withTemplate: '$withTemplate' }, templateSrvWith(' '), legacy, 'd1')).toBeUndefined();
+    expect(resolveWithTemplate(undefined, templateSrvWith(''), legacy, 'd1')).toBeUndefined();
   });
 });
 
