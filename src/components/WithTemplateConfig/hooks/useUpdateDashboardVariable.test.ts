@@ -62,6 +62,8 @@ describe('useUpdateDashboardVariable', () => {
         name: WITH_TEMPLATE_VARIABLE_NAME,
         type: 'constant',
         query: 'up{job="foo"}',
+        hide: 2,
+        skipUrlSync: true,
       }),
     ]);
   });
