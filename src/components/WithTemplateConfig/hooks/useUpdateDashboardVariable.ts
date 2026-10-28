@@ -24,34 +24,52 @@ export interface EditedTarget {
   withTemplate?: string;
 }
 
-// Without a panel id the target is recognised by its refId and the identical inline template text:
-// a match is the edited query itself or a copy of it carrying the template that is being replaced.
-function isEditedTarget(panel: DashboardPanel, target: { refId?: string; withTemplate?: string }, edited?: EditedTarget): boolean {
-  if (!edited || target.refId !== edited.refId) {
-    return false;
+type DashboardTarget = NonNullable<DashboardPanel['targets']>[number];
+
+interface PanelTarget {
+  panel: DashboardPanel;
+  target: DashboardTarget;
+}
+
+// Every query of our datasource type across the panels, including the ones nested in rows
+function collectTargets(panels: DashboardPanel[] | undefined, into: PanelTarget[] = []): PanelTarget[] {
+  for (const panel of panels ?? []) {
+    collectTargets(panel.panels, into);
+    for (const target of panel.targets ?? []) {
+      const dsType = target.datasource?.type || panel.datasource?.type;
+      if (dsType === DATASOURCE_TYPE) {
+        into.push({ panel, target });
+      }
+    }
+  }
+  return into;
+}
+
+// The targets of the edited query. Without a panel id the query is recognised by its refId and the identical
+// inline template text, but only when exactly one target matches: refIds repeat across panels, so a wider
+// match would also switch an unrelated panel carrying the same template
+function findEditedTargets(entries: PanelTarget[], edited?: EditedTarget): DashboardTarget[] {
+  if (!edited) {
+    return [];
   }
   if (edited.panelId !== undefined) {
-    return panel.id === edited.panelId;
+    return entries.filter(e => e.panel.id === edited.panelId && e.target.refId === edited.refId).map(e => e.target);
   }
-  return !!edited.withTemplate && target.withTemplate === edited.withTemplate;
+  if (!edited.withTemplate) {
+    return [];
+  }
+  const matches = entries.filter(e => e.target.refId === edited.refId && e.target.withTemplate === edited.withTemplate);
+  return matches.length === 1 ? [matches[0].target] : [];
 }
 
 // Point all queries of our datasource type at the dashboard variable, except the ones holding an inline template
 // text (e.g. added from Explore), which keep it; the edited query always switches to the variable
 export function migrateWithTemplateQueries(panels: DashboardPanel[] | undefined, edited?: EditedTarget): void {
-  if (!panels) { return }
-  for (const panel of panels) {
-    // Handle row panels with nested panels
-    if (panel.panels) {
-      migrateWithTemplateQueries(panel.panels, edited);
-    }
-    if (!panel.targets) { continue }
-    for (const target of panel.targets) {
-      const dsType = target.datasource?.type || panel.datasource?.type;
-      if (dsType !== DATASOURCE_TYPE) { continue }
-      if (isEditedTarget(panel, target, edited) || !getInlineWithTemplate(target.withTemplate)) {
-        target.withTemplate = WITH_TEMPLATE_VARIABLE_REFERENCE;
-      }
+  const entries = collectTargets(panels);
+  const editedTargets = new Set(findEditedTargets(entries, edited));
+  for (const { target } of entries) {
+    if (editedTargets.has(target) || !getInlineWithTemplate(target.withTemplate)) {
+      target.withTemplate = WITH_TEMPLATE_VARIABLE_REFERENCE;
     }
   }
 }

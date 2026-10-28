@@ -38,4 +38,16 @@ describe('migrateWithTemplateQueries', () => {
     expect(panels[0].targets.map((t) => t.withTemplate)).toEqual(['$withTemplate', 'f = {a="b"}']);
     expect(panels[1].targets[0].withTemplate).toBe('g = up');
   });
+
+  it('leaves every candidate untouched when the panel id is unknown and several queries match', () => {
+    const panels = [
+      { id: 1, datasource: { type: DATASOURCE_TYPE }, targets: [{ refId: 'A', withTemplate: 'f = {a="b"}' }] },
+      { panels: [{ id: 2, datasource: { type: DATASOURCE_TYPE }, targets: [{ refId: 'A', withTemplate: 'f = {a="b"}' }] }] },
+      { id: 3, datasource: { type: DATASOURCE_TYPE }, targets: [{ refId: 'A', withTemplate: '' }] },
+    ];
+    migrateWithTemplateQueries(panels as any, { refId: 'A', withTemplate: 'f = {a="b"}' });
+    expect(panels[0].targets![0].withTemplate).toBe('f = {a="b"}');
+    expect(panels[1].panels![0].targets[0].withTemplate).toBe('f = {a="b"}');
+    expect(panels[2].targets![0].withTemplate).toBe('$withTemplate');
+  });
 });
