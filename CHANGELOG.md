@@ -9,6 +9,8 @@
 
 * BUGFIX: keep the dashboard in its folder when saving WITH templates. Previously the dashboard was moved to the root folder on every save, which made it unavailable to users without permissions on the root folder.
 
+* BUGFIX: show the dashboard-modified message instead of a raw error when saving WITH templates on Grafana 13, which reports a stale dashboard version with HTTP 409 instead of 412.
+
 ## v0.26.1
 
 * MAINTENANCE: fix the frontend build of the plugin.

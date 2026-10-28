@@ -94,7 +94,10 @@ export default (dashboardUID: string) => {
         },
       }));
     } catch (error: unknown) {
-      if (error && typeof error === 'object' && 'status' in error && (error as { status: number }).status === 412) {
+      const status =
+        error && typeof error === 'object' && 'status' in error ? (error as { status: number }).status : undefined;
+      // Grafana 10-12 report a stale dashboard version with 412, Grafana 13 with 409.
+      if (status === 412 || status === 409) {
         throw new DashboardVersionConflictError();
       }
       throw error;

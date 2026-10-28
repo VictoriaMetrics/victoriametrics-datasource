@@ -1,12 +1,12 @@
 import { renderHook } from '@testing-library/react';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { BackendSrvRequest, FetchResponse, getBackendSrv, setBackendSrv } from '@grafana/runtime';
 
 import { WITH_TEMPLATE_VARIABLE_NAME } from '../constants';
 import { DashboardResponse } from '../types';
 
-import useUpdateDashboardVariable from './useUpdateDashboardVariable';
+import useUpdateDashboardVariable, { DashboardVersionConflictError } from './useUpdateDashboardVariable';
 
 function makeDashboardResponse(): DashboardResponse {
   return {
@@ -66,5 +66,16 @@ describe('useUpdateDashboardVariable', () => {
         skipUrlSync: true,
       }),
     ]);
+  });
+
+  it.each([409, 412])('reports HTTP %i when saving as a dashboard version conflict', async (status) => {
+    fetchMock.mockImplementationOnce(() => of({ data: makeDashboardResponse() } as unknown as FetchResponse));
+    fetchMock.mockImplementationOnce(() => throwError(() => ({ status, data: {} })));
+
+    const { result } = renderHook(() => useUpdateDashboardVariable('dashboard-uid'));
+
+    await expect(result.current.updateDashboardVariable('up{job="foo"}')).rejects.toBeInstanceOf(
+      DashboardVersionConflictError
+    );
   });
 });
