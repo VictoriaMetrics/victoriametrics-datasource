@@ -4,23 +4,25 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflow/pr-checks-frontend.yml'
+      - '.github/workflows/pr-checks-frontend.yml'
       - '**/*.ts'
       - '**/*.tsx'
       - '**/yarn.lock'
       - '**/package.json'
       - '**/Makefile'
       - '**/Dockerfile'
+      - '.nvmrc'
   pull_request:
     branches: [main]
     paths:
-      - '.github/workflow/pr-checks-frontend.yml'
+      - '.github/workflows/pr-checks-frontend.yml'
       - '**/*.ts'
       - '**/*.tsx'
       - '**/yarn.lock'
       - '**/package.json'
       - '**/Makefile'
       - '**/Dockerfile'
+      - '.nvmrc'
 
 jobs:
   run-check:
