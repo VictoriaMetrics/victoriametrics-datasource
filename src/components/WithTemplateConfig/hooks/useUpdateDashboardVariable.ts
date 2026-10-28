@@ -86,6 +86,9 @@ export default (dashboardUID: string) => {
             ...dashboardWithoutId,
             templating: { list: variables },
           },
+          // Grafana files a dashboard posted without folderUid under the root folder,
+          // so send back the folder the dashboard was loaded from.
+          folderUid: response.data.meta.folderUid,
           overwrite: false,
           message: 'Update WITH template variable',
         },

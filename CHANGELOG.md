@@ -7,6 +7,8 @@
 
 * BUGFIX: keep WITH templates intact when ad hoc filters or the `Filter for value` action in Explore add label filters to a query. Previously such queries were rewritten into invalid MetricsQL and failed with a `422` error. Filters are now also added to every `or` alternative inside `{...}` and to metrics defined inside WITH templates, and label values are escaped. See [#551](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/551).
 
+* BUGFIX: keep the dashboard in its folder when saving WITH templates. Previously the dashboard was moved to the root folder on every save, which made it unavailable to users without permissions on the root folder.
+
 ## v0.26.1
 
 * MAINTENANCE: fix the frontend build of the plugin.
