@@ -24,8 +24,16 @@ export const getInlineWithTemplate = (value: string | undefined): string | undef
 };
 
 /**
+ * Whether the value is a template that was explicitly cleared: an empty or whitespace-only string,
+ * as opposed to a missing value (undefined).
+ */
+export const isClearedWithTemplate = (value: string | undefined): boolean => value !== undefined && value.trim() === '';
+
+/**
  * Resolves the WITH template text for a query: the template stored in the query itself (Explore) wins,
  * then the dashboard variable, then the legacy datasource storage keyed by dashboard uid (or app name).
+ * A template cleared in the query or in the variable stays disabled: the legacy storage is consulted
+ * only when neither of them holds a value.
  */
 export const resolveWithTemplate = (
   query: Pick<PromQuery, 'withTemplate'> | undefined,
@@ -33,9 +41,13 @@ export const resolveWithTemplate = (
   withTemplates: WithTemplate[],
   dashboardUID: string
 ): string | undefined => {
-  return (
-    getInlineWithTemplate(query?.withTemplate) ||
-    getWithTemplateVariableValue(templateSrv) ||
-    withTemplates.find(t => t.uid === dashboardUID)?.expr
-  );
+  const variableValue = getWithTemplateVariableValue(templateSrv);
+  const template = getInlineWithTemplate(query?.withTemplate) || variableValue?.trim();
+  if (template) {
+    return template;
+  }
+  if (isClearedWithTemplate(query?.withTemplate) || isClearedWithTemplate(variableValue)) {
+    return undefined;
+  }
+  return withTemplates.find(t => t.uid === dashboardUID)?.expr;
 };
