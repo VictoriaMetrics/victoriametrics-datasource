@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { lastValueFrom } from 'rxjs';
 
-import { getBackendSrv } from '@grafana/runtime';
+import { getBackendSrv, isFetchError } from '@grafana/runtime';
 
 import { DATASOURCE_TYPE } from '../../../consts';
 import { WITH_TEMPLATE_VARIABLE_NAME } from '../constants';
@@ -86,12 +86,20 @@ export default (dashboardUID: string) => {
             ...dashboardWithoutId,
             templating: { list: variables },
           },
+          // Grafana moves a dashboard posted without folderUid to the root folder,
+          // so send back the folder the dashboard was loaded from. See
+          // https://archive.grafana.com/docs/grafana/v12.3/developers/http_api/dashboard/#create--update-dashboard
+          folderUid: response.data.meta.folderUid,
           overwrite: false,
           message: 'Update WITH template variable',
         },
       }));
     } catch (error: unknown) {
-      if (error && typeof error === 'object' && 'status' in error && (error as { status: number }).status === 412) {
+      // Grafana 11-12 report a stale dashboard version with the documented 412 (status=version-mismatch):
+      // https://archive.grafana.com/docs/grafana/v12.3/developers/http_api/dashboard/#create--update-dashboard
+      // Grafana 13 serves this endpoint through the new dashboard API and responds with 409 instead:
+      // https://github.com/grafana/grafana/blob/v13.2.2/pkg/api/dashboard.go#L544-L548
+      if (isFetchError(error) && (error.status === 412 || error.status === 409)) {
         throw new DashboardVersionConflictError();
       }
       throw error;
