@@ -6,10 +6,8 @@
   - **Note:** VictoriaMetrics still limits the query length with its `-search.maxQueryLen` flag (16 KiB by default), so very long expressions need that flag raised on the VictoriaMetrics side. See [the list of command-line flags](https://docs.victoriametrics.com/victoriametrics/single-server-victoriametrics/#list-of-command-line-flags).
 
 * BUGFIX: keep WITH templates intact when ad hoc filters or the `Filter for value` action in Explore add label filters to a query. Previously such queries were rewritten into invalid MetricsQL and failed with a `422` error. Filters are now also added to every `or` alternative inside `{...}` and to metrics defined inside WITH templates, and label values are escaped. See [#551](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/551).
-
-* BUGFIX: keep the dashboard in its folder when saving WITH templates. Previously the dashboard was moved to the root folder on every save, which made it unavailable to users without permissions on the root folder.
-
-* BUGFIX: show the dashboard-modified message instead of a raw error when saving WITH templates on Grafana 13, which reports a stale dashboard version with HTTP 409 instead of 412.
+* BUGFIX: keep the dashboard in its folder when saving WITH templates. Previously the save request did not pass the folder, so Grafana [moved the dashboard to the root level](https://archive.grafana.com/docs/grafana/v12.3/developers/http_api/dashboard/#create--update-dashboard), which made it unavailable to users without permissions on the root folder. See [#563](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/563). Thanks to @evkuzin for contributing.
+* BUGFIX: show the `Dashboard has been modified` message when saving WITH templates on Grafana 13. Grafana 11 and 12 report a stale dashboard version with the [documented HTTP 412](https://archive.grafana.com/docs/grafana/v12.3/developers/http_api/dashboard/#create--update-dashboard), while Grafana 13 [responds with HTTP 409](https://github.com/grafana/grafana/blob/v13.2.2/pkg/api/dashboard.go#L544-L548), which previously left the dialog open without any message. See [#563](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/563). Thanks to @evkuzin for contributing.
 
 ## v0.26.1
 

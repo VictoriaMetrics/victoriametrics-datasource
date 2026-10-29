@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 import { BackendSrvRequest, FetchResponse, getBackendSrv, setBackendSrv } from '@grafana/runtime';
 
@@ -32,9 +32,9 @@ function makeDashboardResponse(): DashboardResponse {
   };
 }
 
-const fetchMock = jest.fn((_options: BackendSrvRequest) => {
-  return of({ data: makeDashboardResponse() } as unknown as FetchResponse);
-});
+const respondWithDashboard = () => of({ data: makeDashboardResponse() } as unknown as FetchResponse);
+
+const fetchMock = jest.fn<Observable<FetchResponse>, [BackendSrvRequest]>();
 
 setBackendSrv({
   ...getBackendSrv(),
@@ -42,8 +42,16 @@ setBackendSrv({
 });
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  fetchMock.mockReset();
+  fetchMock.mockImplementation(respondWithDashboard);
 });
+
+// Fails the POST that saves the dashboard; the GET that loads it keeps succeeding
+function failSaveWith(status: number) {
+  const error = { status, data: { message: `HTTP ${status}` } };
+  fetchMock.mockImplementation((options) => (options.method === 'POST' ? throwError(() => error) : respondWithDashboard()));
+  return error;
+}
 
 describe('useUpdateDashboardVariable', () => {
   it('keeps the dashboard in its folder and drops the numeric id when saving the WITH template', async () => {
@@ -52,9 +60,8 @@ describe('useUpdateDashboardVariable', () => {
     await result.current.updateDashboardVariable('up{job="foo"}');
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    const postRequest = fetchMock.mock.calls[1][0];
+    const postRequest = fetchMock.mock.calls.map(([options]) => options).find((options) => options.method === 'POST')!;
     expect(postRequest.url).toBe('/api/dashboards/db');
-    expect(postRequest.method).toBe('POST');
     expect(postRequest.data.folderUid).toBe('folder-123');
     expect(postRequest.data.dashboard).not.toHaveProperty('id');
     expect(postRequest.data.dashboard.templating.list).toEqual([
@@ -69,13 +76,20 @@ describe('useUpdateDashboardVariable', () => {
   });
 
   it.each([409, 412])('reports HTTP %i when saving as a dashboard version conflict', async (status) => {
-    fetchMock.mockImplementationOnce(() => of({ data: makeDashboardResponse() } as unknown as FetchResponse));
-    fetchMock.mockImplementationOnce(() => throwError(() => ({ status, data: {} })));
+    failSaveWith(status);
 
     const { result } = renderHook(() => useUpdateDashboardVariable('dashboard-uid'));
 
     await expect(result.current.updateDashboardVariable('up{job="foo"}')).rejects.toBeInstanceOf(
       DashboardVersionConflictError
     );
+  });
+
+  it('rethrows other save errors unchanged', async () => {
+    const error = failSaveWith(403);
+
+    const { result } = renderHook(() => useUpdateDashboardVariable('dashboard-uid'));
+
+    await expect(result.current.updateDashboardVariable('up{job="foo"}')).rejects.toBe(error);
   });
 });
