@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { PrometheusDatasource } from '../../../datasource';
+import { expandWithExprs } from '../api/expandWithExprs';
 
 interface ValidateResult {
   title: string;
@@ -37,12 +38,6 @@ const validateStatus: {[key: string]: ValidateResult} = {
   }
 }
 
-interface ExpandWithExprsResponse {
-  status: 'success' | 'error';
-  error?: string;
-}
-
-// The request goes through datasource.getRequest so that it honours the configured HTTP method.
 export default (datasource: PrometheusDatasource) => {
   const [validateResult, setValidateResult] = useState<ValidateResult>(validateStatus.noValidate)
 
@@ -57,10 +52,7 @@ export default (datasource: PrometheusDatasource) => {
     try {
       // replace Grafana variables with '1s' for validation
       const val = expr.replace(/\$__interval|\$__range|\$__rate_interval/gm, '1s')
-      const response: ExpandWithExprsResponse = await datasource.getRequest('expand-with-exprs', {
-        query: `WITH(${val})()`,
-        format: 'json',
-      })
+      const response = await expandWithExprs(datasource, `WITH(${val})()`)
       const { status, error = '' } = response
       setValidateResult({
         ...(status === 'success' ? validateStatus.success : validateStatus.invalid),

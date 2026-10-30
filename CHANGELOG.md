@@ -9,6 +9,7 @@
 * BUGFIX: keep the dashboard in its folder when saving WITH templates. Previously the save request did not pass the folder, so Grafana [moved the dashboard to the root level](https://archive.grafana.com/docs/grafana/v12.3/developers/http_api/dashboard/#create--update-dashboard), which made it unavailable to users without permissions on the root folder. See [#563](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/563). Thanks to @evkuzin for contributing.
 * BUGFIX: show the `Dashboard has been modified` message when saving WITH templates on Grafana 13. Grafana 11 and 12 report a stale dashboard version with the [documented HTTP 412](https://archive.grafana.com/docs/grafana/v12.3/developers/http_api/dashboard/#create--update-dashboard), while Grafana 13 [responds with HTTP 409](https://github.com/grafana/grafana/blob/v13.2.2/pkg/api/dashboard.go#L544-L548), which previously left the dialog open without any message. See [#563](https://github.com/VictoriaMetrics/victoriametrics-datasource/pull/563). Thanks to @evkuzin for contributing.
 * BUGFIX: fix WITH templates in Explore: a saved template used to be ignored, now it is applied to the query and kept after a page reload, in shared Explore links and after `Add to dashboard`.
+* BUGFIX: show the metrics of a query that uses a WITH template in the `Export data` dialog. Previously such a query had no selectors to export.
 
 ## v0.26.1
 
