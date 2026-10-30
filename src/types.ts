@@ -42,7 +42,7 @@ export interface PromQuery extends DataQuery {
   editorMode?: QueryEditorMode;
   trace?: number;
   fromExploreMetrics?: boolean;
-  /** Reference to dashboard variable with WITH template, e.g. "$withTemplate" */
+  /** Either a reference to the dashboard variable holding the WITH template (`$withTemplate`) or, in Explore, the WITH template text itself */
   withTemplate?: string;
 }
 

@@ -2,7 +2,7 @@ import { css } from '@emotion/css';
 import React, { useState } from 'react';
 
 import { getDefaultTimeRange, GrafanaTheme2 } from '@grafana/data';
-import { Alert, Button, Field, LinkButton, Modal, RadioButtonGroup, useStyles2 } from '@grafana/ui';
+import { Alert, Button, Field, LinkButton, LoadingPlaceholder, Modal, RadioButtonGroup, useStyles2 } from '@grafana/ui';
 
 import { CsvOptionsFields } from './CsvOptionsFields';
 import { SelectorsField } from './SelectorsField';
@@ -21,7 +21,13 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
     customLayout: DEFAULT_CUSTOM_LAYOUT,
   });
 
-  const { validSelectors, selectedSelectors, toggleSelector } = useExportSelectors(datasource, query, panelData);
+  const {
+    validSelectors,
+    selectedSelectors,
+    toggleSelector,
+    isLoading: selectorsLoading,
+    expandError,
+  } = useExportSelectors(datasource, query, panelData, isOpen);
 
   const {
     availableLabels,
@@ -50,7 +56,13 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
   return (
     <Modal title='Export Data' isOpen={isOpen} onDismiss={onClose}>
       <div className={styles.content}>
-        {!canExport && (
+        {expandError && (
+          <Alert title='Unable to expand WITH templates' severity='error'>
+            {expandError}
+          </Alert>
+        )}
+
+        {!canExport && !selectorsLoading && !expandError && (
           <Alert title='No selectors found' severity='warning'>
             Export requires a query with at least one vector selector (named metric or label-only).
           </Alert>
@@ -78,6 +90,8 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({ isOpen, onClos
         )}
 
         <TimeRangeField timeRange={timeRange} />
+
+        {selectorsLoading && <LoadingPlaceholder text='Expanding WITH templates...' />}
 
         <SelectorsField
           selectors={validSelectors}
