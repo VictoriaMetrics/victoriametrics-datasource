@@ -1,6 +1,6 @@
 module github.com/VictoriaMetrics/victoriametrics-datasource
 
-go 1.26.10
+go 1.27.3
 
 require (
 	github.com/grafana/grafana-plugin-sdk-go v0.296.4
