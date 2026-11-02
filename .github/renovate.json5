@@ -7,8 +7,9 @@
     'helpers:pinGitHubActionDigests',
   ],
   timezone: 'UTC',
-  // Every Monday 00:00-05:59 UTC.
-  schedule: ['* 0-5 * * 1'],
+  // The whole Monday (UTC): the Mend-hosted app runs a repository only once a
+  // day until a Renovate PR is merged, so a shorter window can be missed.
+  schedule: ['* * * * 1'],
   // A release must be at least three days old before it is proposed.
   minimumReleaseAge: '3 days',
   // The Monday batch has to fit into its schedule window, so the hourly limit
@@ -30,8 +31,8 @@
   // its own npmMinimalAgeGate from .yarnrc.yml while resolving.
   lockFileMaintenance: {
     enabled: true,
-    // Every Monday 00:00-05:59 UTC.
-    schedule: ['* 0-5 * * 1'],
+    // The whole Monday (UTC), same as the global schedule.
+    schedule: ['* * * * 1'],
   },
   postUpdateOptions: ['gomodTidy'],
   // The Node image in the Dockerfile is handled by the custom manager below,
@@ -147,13 +148,13 @@
       groupName: 'ci',
     },
     {
-      // The Grafana plugin validator is checked every day, as the catalog
-      // validates each release with its latest version.
+      // The Grafana plugin validator is checked on every Renovate run, as the
+      // catalog validates each release with its latest version.
       matchDepNames: ['grafana/plugin-validator'],
       groupName: 'plugincheck2',
       commitMessageTopic: 'Grafana plugin validator',
-      // Every day 00:00-05:59 UTC.
-      schedule: ['* 0-5 * * *'],
+      // Overrides the Monday-only schedule above.
+      schedule: ['at any time'],
     },
   ],
 }
