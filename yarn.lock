@@ -2150,16 +2150,56 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@es-joy/jsdoccomment@npm:~0.98.0":
-  version: 0.98.0
-  resolution: "@es-joy/jsdoccomment@npm:0.98.0"
+"@es-joy/escodegen@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "@es-joy/escodegen@npm:4.2.0"
+  dependencies:
+    "@es-joy/estraverse": "npm:^7.1.1"
+    "@es-joy/jsdoccomment": "npm:^0.62.0"
+    esprima: "npm:^4.0.1"
+    esutils: "npm:^2.0.3"
+    optionator: "npm:^0.9.4"
+    source-map: "npm:~0.7.6"
+  dependenciesMeta:
+    source-map:
+      optional: true
+  bin:
+    escodegen: bin/escodegen.js
+    esgenerate: bin/esgenerate.js
+  checksum: 10c0/7d839c9c09db946039629c797d155187d904a575ca05bd3d4df79bb149494aea615e4e119399c6204fcab4f6d36fc2bbb392e6289ee9cab76cc6a397a3037567
+  languageName: node
+  linkType: hard
+
+"@es-joy/estraverse@npm:^7.1.1":
+  version: 7.1.1
+  resolution: "@es-joy/estraverse@npm:7.1.1"
+  checksum: 10c0/3e2b0fcda02452df1dfb84f1d09c891d2a5522f44e954fc8f404785aade314b081b332760ca2bcf87eee2edf4ad5c3c1e34a045482688074b59da7e7dd2aab4f
+  languageName: node
+  linkType: hard
+
+"@es-joy/jsdoccomment@npm:^0.62.0":
+  version: 0.62.0
+  resolution: "@es-joy/jsdoccomment@npm:0.62.0"
+  dependencies:
+    "@types/estree": "npm:^1.0.8"
+    "@typescript-eslint/types": "npm:^8.44.1"
+    comment-parser: "npm:1.4.1"
+    esquery: "npm:^1.6.0"
+    jsdoc-type-pratt-parser: "npm:~5.9.0"
+  checksum: 10c0/4bc9d8374cf5b9cbfdbed242477e12f46bc740c0419eb3c9db44990ce25c54c0d033c112e9df3e107c163f1f5f5e77c06cb436c3dce4903d374b3c8090220782
+  languageName: node
+  linkType: hard
+
+"@es-joy/jsdoccomment@npm:~1.0.0":
+  version: 1.0.0
+  resolution: "@es-joy/jsdoccomment@npm:1.0.0"
   dependencies:
     "@types/estree": "npm:^1.0.9"
-    "@typescript-eslint/types": "npm:^8.70.0"
+    "@typescript-eslint/types": "npm:^8.72.0"
     comment-parser: "npm:1.4.9"
     esquery: "npm:^1.7.0"
-    jsdoc-type-pratt-parser: "npm:~9.2.2"
-  checksum: 10c0/0157089e4a8768bd2cb4e7e6302b7d18f73cce01586e05b133aaeb273cdc428e649b964c42e2d9c5b4b6d445121720705edf861a68b1cb409586aa384dab36a5
+    jsdoc-type-pratt-parser: "npm:~9.4.0"
+  checksum: 10c0/2356d56cc334fabf7e40898147b1f5b845ad631bb779eb5b90bc6f7ab251a491cd527f7ece0b8ded09c0f79d4bcc046bc2fa53fc7a5bc8d7e9ac588d76d400aa
   languageName: node
   linkType: hard
 
@@ -5179,7 +5219,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/types@npm:8.72.1, @typescript-eslint/types@npm:^8.56.0, @typescript-eslint/types@npm:^8.70.0, @typescript-eslint/types@npm:^8.72.1":
+"@typescript-eslint/types@npm:8.72.1, @typescript-eslint/types@npm:^8.44.1, @typescript-eslint/types@npm:^8.56.0, @typescript-eslint/types@npm:^8.72.0, @typescript-eslint/types@npm:^8.72.1":
   version: 8.72.1
   resolution: "@typescript-eslint/types@npm:8.72.1"
   checksum: 10c0/759f36d27a5b6c4dcdcd035ddec6e39d261cfcab864e641c4a6252d4be6358e53055ad737f1797e6ebb2b64b8cda380a0492acb96d7115e7ed86e6b27ceeddc3
@@ -5223,7 +5263,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:8.72.1, @typescript-eslint/utils@npm:^8.0.0, @typescript-eslint/utils@npm:^8.33.1, @typescript-eslint/utils@npm:^8.70.0":
+"@typescript-eslint/utils@npm:8.72.1, @typescript-eslint/utils@npm:^8.0.0, @typescript-eslint/utils@npm:^8.33.1, @typescript-eslint/utils@npm:^8.72.0":
   version: 8.72.1
   resolution: "@typescript-eslint/utils@npm:8.72.1"
   dependencies:
@@ -6604,6 +6644,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"comment-parser@npm:1.4.1":
+  version: 1.4.1
+  resolution: "comment-parser@npm:1.4.1"
+  checksum: 10c0/d6c4be3f5be058f98b24f2d557f745d8fe1cc9eb75bebbdccabd404a0e1ed41563171b16285f593011f8b6a5ec81f564fb1f2121418ac5cbf0f49255bf0840dd
+  languageName: node
+  linkType: hard
+
 "comment-parser@npm:1.4.9, comment-parser@npm:^1.4.1":
   version: 1.4.9
   resolution: "comment-parser@npm:1.4.9"
@@ -7539,13 +7586,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^64.3.6":
-  version: 64.5.4
-  resolution: "eslint-plugin-jsdoc@npm:64.5.4"
+"eslint-plugin-jsdoc@npm:^65.0.0":
+  version: 65.4.2
+  resolution: "eslint-plugin-jsdoc@npm:65.4.2"
   dependencies:
-    "@es-joy/jsdoccomment": "npm:~0.98.0"
+    "@es-joy/escodegen": "npm:^4.2.0"
+    "@es-joy/jsdoccomment": "npm:~1.0.0"
     "@es-joy/resolve.exports": "npm:1.2.0"
-    "@typescript-eslint/utils": "npm:^8.70.0"
+    "@typescript-eslint/utils": "npm:^8.72.0"
     are-docs-informative: "npm:^0.1.1"
     comment-parser: "npm:1.4.9"
     debug: "npm:^4.4.3"
@@ -7564,7 +7612,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/6c77abd1deef8a2a2fb93b2b0b0ead07421e61dbfe734d94da66c0b5d52c443f12d8c63f4b08ec212f5156f0ae52d22bb91c181e7a00ed05d4cb445c72f31b6b
+  checksum: 10c0/24108aee2bb1fa5f53fb5a8e7caca4bc46140c75f037895b43ab3ddbdc93f04f9abd115c9a3ae05ff691348e59af85c55f25c5e03b398ce55c36876cb6f222dd
   languageName: node
   linkType: hard
 
@@ -7757,7 +7805,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esquery@npm:^1.7.0":
+"esquery@npm:^1.6.0, esquery@npm:^1.7.0":
   version: 1.7.0
   resolution: "esquery@npm:1.7.0"
   dependencies:
@@ -7805,7 +7853,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esutils@npm:^2.0.2":
+"esutils@npm:^2.0.2, esutils@npm:^2.0.3":
   version: 2.0.3
   resolution: "esutils@npm:2.0.3"
   checksum: 10c0/9a2fe69a41bfdade834ba7c42de4723c97ec776e40656919c62cbd13607c45e127a003f05f724a1ea55e5029a4cf2de444b13009f2af71271e42d93a637137c7
@@ -9912,12 +9960,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdoc-type-pratt-parser@npm:~9.2.2":
-  version: 9.2.3
-  resolution: "jsdoc-type-pratt-parser@npm:9.2.3"
+"jsdoc-type-pratt-parser@npm:~5.9.0":
+  version: 5.9.2
+  resolution: "jsdoc-type-pratt-parser@npm:5.9.2"
+  checksum: 10c0/fbd396dee4fc9347d0bcc156391da4f579651a7d2f6500db48c314bd96f6c340206ed7854be0197d1f960e2250eca1e2e22a311a68944ea5c872abfe8f5e4b0d
+  languageName: node
+  linkType: hard
+
+"jsdoc-type-pratt-parser@npm:~9.4.0":
+  version: 9.4.0
+  resolution: "jsdoc-type-pratt-parser@npm:9.4.0"
   dependencies:
     "@types/estree": "npm:^1.0.9"
-  checksum: 10c0/4b20f971331a78b8420a2dc9736a98c09889f51da6692ce1c22d92cf34a0beec1f52d48cb33596bea42120f2c69d8054e6c00af4201cfe319bcc76d1dbc1a432
+  checksum: 10c0/4221a547be870fae67901c4b2d2c1b8b8ece4c4e03592e98e5f773e2fc6d2dd929ebc4851d05128e6dd49cd41b53ee39e9d55a29cf7715e184ff418f7a3ee858
   languageName: node
   linkType: hard
 
@@ -10803,7 +10858,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"optionator@npm:^0.9.3":
+"optionator@npm:^0.9.3, optionator@npm:^0.9.4":
   version: 0.9.4
   resolution: "optionator@npm:0.9.4"
   dependencies:
@@ -12877,6 +12932,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"source-map@npm:~0.7.6":
+  version: 0.7.6
+  resolution: "source-map@npm:0.7.6"
+  checksum: 10c0/59f6f05538539b274ba771d2e9e32f6c65451982510564438e048bc1352f019c6efcdc6dd07909b1968144941c14015c2c7d4369fb7c4d7d53ae769716dcc16c
+  languageName: node
+  linkType: hard
+
 "spdx-exceptions@npm:^2.1.0":
   version: 2.5.0
   resolution: "spdx-exceptions@npm:2.5.0"
@@ -14048,7 +14110,7 @@ __metadata:
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-import-x: "npm:^4.17.1"
     eslint-plugin-jest: "npm:^29.16.6"
-    eslint-plugin-jsdoc: "npm:^64.3.6"
+    eslint-plugin-jsdoc: "npm:^65.0.0"
     eslint-plugin-lodash: "npm:^8.0.0"
     eslint-plugin-react: "npm:^7.37.5"
     eslint-plugin-react-hooks: "npm:^7.1.1"
