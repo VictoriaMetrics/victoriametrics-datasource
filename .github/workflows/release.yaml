@@ -88,7 +88,7 @@ jobs:
           GRAFANA_ACCESS_POLICY_TOKEN: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
         run: |
           export PKG_TAG="v$(yq -r '.version' package.json)"
-          if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
+          if git show-ref --tags --verify --quiet "refs/tags/${PKG_TAG}"; then
             echo "Tag ${PKG_TAG} exists, skipping release"
           else
             echo "PKG_TAG=$PKG_TAG" >> $GITHUB_ENV
@@ -100,8 +100,8 @@ jobs:
             sed -n '/## tip/,/## /p' CHANGELOG.md | sed -e '$d' -e '1d' > NOTES.md
             sed -i 's/## tip/&\n\n## '${PKG_TAG}'/' CHANGELOG.md
             make vm-plugin-check
-            git tag ${TAG}
-            git push origin ${TAG}
+            git tag ${PKG_TAG}
+            git push origin ${PKG_TAG}
           fi
       - name: Generate artifact attestation
         if: ${{ hashFiles('NOTES.md') != '' }}
