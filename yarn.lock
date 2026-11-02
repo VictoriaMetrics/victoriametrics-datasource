@@ -8544,6 +8544,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"highlight-words-core@npm:2.0.0":
+  version: 2.0.0
+  resolution: "highlight-words-core@npm:2.0.0"
+  checksum: 10c0/12afa504745813295ca9a8a456786abd33162d7c1646b4e73fec23c0e4f1568f858ed0df060ca0faaddbd289cdb05bd8fe3239478ac7743500576408dc8d0e7a
+  languageName: node
+  linkType: hard
+
 "highlight-words-core@npm:^1.2.0":
   version: 1.2.3
   resolution: "highlight-words-core@npm:1.2.3"
@@ -11588,6 +11595,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-highlight-words@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "react-highlight-words@npm:1.0.0"
+  dependencies:
+    highlight-words-core: "npm:2.0.0"
+  peerDependencies:
+    react: ^16.3.0 || ^17.0.0-0 || ^18.0.0-0 || ^19.0.0-0
+  checksum: 10c0/f834bc891a1175eb38f627981b68e130749ec5fe3054f4b12066fcbb83d88e05254a2d6613b70021d3be2fe76efd695662122f9e8e7c423cd4c1daa7717ba5bb
+  languageName: node
+  linkType: hard
+
 "react-hook-form@npm:^7.49.2":
   version: 7.91.0
   resolution: "react-hook-form@npm:7.91.0"
@@ -14072,7 +14090,7 @@ __metadata:
     prismjs: "npm:1.30.0"
     react: "npm:^19.2.8"
     react-dom: "npm:^19.2.8"
-    react-highlight-words: "npm:^0.21.0"
+    react-highlight-words: "npm:^1.0.0"
     react-popper-tooltip: "npm:4.4.2"
     react-redux: "npm:9.3.0"
     react-select: "npm:5.10.2"
