@@ -4800,7 +4800,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jquery@npm:3.5.34, @types/jquery@npm:^3.5.33":
+"@types/jquery@npm:4.0.1":
+  version: 4.0.1
+  resolution: "@types/jquery@npm:4.0.1"
+  checksum: 10c0/8cacbee3ec548cca54079212ef0722882df53fa5e47ee7b082ed541d288487fd830faf6fb535b996d4c3e9b99e7ffa6bbc463da1b7f9e22a9b95005c55aba862
+  languageName: node
+  linkType: hard
+
+"@types/jquery@npm:^3.5.33":
   version: 3.5.34
   resolution: "@types/jquery@npm:3.5.34"
   dependencies:
@@ -9875,6 +9882,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jquery@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "jquery@npm:4.0.0"
+  checksum: 10c0/06d8d0f51121af5a691f8b59c74823157bb5b60eea915b30eaa920d6c0ffd91e60ba81e9b97bd8203f331f9dd8d0ec9a4b010935ea314bdd2f15453c29bc780b
+  languageName: node
+  linkType: hard
+
 "js-cookie@npm:^3.0.0":
   version: 3.0.8
   resolution: "js-cookie@npm:3.0.8"
@@ -14024,7 +14038,7 @@ __metadata:
     "@testing-library/user-event": "npm:^14.6.7"
     "@types/debounce-promise": "npm:^3.1.9"
     "@types/jest": "npm:^30.0.0"
-    "@types/jquery": "npm:3.5.34"
+    "@types/jquery": "npm:4.0.1"
     "@types/lodash": "npm:4.17.25"
     "@types/node": "npm:^24.13.3"
     "@types/pluralize": "npm:^0.0.33"
@@ -14061,7 +14075,7 @@ __metadata:
     imports-loader: "npm:^5.0.0"
     jest: "npm:30.5.1"
     jest-environment-jsdom: "npm:30.5.1"
-    jquery: "npm:^3.7.1"
+    jquery: "npm:^4.0.0"
     lezer-metricsql: "workspace:*"
     lodash: "npm:^4.18.1"
     lru-cache: "npm:11.5.2"
