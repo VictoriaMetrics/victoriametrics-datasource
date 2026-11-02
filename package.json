@@ -113,7 +113,7 @@
     "@grafana/aws-sdk": "^0.12.1",
     "@grafana/data": "^13.2.1",
     "@grafana/i18n": "^13.2.1",
-    "@grafana/plugin-ui": "^0.17.4",
+    "@grafana/plugin-ui": "^0.17.8",
     "@grafana/runtime": "^13.2.1",
     "@grafana/schema": "^13.2.1",
     "@grafana/ui": "^13.2.1",
