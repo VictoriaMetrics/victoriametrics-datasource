@@ -66,32 +66,11 @@
     // --- npm ---------------------------------------------------------------
     {
       // Exact versions in package.json: every update of a direct dependency is
-      // an explicit diff. The first run opens a one-off "pin" pull request.
+      // an explicit diff. All npm updates (minor, patch, major, pin) travel in
+      // one pull request; see the quarantine rule at the end for exceptions.
       matchManagers: ['npm'],
       rangeStrategy: 'pin',
-    },
-    {
-      matchManagers: ['npm'],
-      matchUpdateTypes: ['pin'],
-      groupName: 'pin npm dependencies',
-    },
-    {
-      matchManagers: ['npm'],
-      matchUpdateTypes: ['minor', 'patch'],
-      groupName: 'npm non-major',
-    },
-    {
-      // The @grafana/* packages move together.
-      matchManagers: ['npm'],
-      matchPackageNames: ['/^@grafana\\//'],
-      matchUpdateTypes: ['minor', 'patch'],
-      groupName: 'grafana',
-    },
-    {
-      matchManagers: ['npm'],
-      matchPackageNames: ['/^@grafana\\//'],
-      matchUpdateTypes: ['major'],
-      groupName: 'grafana major',
+      groupName: 'npm',
     },
     {
       // Renovate runs `yarn set version`, which also replaces the vendored
@@ -122,21 +101,18 @@
       rangeStrategy: 'bump',
     },
     {
-      // The go directive in go.mod and the go tool in mise.toml.
-      matchDatasources: ['golang-version'],
+      // The go directive in go.mod and the go tool in mise.toml. The mise
+      // manager resolves go through github-tags (golang/go), not the
+      // golang-version datasource, so the match is by name and manager.
+      matchManagers: ['gomod', 'mise'],
+      matchDepNames: ['go'],
       groupName: 'go',
     },
     {
+      // All modules in go.mod, majors and the plugin SDK included.
       matchManagers: ['gomod'],
       matchDepTypes: ['require'],
-      matchUpdateTypes: ['minor', 'patch'],
-      groupName: 'go non-major',
-    },
-    {
-      // The plugin SDK drags a large vendor/ diff and is reviewed on its own.
-      matchManagers: ['gomod'],
-      matchDepNames: ['github.com/grafana/grafana-plugin-sdk-go'],
-      groupName: 'grafana-plugin-sdk-go',
+      groupName: 'go modules',
     },
     // --- CI tooling --------------------------------------------------------
     {
@@ -155,6 +131,14 @@
       commitMessageTopic: 'Grafana plugin validator',
       // Overrides the Monday-only schedule above.
       schedule: ['at any time'],
+    },
+    // --- Quarantine --------------------------------------------------------
+    {
+      // Updates that currently break CI: each one gets its own pull request so
+      // the grouped ones stay mergeable. Remove a name once it is migrated.
+      // Last on purpose: it overrides the groupName of every rule above.
+      matchPackageNames: ['typescript'],
+      groupName: null,
     },
   ],
 }
