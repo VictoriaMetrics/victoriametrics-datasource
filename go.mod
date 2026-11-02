@@ -4,7 +4,7 @@ go 1.26.10
 
 require (
 	github.com/grafana/grafana-plugin-sdk-go v0.296.4
-	github.com/klauspost/compress v1.19.2
+	github.com/klauspost/compress v1.20.3
 	github.com/magefile/mage v1.17.2
 )
 
