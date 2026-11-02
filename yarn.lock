@@ -113,17 +113,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atlaskit/pragmatic-drag-and-drop@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@atlaskit/pragmatic-drag-and-drop@npm:3.1.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.0.0"
-    bind-event-listener: "npm:^3.0.0"
-    raf-schd: "npm:^4.0.3"
-  checksum: 10c0/e1e79c4c25f95a7842c90ebe81f6d81f2f172dfa7dfe725bb2a976c3bfbe55d480d1ceeef04def26c6cb11828b4a0e9b1449d743caefda25319f901f5fe869c0
-  languageName: node
-  linkType: hard
-
 "@atlaskit/pragmatic-drag-and-drop@npm:^4.0.0":
   version: 4.0.0
   resolution: "@atlaskit/pragmatic-drag-and-drop@npm:4.0.0"
@@ -13980,7 +13969,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "victoriametrics-metrics-datasource@workspace:."
   dependencies:
-    "@atlaskit/pragmatic-drag-and-drop": "npm:^3.1.0"
+    "@atlaskit/pragmatic-drag-and-drop": "npm:^4.0.0"
     "@atlaskit/pragmatic-drag-and-drop-react-beautiful-dnd-migration": "npm:^3.4.1"
     "@babel/core": "npm:7.29.7"
     "@babel/plugin-proposal-class-properties": "npm:7.18.6"
