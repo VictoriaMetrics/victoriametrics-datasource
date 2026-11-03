@@ -1441,7 +1441,8 @@ func TestQuery_ErrorsDoNotContainRequestURL(t *testing.T) {
 		if resp.Error == nil {
 			t.Fatal("expected an error")
 		}
-		if strings.Contains(resp.Error.Error(), srv.URL) || strings.Contains(resp.Error.Error(), secret) {
+		// The network error keeps host:port on purpose, only the path and the query parameters must be hidden
+		if strings.Contains(resp.Error.Error(), instantQueryPath) || strings.Contains(resp.Error.Error(), secret) {
 			t.Fatalf("expected the error to hide the request url, got %q", resp.Error)
 		}
 	})

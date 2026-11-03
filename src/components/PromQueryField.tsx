@@ -32,7 +32,6 @@ import {
   makePromiseCancelable,
 } from '../utils/CancelablePromise';
 
-
 import { LocalStorageValueProvider } from './LocalStorageValueProvider';
 import { PrometheusMetricsBrowser } from './PrometheusMetricsBrowser';
 import { MonacoQueryFieldWrapper } from './monaco-query-field/MonacoQueryFieldWrapper';

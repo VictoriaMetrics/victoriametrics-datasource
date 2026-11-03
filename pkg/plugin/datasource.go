@@ -203,30 +203,11 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 		return newResponseError(err, backend.StatusBadRequest)
 	}
 
-	req, err := newRequest(ctx, di.settings.HTTPMethod, u, params)
+	resp, err := di.do(func() (*http.Request, error) {
+		return newRequest(ctx, di.settings.HTTPMethod, u, params)
+	})
 	if err != nil {
-		err = fmt.Errorf("failed to create new request with context: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
-	}
-	resp, err := di.httpClient.Do(req)
-	if err != nil {
-		if !isTrivialError(err) {
-			// Return unexpected error to the caller.
-			return newResponseError(withoutURL(err), backend.StatusBadRequest)
-		}
-
-		// Something in the middle between client and datasource might be closing
-		// the connection. So we do a one more attempt in hope request will succeed.
-		req, err = newRequest(ctx, di.settings.HTTPMethod, u, params)
-		if err != nil {
-			err = fmt.Errorf("failed to create new request with context: %w", err)
-			return newResponseError(err, backend.StatusBadRequest)
-		}
-		resp, err = di.httpClient.Do(req)
-		if err != nil {
-			err = fmt.Errorf("failed to make http request: %w", withoutURL(err))
-			return newResponseError(err, backend.StatusBadRequest)
-		}
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -236,7 +217,7 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 
 	if resp.StatusCode != http.StatusOK {
 		// The full URL may carry credentials and sensitive query parameters, so it is logged redacted and never returned
-		log.DefaultLogger.Debug("unexpected response status code", "status", resp.StatusCode, "url", redactURL(req.URL))
+		log.DefaultLogger.Debug("unexpected response status code", "status", resp.StatusCode, "url", redactURL(resp.Request.URL))
 		body, readErr := io.ReadAll(io.LimitReader(resp.Body, 4096))
 		if readErr == nil {
 			var errResp Response
@@ -433,33 +414,12 @@ func (d *Datasource) VMAPIQuery(rw http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
-	newReq, err := newProxyRequest(ctx, req, u, body)
+	resp, err := di.do(func() (*http.Request, error) {
+		return newProxyRequest(ctx, req, u, body)
+	})
 	if err != nil {
-		writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to create new request with context: %w", err))
+		writeError(rw, http.StatusBadRequest, err)
 		return
-	}
-
-	resp, err := di.httpClient.Do(newReq)
-	if err != nil {
-		if !isTrivialError(err) {
-			// Return unexpected error to the caller.
-			writeError(rw, http.StatusBadRequest, withoutURL(err))
-			return
-		}
-
-		newReq, err := newProxyRequest(ctx, req, u, body)
-		if err != nil {
-			writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to create new request with context: %w", err))
-			return
-		}
-
-		// Something in the middle between client and datasource might be closing
-		// the connection. So we do a one more attempt in hope request will succeed.
-		resp, err = di.httpClient.Do(newReq)
-		if err != nil {
-			writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to make http request: %w", withoutURL(err)))
-			return
-		}
 	}
 	defer resp.Body.Close()
 
@@ -493,7 +453,7 @@ func (d *Datasource) VMAPIQuery(rw http.ResponseWriter, req *http.Request) {
 func writeError(rw http.ResponseWriter, statusCode int, err error) {
 	data := make(map[string]interface{})
 
-	data["error"] = "Internal Server Error"
+	data["error"] = http.StatusText(statusCode)
 	data["message"] = err.Error()
 
 	var b []byte
@@ -545,6 +505,36 @@ func newHealthCheckErrorf(format string, args ...interface{}) *backend.CheckHeal
 
 // newHealthCheckErrorf returns a new backend.DataResponse with its status set to backend.DataResponse
 // and the specified error message.
+// do sends the request built by newReq and retries once on a trivial network error.
+// Errors returned by the HTTP client never carry the request URL, which may hold
+// credentials and sensitive query parameters.
+func (di *DatasourceInstance) do(newReq func() (*http.Request, error)) (*http.Response, error) {
+	req, err := newReq()
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new request with context: %w", err)
+	}
+	resp, err := di.httpClient.Do(req)
+	if err == nil {
+		return resp, nil
+	}
+	if !isTrivialError(err) {
+		// Return unexpected error to the caller.
+		return nil, withoutURL(err)
+	}
+
+	// Something in the middle between client and datasource might be closing
+	// the connection. So we do a one more attempt in hope request will succeed.
+	req, err = newReq()
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new request with context: %w", err)
+	}
+	resp, err = di.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to make http request: %w", withoutURL(err))
+	}
+	return resp, nil
+}
+
 func newResponseError(err error, httpStatus backend.Status) backend.DataResponse {
 	log.DefaultLogger.Error(err.Error())
 	return backend.DataResponse{Status: httpStatus, Error: err}

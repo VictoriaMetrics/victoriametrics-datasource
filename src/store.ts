@@ -3,13 +3,9 @@ import { StorageKey } from './storageKeys';
 type StoreValue = string | number | boolean | null;
 
 export class Store {
-  /* Reads the prefixed key and falls back to the legacy key written by earlier plugin versions */
-  get({ key, legacyKey }: StorageKey) {
-    const value = window.localStorage[key];
-    if (value !== void 0 || legacyKey === void 0) {
-      return value;
-    }
-    return window.localStorage[legacyKey];
+  get(key: StorageKey) {
+    this.migrateLegacyValue(key);
+    return window.localStorage[key.key];
   }
 
   set({ key }: StorageKey, value: StoreValue) {
@@ -52,13 +48,21 @@ export class Store {
   }
 
   exists(key: StorageKey) {
-    return this.get(key) !== void 0;
+    return this.get(key) !== undefined;
   }
 
-  /* Removes the legacy key as well, otherwise its value would show up again on the next read */
-  delete({ key, legacyKey }: StorageKey) {
+  delete({ key }: StorageKey) {
     window.localStorage.removeItem(key);
-    if (legacyKey !== void 0) {
+  }
+
+  /* Moves the value written by earlier plugin versions under the prefixed key, once */
+  private migrateLegacyValue({ key, legacyKey }: StorageKey) {
+    if (legacyKey === undefined || window.localStorage[key] !== undefined) {
+      return;
+    }
+    const legacyValue = window.localStorage[legacyKey];
+    if (legacyValue !== undefined) {
+      window.localStorage[key] = legacyValue;
       window.localStorage.removeItem(legacyKey);
     }
   }

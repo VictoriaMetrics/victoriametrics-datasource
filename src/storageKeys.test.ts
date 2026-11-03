@@ -6,16 +6,25 @@ describe('pluginStorageKey', () => {
     expect(pluginStorageKey('foo')).toEqual({ key: `${DATASOURCE_TYPE}.foo`, legacyKey: undefined });
   });
 
-  it('keeps the legacy key for reading', () => {
+  it('keeps the legacy key for migration', () => {
     expect(pluginStorageKey('foo', 'bar')).toEqual({ key: `${DATASOURCE_TYPE}.foo`, legacyKey: 'bar' });
   });
 
   it.each([queryEditorModeDefaultKey, queryEditorExplainKey, lastUsedLabelsKey])(
-    'every shared key is prefixed and keeps its legacy key %o',
-    ({ key, legacyKey }) => {
+    'every shared key is prefixed %o',
+    ({ key }) => {
       expect(key.startsWith(`${DATASOURCE_TYPE}.`)).toBe(true);
-      expect(legacyKey).toBeDefined();
-      expect(legacyKey!.startsWith(`${DATASOURCE_TYPE}.`)).toBe(false);
+    }
+  );
+
+  it('migrates only the keys that belonged to this plugin', () => {
+    expect(queryEditorExplainKey.legacyKey).toBe('VictoriaMetricsQueryEditorExplainDefault');
+  });
+
+  it.each([queryEditorModeDefaultKey, lastUsedLabelsKey])(
+    'never reads the keys shared with the Prometheus datasource %o',
+    ({ legacyKey }) => {
+      expect(legacyKey).toBeUndefined();
     }
   );
 });

@@ -31,12 +31,13 @@ import { getArrayFromTemplate } from '../../components/WithTemplateConfig/utils/
 import { resolveWithTemplate, WITH_TEMPLATE_VARIABLE_REFERENCE } from '../../components/WithTemplateConfig/utils/resolveWithTemplate';
 import { PromQueryEditorProps } from '../../components/types';
 import PrometheusLanguageProvider from '../../language_provider';
+import { queryEditorExplainKey } from '../../storageKeys';
 import { PromQuery } from '../../types';
 import { promQueryModeller } from '../PromQueryModeller';
 import { buildVisualQueryFromString } from '../parsing';
 import { QueryEditorModeToggle } from '../shared/QueryEditorModeToggle';
 import { QueryHeaderSwitch } from '../shared/QueryHeaderSwitch';
-import { queryEditorExplainKey, useFlag } from '../shared/hooks/useFlag';
+import { useFlag } from '../shared/hooks/useFlag';
 import { QueryEditorMode } from '../shared/types';
 import { changeEditorMode, getQueryWithDefaults } from '../state';
 
