@@ -2,6 +2,7 @@
 
 ## tip
 
+* BUGFIX: return `400 Bad Request` instead of crashing the backend when the `vmui` resource endpoint receives a request without a body or with invalid JSON.
 * SECURITY: update Go dependencies: `golang.org/x/net` to v0.62.0, `golang.org/x/sys` to v0.49.0, `golang.org/x/text` to v0.43.0. The `golang.org/x/net` update includes fixes for the reported vulnerabilities in the previous version.
 
 ## v1.0.0

@@ -380,13 +380,16 @@ func (d *Datasource) VMUIQuery(rw http.ResponseWriter, req *http.Request) {
 		writeError(rw, http.StatusInternalServerError, err)
 		return
 	}
+	// The SDK resource adapter passes a nil body for requests without one
+	if req.Body == nil {
+		writeError(rw, http.StatusBadRequest, errors.New("request body is required"))
+		return
+	}
 	var vmuiReq struct {
 		VMUI map[string]string `json:"vmui"`
 	}
-	err = json.NewDecoder(req.Body).Decode(&vmuiReq)
-	if err != nil {
-		d.logger.Error("Error decoding request body", "error", err)
-		writeError(rw, http.StatusInternalServerError, err)
+	if err := json.NewDecoder(req.Body).Decode(&vmuiReq); err != nil {
+		writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to decode request body: %w", err))
 		return
 	}
 	params := url.Values{}

@@ -1333,3 +1333,65 @@ func TestVMAPIQuery_GETWithoutBody(t *testing.T) {
 		t.Errorf("expected an empty body, got %q", gotBody)
 	}
 }
+
+func TestVMUIQuery(t *testing.T) {
+	newRequest := func(t *testing.T, body io.Reader) *http.Request {
+		t.Helper()
+		pluginCtx := backend.PluginContext{
+			DataSourceInstanceSettings: &backend.DataSourceInstanceSettings{
+				URL:      "http://vm:8428",
+				JSONData: []byte(`{"httpMethod":"POST","customQueryParameters":"nocache=1"}`),
+			},
+		}
+		ctx := backend.WithPluginContext(context.Background(), pluginCtx)
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, "/vmui", body)
+		if err != nil {
+			t.Fatalf("failed to create request: %s", err)
+		}
+		return req
+	}
+
+	t.Run("nil body returns a client error", func(t *testing.T) {
+		// The SDK resource adapter passes a nil body when the request has no body.
+		req := newRequest(t, nil)
+		if req.Body != nil {
+			t.Fatal("expected a nil request body")
+		}
+
+		rr := httptest.NewRecorder()
+		NewDatasource().VMUIQuery(rr, req)
+		if rr.Code != http.StatusBadRequest {
+			t.Fatalf("expected status %d, got %d; body: %s", http.StatusBadRequest, rr.Code, rr.Body.String())
+		}
+	})
+
+	t.Run("invalid json returns a client error", func(t *testing.T) {
+		req := newRequest(t, strings.NewReader(`{"vmui": `))
+
+		rr := httptest.NewRecorder()
+		NewDatasource().VMUIQuery(rr, req)
+		if rr.Code != http.StatusBadRequest {
+			t.Fatalf("expected status %d, got %d; body: %s", http.StatusBadRequest, rr.Code, rr.Body.String())
+		}
+	})
+
+	t.Run("valid request returns the vmui url", func(t *testing.T) {
+		req := newRequest(t, strings.NewReader(`{"vmui": {"expr": "up"}}`))
+
+		rr := httptest.NewRecorder()
+		NewDatasource().VMUIQuery(rr, req)
+		if rr.Code != http.StatusOK {
+			t.Fatalf("expected status %d, got %d; body: %s", http.StatusOK, rr.Code, rr.Body.String())
+		}
+		var resp struct {
+			VMUIURL string `json:"vmuiURL"`
+		}
+		if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("failed to decode response %q: %s", rr.Body.String(), err)
+		}
+		want := "http://vm:8428/vmui?#/?g0.expr=up&nocache=1"
+		if resp.VMUIURL != want {
+			t.Errorf("expected vmui url %q, got %q", want, resp.VMUIURL)
+		}
+	})
+}
