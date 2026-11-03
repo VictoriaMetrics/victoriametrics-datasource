@@ -18,12 +18,12 @@
   "devDependencies": {
     "@lezer/generator": "1.8.1",
     "@lezer/highlight": "1.2.5",
-    "@lezer/lr": "1.4.11",
+    "@lezer/lr": "1.4.12",
     "@rollup/plugin-node-resolve": "16.0.3",
-    "rollup": "4.65.1"
+    "rollup": "4.67.2"
   },
   "peerDependencies": {
     "@lezer/highlight": "1.2.5",
-    "@lezer/lr": "1.4.11"
+    "@lezer/lr": "1.4.12"
   }
 }
