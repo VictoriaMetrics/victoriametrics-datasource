@@ -2,8 +2,10 @@
 
 ## tip
 
-* BUGFIX: return `400 Bad Request` instead of crashing the backend when the `vmui` resource endpoint receives a request without a body or with invalid JSON.
-* SECURITY: update Go dependencies: `golang.org/x/net` to v0.62.0, `golang.org/x/sys` to v0.49.0, `golang.org/x/text` to v0.43.0. The `golang.org/x/net` update includes fixes for the reported vulnerabilities in the previous version.
+* BUGFIX: keep the query editor settings saved in the browser separate from the built-in Prometheus datasource. Previously, both plugins shared the same storage keys and overwrote each other's default editor mode and last used labels.
+* BUGFIX: respond with a client error instead of crashing the backend when the `vmui` link request has no body or invalid JSON.
+
+* DEPENDENCY: update `golang.org/x/net` to v0.62.0 to fix the reported vulnerabilities.
 
 ## v1.0.0
 

@@ -18,10 +18,10 @@
 
 import { useCallback, useState } from 'react';
 
+import { queryEditorExplainKey, queryEditorRawQueryKey } from '../../../storageKeys';
 import store from '../../../store';
 
-export const queryEditorExplainKey = 'VictoriaMetricsQueryEditorExplainDefault';
-export const queryEditorRawQueryKey = 'VictoriaMetricsQueryEditorRawQueryDefault';
+export { queryEditorExplainKey, queryEditorRawQueryKey };
 
 export type QueryEditorFlags =
   | typeof queryEditorExplainKey

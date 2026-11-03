@@ -24,6 +24,7 @@ import { Icon } from '@grafana/ui';
 import { PrometheusDatasource } from '../datasource';
 import PromQlLanguageProvider from '../language_provider';
 import { roundMsToMin } from '../language_utils';
+import { lastUsedLabelsKey } from '../storageKeys';
 import { PromOptions, PromQuery } from '../types';
 import {
   CancelablePromise,
@@ -31,11 +32,10 @@ import {
   makePromiseCancelable,
 } from '../utils/CancelablePromise';
 
+
 import { LocalStorageValueProvider } from './LocalStorageValueProvider';
 import { PrometheusMetricsBrowser } from './PrometheusMetricsBrowser';
 import { MonacoQueryFieldWrapper } from './monaco-query-field/MonacoQueryFieldWrapper';
-
-const LAST_USED_LABELS_KEY = 'grafana.datasources.prometheus.browser.labels';
 
 function getChooserText(metricsLookupDisabled: boolean, hasSyntax: boolean, hasMetrics: boolean) {
   if (metricsLookupDisabled) {
@@ -221,7 +221,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
     const buttonDisabled = !(syntaxLoaded && hasMetrics);
 
     return (
-      <LocalStorageValueProvider<string[]> storageKey={LAST_USED_LABELS_KEY} defaultValue={[]}>
+      <LocalStorageValueProvider<string[]> storageKey={lastUsedLabelsKey} defaultValue={[]}>
         {(lastUsedLabels, onLastUsedLabelsSave, onLastUsedLabelsDelete) => {
           return (
             <>
