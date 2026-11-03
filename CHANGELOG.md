@@ -2,6 +2,8 @@
 
 ## tip
 
+* SECURITY: update Go dependencies: `golang.org/x/net` to v0.62.0, `golang.org/x/sys` to v0.49.0, `golang.org/x/text` to v0.43.0. The `golang.org/x/net` update includes fixes for the reported vulnerabilities in the previous version.
+
 ## v1.0.0
 
 * BUGFIX: send query parameters in the request body when the `HTTP method` setting is `POST`, so large queries no longer fail with `431 Request Header Fields Too Large` behind proxies that limit the URL length. The same applies to metadata requests such as label and series lookups. See [#550](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/550).
