@@ -16,17 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { LanguageMap, languages as prismLanguages } from 'prismjs';
 import React, { ReactNode } from 'react';
-import { Plugin } from 'slate';
-import { Editor } from 'slate-react';
 
 import { isDataFrame, QueryEditorProps, QueryHint, TimeRange, toLegacyResponseData } from '@grafana/data';
-import {
-  BracesPlugin,
-  Icon,
-  SlatePrism,
-} from '@grafana/ui';
+import { Icon } from '@grafana/ui';
 
 import { PrometheusDatasource } from '../datasource';
 import PromQlLanguageProvider from '../language_provider';
@@ -73,25 +66,10 @@ interface PromQueryFieldState {
 }
 
 class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryFieldState> {
-  // @ts-ignore
-  plugins: Array<Plugin<Editor>>;
   declare languageProviderInitializationPromise: CancelablePromise<any>;
 
   constructor(props: PromQueryFieldProps, context: React.Context<any>) {
     super(props, context);
-
-    this.plugins = [
-      // @ts-ignore
-      BracesPlugin(),
-      // @ts-ignore
-      SlatePrism(
-        {
-          onlyIn: (node: any) => node.type === 'code_block',
-          getSyntax: () => 'promql',
-        },
-        { ...(prismLanguages as LanguageMap), promql: this.props.datasource.languageProvider.syntax }
-      ),
-    ];
 
     this.state = {
       labelBrowserVisible: false,
