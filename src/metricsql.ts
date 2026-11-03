@@ -2,20 +2,6 @@ import { Grammar } from 'prismjs';
 
 import { CompletionItem } from '@grafana/ui';
 
-
-// When changing RATE_RANGES, check if Loki/LogQL ranges should be changed too
-export const RATE_RANGES: CompletionItem[] = [
-  { label: '$__interval', sortValue: '$__interval' },
-  { label: '$__rate_interval', sortValue: '$__rate_interval' },
-  { label: '$__range', sortValue: '$__range' },
-  { label: '1m', sortValue: '00:01:00' },
-  { label: '5m', sortValue: '00:05:00' },
-  { label: '10m', sortValue: '00:10:00' },
-  { label: '30m', sortValue: '00:30:00' },
-  { label: '1h', sortValue: '01:00:00' },
-  { label: '1d', sortValue: '24:00:00' },
-];
-
 export const OPERATORS = ['by', 'group_left', 'group_right', 'ignoring', 'on', 'offset', 'without'];
 // export const LOGICAL_OPERATORS = ['or', 'and', 'unless'];
 
