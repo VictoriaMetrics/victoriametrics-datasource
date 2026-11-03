@@ -68,9 +68,12 @@
       // Exact versions in package.json: every update of a direct dependency is
       // an explicit diff. All npm updates (minor, patch, major, pin) travel in
       // one pull request; see the quarantine rule at the end for exceptions.
+      // By default Renovate still splits a group into a major and a non-major
+      // branch, so the split is turned off explicitly.
       matchManagers: ['npm'],
       rangeStrategy: 'pin',
       groupName: 'npm',
+      separateMajorMinor: false,
     },
     {
       // Renovate runs `yarn set version`, which also replaces the vendored
