@@ -171,7 +171,7 @@ github.com/json-iterator/go
 # github.com/jszwedko/go-datemath v0.1.1-0.20260113213115-7f666eef0523
 ## explicit; go 1.13
 github.com/jszwedko/go-datemath
-# github.com/klauspost/compress v1.20.1
+# github.com/klauspost/compress v1.20.3
 ## explicit; go 1.25
 github.com/klauspost/compress
 github.com/klauspost/compress/flate
