@@ -4,7 +4,7 @@ go 1.27.3
 
 require (
 	github.com/grafana/grafana-plugin-sdk-go v0.298.0
-	github.com/klauspost/compress v1.20.1
+	github.com/klauspost/compress v1.20.3
 	github.com/magefile/mage v1.17.2
 )
 
