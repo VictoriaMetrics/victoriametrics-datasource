@@ -1395,3 +1395,54 @@ func TestVMUIQuery(t *testing.T) {
 		}
 	})
 }
+
+func TestQuery_ErrorsDoNotContainRequestURL(t *testing.T) {
+	const secret = "token=secret"
+	newInstance := func(t *testing.T, srvURL string) *DatasourceInstance {
+		t.Helper()
+		settings := backend.DataSourceInstanceSettings{
+			URL:      srvURL,
+			JSONData: []byte(`{"httpMethod":"GET","customQueryParameters":"` + secret + `"}`),
+		}
+		inst, err := newDatasourceInstance(context.Background(), settings)
+		if err != nil {
+			t.Fatalf("failed to create instance: %s", err)
+		}
+		return inst.(*DatasourceInstance)
+	}
+	query := backend.DataQuery{
+		RefID: "A",
+		JSON:  []byte(`{"refId":"A","instant":true,"expr":"up"}`),
+	}
+
+	t.Run("non-200 response", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(http.StatusBadGateway)
+		}))
+		defer srv.Close()
+
+		resp := newInstance(t, srv.URL).query(context.Background(), query, false)
+		if resp.Error == nil {
+			t.Fatal("expected an error")
+		}
+		if strings.Contains(resp.Error.Error(), srv.URL) || strings.Contains(resp.Error.Error(), secret) {
+			t.Fatalf("expected the error to hide the request url, got %q", resp.Error)
+		}
+		if !strings.Contains(resp.Error.Error(), "502") {
+			t.Fatalf("expected the status code in the error, got %q", resp.Error)
+		}
+	})
+
+	t.Run("connection error", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+		srv.Close()
+
+		resp := newInstance(t, srv.URL).query(context.Background(), query, false)
+		if resp.Error == nil {
+			t.Fatal("expected an error")
+		}
+		if strings.Contains(resp.Error.Error(), srv.URL) || strings.Contains(resp.Error.Error(), secret) {
+			t.Fatalf("expected the error to hide the request url, got %q", resp.Error)
+		}
+	})
+}

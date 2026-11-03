@@ -208,12 +208,11 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 		err = fmt.Errorf("failed to create new request with context: %w", err)
 		return newResponseError(err, backend.StatusBadRequest)
 	}
-	reqURL := req.URL.String()
 	resp, err := di.httpClient.Do(req)
 	if err != nil {
 		if !isTrivialError(err) {
 			// Return unexpected error to the caller.
-			return newResponseError(err, backend.StatusBadRequest)
+			return newResponseError(withoutURL(err), backend.StatusBadRequest)
 		}
 
 		// Something in the middle between client and datasource might be closing
@@ -225,7 +224,7 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 		}
 		resp, err = di.httpClient.Do(req)
 		if err != nil {
-			err = fmt.Errorf("failed to make http request: %w", err)
+			err = fmt.Errorf("failed to make http request: %w", withoutURL(err))
 			return newResponseError(err, backend.StatusBadRequest)
 		}
 	}
@@ -236,6 +235,8 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 	}()
 
 	if resp.StatusCode != http.StatusOK {
+		// The full URL may carry credentials and sensitive query parameters, so it is logged redacted and never returned
+		log.DefaultLogger.Debug("unexpected response status code", "status", resp.StatusCode, "url", redactURL(req.URL))
 		body, readErr := io.ReadAll(io.LimitReader(resp.Body, 4096))
 		if readErr == nil {
 			var errResp Response
@@ -250,7 +251,7 @@ func (di *DatasourceInstance) query(ctx context.Context, query backend.DataQuery
 		}
 
 		return newResponseError(
-			fmt.Errorf("got unexpected response status code: %d with request url: %q", resp.StatusCode, reqURL),
+			fmt.Errorf("got unexpected response status code: %d", resp.StatusCode),
 			backend.Status(resp.StatusCode),
 		)
 	}
@@ -442,7 +443,7 @@ func (d *Datasource) VMAPIQuery(rw http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		if !isTrivialError(err) {
 			// Return unexpected error to the caller.
-			writeError(rw, http.StatusBadRequest, err)
+			writeError(rw, http.StatusBadRequest, withoutURL(err))
 			return
 		}
 
@@ -456,7 +457,7 @@ func (d *Datasource) VMAPIQuery(rw http.ResponseWriter, req *http.Request) {
 		// the connection. So we do a one more attempt in hope request will succeed.
 		resp, err = di.httpClient.Do(newReq)
 		if err != nil {
-			writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to make http request: %w", err))
+			writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to make http request: %w", withoutURL(err)))
 			return
 		}
 	}

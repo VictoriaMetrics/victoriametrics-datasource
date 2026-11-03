@@ -4,6 +4,7 @@
 
 * BUGFIX: keep the query editor settings saved in the browser separate from the built-in Prometheus datasource. Previously, both plugins shared the same storage keys and overwrote each other's default editor mode and last used labels.
 * BUGFIX: respond with a client error instead of crashing the backend when the `vmui` link request has no body or invalid JSON.
+* BUGFIX: stop including the full request URL, which may carry credentials and custom query parameters, in query error messages and logs.
 
 * DEPENDENCY: update `golang.org/x/net` to v0.62.0 to fix the reported vulnerabilities.
 
