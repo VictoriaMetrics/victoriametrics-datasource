@@ -1375,6 +1375,16 @@ func TestVMUIQuery(t *testing.T) {
 		}
 	})
 
+	t.Run("trailing data after json returns a client error", func(t *testing.T) {
+		req := newRequest(t, strings.NewReader(`{"vmui": {}} garbage`))
+
+		rr := httptest.NewRecorder()
+		NewDatasource().VMUIQuery(rr, req)
+		if rr.Code != http.StatusBadRequest {
+			t.Fatalf("expected status %d, got %d; body: %s", http.StatusBadRequest, rr.Code, rr.Body.String())
+		}
+	})
+
 	t.Run("valid request returns the vmui url", func(t *testing.T) {
 		req := newRequest(t, strings.NewReader(`{"vmui": {"expr": "up"}}`))
 

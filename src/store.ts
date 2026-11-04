@@ -51,8 +51,12 @@ export class Store {
     return this.get(key) !== undefined;
   }
 
-  delete({ key }: StorageKey) {
+  /* Removes the legacy key too, otherwise the next read would migrate its value back */
+  delete({ key, legacyKey }: StorageKey) {
     window.localStorage.removeItem(key);
+    if (legacyKey !== undefined) {
+      window.localStorage.removeItem(legacyKey);
+    }
   }
 
   /* Moves the value written by earlier plugin versions under the prefixed key, once */

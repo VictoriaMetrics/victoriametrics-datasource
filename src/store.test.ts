@@ -73,6 +73,13 @@ describe('store', () => {
       expect(store.get(storageKey)).toBeUndefined();
     });
 
+    it('removes the legacy key when the value was never read', () => {
+      window.localStorage['legacyValue'] = 'old';
+      store.delete(storageKey);
+      expect(window.localStorage['legacyValue']).toBeUndefined();
+      expect(store.get(storageKey)).toBeUndefined();
+    });
+
     it('does not touch keys of other plugins', () => {
       window.localStorage['grafana.datasources.prometheus.browser.labels'] = '["job"]';
       store.delete({ key: 'plugin.browser.labels' });

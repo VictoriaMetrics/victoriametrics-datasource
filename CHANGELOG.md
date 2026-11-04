@@ -6,7 +6,7 @@
 * BUGFIX: respond with a client error instead of crashing the backend when the `vmui` link request has no body or invalid JSON.
 * BUGFIX: stop including the full request URL, which may carry credentials and custom query parameters, in query error messages and logs.
 
-* DEPENDENCY: update `golang.org/x/net` to v0.62.0 to fix the reported vulnerabilities.
+* DEPENDENCY: update `golang.org/x/net` to v0.62.0 to fix [GO-2026-6860](https://pkg.go.dev/vuln/GO-2026-6860) and [GO-2026-6866](https://pkg.go.dev/vuln/GO-2026-6866).
 
 ## v1.0.0
 

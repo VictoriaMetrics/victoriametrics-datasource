@@ -370,7 +370,13 @@ func (d *Datasource) VMUIQuery(rw http.ResponseWriter, req *http.Request) {
 	var vmuiReq struct {
 		VMUI map[string]string `json:"vmui"`
 	}
-	if err := json.NewDecoder(req.Body).Decode(&vmuiReq); err != nil {
+	// Unmarshal, unlike Decode, rejects data after the JSON value.
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to read request body: %w", err))
+		return
+	}
+	if err := json.Unmarshal(body, &vmuiReq); err != nil {
 		writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to decode request body: %w", err))
 		return
 	}
@@ -503,11 +509,9 @@ func newHealthCheckErrorf(format string, args ...interface{}) *backend.CheckHeal
 	return &backend.CheckHealthResult{Status: backend.HealthStatusError, Message: fmt.Sprintf(format, args...)}
 }
 
-// newHealthCheckErrorf returns a new backend.DataResponse with its status set to backend.DataResponse
-// and the specified error message.
 // do sends the request built by newReq and retries once on a trivial network error.
-// Errors returned by the HTTP client never carry the request URL, which may hold
-// credentials and sensitive query parameters.
+// It strips the request URL from the errors of the HTTP client, because the URL
+// may hold credentials and sensitive query parameters.
 func (di *DatasourceInstance) do(newReq func() (*http.Request, error)) (*http.Response, error) {
 	req, err := newReq()
 	if err != nil {
@@ -535,6 +539,8 @@ func (di *DatasourceInstance) do(newReq func() (*http.Request, error)) (*http.Re
 	return resp, nil
 }
 
+// newHealthCheckErrorf returns a new backend.DataResponse with its status set to backend.DataResponse
+// and the specified error message.
 func newResponseError(err error, httpStatus backend.Status) backend.DataResponse {
 	log.DefaultLogger.Error(err.Error())
 	return backend.DataResponse{Status: httpStatus, Error: err}
