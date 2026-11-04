@@ -370,14 +370,14 @@ func (d *Datasource) VMUIQuery(rw http.ResponseWriter, req *http.Request) {
 	var vmuiReq struct {
 		VMUI map[string]string `json:"vmui"`
 	}
-	// Unmarshal, unlike Decode, rejects data after the JSON value.
-	body, err := io.ReadAll(req.Body)
-	if err != nil {
-		writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to read request body: %w", err))
+	dec := json.NewDecoder(req.Body)
+	if err := dec.Decode(&vmuiReq); err != nil {
+		writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to decode request body: %w", err))
 		return
 	}
-	if err := json.Unmarshal(body, &vmuiReq); err != nil {
-		writeError(rw, http.StatusBadRequest, fmt.Errorf("failed to decode request body: %w", err))
+	// Decode stops after the first JSON value, so reject anything that follows it.
+	if _, err := dec.Token(); err != io.EOF {
+		writeError(rw, http.StatusBadRequest, errors.New("unexpected data after the request body"))
 		return
 	}
 	params := url.Values{}
