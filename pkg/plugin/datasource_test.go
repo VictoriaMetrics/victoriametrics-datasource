@@ -1333,3 +1333,127 @@ func TestVMAPIQuery_GETWithoutBody(t *testing.T) {
 		t.Errorf("expected an empty body, got %q", gotBody)
 	}
 }
+
+func TestVMUIQuery(t *testing.T) {
+	newRequest := func(t *testing.T, body io.Reader) *http.Request {
+		t.Helper()
+		pluginCtx := backend.PluginContext{
+			DataSourceInstanceSettings: &backend.DataSourceInstanceSettings{
+				URL:      "http://vm:8428",
+				JSONData: []byte(`{"httpMethod":"POST","customQueryParameters":"nocache=1"}`),
+			},
+		}
+		ctx := backend.WithPluginContext(context.Background(), pluginCtx)
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, "/vmui", body)
+		if err != nil {
+			t.Fatalf("failed to create request: %s", err)
+		}
+		return req
+	}
+
+	t.Run("nil body returns a client error", func(t *testing.T) {
+		// The SDK resource adapter passes a nil body when the request has no body.
+		req := newRequest(t, nil)
+		if req.Body != nil {
+			t.Fatal("expected a nil request body")
+		}
+
+		rr := httptest.NewRecorder()
+		NewDatasource().VMUIQuery(rr, req)
+		if rr.Code != http.StatusBadRequest {
+			t.Fatalf("expected status %d, got %d; body: %s", http.StatusBadRequest, rr.Code, rr.Body.String())
+		}
+	})
+
+	t.Run("invalid json returns a client error", func(t *testing.T) {
+		req := newRequest(t, strings.NewReader(`{"vmui": `))
+
+		rr := httptest.NewRecorder()
+		NewDatasource().VMUIQuery(rr, req)
+		if rr.Code != http.StatusBadRequest {
+			t.Fatalf("expected status %d, got %d; body: %s", http.StatusBadRequest, rr.Code, rr.Body.String())
+		}
+	})
+
+	t.Run("trailing data after json returns a client error", func(t *testing.T) {
+		req := newRequest(t, strings.NewReader(`{"vmui": {}} garbage`))
+
+		rr := httptest.NewRecorder()
+		NewDatasource().VMUIQuery(rr, req)
+		if rr.Code != http.StatusBadRequest {
+			t.Fatalf("expected status %d, got %d; body: %s", http.StatusBadRequest, rr.Code, rr.Body.String())
+		}
+	})
+
+	t.Run("valid request returns the vmui url", func(t *testing.T) {
+		req := newRequest(t, strings.NewReader(`{"vmui": {"expr": "up"}}`))
+
+		rr := httptest.NewRecorder()
+		NewDatasource().VMUIQuery(rr, req)
+		if rr.Code != http.StatusOK {
+			t.Fatalf("expected status %d, got %d; body: %s", http.StatusOK, rr.Code, rr.Body.String())
+		}
+		var resp struct {
+			VMUIURL string `json:"vmuiURL"`
+		}
+		if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("failed to decode response %q: %s", rr.Body.String(), err)
+		}
+		want := "http://vm:8428/vmui?#/?g0.expr=up&nocache=1"
+		if resp.VMUIURL != want {
+			t.Errorf("expected vmui url %q, got %q", want, resp.VMUIURL)
+		}
+	})
+}
+
+func TestQuery_ErrorsDoNotContainRequestURL(t *testing.T) {
+	const secret = "token=secret"
+	newInstance := func(t *testing.T, srvURL string) *DatasourceInstance {
+		t.Helper()
+		settings := backend.DataSourceInstanceSettings{
+			URL:      srvURL,
+			JSONData: []byte(`{"httpMethod":"GET","customQueryParameters":"` + secret + `"}`),
+		}
+		inst, err := newDatasourceInstance(context.Background(), settings)
+		if err != nil {
+			t.Fatalf("failed to create instance: %s", err)
+		}
+		return inst.(*DatasourceInstance)
+	}
+	query := backend.DataQuery{
+		RefID: "A",
+		JSON:  []byte(`{"refId":"A","instant":true,"expr":"up"}`),
+	}
+
+	t.Run("non-200 response", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(http.StatusBadGateway)
+		}))
+		defer srv.Close()
+
+		resp := newInstance(t, srv.URL).query(context.Background(), query, false)
+		if resp.Error == nil {
+			t.Fatal("expected an error")
+		}
+		if strings.Contains(resp.Error.Error(), srv.URL) || strings.Contains(resp.Error.Error(), secret) {
+			t.Fatalf("expected the error to hide the request url, got %q", resp.Error)
+		}
+		if !strings.Contains(resp.Error.Error(), "502") {
+			t.Fatalf("expected the status code in the error, got %q", resp.Error)
+		}
+	})
+
+	t.Run("connection error", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+		srv.Close()
+
+		resp := newInstance(t, srv.URL).query(context.Background(), query, false)
+		if resp.Error == nil {
+			t.Fatal("expected an error")
+		}
+		// The network error keeps host:port on purpose, only the path and the query parameters must be hidden
+		if strings.Contains(resp.Error.Error(), instantQueryPath) || strings.Contains(resp.Error.Error(), secret) {
+			t.Fatalf("expected the error to hide the request url, got %q", resp.Error)
+		}
+	})
+}

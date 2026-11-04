@@ -18,10 +18,11 @@
 
 import React, { PureComponent } from 'react';
 
+import { StorageKey } from '../storageKeys';
 import store from '../store';
 
 export interface Props<T> {
-  storageKey: string;
+  storageKey: StorageKey;
   defaultValue: T;
   children: (value: T, onSaveToStore: (value: T) => void, onDeleteFromStore: () => void) => React.ReactNode;
 }

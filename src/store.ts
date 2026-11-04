@@ -1,41 +1,44 @@
+import { StorageKey } from './storageKeys';
+
 type StoreValue = string | number | boolean | null;
 
 export class Store {
-  get(key: string) {
-    return window.localStorage[key];
+  get(key: StorageKey) {
+    this.migrateLegacyValue(key);
+    return window.localStorage[key.key];
   }
 
-  set(key: string, value: StoreValue) {
+  set({ key }: StorageKey, value: StoreValue) {
     window.localStorage[key] = value;
   }
 
-  getObject<T = unknown>(key: string, def: T): T;
-  getObject<T = unknown>(key: string, def?: T) {
+  getObject<T = unknown>(key: StorageKey, def: T): T;
+  getObject<T = unknown>(key: StorageKey, def?: T) {
     let ret = def;
     if (this.exists(key)) {
-      const json = window.localStorage[key];
+      const json = this.get(key);
       try {
         ret = JSON.parse(json);
       } catch (error) {
-        console.error(`Error parsing store object: ${key}. Returning default: ${def}. [${error}]`);
+        console.error(`Error parsing store object: ${key.key}. Returning default: ${def}. [${error}]`);
       }
     }
     return ret;
   }
 
   /* Returns true when successfully stored, throws error if not successfully stored */
-  setObject(key: string, value: any) {
+  setObject(key: StorageKey, value: any) {
     let json;
     try {
       json = JSON.stringify(value);
     } catch (error) {
-      throw new Error(`Could not stringify object: ${key}. [${error}]`);
+      throw new Error(`Could not stringify object: ${key.key}. [${error}]`);
     }
     try {
       this.set(key, json);
     } catch (error) {
       // Likely hitting storage quota
-      const errorToThrow = new Error(`Could not save item in localStorage: ${key}. [${error}]`);
+      const errorToThrow = new Error(`Could not save item in localStorage: ${key.key}. [${error}]`);
       if (error instanceof Error) {
         errorToThrow.name = error.name;
       }
@@ -44,12 +47,28 @@ export class Store {
     return true;
   }
 
-  exists(key: string) {
-    return window.localStorage[key] !== void 0;
+  exists(key: StorageKey) {
+    return this.get(key) !== undefined;
   }
 
-  delete(key: string) {
+  /* Removes the legacy key too, otherwise the next read would migrate its value back */
+  delete({ key, legacyKey }: StorageKey) {
     window.localStorage.removeItem(key);
+    if (legacyKey !== undefined) {
+      window.localStorage.removeItem(legacyKey);
+    }
+  }
+
+  /* Moves the value written by earlier plugin versions under the prefixed key, once */
+  private migrateLegacyValue({ key, legacyKey }: StorageKey) {
+    if (legacyKey === undefined || window.localStorage[key] !== undefined) {
+      return;
+    }
+    const legacyValue = window.localStorage[legacyKey];
+    if (legacyValue !== undefined) {
+      window.localStorage[key] = legacyValue;
+      window.localStorage.removeItem(legacyKey);
+    }
   }
 }
 
