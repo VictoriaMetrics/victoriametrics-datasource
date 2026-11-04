@@ -139,7 +139,6 @@
     "lezer-metricsql": "workspace:*",
     "lodash": "4.18.1",
     "lru-cache": "11.5.3",
-    "monaco-editor": "0.57.0",
     "monaco-promql": "1.9.0",
     "pluralize": "8.0.0",
     "prismjs": "1.30.0",
