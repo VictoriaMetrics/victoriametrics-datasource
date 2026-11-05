@@ -50,7 +50,7 @@ export type Props = QueryEditorProps<PrometheusDatasource, PromQuery, PromOption
 
 const refId = 'VariableQueryEditor-VariableQuery';
 
-export const VariableQueryEditor = ({ onChange, query, datasource, range }: Props) => {
+export const VariableQueryEditor = ({ onChange, query, datasource }: Props) => {
   // to select the query type, i.e. label_names, label_values, etc.
   const [qryType, setQryType] = useState<number | undefined>(undefined);
   // list of variables for each function
@@ -77,7 +77,7 @@ export const VariableQueryEditor = ({ onChange, query, datasource, range }: Prop
   const [labelFilters, setLabelFilters] = useState<QueryBuilderLabelFilter[]>([]);
 
   useEffect(() => {
-    datasource.languageProvider.start(range);
+    datasource.languageProvider.start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

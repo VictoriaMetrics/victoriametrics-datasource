@@ -23,9 +23,7 @@ import Prism from 'prismjs';
 import {
   AbstractLabelMatcher,
   AbstractQuery,
-  getDefaultTimeRange,
   LanguageProvider,
-  TimeRange,
 } from '@grafana/data';
 import { BackendSrvRequest } from '@grafana/runtime';
 
@@ -58,7 +56,6 @@ export function getMetadataString(metric: string, metadata: PromMetricsMetadata)
 
 export default class PromQlLanguageProvider extends LanguageProvider {
   histogramMetrics: string[];
-  timeRange: TimeRange;
   metrics: string[];
   metricsMetadata?: PromMetricsMetadata;
   declare startTask: Promise<any>;
@@ -79,7 +76,6 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
     this.datasource = datasource;
     this.histogramMetrics = [];
-    this.timeRange = getDefaultTimeRange();
     this.metrics = [];
     this.withTemplates = []
 
@@ -97,9 +93,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     return defaultValue;
   };
 
-  start = async (timeRange?: TimeRange): Promise<any[]> => {
-    this.timeRange = timeRange ?? getDefaultTimeRange();
-
+  start = async (): Promise<any[]> => {
     if (this.datasource.lookupsDisabled) {
       return [];
     }
@@ -172,7 +166,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
   fetchSeriesLabelsMatch = async (name: string): Promise<string[]> => {
     const interpolatedName = this.datasource.interpolateString(name);
-    const range = this.datasource.getAdjustedInterval(this.timeRange);
+    const range = this.datasource.getTimeRangeParams();
     const urlParams = {
       ...range,
       'match[]': interpolatedName,
@@ -182,14 +176,10 @@ export default class PromQlLanguageProvider extends LanguageProvider {
     return await this.request(url, [], urlParams)
   };
 
-  fetchSeriesValuesWithMatch = async (
-    name: string,
-    match?: string,
-    timeRange: TimeRange = this.timeRange
-  ): Promise<string[]> => {
+  fetchSeriesValuesWithMatch = async (name: string, match?: string): Promise<string[]> => {
     const interpolatedName = name ? this.datasource.interpolateString(name) : null;
     const interpolatedMatch = match ? this.datasource.interpolateString(match) : null;
-    const range = this.datasource.getAdjustedInterval(timeRange);
+    const range = this.datasource.getTimeRangeParams();
     const urlParams = {
       ...range,
       ...(interpolatedMatch && { 'match[]': interpolatedMatch }),
@@ -252,7 +242,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
   fetchSeriesLabelsOptimized = async (name: string, withName?: boolean): Promise<Record<string, string[]>> => {
     const unescapedName = name.replace(/\\(.)/g, '$1');
     const interpolatedName = this.datasource.interpolateString(unescapedName);
-    const range = this.datasource.getAdjustedInterval(this.timeRange);
+    const range = this.datasource.getTimeRangeParams();
 
     // Cache key for optimized API
     const cacheParams = new URLSearchParams({
@@ -278,7 +268,7 @@ export default class PromQlLanguageProvider extends LanguageProvider {
 
     await Promise.all(
       labelsToFetch.map(async (labelName) => {
-        const values = await this.fetchSeriesValuesWithMatch(labelName, interpolatedName, this.timeRange);
+        const values = await this.fetchSeriesValuesWithMatch(labelName, interpolatedName);
         if (values.length > 0) {
           result[labelName] = values;
         }

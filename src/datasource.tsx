@@ -50,7 +50,7 @@ import { WithTemplate } from './components/WithTemplateConfig/types';
 import { mergeResolvedWithTemplate } from './components/WithTemplateConfig/utils/mergeResolvedWithTemplate';
 import { ANNOTATION_QUERY_STEP_DEFAULT, DATASOURCE_TYPE } from './consts';
 import PrometheusLanguageProvider from './language_provider';
-import { escapeLabelValueInExactSelector, expandRecordingRules, getVictoriaMetricsTime } from './language_utils';
+import { escapeLabelValueInExactSelector, expandRecordingRules } from './language_utils';
 import { renderLegendFormat } from './legend';
 import PrometheusMetricFindQuery from './metric_find_query';
 import { getInitHints, getQueryHints } from './query_hints';
@@ -621,13 +621,6 @@ export class PrometheusDatasource
         }
       }
       return this.interpolateQueryExpr(value, variable);
-    };
-  }
-
-  getAdjustedInterval(timeRange: TimeRange): { start: string; end: string } {
-    return {
-      start: getVictoriaMetricsTime(timeRange.from, false).toString(),
-      end: getVictoriaMetricsTime(timeRange.to, true).toString(),
     };
   }
 
