@@ -65,6 +65,52 @@ describe('Language completion provider', () => {
     });
   });
 
+  describe('optimized labels API', () => {
+    const optimizedDatasource = {
+      ...datasource,
+      useOptimizedLabelsApi: () => true,
+    } as unknown as PrometheusDatasource;
+
+    it('fetchSeriesLabelsMatch uses the current time range', async () => {
+      const languageProvider = new LanguageProvider(optimizedDatasource);
+      const requestSpy = jest.spyOn(languageProvider, 'request');
+      await languageProvider.fetchSeriesLabelsMatch('up');
+      expect(requestSpy).toHaveBeenCalledWith('/api/v1/labels', [], { start: '0', end: '1', 'match[]': 'up' });
+    });
+
+    it('fetchSeriesValuesWithMatch uses the current time range', async () => {
+      const languageProvider = new LanguageProvider(optimizedDatasource);
+      const requestSpy = jest.spyOn(languageProvider, 'request');
+      await languageProvider.fetchSeriesValuesWithMatch('job', 'up');
+      expect(requestSpy).toHaveBeenCalledWith('/api/v1/label/job/values', [], {
+        start: '0',
+        end: '1',
+        'match[]': 'up',
+      });
+    });
+
+    it('fetchSeriesLabels refetches when the time range changes', async () => {
+      const getTimeRangeParams = jest.fn().mockReturnValue({ start: '0', end: '1' });
+      const languageProvider = new LanguageProvider({
+        ...optimizedDatasource,
+        getTimeRangeParams,
+        getRequest: () => ({ data: ['job'] }),
+      } as unknown as PrometheusDatasource);
+      const requestSpy = jest.spyOn(languageProvider, 'request');
+
+      await languageProvider.fetchSeriesLabels('up');
+      getTimeRangeParams.mockReturnValue({ start: '3600', end: '7200' });
+      await languageProvider.fetchSeriesLabels('up');
+
+      expect(requestSpy).toHaveBeenCalledWith('/api/v1/labels', [], { start: '3600', end: '7200', 'match[]': 'up' });
+      expect(requestSpy).toHaveBeenCalledWith('/api/v1/label/job/values', [], {
+        start: '3600',
+        end: '7200',
+        'match[]': 'up',
+      });
+    });
+  });
+
   describe('getSeries', () => {
     it('does not re-fetch default labels', async () => {
       const datasource: PrometheusDatasource = {
