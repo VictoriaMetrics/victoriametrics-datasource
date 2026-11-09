@@ -20,7 +20,7 @@
     "@lezer/highlight": "1.2.5",
     "@lezer/lr": "1.4.12",
     "@rollup/plugin-node-resolve": "16.0.3",
-    "rollup": "4.67.4"
+    "rollup": "4.67.5"
   },
   "peerDependencies": {
     "@lezer/highlight": "1.2.5",
