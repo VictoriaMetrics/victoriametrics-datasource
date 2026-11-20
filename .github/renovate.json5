@@ -27,13 +27,10 @@
   labels: ['dependencies'],
   // maintainer of plugin repo
   reviewers: ['arturminchukov'],
-  // Refreshes the transitive dependencies in yarn.lock once a week; Yarn applies
-  // its own npmMinimalAgeGate from .yarnrc.yml while resolving.
-  lockFileMaintenance: {
-    enabled: true,
-    // The whole Monday (UTC), same as the global schedule.
-    schedule: ['* * * * 1'],
-  },
+  // Off: re-resolving the whole yarn.lock takes 2-3 GB of memory and the
+  // Mend-hosted job is killed at its 3 GB limit, which blocks every other
+  // update. Transitive dependencies in yarn.lock are refreshed by hand.
+  lockFileMaintenance: { enabled: false },
   postUpdateOptions: ['gomodTidy'],
   // The Node image in the Dockerfile is handled by the custom manager below,
   // the Docker images in compose.yaml are a dev environment only.
