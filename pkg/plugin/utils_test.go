@@ -1,6 +1,8 @@
 package plugin
 
 import (
+	"math"
+	"strings"
 	"testing"
 	"time"
 )
@@ -102,6 +104,45 @@ func TestParseFloatToTime(t *testing.T) {
 
 			if !tt.expectErr && !gotTime.Equal(tt.wantTime) {
 				t.Errorf("expected time: %v, got: %v", tt.wantTime, gotTime)
+			}
+		})
+	}
+}
+
+func TestParseSampleValue(t *testing.T) {
+	tests := []struct {
+		name      string
+		input     interface{}
+		want      float64
+		expectErr bool
+	}{
+		{name: "integer string", input: "13763", want: 13763},
+		{name: "float string", input: "1.5", want: 1.5},
+		{name: "exponent string", input: "1e3", want: 1000},
+		{name: "infinity string", input: "+Inf", want: math.Inf(1)},
+		{name: "number instead of string", input: 1.5, expectErr: true},
+		{name: "null instead of string", input: nil, expectErr: true},
+		{name: "object instead of string", input: map[string]interface{}{"a": 1}, expectErr: true},
+		{name: "empty string", input: "", expectErr: true},
+		{name: "not a number", input: "secret", expectErr: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := parseSampleValue(tt.input)
+
+			if (err != nil) != tt.expectErr {
+				t.Fatalf("expected error: %v, got: %v", tt.expectErr, err)
+			}
+			if tt.expectErr {
+				// the error is logged, so it must not carry the value from the response
+				if s, ok := tt.input.(string); ok && s != "" && strings.Contains(err.Error(), s) {
+					t.Errorf("error contains the sample value: %s", err)
+				}
+				return
+			}
+			if got != tt.want {
+				t.Errorf("expected value: %v, got: %v", tt.want, got)
 			}
 		})
 	}

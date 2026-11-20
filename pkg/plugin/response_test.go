@@ -2,11 +2,63 @@ package plugin
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
+
+func TestResponse_getDataFrames_invalidResult(t *testing.T) {
+	// marks response data which must not get into the error message, as the error is logged
+	const payload = "leaked_payload"
+	f := func(resultType, result string, forAlerting bool) {
+		t.Helper()
+		r := &Response{
+			Status:      "success",
+			Data:        Data{ResultType: resultType, Result: []byte(result)},
+			ForAlerting: forAlerting,
+		}
+		_, err := r.getDataFrames()
+		if err == nil {
+			t.Errorf("getDataFrames() expected error for %s result %s", resultType, result)
+			return
+		}
+		if strings.Contains(err.Error(), payload) {
+			t.Errorf("getDataFrames() error contains response data: %s", err)
+		}
+	}
+
+	// numeric sample value
+	f(vector, `[{"metric":{"job":"leaked_payload"},"value":[1583786142,1.5]}]`, false)
+	f(vector, `[{"metric":{"job":"leaked_payload"},"value":[1583786142,1.5]}]`, true)
+	f(matrix, `[{"metric":{"job":"leaked_payload"},"values":[[1583786142,1.5]]}]`, false)
+	f(scalar, `[1583786142,1.5]`, false)
+
+	// null sample value
+	f(vector, `[{"metric":{"job":"leaked_payload"},"value":[1583786142,null]}]`, false)
+	f(vector, `[{"metric":{"job":"leaked_payload"},"value":[1583786142,null]}]`, true)
+	f(matrix, `[{"metric":{"job":"leaked_payload"},"values":[[1583786142,null]]}]`, false)
+	f(scalar, `[1583786142,null]`, false)
+
+	// missing sample value
+	f(vector, `[{"metric":{"job":"leaked_payload"}}]`, false)
+	f(vector, `[{"metric":{"job":"leaked_payload"}}]`, true)
+
+	// sample value is not a number
+	f(vector, `[{"metric":{"job":"leaked_payload"},"value":[1583786142,"leaked_payload"]}]`, false)
+	f(vector, `[{"metric":{"job":"leaked_payload"},"value":[1583786142,"leaked_payload"]}]`, true)
+	f(matrix, `[{"metric":{"job":"leaked_payload"},"values":[[1583786142,"leaked_payload"]]}]`, false)
+	f(scalar, `[1583786142,"leaked_payload"]`, false)
+
+	// series without samples
+	f(matrix, `[{"metric":{"job":"leaked_payload"},"values":[]}]`, false)
+
+	// result of unexpected shape
+	f(vector, `{"leaked_payload":1}`, false)
+	f(matrix, `{"leaked_payload":1}`, false)
+	f(scalar, `{"leaked_payload":1}`, false)
+}
 
 func TestResponse_getDataFrames(t *testing.T) {
 	type opts struct {
