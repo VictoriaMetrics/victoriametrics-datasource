@@ -2,6 +2,8 @@
 
 ## tip
 
+## v1.0.2
+
 * BUGFIX: use the selected time range for label and label value suggestions when `Use optimized labels API` is enabled, which is the default. Previously, these requests always covered the last 6 hours regardless of the time picker. See [#600](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/600).
 
 ## v1.0.1
