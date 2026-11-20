@@ -128,7 +128,7 @@ func TestDatasourceQueryRequest(t *testing.T) {
 	expErr(ctx, "failed to decode body response: json: cannot unmarshal array into Go value of type plugin.Response") // 1
 	expErr(ctx, "ERROR: type:, some error msg")                                                                       // 2
 	expErr(ctx, "failed to prepare data from response: unknown result type \"\"")                                     // 3
-	expErr(ctx, "failed to prepare data from response: unmarshal err unexpected end of JSON input")                   // 4
+	expErr(ctx, "failed to prepare data from response: failed to decode matrix result: unexpected end of JSON input") // 4
 
 	// 5
 	queryJSON := []byte(`{

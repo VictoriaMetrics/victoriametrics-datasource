@@ -3,7 +3,6 @@ package plugin
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/data"
@@ -66,9 +65,9 @@ type promInstant struct {
 func (pi promInstant) dataframes() (data.Frames, error) {
 	frames := make(data.Frames, len(pi.Result))
 	for i, res := range pi.Result {
-		f, err := strconv.ParseFloat(res.Value[1].(string), 64)
+		f, err := parseSampleValue(res.Value[1])
 		if err != nil {
-			return nil, fmt.Errorf("metric %v, unable to parse float64 from %s: %w", res, res.Value[1], err)
+			return nil, fmt.Errorf("series %d: %w", i, err)
 		}
 
 		v, ok := res.Value[0].(float64)
@@ -97,9 +96,9 @@ func (pi promInstant) dataframes() (data.Frames, error) {
 func (pi promInstant) alertingDataFrames() (data.Frames, error) {
 	frames := make(data.Frames, len(pi.Result))
 	for i, res := range pi.Result {
-		f, err := strconv.ParseFloat(res.Value[1].(string), 64)
+		f, err := parseSampleValue(res.Value[1])
 		if err != nil {
-			return nil, fmt.Errorf("metric %v, unable to parse float64 from %s: %w", res, res.Value[1], err)
+			return nil, fmt.Errorf("series %d: %w", i, err)
 		}
 
 		frames[i] = data.NewFrame("",
@@ -134,15 +133,15 @@ func (pr promRange) dataframes() (data.Frames, error) {
 				return nil, fmt.Errorf("error get time from dataframes: %s", err)
 			}
 
-			f, err := strconv.ParseFloat(value[1].(string), 64)
+			f, err := parseSampleValue(value[1])
 			if err != nil {
-				return nil, fmt.Errorf("erro get value from dataframes: %s", err)
+				return nil, fmt.Errorf("series %d: %w", i, err)
 			}
 			values[j] = f
 		}
 
 		if len(values) < 1 || len(timestamps) < 1 {
-			return nil, fmt.Errorf("metric %v contains no values", res)
+			return nil, fmt.Errorf("series %d contains no values", i)
 		}
 
 		frames[i] = data.NewFrame("",
@@ -162,9 +161,9 @@ type promScalar Value
 
 func (ps promScalar) dataframes() (data.Frames, error) {
 	var frames data.Frames
-	f, err := strconv.ParseFloat(ps[1].(string), 64)
+	f, err := parseSampleValue(ps[1])
 	if err != nil {
-		return nil, fmt.Errorf("metric %v, unable to parse float64 from %s: %w", ps, ps[1], err)
+		return nil, err
 	}
 
 	v, ok := ps[0].(float64)
@@ -211,7 +210,7 @@ func (r *Response) getDataFrames() (fss data.Frames, err error) {
 	case vector:
 		var pi promInstant
 		if err = json.Unmarshal(r.Data.Result, &pi.Result); err != nil {
-			return nil, fmt.Errorf("unmarshal err %w; \n %#v", err, string(r.Data.Result))
+			return nil, fmt.Errorf("failed to decode %s result: %w", r.Data.ResultType, err)
 		}
 		if r.ForAlerting {
 			fss, err = pi.alertingDataFrames()
@@ -224,13 +223,13 @@ func (r *Response) getDataFrames() (fss data.Frames, err error) {
 	case matrix:
 		var pr promRange
 		if err = json.Unmarshal(r.Data.Result, &pr.Result); err != nil {
-			return nil, fmt.Errorf("unmarshal err %w; \n %#v", err, string(r.Data.Result))
+			return nil, fmt.Errorf("failed to decode %s result: %w", r.Data.ResultType, err)
 		}
 		df = pr
 	case scalar:
 		var ps promScalar
 		if err = json.Unmarshal(r.Data.Result, &ps); err != nil {
-			return nil, fmt.Errorf("unmarshal err %w; \n %#v", err, string(r.Data.Result))
+			return nil, fmt.Errorf("failed to decode %s result: %w", r.Data.ResultType, err)
 		}
 		df = ps
 	default:
