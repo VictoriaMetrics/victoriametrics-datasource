@@ -3628,17 +3628,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lezer/common@npm:1.5.6":
+"@lezer/common@npm:1.5.6, @lezer/common@npm:^1.0.0, @lezer/common@npm:^1.0.2, @lezer/common@npm:^1.1.0, @lezer/common@npm:^1.2.0, @lezer/common@npm:^1.2.1, @lezer/common@npm:^1.3.0, @lezer/common@npm:^1.5.0":
   version: 1.5.6
   resolution: "@lezer/common@npm:1.5.6"
   checksum: 10c0/a1a17c7b370f4b354e973acd76edf80ef5a33457fd3be94a5884da1189ddb851cb5581a689fa9aa7de38235c9aa8d503cf7ffb92d8266b07802face7cbbd6965
-  languageName: node
-  linkType: hard
-
-"@lezer/common@npm:^1.0.0, @lezer/common@npm:^1.0.2, @lezer/common@npm:^1.1.0, @lezer/common@npm:^1.2.0, @lezer/common@npm:^1.2.1, @lezer/common@npm:^1.3.0, @lezer/common@npm:^1.5.0":
-  version: 1.5.5
-  resolution: "@lezer/common@npm:1.5.5"
-  checksum: 10c0/d989bd7453d1fd90f2c0baf33fcf6e5f2082fcf3f1faf8b271ae51bef1ad388e2e53f5d91c16e841b70fe4d2ed7ed08adb3fb23cb03fee6455dad3c72f6ff998
   languageName: node
   linkType: hard
 
