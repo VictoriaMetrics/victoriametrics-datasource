@@ -23,7 +23,7 @@ module.exports = {
     '<rootDir>/src/**/*.{spec,test,jest}.{js,jsx,ts,tsx}',
   ],
   transform: {
-    '^.+\\.(t|j)sx?$': [
+    '^.+\\.(t|j|mj)sx?$': [
       '@swc/jest',
       {
         sourceMaps: 'inline',
