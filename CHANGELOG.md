@@ -2,6 +2,8 @@
 
 ## tip
 
+## v1.0.3
+
 * BUGFIX: return a query error instead of crashing the backend when a sample value in the datasource response is not a string, for example a number or `null`.
 * BUGFIX: stop writing the contents of the datasource response to the Grafana log when the response cannot be parsed.
 
