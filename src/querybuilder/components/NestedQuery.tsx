@@ -79,7 +79,7 @@ export const NestedQuery = React.memo<Props>((props) => {
           <AutoSizeInput
             className={styles.vectorMatchInput}
             minWidth={20}
-            defaultValue={nestedQuery.vectorMatches}
+            value={nestedQuery.vectorMatches}
             onCommitChange={(evt) => {
               onChange(index, {
                 ...nestedQuery,

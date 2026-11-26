@@ -53,7 +53,7 @@ function SimpleInputParamEditor(props: QueryBuilderOperationParamEditorProps) {
   return (
     <AutoSizeInput
       id={getOperationParamId(props.operationIndex, props.index)}
-      defaultValue={props.value?.toString()}
+      value={props.value?.toString()}
       minWidth={props.paramDef.minWidth}
       placeholder={props.paramDef.placeholder}
       title={props.paramDef.description}

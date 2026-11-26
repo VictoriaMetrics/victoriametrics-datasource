@@ -41,24 +41,36 @@ export interface Props extends Omit<HTMLProps<HTMLInputElement>, 'prefix' | 'siz
   maxWidth?: number;
   /** onChange function that will be run on onBlur and onKeyPress with enter*/
   onCommitChange?: (event: React.FormEvent<HTMLInputElement>) => void;
+  /** The value to show. Unlike defaultValue, a new value replaces the text in the input */
+  value?: string | number;
 }
 
 export const AutoSizeInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
-  const { defaultValue = '', minWidth = 10, maxWidth, onCommitChange, onKeyDown, onBlur, ...restProps } = props;
-  const [value, setValue] = React.useState(defaultValue);
+  const { defaultValue = '', value, minWidth = 10, maxWidth, onCommitChange, onKeyDown, onBlur, ...restProps } = props;
+  const [initialValue] = React.useState(defaultValue);
+  // Typed text is shown until `value` changes: it survives re-renders with the same value and gives way to a new
+  // value, e.g. the committed text or an older query restored by the browser Back button. It is reset during
+  // render rather than in an effect, so the old text is never shown with the new value.
+  const [typedText, setTypedText] = React.useState<string>();
+  const [prevValue, setPrevValue] = React.useState(value);
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setTypedText(undefined);
+  }
+  const inputValue = (typedText ?? value ?? initialValue).toString();
   const [inputWidth, setInputWidth] = React.useState(minWidth);
 
   useEffect(() => {
-    setInputWidth(getWidthFor(value.toString(), minWidth, maxWidth));
-  }, [value, maxWidth, minWidth]);
+    setInputWidth(getWidthFor(inputValue, minWidth, maxWidth));
+  }, [inputValue, maxWidth, minWidth]);
 
   return (
     <Input
       {...restProps}
       ref={ref}
-      value={value.toString()}
+      value={inputValue}
       onChange={(event) => {
-        setValue(event.currentTarget.value);
+        setTypedText(event.currentTarget.value);
       }}
       width={inputWidth}
       onBlur={(event) => {
