@@ -86,7 +86,7 @@ export const PromQueryBuilderOptions = React.memo<Props>(({ query, app, onChange
             placeholder={'auto'}
             minWidth={10}
             onCommitChange={onChangeStep}
-            defaultValue={query.interval}
+            value={query.interval}
           />
         </EditorField>
         <EditorField label='Format'>

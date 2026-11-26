@@ -90,7 +90,7 @@ export const PromQueryLegendEditor = React.memo<Props>(({ legendFormat, onChange
             id='legendFormat'
             minWidth={22}
             placeholder='auto'
-            defaultValue={legendFormat}
+            value={legendFormat}
             onCommitChange={onLegendFormatChanged}
             ref={inputRef}
           />

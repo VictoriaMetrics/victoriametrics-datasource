@@ -2,6 +2,8 @@
 
 ## tip
 
+* BUGFIX: show the current value in the `Min step`, custom `Legend` and `Vector matches` fields of the query editor when the query changes outside of them, for example after the browser Back button in Explore. Previously, these fields kept showing the old value, and leaving such a field applied the old value to the query again. See [#624](https://github.com/VictoriaMetrics/victoriametrics-datasource/issues/624).
+
 ## v1.0.3
 
 * BUGFIX: return a query error instead of crashing the backend when a sample value in the datasource response is not a string, for example a number or `null`.
